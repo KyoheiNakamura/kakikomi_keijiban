@@ -25,3 +25,13 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - images/
+
+  fonts:
+    - family: GenShinGothic
+      fonts:
+        - asset: fonts/GenShinGothic/GenShinGothic-Regular.ttf
+
+
