@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
-import 'home/home_page.dart';
+import 'package:kakikomi_keijiban/constants.dart';
+import 'package:kakikomi_keijiban/home/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,10 +13,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '発達障害お悩み掲示板',
+      title: '発達障害困りごと掲示板',
       theme: ThemeData(
-        primaryColor: Color(0xFFDC5A6E),
-        accentColor: Color(0xFFE89AA6),
+        primaryColor: kDarkPink,
+        accentColor: kLightPink,
         brightness: Brightness.light,
         fontFamily: 'GenShinGothic',
         // appBarTheme: AppBarTheme(

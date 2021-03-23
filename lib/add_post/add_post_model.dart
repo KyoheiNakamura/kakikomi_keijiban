@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/post.dart';
 import 'package:kakikomi_keijiban/reply.dart';
 
-class HomeModel extends ChangeNotifier {
+class AddPostModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
 
   List<Post> _posts = [];
@@ -21,7 +21,7 @@ class HomeModel extends ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future<void> getPostsWithReplies() async {
+  Future getPostsWithReplies() async {
     final querySnapshot = await _firestore
         .collection('posts')
         .orderBy('createdAt', descending: true)
@@ -54,13 +54,13 @@ class HomeModel extends ChangeNotifier {
     });
   }
 
-  Future<void> updatePost(Post post) async {
+  Future updatePost(Post post) async {
     final collection = _firestore.collection('posts');
     await collection.doc(post.id).update({'title': post.title});
     notifyListeners();
   }
 
-  Future<void> deletePost(Post post) async {
+  Future deletePost(Post post) async {
     final collection = _firestore.collection('posts');
     await collection.doc(post.id).delete();
     notifyListeners();
