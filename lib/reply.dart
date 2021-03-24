@@ -10,10 +10,10 @@ class Reply {
     this._createdAt = date;
   }
 
-  String text;
-  String id;
+  String text = '';
+  String id = '';
   // String postId;
-  DateTime _createdAt;
+  DateTime _createdAt = DateTime.now();
 
   String get createdAt => _formatDate();
 

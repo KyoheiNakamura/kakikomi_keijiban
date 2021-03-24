@@ -1,68 +1,98 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/post.dart';
-import 'package:kakikomi_keijiban/reply.dart';
 
 class AddPostModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
 
-  List<Post> _posts = [];
-  List<List<Reply>> _replies = [];
+  String _titleValue = '';
+  String get titleValue => _titleValue;
 
-  List<Post> get posts => _posts;
-  List<List<Reply>> get replies => _replies;
+  String _contentValue = '';
+  String get contentValue => _contentValue;
 
-  // Future getPosts() async {
-  //   final querySnapshot = await _firestore.collection('posts').get();
-  //   final docs = querySnapshot.docs;
-  //   final posts = docs.map((doc) => Post(doc)).toList();
-  //   posts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-  //   _posts = posts;
-  //   notifyListeners();
-  // }
+  String _nicknameValue = '';
+  String get nicknameValue => _nicknameValue;
 
-  Future getPostsWithReplies() async {
-    final querySnapshot = await _firestore
-        .collection('posts')
-        .orderBy('createdAt', descending: true)
-        .get();
-    final docs = querySnapshot.docs;
-    final posts = docs.map((doc) => Post(doc)).toList();
-    _posts = posts;
-    for (final post in posts) {
-      final querySnapshot = await _firestore
-          .collection('posts')
-          .doc(post.id)
-          .collection('replies')
-          .orderBy('createdAt')
-          .get();
-      final docs = querySnapshot.docs;
-      final replies = docs.map((doc) => Reply(doc)).toList();
-      _replies.add(replies);
-    }
+  String _genderDropdownValue = '選択してください';
+  String get genderDropdownValue => _genderDropdownValue;
+
+  String _emotionDropdownValue = '選択してください';
+  String get emotionDropdownValue => _emotionDropdownValue;
+
+  String _ageDropdownValue = '選択してください';
+  String get ageDropdownValue => _ageDropdownValue;
+
+  String _positionDropdownValue = '選択してください';
+  String get positionDropdownValue => _positionDropdownValue;
+
+  String _areaDropdownValue = '選択してください';
+  String get areaDropdownValue => _areaDropdownValue;
+
+  void getTitleValue(String? inputtedValue) {
+    _titleValue = inputtedValue!;
     notifyListeners();
   }
 
-  void getPostsRealtime() {
-    final snapshots = _firestore.collection('posts').snapshots();
-    snapshots.listen((snapshot) {
-      final docs = snapshot.docs;
-      final _posts = docs.map((doc) => Post(doc)).toList();
-      _posts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      this._posts = _posts;
-      notifyListeners();
+  void getContentValue(String? inputtedValue) {
+    _contentValue = inputtedValue!;
+    notifyListeners();
+  }
+
+  void getNicknameValue(String? inputtedValue) {
+    _nicknameValue = inputtedValue!;
+    notifyListeners();
+  }
+
+  void selectGenderDropdownValue(String? selectedValue) {
+    _genderDropdownValue = selectedValue!;
+    notifyListeners();
+  }
+
+  void selectEmotionDropdownValue(String? selectedValue) {
+    _emotionDropdownValue = selectedValue!;
+    notifyListeners();
+  }
+
+  void selectAgeDropdownValue(String? selectedValue) {
+    _ageDropdownValue = selectedValue!;
+    notifyListeners();
+  }
+
+  void selectPositionDropdownValue(String? selectedValue) {
+    _positionDropdownValue = selectedValue!;
+    notifyListeners();
+  }
+
+  void selectAreaDropdownValue(String? selectedValue) {
+    _areaDropdownValue = selectedValue!;
+    notifyListeners();
+  }
+
+  Future<void> addPost() async {
+    final posts = _firestore.collection('posts');
+    await posts.add({
+      'title': titleValue,
+      'textBody': contentValue,
+      'nickname': nicknameValue,
+      'gender': _genderDropdownValue,
+      'emotion': _emotionDropdownValue,
+      'age': _ageDropdownValue,
+      'position': _positionDropdownValue,
+      'area': _areaDropdownValue,
+      'createdAt': Timestamp.now(),
     });
   }
 
-  Future updatePost(Post post) async {
-    final collection = _firestore.collection('posts');
-    await collection.doc(post.id).update({'title': post.title});
-    notifyListeners();
-  }
-
-  Future deletePost(Post post) async {
-    final collection = _firestore.collection('posts');
-    await collection.doc(post.id).delete();
-    notifyListeners();
-  }
+//   Future<void> updatePost(Post post) async {
+//     final collection = _firestore.collection('posts');
+//     await collection.doc(post.id).update({'title': post.title});
+//     notifyListeners();
+//   }
+//
+//   Future<void> deletePost(Post post) async {
+//     final collection = _firestore.collection('posts');
+//     await collection.doc(post.id).delete();
+//     notifyListeners();
+//   }
 }

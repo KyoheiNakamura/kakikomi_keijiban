@@ -12,15 +12,6 @@ class HomeModel extends ChangeNotifier {
   List<Post> get posts => _posts;
   List<List<Reply>> get replies => _replies;
 
-  // Future getPosts() async {
-  //   final querySnapshot = await _firestore.collection('posts').get();
-  //   final docs = querySnapshot.docs;
-  //   final posts = docs.map((doc) => Post(doc)).toList();
-  //   posts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-  //   _posts = posts;
-  //   notifyListeners();
-  // }
-
   Future<void> getPostsWithReplies() async {
     final querySnapshot = await _firestore
         .collection('posts')
@@ -54,15 +45,24 @@ class HomeModel extends ChangeNotifier {
     });
   }
 
-  Future<void> updatePost(Post post) async {
-    final collection = _firestore.collection('posts');
-    await collection.doc(post.id).update({'title': post.title});
-    notifyListeners();
-  }
+// Future getPosts() async {
+//   final querySnapshot = await _firestore.collection('posts').get();
+//   final docs = querySnapshot.docs;
+//   final posts = docs.map((doc) => Post(doc)).toList();
+//   posts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+//   _posts = posts;
+//   notifyListeners();
+// }
 
-  Future<void> deletePost(Post post) async {
-    final collection = _firestore.collection('posts');
-    await collection.doc(post.id).delete();
-    notifyListeners();
-  }
+// Future<void> updatePost(Post post) async {
+  //   final collection = _firestore.collection('posts');
+  //   await collection.doc(post.id).update({'title': post.title});
+  //   notifyListeners();
+  // }
+  //
+  // Future<void> deletePost(Post post) async {
+  //   final collection = _firestore.collection('posts');
+  //   await collection.doc(post.id).delete();
+  //   notifyListeners();
+  // }
 }
