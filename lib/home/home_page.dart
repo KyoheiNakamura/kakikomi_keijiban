@@ -72,28 +72,44 @@ class HomePage extends StatelessWidget {
             ),
           );
         }),
-        floatingActionButton: FloatingActionButton.extended(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          elevation: 0,
-          highlightElevation: 0,
-          splashColor: kDarkPink,
-          backgroundColor: kLightPink,
-          label: Text(
-            '投稿する',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
+        floatingActionButton: Consumer<HomeModel>(builder: (
+          context,
+          model,
+          child,
+        ) {
+          return FloatingActionButton.extended(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
             ),
-          ),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => AddPostPage()),
-            );
-          },
-        ),
+            elevation: 0,
+            highlightElevation: 0,
+            splashColor: kDarkPink,
+            backgroundColor: Color(0xFFFCF0F5),
+            label: Row(
+              children: [
+                Icon(
+                  Icons.create,
+                  color: kDarkPink,
+                ),
+                SizedBox(width: 8),
+                Text(
+                  '投稿する',
+                  style: TextStyle(
+                    color: kDarkPink,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddPostPage()),
+              );
+              await model.getPostsWithReplies();
+            },
+          );
+        }),
       ),
     );
   }
