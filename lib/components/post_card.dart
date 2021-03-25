@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/components/reply_card.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/home/home_model.dart';
+import 'package:kakikomi_keijiban/components/popup_menu_on_post_card.dart';
 import 'package:kakikomi_keijiban/post.dart';
 import 'package:kakikomi_keijiban/reply.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +19,7 @@ class PostCard extends StatelessWidget {
     String formattedPosterInfo = '';
 
     List<String> posterData = [
-      post.nickname,
+      '${post.nickname}さん',
       post.gender,
       post.age,
       post.area,
@@ -35,11 +36,11 @@ class PostCard extends StatelessWidget {
       alignment: AlignmentDirectional.topCenter,
       children: [
         Container(
-          padding: EdgeInsets.all(20.0),
+          padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20.0),
             child: Container(
-              color: Color(0xFFFDF3E1),
+              color: kLightPink,
               padding: EdgeInsets.only(
                   top: 40.0, left: 20.0, right: 20.0, bottom: 30.0),
               child: Column(
@@ -52,15 +53,6 @@ class PostCard extends StatelessWidget {
                       style: TextStyle(fontSize: 17.0),
                     ),
                   ),
-                  // Row(
-                  //   children: [
-                  //     Text(post.nickname),
-                  //     Text(post.gender),
-                  //     Text(post.age),
-                  //     Text(post.area),
-                  //     Text(post.position),
-                  //   ],
-                  // ),
                   Text(
                     formattedPosterInfo,
                     style: TextStyle(color: kLightGrey),
@@ -79,17 +71,17 @@ class PostCard extends StatelessWidget {
                         onPressed: () {},
                         child: Text(
                           '返信する',
-                          style: TextStyle(color: kDarkPink, fontSize: 15),
+                          style: TextStyle(color: kDarkPink, fontSize: 15.0),
                         ),
                         style: OutlinedButton.styleFrom(
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(15.0),
                           ),
-                          side: BorderSide(color: kLightPink),
+                          side: BorderSide(color: kPink),
                         ),
                       ),
                       Text(
-                        post.createdAt,
+                        post.updatedAt,
                         style: TextStyle(color: kLightGrey),
                       ),
                     ],
@@ -109,47 +101,9 @@ class PostCard extends StatelessWidget {
         ),
         Positioned.directional(
           textDirection: TextDirection.ltr,
-          top: 30,
-          end: 20,
-          child: PopupMenuButton<WhyFarther>(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            elevation: 1,
-            // onSelected: (WhyFarther result) {
-            //   setState(() {
-            //     _selection = result;
-            //   });
-            // },
-            itemBuilder: (BuildContext context) => [
-              PopupMenuItem<WhyFarther>(
-                value: WhyFarther.harder,
-                child: Row(
-                  children: [
-                    Icon(Icons.update, color: kLightGrey),
-                    SizedBox(width: 8),
-                    Text(
-                      '更新する',
-                      style: TextStyle(color: kLightGrey),
-                    ),
-                  ],
-                ),
-              ),
-              PopupMenuItem<WhyFarther>(
-                value: WhyFarther.smarter,
-                child: Row(
-                  children: [
-                    Icon(Icons.delete, color: kLightGrey),
-                    SizedBox(width: 8),
-                    Text(
-                      '削除する',
-                      style: TextStyle(color: kLightGrey),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+          top: 30.0,
+          end: 20.0,
+          child: PopupMenuOnPostCard(post),
         ),
         Positioned(
           width: 50.0,
@@ -160,5 +114,3 @@ class PostCard extends StatelessWidget {
     );
   }
 }
-
-enum WhyFarther { harder, smarter, selfStarter, tradingCharter }

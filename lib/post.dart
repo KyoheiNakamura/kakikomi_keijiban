@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:kakikomi_keijiban/constants.dart';
 
 class Post {
   Post(DocumentSnapshot doc) {
@@ -7,30 +8,43 @@ class Post {
     this.title = doc['title'];
     this.textBody = doc['textBody'];
     this.nickname = doc['nickname'];
-    this.gender = doc['gender'];
     this.emotion = doc['emotion'];
-    this.age = doc['age'];
     this.position = doc['position'];
-    this.area = doc['area'];
-    final date = doc['createdAt'].toDate();
-    this._createdAt = date;
+    this.gender =
+        doc['gender'] != kPleaseSelect && doc['gender'] != kDoNotSelect
+            ? doc['gender']
+            : '';
+    this.age = doc['age'] != kPleaseSelect && doc['age'] != kDoNotSelect
+        ? doc['age']
+        : '';
+    this.area = doc['area'] != kPleaseSelect && doc['area'] != kDoNotSelect
+        ? doc['area']
+        : '';
+    final createdDate = doc['createdAt'].toDate();
+    this._createdAt = createdDate;
+    if (doc['updatedAt'] != null) {
+      final updatedDate = doc['updatedAt'].toDate();
+      this._updatedAt = updatedDate;
+    }
   }
 
   String id = '';
   String title = '';
   String textBody = '';
   String nickname = '';
-  String gender = '';
   String emotion = '';
-  String age = '';
   String position = '';
+  String gender = '';
+  String age = '';
   String area = '';
-  DateTime _createdAt = DateTime.now();
+  DateTime? _createdAt;
+  DateTime? _updatedAt;
 
-  String get createdAt => _formatDate();
+  String get createdAt => _formatDate(_createdAt);
+  String get updatedAt => _formatDate(_updatedAt);
 
-  String _formatDate() {
+  String _formatDate(date) {
     final formatter = DateFormat('yyyy年MM月dd日 HH時mm分');
-    return formatter.format(_createdAt);
+    return date != null ? formatter.format(date) : '';
   }
 }
