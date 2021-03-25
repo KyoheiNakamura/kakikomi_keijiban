@@ -5,11 +5,11 @@ const Color kPink = Color(0xFFE496A2);
 const Color kLightPink = Color(0xFFFFF7FA);
 const Color kLightGrey = Colors.black54;
 
-const String pleaseSelect = '選択してください';
-const String doNotSelect = '選択しない';
+const String kPleaseSelect = '選択してください';
+const String kDoNotSelect = '選択しない';
 
-const List<String> emotionList = [
-  pleaseSelect,
+const List<String> kEmotionList = [
+  kPleaseSelect,
   '相談',
   '疑問',
   '提案',
@@ -18,11 +18,11 @@ const List<String> emotionList = [
   'うれしい',
   'かなしい',
   'つらい',
-  '呼びかけ'
+  '呼びかけ',
 ];
 
-const List<String> positionList = [
-  pleaseSelect,
+const List<String> kPositionList = [
+  kPleaseSelect,
   '当事者',
   '配偶者',
   '親',
@@ -30,11 +30,18 @@ const List<String> positionList = [
   '親戚',
   '友達',
   '同僚',
-  'その他'
+  'その他',
 ];
 
-const List<String> ageList = [
-  pleaseSelect,
+const List<String> kGenderList = [
+  kPleaseSelect,
+  '男性',
+  '女性',
+  kDoNotSelect,
+];
+
+const List<String> kAgeList = [
+  kPleaseSelect,
   '19歳以下',
   '20代',
   '30代',
@@ -42,11 +49,11 @@ const List<String> ageList = [
   '50代',
   '60代',
   '70代以上',
-  doNotSelect
+  kDoNotSelect,
 ];
 
-const List<String> areaList = [
-  pleaseSelect,
+const List<String> kAreaList = [
+  kPleaseSelect,
   '北海道',
   '青森県',
   '岩手県',
@@ -94,5 +101,5 @@ const List<String> areaList = [
   '宮崎県',
   '鹿児島県',
   '沖縄県',
-  doNotSelect
+  kDoNotSelect,
 ];

@@ -10,19 +10,22 @@ class Post {
     this.nickname = doc['nickname'];
     this.emotion = doc['emotion'];
     this.position = doc['position'];
-    this.gender = doc['gender'] != pleaseSelect && doc['gender'] != doNotSelect
-        ? doc['gender']
-        : '';
-    this.age = doc['age'] != pleaseSelect && doc['age'] != doNotSelect
+    this.gender =
+        doc['gender'] != kPleaseSelect && doc['gender'] != kDoNotSelect
+            ? doc['gender']
+            : '';
+    this.age = doc['age'] != kPleaseSelect && doc['age'] != kDoNotSelect
         ? doc['age']
         : '';
-    this.area = doc['area'] != pleaseSelect && doc['area'] != doNotSelect
+    this.area = doc['area'] != kPleaseSelect && doc['area'] != kDoNotSelect
         ? doc['area']
         : '';
     final createdDate = doc['createdAt'].toDate();
     this._createdAt = createdDate;
-    final updatedDate = doc['updatedAt']?.toDate();
-    this._updatedAt = updatedDate;
+    if (doc['updatedAt'] != null) {
+      final updatedDate = doc['updatedAt'].toDate();
+      this._updatedAt = updatedDate;
+    }
   }
 
   String id = '';
@@ -38,10 +41,10 @@ class Post {
   DateTime? _updatedAt;
 
   String get createdAt => _formatDate(_createdAt);
-  String? get updatedAt => _formatDate(_updatedAt);
+  String get updatedAt => _formatDate(_updatedAt);
 
   String _formatDate(date) {
     final formatter = DateFormat('yyyy年MM月dd日 HH時mm分');
-    return formatter.format(date);
+    return date != null ? formatter.format(date) : '';
   }
 }

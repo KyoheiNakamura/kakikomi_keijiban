@@ -9,43 +9,11 @@ class AddPostModel extends ChangeNotifier {
   String titleValue = '';
   String contentValue = '';
   String nicknameValue = '';
-  String genderDropdownValue = pleaseSelect;
-  String emotionDropdownValue = pleaseSelect;
-  String ageDropdownValue = pleaseSelect;
-  String positionDropdownValue = pleaseSelect;
-  String areaDropdownValue = pleaseSelect;
-
-  void getTitleValue(String? inputtedValue) {
-    titleValue = inputtedValue!;
-  }
-
-  void getContentValue(String? inputtedValue) {
-    contentValue = inputtedValue!;
-  }
-
-  void getNicknameValue(String? inputtedValue) {
-    nicknameValue = inputtedValue!;
-  }
-
-  void selectGenderDropdownValue(String? selectedValue) {
-    genderDropdownValue = selectedValue!;
-  }
-
-  void selectEmotionDropdownValue(String? selectedValue) {
-    emotionDropdownValue = selectedValue!;
-  }
-
-  void selectAgeDropdownValue(String? selectedValue) {
-    ageDropdownValue = selectedValue!;
-  }
-
-  void selectPositionDropdownValue(String? selectedValue) {
-    positionDropdownValue = selectedValue!;
-  }
-
-  void selectAreaDropdownValue(String? selectedValue) {
-    areaDropdownValue = selectedValue!;
-  }
+  String genderDropdownValue = kPleaseSelect;
+  String emotionDropdownValue = kPleaseSelect;
+  String ageDropdownValue = kPleaseSelect;
+  String positionDropdownValue = kPleaseSelect;
+  String areaDropdownValue = kPleaseSelect;
 
   Future<void> addPost() async {
     final posts = _firestore.collection('posts');
@@ -59,6 +27,7 @@ class AddPostModel extends ChangeNotifier {
       'position': positionDropdownValue,
       'area': areaDropdownValue,
       'createdAt': Timestamp.now(),
+      'updatedAt': Timestamp.now(),
     });
   }
 
@@ -76,10 +45,4 @@ class AddPostModel extends ChangeNotifier {
       'updatedAt': Timestamp.now(),
     });
   }
-//
-//   Future<void> deletePost(Post post) async {
-//     final collection = _firestore.collection('posts');
-//     await collection.doc(post.id).delete();
-//     notifyListeners();
-//   }
 }

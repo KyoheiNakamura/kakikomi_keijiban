@@ -81,9 +81,7 @@ class PostCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        post.updatedAt != null
-                            ? post.updatedAt!
-                            : post.createdAt,
+                        post.updatedAt,
                         style: TextStyle(color: kLightGrey),
                       ),
                     ],

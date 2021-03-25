@@ -10,15 +10,6 @@ class AddPostPage extends StatelessWidget {
   final Post? existingPost;
   final _formKey = GlobalKey<FormState>();
 
-  final _contentFocusNode = FocusNode();
-  final _nicknameFocusNode = FocusNode();
-  final _emotionFocusNode = FocusNode();
-  final _positionFocusNode = FocusNode();
-  final _genderFocusNode = FocusNode();
-  final _ageFocusNode = FocusNode();
-  final _postButtonFocusNode = FocusNode();
-  final _areaFocusNode = FocusNode();
-
   @override
   Widget build(BuildContext context) {
     final bool isPostExisting = existingPost != null;
@@ -56,12 +47,11 @@ class AddPostPage extends StatelessWidget {
         body: Consumer<AddPostModel>(
           builder: (context, model, child) {
             return SingleChildScrollView(
-              // reverse: true,
               child: Form(
                 key: _formKey,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      vertical: 32.0, horizontal: 24.0),
+                      vertical: 40.0, horizontal: 24.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -81,27 +71,25 @@ class AddPostPage extends StatelessWidget {
                         // maxLength: 50,
                         maxLines: null,
                         // autofocus: true,
-                        onFieldSubmitted: (_) {
-                          FocusScope.of(context)
-                              .requestFocus(_contentFocusNode);
-                        },
                         onChanged: (newValue) {
-                          model.getTitleValue(newValue);
+                          model.titleValue = newValue;
                         },
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.title),
                           labelText: 'タイトル',
                           hintText: '大人の発達障害とグレーゾーンについて',
-                          helperText: '必須 50字以内でご記入ください',
-                          // helperStyle: TextStyle(color: kDarkPink),
-                          counterText: isPostExisting
-                              ? '${existingPost!.title.length} 字'
-                              : '${model.titleValue.length} 字',
+                          helperText: '必須',
+                          helperStyle: TextStyle(color: kDarkPink),
+                          counterText: '50字以内でご記入ください',
+                          counterStyle: TextStyle(color: kLightGrey),
+                          // counterText: isPostExisting
+                          //     ? '${existingPost!.title.length} 字'
+                          //     : '${model.titleValue.length} 字',
                         ),
                       ),
                       SizedBox(
-                        height: 24.0,
+                        height: 32.0,
                       ),
                       // content
                       TextFormField(
@@ -119,13 +107,8 @@ class AddPostPage extends StatelessWidget {
                         // maxLength: 1000,
                         maxLines: null,
                         keyboardType: TextInputType.multiline,
-                        focusNode: _contentFocusNode,
-                        onFieldSubmitted: (_) {
-                          FocusScope.of(context)
-                              .requestFocus(_nicknameFocusNode);
-                        },
                         onChanged: (newValue) {
-                          model.getContentValue(newValue);
+                          model.contentValue = newValue;
                         },
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
@@ -133,15 +116,17 @@ class AddPostPage extends StatelessWidget {
                           labelText: '内容',
                           hintText:
                               '自分が大人の発達障害ではないかと疑っているのですが、特徴の濃淡がはっきりせずグレーゾーンに思われるため、確信が持てないのと、親へどう話せばいいかわからず、診断に踏み切れていません。',
-                          helperText: '必須 1000字以内でご記入ください',
-                          // helperStyle: TextStyle(color: kDarkPink),
-                          counterText: isPostExisting
-                              ? '${existingPost!.textBody.length} 字'
-                              : '${model.contentValue.length} 字',
+                          helperText: '必須',
+                          helperStyle: TextStyle(color: kDarkPink),
+                          counterText: '1000字以内でご記入ください',
+                          counterStyle: TextStyle(color: kLightGrey),
+                          // counterText: isPostExisting
+                          //     ? '${existingPost!.textBody.length} 字'
+                          //     : '${model.contentValue.length} 字',
                         ),
                       ),
                       SizedBox(
-                        height: 24.0,
+                        height: 32.0,
                       ),
                       // nickname
                       TextFormField(
@@ -156,38 +141,35 @@ class AddPostPage extends StatelessWidget {
                           }
                           return null;
                         },
-                        focusNode: _nicknameFocusNode,
-                        onFieldSubmitted: (_) {
-                          FocusScope.of(context)
-                              .requestFocus(_emotionFocusNode);
-                        },
                         onChanged: (newValue) {
-                          model.getNicknameValue(newValue);
+                          model.nicknameValue = newValue;
                         },
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.face),
                           labelText: 'ニックネーム',
                           hintText: 'ムセンシティ部',
-                          helperText: '必須 10字以内でご記入ください',
-                          // helperStyle: TextStyle(color: kDarkPink),
-                          counterText: isPostExisting
-                              ? '${existingPost!.nickname.length} 字'
-                              : '${model.nicknameValue.length} 字',
+                          helperText: '必須',
+                          helperStyle: TextStyle(color: kDarkPink),
+                          counterText: '10字以内でご記入ください',
+                          counterStyle: TextStyle(color: kLightGrey),
+                          // counterText: isPostExisting
+                          //     ? '${existingPost!.nickname.length} 字'
+                          //     : '${model.nicknameValue.length} 字',
                         ),
                       ),
                       SizedBox(
-                        height: 24.0,
+                        height: 32.0,
                       ),
                       // emotion
                       DropdownButtonFormField(
                         validator: (value) {
-                          if (value == pleaseSelect) {
+                          if (value == kPleaseSelect) {
                             return 'あなたの気持ちを選択してください';
                           }
                           return null;
                         },
-                        focusNode: _emotionFocusNode,
+                        // focusNode: _emotionFocusNode,
                         focusColor: Colors.pink[50],
                         value: isPostExisting
                             ? model.emotionDropdownValue = existingPost!.emotion
@@ -204,14 +186,12 @@ class AddPostPage extends StatelessWidget {
                           prefixIcon: Icon(Icons.mood),
                           labelText: 'あなたの気持ち',
                           helperText: '必須',
-                          // helperStyle: TextStyle(color: kDarkPink),
+                          helperStyle: TextStyle(color: kDarkPink),
                         ),
                         onChanged: (String? selectedValue) {
-                          model.selectEmotionDropdownValue(selectedValue);
-                          FocusScope.of(context)
-                              .requestFocus(_positionFocusNode);
+                          model.emotionDropdownValue = selectedValue!;
                         },
-                        items: emotionList.map((String value) {
+                        items: kEmotionList.map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(value),
@@ -219,17 +199,17 @@ class AddPostPage extends StatelessWidget {
                         }).toList(),
                       ),
                       SizedBox(
-                        height: 24.0,
+                        height: 32.0,
                       ),
                       // position
                       DropdownButtonFormField(
                         validator: (value) {
-                          if (value == pleaseSelect) {
+                          if (value == kPleaseSelect) {
                             return 'あなたの立場を選択してください';
                           }
                           return null;
                         },
-                        focusNode: _positionFocusNode,
+                        // focusNode: _positionFocusNode,
                         focusColor: Colors.pink[50],
                         value: isPostExisting
                             ? model.positionDropdownValue =
@@ -246,13 +226,13 @@ class AddPostPage extends StatelessWidget {
                           border: OutlineInputBorder(),
                           labelText: 'あなたの立場',
                           helperText: '必須',
+                          helperStyle: TextStyle(color: kDarkPink),
                           prefixIcon: Icon(Icons.group),
                         ),
                         onChanged: (String? selectedValue) {
-                          model.selectPositionDropdownValue(selectedValue);
-                          FocusScope.of(context).requestFocus(_genderFocusNode);
+                          model.positionDropdownValue = selectedValue!;
                         },
-                        items: positionList.map((String value) {
+                        items: kPositionList.map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(value),
@@ -260,11 +240,11 @@ class AddPostPage extends StatelessWidget {
                         }).toList(),
                       ),
                       SizedBox(
-                        height: 24.0,
+                        height: 32.0,
                       ),
                       // gender
                       DropdownButtonFormField(
-                        focusNode: _genderFocusNode,
+                        // focusNode: _genderFocusNode,
                         focusColor: Colors.pink[50],
                         value: isPostExisting && existingPost!.gender.isNotEmpty
                             ? model.genderDropdownValue = existingPost!.gender
@@ -282,11 +262,9 @@ class AddPostPage extends StatelessWidget {
                           prefixIcon: Icon(Icons.lens_outlined),
                         ),
                         onChanged: (String? selectedValue) {
-                          model.selectGenderDropdownValue(selectedValue);
-                          FocusScope.of(context).requestFocus(_ageFocusNode);
+                          model.genderDropdownValue = selectedValue!;
                         },
-                        items: <String>[pleaseSelect, '男性', '女性', doNotSelect]
-                            .map<DropdownMenuItem<String>>((String value) {
+                        items: kGenderList.map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(value),
@@ -294,11 +272,11 @@ class AddPostPage extends StatelessWidget {
                         }).toList(),
                       ),
                       SizedBox(
-                        height: 24.0,
+                        height: 32.0,
                       ),
                       // age
                       DropdownButtonFormField(
-                        focusNode: _ageFocusNode,
+                        // focusNode: _ageFocusNode,
                         focusColor: Colors.pink[50],
                         value: isPostExisting && existingPost!.age.isNotEmpty
                             ? model.ageDropdownValue = existingPost!.age
@@ -316,10 +294,9 @@ class AddPostPage extends StatelessWidget {
                           prefixIcon: Icon(Icons.date_range),
                         ),
                         onChanged: (String? selectedValue) {
-                          model.selectAgeDropdownValue(selectedValue);
-                          FocusScope.of(context).requestFocus(_areaFocusNode);
+                          model.ageDropdownValue = selectedValue!;
                         },
-                        items: ageList.map((String value) {
+                        items: kAgeList.map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(value),
@@ -327,11 +304,11 @@ class AddPostPage extends StatelessWidget {
                         }).toList(),
                       ),
                       SizedBox(
-                        height: 24.0,
+                        height: 32.0,
                       ),
                       // area
                       DropdownButtonFormField(
-                        focusNode: _areaFocusNode,
+                        // focusNode: _areaFocusNode,
                         focusColor: Colors.pink[50],
                         value: isPostExisting && existingPost!.area.isNotEmpty
                             ? model.areaDropdownValue = existingPost!.area
@@ -349,11 +326,9 @@ class AddPostPage extends StatelessWidget {
                           prefixIcon: Icon(Icons.place_outlined),
                         ),
                         onChanged: (String? selectedValue) {
-                          model.selectAreaDropdownValue(selectedValue);
-                          FocusScope.of(context)
-                              .requestFocus(_postButtonFocusNode);
+                          model.areaDropdownValue = selectedValue!;
                         },
-                        items: areaList.map((String value) {
+                        items: kAreaList.map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
                             child: Text(value),
@@ -361,11 +336,10 @@ class AddPostPage extends StatelessWidget {
                         }).toList(),
                       ),
                       SizedBox(
-                        height: 32.0,
+                        height: 48.0,
                       ),
                       // 投稿送信ボタン
                       OutlinedButton(
-                        focusNode: _postButtonFocusNode,
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             isPostExisting
@@ -384,9 +358,9 @@ class AddPostPage extends StatelessWidget {
                         ),
                         style: OutlinedButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 16.0),
-                          // shape: RoundedRectangleBorder(
-                          //   borderRadius: BorderRadius.circular(15),
-                          // ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
                           side: BorderSide(color: kDarkPink),
                         ),
                       )
