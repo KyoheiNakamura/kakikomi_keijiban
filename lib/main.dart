@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       title: '発達障害困りごと掲示板',
       theme: ThemeData(
         primaryColor: kDarkPink,
-        accentColor: kLightPink,
+        accentColor: kPink,
         brightness: Brightness.light,
         fontFamily: 'GenShinGothic',
         // appBarTheme: AppBarTheme(

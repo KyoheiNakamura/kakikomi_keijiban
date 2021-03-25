@@ -55,14 +55,14 @@ class HomeModel extends ChangeNotifier {
 // }
 
 // Future<void> updatePost(Post post) async {
-  //   final collection = _firestore.collection('posts');
-  //   await collection.doc(post.id).update({'title': post.title});
-  //   notifyListeners();
-  // }
-  //
-  // Future<void> deletePost(Post post) async {
-  //   final collection = _firestore.collection('posts');
-  //   await collection.doc(post.id).delete();
-  //   notifyListeners();
-  // }
+//     final collection = _firestore.collection('posts');
+//     await collection.doc(post.id).update({'title': post.title});
+//     notifyListeners();
+//   }
+
+  Future<void> deletePost(Post post) async {
+    final collection = _firestore.collection('posts');
+    await collection.doc(post.id).delete();
+    notifyListeners();
+  }
 }

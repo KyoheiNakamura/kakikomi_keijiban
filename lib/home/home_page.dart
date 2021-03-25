@@ -72,11 +72,8 @@ class HomePage extends StatelessWidget {
             ),
           );
         }),
-        floatingActionButton: Consumer<HomeModel>(builder: (
-          context,
-          model,
-          child,
-        ) {
+        floatingActionButton:
+            Consumer<HomeModel>(builder: (context, model, child) {
           return FloatingActionButton.extended(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
