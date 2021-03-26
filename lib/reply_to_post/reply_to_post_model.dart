@@ -2,14 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/domain/reply.dart';
 
-class AddPostModel extends ChangeNotifier {
+class ReplyToPostModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
 
-  String titleValue = '';
   String contentValue = '';
   String nicknameValue = '';
-  String emotionDropdownValue = kPleaseSelect;
   String positionDropdownValue = kPleaseSelect;
   String genderDropdownValue = kPleaseSelect;
   String ageDropdownValue = kPleaseSelect;
@@ -17,10 +16,8 @@ class AddPostModel extends ChangeNotifier {
 
   List<String> _convertNoSelectedValueToEmpty() {
     List<String> postDataList = [
-      titleValue,
       contentValue,
       nicknameValue,
-      emotionDropdownValue,
       positionDropdownValue,
       genderDropdownValue,
       ageDropdownValue,
@@ -36,37 +33,34 @@ class AddPostModel extends ChangeNotifier {
     return postDataList;
   }
 
-  Future<void> addPost() async {
-    final posts = _firestore.collection('posts');
+  Future<void> addReply(Post repliedPost) async {
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
+    final post = _firestore.collection('posts').doc(repliedPost.id);
+    final replies = post.collection('replies');
 
-    await posts.add({
-      'title': _postDataList[0],
-      'textBody': _postDataList[1],
-      'nickname': _postDataList[2],
-      'emotion': _postDataList[3],
-      'position': _postDataList[4],
-      'gender': _postDataList[5],
-      'age': _postDataList[6],
-      'area': _postDataList[7],
+    await replies.add({
+      'textBody': _postDataList[0],
+      'nickname': _postDataList[1],
+      'position': _postDataList[2],
+      'gender': _postDataList[3],
+      'age': _postDataList[4],
+      'area': _postDataList[5],
       'createdAt': Timestamp.now(),
       'updatedAt': Timestamp.now(),
     });
   }
 
-  Future<void> updatePost(Post post) async {
-    final collection = _firestore.collection('posts');
+  Future<void> updateReply(Reply existingReply) async {
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
-
-    await collection.doc(post.id).update({
-      'title': _postDataList[0],
-      'textBody': _postDataList[1],
-      'nickname': _postDataList[2],
-      'emotion': _postDataList[3],
-      'position': _postDataList[4],
-      'gender': _postDataList[5],
-      'age': _postDataList[6],
-      'area': _postDataList[7],
+    final post = _firestore.collection('posts').doc(existingReply.postId);
+    final reply = post.collection('replies').doc(existingReply.id);
+    await reply.update({
+      'textBody': _postDataList[0],
+      'nickname': _postDataList[1],
+      'position': _postDataList[2],
+      'gender': _postDataList[3],
+      'age': _postDataList[4],
+      'area': _postDataList[5],
       'updatedAt': Timestamp.now(),
     });
   }

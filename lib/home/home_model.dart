@@ -1,16 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/post.dart';
-import 'package:kakikomi_keijiban/reply.dart';
+import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/domain/reply.dart';
 
 class HomeModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
 
   List<Post> _posts = [];
-  List<List<Reply>> _replies = [];
-
   List<Post> get posts => _posts;
-  List<List<Reply>> get replies => _replies;
+
+  Map<String, List<Reply>> _replies = {};
+  Map<String, List<Reply>> get replies => _replies;
 
   Future<void> getPostsWithReplies() async {
     final querySnapshot = await _firestore
@@ -29,7 +29,7 @@ class HomeModel extends ChangeNotifier {
           .get();
       final docs = querySnapshot.docs;
       final replies = docs.map((doc) => Reply(doc)).toList();
-      _replies.add(replies);
+      _replies[post.id] = replies;
     }
     notifyListeners();
   }
@@ -55,8 +55,13 @@ class HomeModel extends ChangeNotifier {
 // }
 
   Future<void> deletePost(Post post) async {
-    final collection = _firestore.collection('posts');
-    await collection.doc(post.id).delete();
-    notifyListeners();
+    final posts = _firestore.collection('posts');
+    await posts.doc(post.id).delete();
+  }
+
+  Future<void> deleteReply(Reply existingReply) async {
+    final post = _firestore.collection('posts').doc(existingReply.postId);
+    final reply = post.collection('replies').doc(existingReply.id);
+    await reply.delete();
   }
 }

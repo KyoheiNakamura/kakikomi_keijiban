@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
-import 'package:kakikomi_keijiban/constants.dart';
 
 class Post {
   Post(DocumentSnapshot doc) {
@@ -10,16 +9,9 @@ class Post {
     this.nickname = doc['nickname'];
     this.emotion = doc['emotion'];
     this.position = doc['position'];
-    this.gender =
-        doc['gender'] != kPleaseSelect && doc['gender'] != kDoNotSelect
-            ? doc['gender']
-            : '';
-    this.age = doc['age'] != kPleaseSelect && doc['age'] != kDoNotSelect
-        ? doc['age']
-        : '';
-    this.area = doc['area'] != kPleaseSelect && doc['area'] != kDoNotSelect
-        ? doc['area']
-        : '';
+    this.gender = doc['gender'] != '' ? doc['gender'] : '';
+    this.age = doc['age'] != '' ? doc['age'] : '';
+    this.area = doc['area'] != '' ? doc['area'] : '';
     final createdDate = doc['createdAt'].toDate();
     this._createdAt = createdDate;
     if (doc['updatedAt'] != null) {
