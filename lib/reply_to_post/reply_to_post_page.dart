@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/add_post/add_post_model.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/domain/reply.dart';
+import 'package:kakikomi_keijiban/reply_to_post/reply_to_post_model.dart';
 import 'package:provider/provider.dart';
 
-class AddPostPage extends StatelessWidget {
-  AddPostPage({this.existingPost});
+// repliedPostかexistingReplyのどちらかを必ずコンストラクタ引数に取る
+class ReplyToPostPage extends StatelessWidget {
+  ReplyToPostPage({this.repliedPost, this.existingReply});
 
-  final Post? existingPost;
+  final Post? repliedPost;
+  final Reply? existingReply;
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    final bool isPostExisting = existingPost != null;
-    return ChangeNotifierProvider<AddPostModel>(
-      create: (context) => AddPostModel(),
+    final bool isReplyExisting = existingReply != null;
+    return ChangeNotifierProvider<ReplyToPostModel>(
+      create: (context) => ReplyToPostModel(),
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
@@ -44,7 +47,7 @@ class AddPostPage extends StatelessWidget {
             ),
           ],
         ),
-        body: Consumer<AddPostModel>(
+        body: Consumer<ReplyToPostModel>(
           builder: (context, model, child) {
             return SingleChildScrollView(
               child: Form(
@@ -55,50 +58,14 @@ class AddPostPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // title
-                      TextFormField(
-                        initialValue: isPostExisting
-                            ? model.titleValue = existingPost!.title
-                            : null,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'タイトルを入力してください';
-                          } else if (value.length > 50) {
-                            return '50字以内でご記入ください';
-                          }
-                          return null;
-                        },
-                        // maxLength: 50,
-                        maxLines: null,
-                        // autofocus: true,
-                        onChanged: (newValue) {
-                          model.titleValue = newValue;
-                        },
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.title),
-                          labelText: 'タイトル',
-                          hintText: '大人の発達障害とグレーゾーンについて',
-                          helperText: '必須',
-                          helperStyle: TextStyle(color: kDarkPink),
-                          counterText: '50字以内でご記入ください',
-                          counterStyle: TextStyle(color: kLightGrey),
-                          // counterText: isPostExisting
-                          //     ? '${existingPost!.title.length} 字'
-                          //     : '${model.titleValue.length} 字',
-                        ),
-                      ),
-                      SizedBox(
-                        height: 32.0,
-                      ),
                       // content
                       TextFormField(
-                        initialValue: isPostExisting
-                            ? model.contentValue = existingPost!.textBody
+                        initialValue: isReplyExisting
+                            ? model.contentValue = existingReply!.textBody
                             : null,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return '投稿の内容を入力してください';
+                            return '返信の内容を入力してください';
                           } else if (value.length > 1000) {
                             return '1000字以内でご記入ください';
                           }
@@ -113,15 +80,15 @@ class AddPostPage extends StatelessWidget {
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.text_fields),
-                          labelText: '投稿の内容',
+                          labelText: '返信の内容',
                           hintText:
-                              '自分が大人の発達障害ではないかと疑っているのですが、特徴の濃淡がはっきりせずグレーゾーンに思われるため、確信が持てないのと、親へどう話せばいいかわからず、診断に踏み切れていません。',
+                              'ハッキリと調べてほしいと言うのなら、病院か保健所へ行って相談することがいいと思います。『グレーゾーンだから』だってもやもやするのはつらいですよね…でも、仕事する(あるいは仕事やめてまた探す)となると…かえってつらくなることもあるのです。仕事できないからって『何もしない』と自分が迷惑することになりかねないし、かえってイヤな思いを背負うこともあるのです。',
                           helperText: '必須',
                           helperStyle: TextStyle(color: kDarkPink),
                           counterText: '1000字以内でご記入ください',
                           counterStyle: TextStyle(color: kLightGrey),
-                          // counterText: isPostExisting
-                          //     ? '${existingPost!.textBody.length} 字'
+                          // counterText: isReplyExisting
+                          //     ? '${existingReply!.textBody.length} 字'
                           //     : '${model.contentValue.length} 字',
                         ),
                       ),
@@ -130,8 +97,8 @@ class AddPostPage extends StatelessWidget {
                       ),
                       // nickname
                       TextFormField(
-                        initialValue: isPostExisting
-                            ? model.nicknameValue = existingPost!.nickname
+                        initialValue: isReplyExisting
+                            ? model.nicknameValue = existingReply!.nickname
                             : null,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -153,67 +120,27 @@ class AddPostPage extends StatelessWidget {
                           helperStyle: TextStyle(color: kDarkPink),
                           counterText: '10字以内でご記入ください',
                           counterStyle: TextStyle(color: kLightGrey),
-                          // counterText: isPostExisting
-                          //     ? '${existingPost!.nickname.length} 字'
+                          // counterText: isReplyExisting
+                          //     ? '${existingReply!.nickname.length} 字'
                           //     : '${model.nicknameValue.length} 字',
                         ),
                       ),
                       SizedBox(
                         height: 32.0,
                       ),
-                      // emotion
-                      DropdownButtonFormField(
-                        validator: (value) {
-                          if (value == kPleaseSelect) {
-                            return 'あなたの気持ちを選択してください';
-                          }
-                          return null;
-                        },
-                        // focusNode: _emotionFocusNode,
-                        focusColor: Colors.pink[50],
-                        value: isPostExisting
-                            ? model.emotionDropdownValue = existingPost!.emotion
-                            : model.emotionDropdownValue,
-                        icon: Icon(
-                          Icons.arrow_downward,
-                          // color: kDarkPink,
-                        ),
-                        iconSize: 24,
-                        elevation: 1,
-                        style: TextStyle(color: Colors.black, fontSize: 15.0),
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.mood),
-                          labelText: 'あなたの気持ち',
-                          helperText: '必須',
-                          helperStyle: TextStyle(color: kDarkPink),
-                        ),
-                        onChanged: (String? selectedValue) {
-                          model.emotionDropdownValue = selectedValue!;
-                        },
-                        items: kEmotionList.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                      ),
-                      SizedBox(
-                        height: 32.0,
-                      ),
                       // position
                       DropdownButtonFormField(
-                        validator: (value) {
-                          if (value == kPleaseSelect) {
-                            return 'あなたの立場を選択してください';
-                          }
-                          return null;
-                        },
+                        // validator: (value) {
+                        //   if (value == kPleaseSelect) {
+                        //     return 'あなたの立場を選択してください';
+                        //   }
+                        //   return null;
+                        // },
                         // focusNode: _positionFocusNode,
                         focusColor: Colors.pink[50],
-                        value: isPostExisting
+                        value: isReplyExisting
                             ? model.positionDropdownValue =
-                                existingPost!.position
+                                existingReply!.position
                             : model.positionDropdownValue,
                         icon: Icon(
                           Icons.arrow_downward,
@@ -225,8 +152,8 @@ class AddPostPage extends StatelessWidget {
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'あなたの立場',
-                          helperText: '必須',
-                          helperStyle: TextStyle(color: kDarkPink),
+                          // helperText: '必須',
+                          // helperStyle: TextStyle(color: kDarkPink),
                           prefixIcon: Icon(Icons.group),
                         ),
                         onChanged: (String? selectedValue) {
@@ -246,8 +173,9 @@ class AddPostPage extends StatelessWidget {
                       DropdownButtonFormField(
                         // focusNode: _genderFocusNode,
                         focusColor: Colors.pink[50],
-                        value: isPostExisting && existingPost!.gender.isNotEmpty
-                            ? model.genderDropdownValue = existingPost!.gender
+                        value: isReplyExisting &&
+                                existingReply!.gender.isNotEmpty
+                            ? model.genderDropdownValue = existingReply!.gender
                             : model.genderDropdownValue,
                         icon: Icon(
                           Icons.arrow_downward,
@@ -278,8 +206,8 @@ class AddPostPage extends StatelessWidget {
                       DropdownButtonFormField(
                         // focusNode: _ageFocusNode,
                         focusColor: Colors.pink[50],
-                        value: isPostExisting && existingPost!.age.isNotEmpty
-                            ? model.ageDropdownValue = existingPost!.age
+                        value: isReplyExisting && existingReply!.age.isNotEmpty
+                            ? model.ageDropdownValue = existingReply!.age
                             : model.ageDropdownValue,
                         icon: Icon(
                           Icons.arrow_downward,
@@ -310,8 +238,8 @@ class AddPostPage extends StatelessWidget {
                       DropdownButtonFormField(
                         // focusNode: _areaFocusNode,
                         focusColor: Colors.pink[50],
-                        value: isPostExisting && existingPost!.area.isNotEmpty
-                            ? model.areaDropdownValue = existingPost!.area
+                        value: isReplyExisting && existingReply!.area.isNotEmpty
+                            ? model.areaDropdownValue = existingReply!.area
                             : model.areaDropdownValue,
                         icon: Icon(
                           Icons.arrow_downward,
@@ -342,14 +270,14 @@ class AddPostPage extends StatelessWidget {
                       OutlinedButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            isPostExisting
-                                ? await model.updatePost(existingPost!)
-                                : await model.addPost();
+                            isReplyExisting
+                                ? await model.updateReply(existingReply!)
+                                : await model.addReply(repliedPost!);
                             Navigator.pop(context);
                           }
                         },
                         child: Text(
-                          isPostExisting ? '更新する' : '投稿する',
+                          isReplyExisting ? '更新する' : '返信する',
                           style: TextStyle(
                             color: kDarkPink,
                             fontSize: 16,

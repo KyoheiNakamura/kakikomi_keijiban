@@ -3,20 +3,25 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/add_post/add_post_page.dart';
 import 'package:kakikomi_keijiban/constants.dart';
+import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/home/home_model.dart';
-import 'package:kakikomi_keijiban/post.dart';
+import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/reply_to_post/reply_to_post_page.dart';
 import 'package:provider/provider.dart';
 
-enum PopupMenuItemsOnPostCard { update, delete }
+enum PopupMenuItemsOnCard { update, delete }
 
-class PopupMenuOnPostCard extends StatelessWidget {
-  PopupMenuOnPostCard(this.post);
+// postかreplyのどちらかを必ずコンストラクタの引数に取る
+class PopupMenuOnCard extends StatelessWidget {
+  PopupMenuOnCard({this.post, this.reply});
 
-  final Post post;
+  final Post? post;
+  final Reply? reply;
 
   @override
   Widget build(BuildContext context) {
-    Future<void> _showPostDeleteConfirmDialog(HomeModel model) async {
+    final bool isPostExisting = post != null;
+    Future<void> _showCardDeleteConfirmDialog(HomeModel model) async {
       return showDialog<void>(
         context: context,
         barrierDismissible: false, // user must tap button!
@@ -25,7 +30,7 @@ class PopupMenuOnPostCard extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.0),
             ),
-            title: Text('投稿の削除'),
+            title: isPostExisting ? Text('投稿の削除') : Text('返信の削除'),
             content: Text('本当に削除しますか？'),
             contentPadding:
                 EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
@@ -45,7 +50,9 @@ class PopupMenuOnPostCard extends StatelessWidget {
                   style: TextStyle(color: kDarkPink),
                 ),
                 onPressed: () async {
-                  await model.deletePost(post);
+                  isPostExisting
+                      ? await model.deletePost(post!)
+                      : await model.deleteReply(reply!);
                   Navigator.of(context).pop();
                 },
               ),
@@ -56,27 +63,30 @@ class PopupMenuOnPostCard extends StatelessWidget {
     }
 
     return Consumer<HomeModel>(builder: (context, model, child) {
-      return PopupMenuButton<PopupMenuItemsOnPostCard>(
+      return PopupMenuButton<PopupMenuItemsOnCard>(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
         ),
         elevation: 1,
         onSelected: (result) async {
-          if (result == PopupMenuItemsOnPostCard.update) {
+          if (result == PopupMenuItemsOnCard.update) {
             await Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => AddPostPage(existingPost: post)),
+              MaterialPageRoute(builder: (context) {
+                return isPostExisting
+                    ? AddPostPage(existingPost: post)
+                    : ReplyToPostPage(existingReply: reply);
+              }),
             );
             await model.getPostsWithReplies();
-          } else if (result == PopupMenuItemsOnPostCard.delete) {
-            await _showPostDeleteConfirmDialog(model);
+          } else if (result == PopupMenuItemsOnCard.delete) {
+            await _showCardDeleteConfirmDialog(model);
             await model.getPostsWithReplies();
           }
         },
         itemBuilder: (BuildContext context) => [
-          PopupMenuItem<PopupMenuItemsOnPostCard>(
-            value: PopupMenuItemsOnPostCard.update,
+          PopupMenuItem<PopupMenuItemsOnCard>(
+            value: PopupMenuItemsOnCard.update,
             child: Container(
               width: 100.0,
               child: Row(
@@ -92,8 +102,8 @@ class PopupMenuOnPostCard extends StatelessWidget {
             ),
           ),
           PopupMenuDivider(),
-          PopupMenuItem<PopupMenuItemsOnPostCard>(
-            value: PopupMenuItemsOnPostCard.delete,
+          PopupMenuItem<PopupMenuItemsOnCard>(
+            value: PopupMenuItemsOnCard.delete,
             child: Container(
               width: 100.0,
               child: Row(

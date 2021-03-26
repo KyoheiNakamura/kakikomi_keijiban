@@ -2,19 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/components/reply_card.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/home/home_model.dart';
-import 'package:kakikomi_keijiban/components/popup_menu_on_post_card.dart';
-import 'package:kakikomi_keijiban/post.dart';
-import 'package:kakikomi_keijiban/reply.dart';
+import 'package:kakikomi_keijiban/components/popup_menu_on_card.dart';
+import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/domain/reply.dart';
+import 'package:kakikomi_keijiban/reply_to_post/reply_to_post_page.dart';
 import 'package:provider/provider.dart';
 
 class PostCard extends StatelessWidget {
-  PostCard({required this.post, required this.index});
+  PostCard(this.post);
 
   final Post post;
-  final int index;
 
-  @override
-  Widget build(BuildContext context) {
+  String _getFormattedPosterData(post) {
     String posterInfo = '';
     String formattedPosterInfo = '';
 
@@ -31,7 +30,11 @@ class PostCard extends StatelessWidget {
       int lastSlashIndex = posterInfo.length - 1;
       formattedPosterInfo = posterInfo.substring(0, lastSlashIndex);
     }
+    return formattedPosterInfo;
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Stack(
       alignment: AlignmentDirectional.topCenter,
       children: [
@@ -43,59 +46,70 @@ class PostCard extends StatelessWidget {
               color: kLightPink,
               padding: EdgeInsets.only(
                   top: 40.0, left: 20.0, right: 20.0, bottom: 30.0),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 8.0, top: 8.0, right: 8.0, bottom: 0.0),
-                    child: Text(
-                      post.title,
-                      style: TextStyle(fontSize: 17.0),
+              child: Consumer<HomeModel>(builder: (context, model, child) {
+                final List<Reply>? replies = model.replies[post.id];
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          left: 8.0, top: 8.0, right: 8.0, bottom: 0.0),
+                      child: Text(
+                        post.title,
+                        style: TextStyle(fontSize: 17.0),
+                      ),
                     ),
-                  ),
-                  Text(
-                    formattedPosterInfo,
-                    style: TextStyle(color: kLightGrey),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 15.0),
-                    child: Text(
-                      post.textBody,
-                      style: TextStyle(fontSize: 16.0),
+                    Text(
+                      _getFormattedPosterData(post),
+                      style: TextStyle(color: kLightGrey),
                     ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      OutlinedButton(
-                        onPressed: () {},
-                        child: Text(
-                          '返信する',
-                          style: TextStyle(color: kDarkPink, fontSize: 15.0),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15.0),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 15.0),
+                      child: Text(
+                        post.textBody,
+                        style: TextStyle(fontSize: 16.0),
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        OutlinedButton(
+                          onPressed: () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ReplyToPostPage(repliedPost: post),
+                              ),
+                            );
+                            await model.getPostsWithReplies();
+                          },
+                          child: Text(
+                            '返信する',
+                            style: TextStyle(color: kDarkPink, fontSize: 15.0),
                           ),
-                          side: BorderSide(color: kPink),
+                          style: OutlinedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                            ),
+                            side: BorderSide(color: kPink),
+                          ),
                         ),
-                      ),
-                      Text(
-                        post.updatedAt,
-                        style: TextStyle(color: kLightGrey),
-                      ),
-                    ],
-                  ),
-                  Consumer<HomeModel>(builder: (context, model, child) {
-                    final List<Reply> replies = model.replies[index];
-                    return Column(
-                      children: replies.map((reply) {
-                        return ReplyCard(reply);
-                      }).toList(),
-                    );
-                  }),
-                ],
-              ),
+                        Text(
+                          post.updatedAt,
+                          style: TextStyle(color: kLightGrey),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: replies != null
+                          ? replies.map((reply) {
+                              return ReplyCard(reply);
+                            }).toList()
+                          : [],
+                    ),
+                  ],
+                );
+              }),
             ),
           ),
         ),
@@ -103,7 +117,7 @@ class PostCard extends StatelessWidget {
           textDirection: TextDirection.ltr,
           top: 30.0,
           end: 20.0,
-          child: PopupMenuOnPostCard(post),
+          child: PopupMenuOnCard(post: post),
         ),
         Positioned(
           width: 50.0,

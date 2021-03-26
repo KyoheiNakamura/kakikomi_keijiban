@@ -4,7 +4,7 @@ import 'package:kakikomi_keijiban/add_post/add_post_page.dart';
 import 'package:kakikomi_keijiban/components/post_card.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/home/home_model.dart';
-import 'package:kakikomi_keijiban/post.dart';
+import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
@@ -59,7 +59,7 @@ class HomePage extends StatelessWidget {
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
                             final post = posts[index];
-                            return PostCard(post: post, index: index);
+                            return PostCard(post);
                           },
                           childCount: posts.length,
                         ),
