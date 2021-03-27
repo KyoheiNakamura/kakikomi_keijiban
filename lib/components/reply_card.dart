@@ -45,10 +45,10 @@ class ReplyCard extends StatelessWidget {
                     style: TextStyle(color: kLightGrey),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 15.0),
+                    padding: EdgeInsets.symmetric(vertical: 15.0),
                     child: Text(
                       reply.textBody,
-                      style: TextStyle(fontSize: 16.0),
+                      style: TextStyle(fontSize: 16.0, height: 1.8),
                     ),
                   ),
                   Align(
@@ -65,7 +65,8 @@ class ReplyCard extends StatelessWidget {
         ),
         Positioned.directional(
           textDirection: TextDirection.ltr,
-          top: 25.0,
+          top: 27.0,
+          end: -5.0,
           child: PopupMenuOnCard(reply: reply),
         ),
       ],

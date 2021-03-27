@@ -39,7 +39,7 @@ class PostCard extends StatelessWidget {
       alignment: AlignmentDirectional.topCenter,
       children: [
         Container(
-          padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
+          padding: EdgeInsets.all(20.0),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20.0),
             child: Container(
@@ -51,7 +51,7 @@ class PostCard extends StatelessWidget {
                 return Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(
+                      padding: EdgeInsets.only(
                           left: 8.0, top: 8.0, right: 8.0, bottom: 0.0),
                       child: Text(
                         post.title,
@@ -63,10 +63,11 @@ class PostCard extends StatelessWidget {
                       style: TextStyle(color: kLightGrey),
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 15.0),
+                      padding: EdgeInsets.symmetric(vertical: 15.0),
                       child: Text(
                         post.textBody,
-                        style: TextStyle(fontSize: 16.0),
+                        // maxLines: 3,
+                        style: TextStyle(fontSize: 16.0, height: 1.8),
                       ),
                     ),
                     Row(
