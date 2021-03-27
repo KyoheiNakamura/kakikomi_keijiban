@@ -69,7 +69,7 @@ class AddPostPage extends StatelessWidget {
                           return null;
                         },
                         // maxLength: 50,
-                        maxLines: null,
+                        // maxLines: null,
                         // autofocus: true,
                         onChanged: (newValue) {
                           model.titleValue = newValue;
@@ -357,7 +357,7 @@ class AddPostPage extends StatelessWidget {
                           ),
                         ),
                         style: OutlinedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 16.0),
+                          padding: EdgeInsets.symmetric(vertical: 12.0),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
