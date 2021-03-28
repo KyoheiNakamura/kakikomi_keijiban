@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/enum.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class SignUpModel extends ChangeNotifier {
   final _auth = FirebaseAuth.instance;
@@ -8,21 +11,58 @@ class SignUpModel extends ChangeNotifier {
 
   String enteredEmail = '';
   String enteredPassword = '';
+  String enteredNickname = '';
 
-  Future register() async {
+  // createUserWithEmailAndPassword()の説明（アカウント作成後、自動でログインしてくれる）
+  // The method is a two-step operation; it will first create the new account (if it does not already exist and the password is valid) and then automatically sign in the user in to that account.
+  // Future signUpAndLogIn() async {
+  //   try {
+  //     final UserCredential userCredential =
+  //         await _auth.createUserWithEmailAndPassword(
+  //       email: enteredEmail,
+  //       password: enteredPassword,
+  //     );
+  //     final Auth.User user = userCredential.user!;
+  //     final String email = user.email!;
+  //     _firestore.collection('users').add({
+  //       'id': user.uid,
+  //       'email': email,
+  //       'nickname': enteredNickname,
+  //       'createdAt': FieldValue.serverTimestamp(),
+  //     });
+  //   } on FirebaseAuthException catch (e) {
+  //     if (e.code == 'email-already-in-use') {
+  //       print('このメールアドレスはすでに使用されています。');
+  //       return AuthException.emailAlreadyInUse;
+  //     } else if (e.code == 'invalid-email') {
+  //       print('このメールアドレスは形式が正しくないです。');
+  //       return AuthException.invalidEmail;
+  //       // Todo createUserWithEmailAndPassword()の他の例外処理も書こう
+  //     } else {
+  //       print(e);
+  //       return e;
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //     return e;
+  //   }
+  // }
+
+  Future signUpAndSignInWithEmailAndUpgradeAnonymous() async {
     try {
-      final UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
+      final AuthCredential credential = EmailAuthProvider.credential(
         email: enteredEmail,
         password: enteredPassword,
       );
-      final User user = userCredential.user!;
-      final String email = user.email!;
-      _firestore.collection('users').add({
-        'id': user.uid,
-        'email': email,
-        'createdAt': Timestamp.now(),
-      });
+      await _auth.currentUser!.linkWithCredential(credential);
+      // final Auth.User user = userCredential.user!;
+      // final String email = user.email!;
+      // _firestore.collection('users').add({
+      //   'id': user.uid,
+      //   'email': email,
+      //   'nickname': enteredNickname,
+      //   'createdAt': Timestamp.now(),
+      // });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
         print('このメールアドレスはすでに使用されています。');
@@ -40,6 +80,48 @@ class SignUpModel extends ChangeNotifier {
       return e;
     }
   }
-}
 
-enum AuthException { emailAlreadyInUse, invalidEmail }
+  Future signUpAndSignInWithGoogleAndUpgradeAnonymous() async {
+    try {
+      final GoogleSignInAccount googleUser = (await GoogleSignIn().signIn())!;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      await _auth.currentUser!.linkWithCredential(credential);
+      // final Auth.User user = userCredential.user!;
+      // final String email = user.email!;
+      // _firestore.collection('users').add({
+      //   'id': user.uid,
+      //   'email': email,
+      //   'nickname': enteredNickname,
+      //   'createdAt': Timestamp.now(),
+      // });
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        print('このメールアドレスはすでに使用されています。');
+        return AuthException.emailAlreadyInUse;
+      } else if (e.code == 'invalid-email') {
+        print('このメールアドレスは形式が正しくないです。');
+        return AuthException.invalidEmail;
+        // Todo createUserWithEmailAndPassword()の他の例外処理も書こう
+      } else {
+        print(e);
+        return e;
+      }
+    } catch (e) {
+      print(e);
+      return e;
+    }
+  }
+
+// Future<void> linkAnonymousWithEmail() async {
+  //   final AuthCredential emailAuthCredential = EmailAuthProvider.credential(
+  //     email: enteredEmail,
+  //     password: enteredPassword,
+  //   );
+  //   await _auth.currentUser!.linkWithCredential(emailAuthCredential);
+  // }
+}

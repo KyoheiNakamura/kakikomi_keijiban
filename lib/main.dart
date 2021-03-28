@@ -16,9 +16,16 @@ class MyApp extends StatelessWidget {
       title: '発達障害困りごと掲示板',
       theme: ThemeData(
         primaryColor: kDarkPink,
+        primaryColorDark: Color(0xFFa54352),
         accentColor: kPink,
         brightness: Brightness.light,
         fontFamily: 'GenShinGothic',
+        pageTransitionsTheme: PageTransitionsTheme(
+          builders: <TargetPlatform, PageTransitionsBuilder>{
+            TargetPlatform.android: ZoomPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          },
+        ),
         // appBarTheme: AppBarTheme(
         //   centerTitle: true,
         //   textTheme: ThemeData.light().textTheme.copyWith(
@@ -30,7 +37,10 @@ class MyApp extends StatelessWidget {
         //       ),
         // ),
       ),
-      home: HomePage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => HomePage(),
+      },
     );
   }
 }

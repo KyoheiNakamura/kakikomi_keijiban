@@ -11,6 +11,7 @@ class Reply {
     this.gender = doc['gender'] != '' ? doc['gender'] : '';
     this.age = doc['age'] != '' ? doc['age'] : '';
     this.area = doc['area'] != '' ? doc['area'] : '';
+    this.uid = doc['uid'] != '' ? doc['uid'] : '';
     final createdDate = doc['createdAt'].toDate();
     this._createdAt = createdDate;
     if (doc['updatedAt'] != null) {
@@ -27,6 +28,7 @@ class Reply {
   String gender = '';
   String age = '';
   String area = '';
+  String uid = '';
   DateTime? _createdAt;
   DateTime? _updatedAt;
 
