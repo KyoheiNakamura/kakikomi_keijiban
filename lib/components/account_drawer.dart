@@ -2,19 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/home/home_model.dart';
 import 'package:kakikomi_keijiban/select_registration_method_page.dart';
+import 'package:kakikomi_keijiban/sign_in/sign_in_page.dart';
 import 'package:provider/provider.dart';
 
 class AccountDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<HomeModel>(builder: (context, model, child) {
+      final bool isUserLoggedIn = model.loggedInUser != null &&
+          model.loggedInUser!.isAnonymous == false;
       return SizedBox(
-        width: MediaQuery.of(context).size.width * 0.84,
+        width: MediaQuery.of(context).size.width * 0.8,
         child: Drawer(
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              model.loggedInUser != null
+              isUserLoggedIn
                   ? DrawerHeader(
                       decoration: BoxDecoration(
                         color: Colors.blue,
@@ -22,12 +25,15 @@ class AccountDrawer extends StatelessWidget {
                       child: Column(
                         children: [
                           Text(
-                            'Drawer Header',
+                            model.loggedInUser!.uid,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 24,
                             ),
                           ),
+                          // Text((model.loggedInUser!.isAnonymous != false
+                          //     ? model.loggedInUser!.email
+                          //     : '')!),
                           TextButton(
                             onPressed: () {
                               model.signOut();
@@ -79,14 +85,16 @@ class AccountDrawer extends StatelessWidget {
                                   MaterialStateProperty.all(kDarkPink),
                             ),
                             onPressed: () async {
+                              // Navigator.pop(context);
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
+                                    // Todo scaffoldのcontextを持ってきたい。keyについて調べよう。
                                     builder: (context) =>
                                         SelectRegistrationMethodPage()),
                               );
-                              model.getCurrentUser();
-                              Navigator.pop(context);
+                              // model.getCurrentUser();
+                              // Navigator.pop(context);
                             },
                           ),
                           SizedBox(height: 16.0),
@@ -96,14 +104,14 @@ class AccountDrawer extends StatelessWidget {
                               style: TextStyle(color: kDarkPink),
                             ),
                             onPressed: () async {
+                              // Navigator.pop(context);
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        SelectRegistrationMethodPage()),
+                                    builder: (context) => SignInPage()),
                               );
-                              model.getCurrentUser();
-                              Navigator.pop(context);
+                              // model.getCurrentUser();
+                              // Navigator.pop(context);
                             },
                           )
                         ],
@@ -113,18 +121,51 @@ class AccountDrawer extends StatelessWidget {
               ListTile(
                 leading: Icon(Icons.description),
                 title: Text('投稿一覧'),
-                onTap: () {},
+                onTap: () async {
+                  isUserLoggedIn
+                      ? print('後で実装するよ！')
+                      : await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  SelectRegistrationMethodPage()),
+                        );
+                  // model.getCurrentUser();
+                  // Navigator.pop(context);
+                },
               ),
               ListTile(
                 leading: Icon(Icons.favorite_border),
                 title: Text('共感した投稿'),
-                onTap: () {},
+                onTap: () async {
+                  isUserLoggedIn
+                      ? print('後で実装するよ！')
+                      : await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  SelectRegistrationMethodPage()),
+                        );
+                  // model.getCurrentUser();
+                  // Navigator.pop(context);
+                },
               ),
               Divider(thickness: 1.0),
               ListTile(
                 leading: Icon(Icons.settings),
-                title: Text('Settings'),
-                onTap: () {},
+                title: Text('設定'),
+                onTap: () async {
+                  isUserLoggedIn
+                      ? print('後で実装するよ！')
+                      : await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  SelectRegistrationMethodPage()),
+                        );
+                  // model.getCurrentUser();
+                  // Navigator.pop(context);
+                },
               ),
             ],
           ),

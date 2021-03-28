@@ -35,20 +35,24 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: AlignmentDirectional.topCenter,
-      children: [
-        Container(
-          padding: EdgeInsets.all(20.0),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20.0),
-            child: Container(
-              color: kLightPink,
-              padding: EdgeInsets.only(
-                  top: 40.0, left: 20.0, right: 20.0, bottom: 30.0),
-              child: Consumer<HomeModel>(builder: (context, model, child) {
-                final List<Reply>? replies = model.replies[post.id];
-                return Column(
+    return Consumer<HomeModel>(builder: (context, model, child) {
+      final List<Reply>? replies = model.replies[post.id];
+      bool isMe = false;
+      if (model.loggedInUser != null) {
+        isMe = model.loggedInUser!.uid == post.uid;
+      }
+      return Stack(
+        alignment: AlignmentDirectional.topCenter,
+        children: [
+          Container(
+            padding: EdgeInsets.all(20.0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20.0),
+              child: Container(
+                color: kLightPink,
+                padding: EdgeInsets.only(
+                    top: 40.0, left: 20.0, right: 20.0, bottom: 30.0),
+                child: Column(
                   children: [
                     Padding(
                       padding: EdgeInsets.only(
@@ -109,23 +113,25 @@ class PostCard extends StatelessWidget {
                           : [],
                     ),
                   ],
-                );
-              }),
+                ),
+              ),
             ),
           ),
-        ),
-        Positioned.directional(
-          textDirection: TextDirection.ltr,
-          top: 30.0,
-          end: 20.0,
-          child: PopupMenuOnCard(post: post),
-        ),
-        Positioned(
-          width: 50.0,
-          height: 50.0,
-          child: Image.asset('images/anpanman.png'),
-        ),
-      ],
-    );
+          isMe
+              ? Positioned.directional(
+                  textDirection: TextDirection.ltr,
+                  top: 30.0,
+                  end: 20.0,
+                  child: PopupMenuOnCard(post: post),
+                )
+              : Container(),
+          Positioned(
+            width: 50.0,
+            height: 50.0,
+            child: Image.asset('images/anpanman.png'),
+          ),
+        ],
+      );
+    });
   }
 }

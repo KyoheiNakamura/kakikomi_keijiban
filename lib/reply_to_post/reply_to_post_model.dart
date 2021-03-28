@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
@@ -13,6 +14,9 @@ class ReplyToPostModel extends ChangeNotifier {
   String genderDropdownValue = kPleaseSelect;
   String ageDropdownValue = kPleaseSelect;
   String areaDropdownValue = kPleaseSelect;
+  String uid = FirebaseAuth.instance.currentUser != null
+      ? FirebaseAuth.instance.currentUser!.uid
+      : '';
 
   List<String> _convertNoSelectedValueToEmpty() {
     List<String> postDataList = [
@@ -45,8 +49,9 @@ class ReplyToPostModel extends ChangeNotifier {
       'gender': _postDataList[3],
       'age': _postDataList[4],
       'area': _postDataList[5],
-      'createdAt': Timestamp.now(),
-      'updatedAt': Timestamp.now(),
+      'uid': uid,
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
     });
   }
 

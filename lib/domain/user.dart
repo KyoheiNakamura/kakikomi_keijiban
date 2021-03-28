@@ -5,6 +5,7 @@ class User {
   User(DocumentSnapshot doc) {
     this.id = doc.id;
     this.email = doc['title'];
+    this.nickname = doc['nickName'];
     this.password = doc['textBody'];
     final createdDate = doc['createdAt'].toDate();
     this._createdAt = createdDate;
@@ -12,6 +13,7 @@ class User {
 
   String id = '';
   String email = '';
+  String nickname = '';
   String password = '';
   DateTime? _createdAt;
 

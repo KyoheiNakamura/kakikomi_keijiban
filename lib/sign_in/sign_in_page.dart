@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/enum.dart';
-import 'package:kakikomi_keijiban/sign_up/sign_up_model.dart';
+import 'package:kakikomi_keijiban/sign_in/sign_in_model.dart';
 import 'package:provider/provider.dart';
 
-class SignUpPage extends StatelessWidget {
+class SignInPage extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -45,22 +45,22 @@ class SignUpPage extends StatelessWidget {
       );
     }
 
-    return ChangeNotifierProvider<SignUpModel>(
-      create: (context) => SignUpModel(),
+    return ChangeNotifierProvider<SignInModel>(
+      create: (context) => SignInModel(),
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
           elevation: 0,
           centerTitle: true,
           title: Text(
-            '会員登録',
+            'ログイン',
             style: TextStyle(
               fontSize: 17.0,
               fontWeight: FontWeight.bold,
             ),
           ),
         ),
-        body: Consumer<SignUpModel>(
+        body: Consumer<SignInModel>(
           builder: (context, model, child) {
             return SingleChildScrollView(
               child: Form(
@@ -71,25 +71,6 @@ class SignUpPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      TextFormField(
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'ニックネームを入力してください';
-                          } else if (value.length > 10) {
-                            return '10文字以下でご記入ください';
-                          }
-                          return null;
-                        },
-                        onChanged: (newValue) {
-                          model.enteredNickname = newValue;
-                        },
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          // prefixIcon: Icon(Icons.password),
-                          labelText: 'ニックネーム（10文字以内）',
-                        ),
-                      ),
-                      SizedBox(height: 32.0),
                       // content
                       TextFormField(
                         validator: (value) {
@@ -115,7 +96,9 @@ class SignUpPage extends StatelessWidget {
                           labelText: 'メールアドレス',
                         ),
                       ),
-                      SizedBox(height: 32.0),
+                      SizedBox(
+                        height: 32.0,
+                      ),
                       // nickname
                       TextFormField(
                         validator: (value) {
@@ -137,23 +120,26 @@ class SignUpPage extends StatelessWidget {
                           labelText: 'パスワード（8文字以上の半角英数記号）',
                         ),
                       ),
-                      SizedBox(height: 48.0),
+                      SizedBox(
+                        height: 48.0,
+                      ),
                       // 投稿送信ボタン
                       OutlinedButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             clearText();
-                            // var signInResult = await model.signUpAndLogIn();
-                            var signInResult = await model
-                                .signUpAndSignInWithEmailAndUpgradeAnonymous();
+                            var signInResult = await model.signIn();
                             if (signInResult ==
                                 AuthException.emailAlreadyInUse) {
                               await _showAuthErrorDialog(
                                   'このメールアドレスは\nすでに使用されています。');
                             } else if (signInResult ==
-                                AuthException.invalidEmail) {
+                                AuthException.userNotFound) {
                               await _showAuthErrorDialog(
-                                  'このメールアドレスは\n形式が正しくありません。');
+                                  'このメールアドレスは\n登録されていません。');
+                            } else if (signInResult ==
+                                AuthException.wrongPassword) {
+                              await _showAuthErrorDialog('パスワードが正しくありません。');
                             } else {
                               Navigator.of(context).popUntil(
                                 ModalRoute.withName('/'),
@@ -162,7 +148,7 @@ class SignUpPage extends StatelessWidget {
                           }
                         },
                         child: Text(
-                          '登録する',
+                          'ログインする',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,

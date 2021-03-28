@@ -20,29 +20,13 @@ class AddPostPage extends StatelessWidget {
           toolbarHeight: 50,
           elevation: 0,
           centerTitle: true,
-          leading: IconButton(
-            icon: Icon(
-              Icons.account_circle,
-              size: 30,
-            ),
-            onPressed: () {},
-          ),
           title: Text(
-            '発達障害困りごと掲示板',
+            '投稿',
             style: TextStyle(
               fontSize: 17.0,
               fontWeight: FontWeight.bold,
             ),
           ),
-          actions: [
-            IconButton(
-              icon: Icon(
-                Icons.search,
-                size: 30,
-              ),
-              onPressed: () {},
-            ),
-          ],
         ),
         body: Consumer<AddPostModel>(
           builder: (context, model, child) {

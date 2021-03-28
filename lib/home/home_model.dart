@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,17 +18,28 @@ class HomeModel extends ChangeNotifier {
   Map<String, List<Reply>> _replies = {};
   Map<String, List<Reply>> get replies => _replies;
 
-  void getCurrentUser() {
-    try {
-      final user = _auth.currentUser;
-      if (user != null) {
-        loggedInUser = user;
-        notifyListeners();
+  void listenAuthStateChanges() {
+    _auth.userChanges().listen((Auth.User? user) async {
+      if (user == null) {
+        this.loggedInUser = (await _auth.signInAnonymously()).user;
+      } else {
+        this.loggedInUser = user;
       }
-    } catch (e) {
-      print(e);
-    }
+      notifyListeners();
+    });
   }
+
+  // void getCurrentUser() {
+  //   try {
+  //     final user = _auth.currentUser;
+  //     if (user != null) {
+  //       loggedInUser = user;
+  //       notifyListeners();
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   void signOut() async {
     await _auth.signOut();
@@ -57,8 +70,12 @@ class HomeModel extends ChangeNotifier {
   }
 
   Future<void> deletePost(Post post) async {
-    final posts = _firestore.collection('posts');
-    await posts.doc(post.id).delete();
+    final _post = _firestore.collection('posts').doc(post.id);
+    final replies = (await _post.collection('replies').get()).docs;
+    for (int i = 0; i < replies.length; i++) {
+      replies[i].reference.delete();
+    }
+    await _post.delete();
   }
 
   Future<void> deleteReply(Reply existingReply) async {
