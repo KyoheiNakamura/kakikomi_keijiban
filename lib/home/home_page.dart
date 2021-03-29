@@ -25,7 +25,7 @@ class HomePage extends StatelessWidget {
                 .copyWith(statusBarColor: Theme.of(context).primaryColorDark),
             child: SafeArea(
               child: Container(
-                color: Colors.white,
+                color: kLightPink,
                 child: RefreshIndicator(
                   onRefresh: () => model.getPostsWithReplies(),
                   child: CustomScrollView(
@@ -42,7 +42,7 @@ class HomePage extends StatelessWidget {
                           },
                         ),
                         title: Text(
-                          '発達障害困りごと掲示板',
+                          'ホーム',
                           style: TextStyle(
                             fontSize: 17.0,
                             fontWeight: FontWeight.bold,
@@ -63,7 +63,8 @@ class HomePage extends StatelessWidget {
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
                             final post = posts[index];
-                            return PostCard(post);
+                            return PostCardByCard(post);
+                            // return PostCard(post);
                           },
                           childCount: posts.length,
                         ),
