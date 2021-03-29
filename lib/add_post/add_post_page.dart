@@ -21,7 +21,7 @@ class AddPostPage extends StatelessWidget {
           elevation: 0,
           centerTitle: true,
           title: Text(
-            '投稿',
+            '新規投稿',
             style: TextStyle(
               fontSize: 17.0,
               fontWeight: FontWeight.bold,

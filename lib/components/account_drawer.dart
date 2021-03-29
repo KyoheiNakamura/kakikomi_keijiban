@@ -17,106 +17,7 @@ class AccountDrawer extends StatelessWidget {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              isUserLoggedIn
-                  ? DrawerHeader(
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            model.loggedInUser!.uid,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                            ),
-                          ),
-                          // Text((model.loggedInUser!.isAnonymous != false
-                          //     ? model.loggedInUser!.email
-                          //     : '')!),
-                          TextButton(
-                            onPressed: () {
-                              model.signOut();
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              'ログアウト',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
-                            child: Row(
-                              children: [
-                                IconButton(
-                                  padding: EdgeInsets.zero,
-                                  constraints: BoxConstraints(),
-                                  onPressed: () {},
-                                  icon: Icon(Icons.help_outline),
-                                  color: kDarkPink,
-                                ),
-                                SizedBox(width: 16.0),
-                                Flexible(
-                                  child: Text(
-                                    '全ての機能をご利用いただくには新規会員登録もしくはログインが必要です。',
-                                    style: TextStyle(
-                                      fontSize: 13.0,
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                          OutlinedButton(
-                            child: Text(
-                              '会員登録',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.all(kDarkPink),
-                            ),
-                            onPressed: () async {
-                              // Navigator.pop(context);
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    // Todo scaffoldのcontextを持ってきたい。keyについて調べよう。
-                                    builder: (context) =>
-                                        SelectRegistrationMethodPage()),
-                              );
-                              // model.getCurrentUser();
-                              // Navigator.pop(context);
-                            },
-                          ),
-                          SizedBox(height: 16.0),
-                          OutlinedButton(
-                            child: Text(
-                              'ログイン',
-                              style: TextStyle(color: kDarkPink),
-                            ),
-                            onPressed: () async {
-                              // Navigator.pop(context);
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => SignInPage()),
-                              );
-                              // model.getCurrentUser();
-                              // Navigator.pop(context);
-                            },
-                          )
-                        ],
-                      ),
-                    ),
+              ChangingDrawerHeader(isUserLoggedIn),
               Divider(thickness: 1.0),
               ListTile(
                 leading: Icon(Icons.description),
@@ -170,6 +71,113 @@ class AccountDrawer extends StatelessWidget {
             ],
           ),
         ),
+      );
+    });
+  }
+}
+
+class ChangingDrawerHeader extends StatelessWidget {
+  ChangingDrawerHeader(this.isUserLoggedIn);
+  final bool isUserLoggedIn;
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<HomeModel>(builder: (context, model, child) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: isUserLoggedIn
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    model.loggedInUser!.uid,
+                    style: TextStyle(
+                      fontSize: 24,
+                    ),
+                  ),
+                  Text(
+                    (model.loggedInUser!.isAnonymous == false
+                        ? model.loggedInUser!.email
+                        : '')!,
+                    style: TextStyle(fontSize: 20.0),
+                  ),
+                  SizedBox(height: 24.0),
+                  TextButton(
+                    onPressed: () {
+                      model.signOut();
+                      Navigator.pop(context);
+                    },
+                    child: Text(
+                      'ログアウト',
+                    ),
+                  )
+                ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          padding: EdgeInsets.zero,
+                          constraints: BoxConstraints(),
+                          onPressed: () {},
+                          icon: Icon(Icons.help_outline),
+                          color: kDarkPink,
+                        ),
+                        SizedBox(width: 16.0),
+                        Flexible(
+                          child: Text(
+                            '全ての機能をご利用いただくには新規会員登録もしくはログインが必要です。',
+                            style: TextStyle(
+                              fontSize: 13.0,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  OutlinedButton(
+                    child: Text(
+                      '会員登録',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(kDarkPink),
+                    ),
+                    onPressed: () async {
+                      // Navigator.pop(context);
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            // Todo scaffoldのcontextを持ってきたい。keyについて調べよう。
+                            builder: (context) =>
+                                SelectRegistrationMethodPage()),
+                      );
+                      // model.getCurrentUser();
+                      // Navigator.pop(context);
+                    },
+                  ),
+                  SizedBox(height: 16.0),
+                  OutlinedButton(
+                    child: Text(
+                      'ログイン',
+                      style: TextStyle(color: kDarkPink),
+                    ),
+                    onPressed: () async {
+                      // Navigator.pop(context);
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SignInPage()),
+                      );
+                      // model.getCurrentUser();
+                      // Navigator.pop(context);
+                    },
+                  )
+                ],
+              ),
       );
     });
   }
