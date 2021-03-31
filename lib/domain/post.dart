@@ -5,16 +5,16 @@ class Post {
   Post(DocumentSnapshot doc) {
     this.id = doc.id;
     this.title = doc['title'];
-    this.textBody = doc['textBody'];
+    this.body = doc['body'];
     this.nickname = doc['nickname'];
     this.emotion = doc['emotion'];
     this.position = doc['position'];
     this.gender = doc['gender'] != '' ? doc['gender'] : '';
     this.age = doc['age'] != '' ? doc['age'] : '';
     this.area = doc['area'] != '' ? doc['area'] : '';
-    this.uid = doc['uid'] != '' ? doc['uid'] : '';
-    final createdDate = doc['createdAt'].toDate();
-    this._createdAt = createdDate;
+    this.uid = doc.reference.parent.parent!.id;
+    this.isBookmarked = false;
+    this._createdAt = doc['createdAt'].toDate();
     if (doc['updatedAt'] != null) {
       final updatedDate = doc['updatedAt'].toDate();
       this._updatedAt = updatedDate;
@@ -23,7 +23,7 @@ class Post {
 
   String id = '';
   String title = '';
-  String textBody = '';
+  String body = '';
   String nickname = '';
   String emotion = '';
   String position = '';
@@ -31,6 +31,7 @@ class Post {
   String age = '';
   String area = '';
   String uid = '';
+  bool isBookmarked = false;
   DateTime? _createdAt;
   DateTime? _updatedAt;
 

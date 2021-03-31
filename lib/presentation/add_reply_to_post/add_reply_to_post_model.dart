@@ -5,22 +5,20 @@ import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 
-class ReplyToPostModel extends ChangeNotifier {
+class AddReplyToPostModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
+  final uid = FirebaseAuth.instance.currentUser!.uid;
 
-  String contentValue = '';
+  String bodyValue = '';
   String nicknameValue = '';
   String positionDropdownValue = kPleaseSelect;
   String genderDropdownValue = kPleaseSelect;
   String ageDropdownValue = kPleaseSelect;
   String areaDropdownValue = kPleaseSelect;
-  String uid = FirebaseAuth.instance.currentUser != null
-      ? FirebaseAuth.instance.currentUser!.uid
-      : '';
 
   List<String> _convertNoSelectedValueToEmpty() {
     List<String> postDataList = [
-      contentValue,
+      bodyValue,
       nicknameValue,
       positionDropdownValue,
       genderDropdownValue,
@@ -39,17 +37,19 @@ class ReplyToPostModel extends ChangeNotifier {
 
   Future<void> addReply(Post repliedPost) async {
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
-    final post = _firestore.collection('posts').doc(repliedPost.id);
+    final userRef = _firestore.collection('users').doc(uid);
+    final post = userRef.collection('posts').doc(repliedPost.id);
     final replies = post.collection('replies');
 
     await replies.add({
-      'textBody': _postDataList[0],
+      // 'postId'はhome_modelで使ってる
+      'postId': repliedPost.id,
+      'body': _postDataList[0],
       'nickname': _postDataList[1],
       'position': _postDataList[2],
       'gender': _postDataList[3],
       'age': _postDataList[4],
       'area': _postDataList[5],
-      'uid': uid,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
@@ -57,16 +57,17 @@ class ReplyToPostModel extends ChangeNotifier {
 
   Future<void> updateReply(Reply existingReply) async {
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
-    final post = _firestore.collection('posts').doc(existingReply.postId);
+    final userRef = _firestore.collection('users').doc(uid);
+    final post = userRef.collection('posts').doc(existingReply.postId);
     final reply = post.collection('replies').doc(existingReply.id);
     await reply.update({
-      'textBody': _postDataList[0],
+      'body': _postDataList[0],
       'nickname': _postDataList[1],
       'position': _postDataList[2],
       'gender': _postDataList[3],
       'age': _postDataList[4],
       'area': _postDataList[5],
-      'updatedAt': Timestamp.now(),
+      'updatedAt': FieldValue.serverTimestamp(),
     });
   }
 }

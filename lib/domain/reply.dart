@@ -5,13 +5,13 @@ class Reply {
   Reply(DocumentSnapshot doc) {
     this.id = doc.id;
     this.postId = doc.reference.parent.parent!.id;
-    this.textBody = doc['textBody'];
+    this.body = doc['body'];
     this.nickname = doc['nickname'];
-    this.position = doc['position'];
+    this.position = doc['position'] != '' ? doc['position'] : '';
     this.gender = doc['gender'] != '' ? doc['gender'] : '';
     this.age = doc['age'] != '' ? doc['age'] : '';
     this.area = doc['area'] != '' ? doc['area'] : '';
-    this.uid = doc['uid'] != '' ? doc['uid'] : '';
+    this.uid = doc.reference.parent.parent!.parent.parent!.id;
     final createdDate = doc['createdAt'].toDate();
     this._createdAt = createdDate;
     if (doc['updatedAt'] != null) {
@@ -22,7 +22,7 @@ class Reply {
 
   String id = '';
   String postId = '';
-  String textBody = '';
+  String body = '';
   String nickname = '';
   String position = '';
   String gender = '';

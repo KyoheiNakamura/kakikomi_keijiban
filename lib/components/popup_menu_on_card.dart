@@ -1,12 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/add_post/add_post_page.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
-import 'package:kakikomi_keijiban/home/home_model.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
-import 'package:kakikomi_keijiban/reply_to_post/reply_to_post_page.dart';
+import 'package:kakikomi_keijiban/presentation/add_post/add_post_page.dart';
+import 'package:kakikomi_keijiban/presentation/add_reply_to_post/add_reply_to_post_page.dart';
+import 'package:kakikomi_keijiban/presentation/home/home_model.dart';
 import 'package:provider/provider.dart';
 
 enum PopupMenuItemsOnCard { update, delete }
@@ -51,7 +51,7 @@ class PopupMenuOnCard extends StatelessWidget {
                 ),
                 onPressed: () async {
                   isPostExisting
-                      ? await model.deletePost(post!)
+                      ? await model.deletePostAndReplies(post!)
                       : await model.deleteReply(reply!);
                   Navigator.of(context).pop();
                 },
@@ -75,7 +75,7 @@ class PopupMenuOnCard extends StatelessWidget {
               MaterialPageRoute(builder: (context) {
                 return isPostExisting
                     ? AddPostPage(existingPost: post)
-                    : ReplyToPostPage(existingReply: reply);
+                    : AddReplyToPostPage(existingReply: reply);
               }),
             );
             await model.getPostsWithReplies();

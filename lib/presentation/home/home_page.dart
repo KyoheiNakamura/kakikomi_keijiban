@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:kakikomi_keijiban/add_post/add_post_page.dart';
 import 'package:kakikomi_keijiban/components/account_drawer.dart';
 import 'package:kakikomi_keijiban/components/post_card.dart';
 import 'package:kakikomi_keijiban/constants.dart';
-import 'package:kakikomi_keijiban/home/home_model.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/presentation/add_post/add_post_page.dart';
+import 'package:kakikomi_keijiban/presentation/home/home_model.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
@@ -95,7 +95,7 @@ class HomePage extends StatelessWidget {
                 ),
                 SizedBox(width: 8),
                 Text(
-                  '投稿する',
+                  '投稿',
                   style: TextStyle(
                     color: kDarkPink,
                     fontSize: 16,

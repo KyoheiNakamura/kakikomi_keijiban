@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/enum.dart';
-import 'package:kakikomi_keijiban/sign_in/sign_in_model.dart';
+import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_model.dart';
 import 'package:provider/provider.dart';
 
 class SignInPage extends StatelessWidget {

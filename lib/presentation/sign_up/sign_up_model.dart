@@ -13,41 +13,6 @@ class SignUpModel extends ChangeNotifier {
   String enteredPassword = '';
   String enteredNickname = '';
 
-  // createUserWithEmailAndPassword()の説明（アカウント作成後、自動でログインしてくれる）
-  // The method is a two-step operation; it will first create the new account (if it does not already exist and the password is valid) and then automatically sign in the user in to that account.
-  // Future signUpAndLogIn() async {
-  //   try {
-  //     final UserCredential userCredential =
-  //         await _auth.createUserWithEmailAndPassword(
-  //       email: enteredEmail,
-  //       password: enteredPassword,
-  //     );
-  //     final Auth.User user = userCredential.user!;
-  //     final String email = user.email!;
-  //     _firestore.collection('users').add({
-  //       'id': user.uid,
-  //       'email': email,
-  //       'nickname': enteredNickname,
-  //       'createdAt': FieldValue.serverTimestamp(),
-  //     });
-  //   } on FirebaseAuthException catch (e) {
-  //     if (e.code == 'email-already-in-use') {
-  //       print('このメールアドレスはすでに使用されています。');
-  //       return AuthException.emailAlreadyInUse;
-  //     } else if (e.code == 'invalid-email') {
-  //       print('このメールアドレスは形式が正しくないです。');
-  //       return AuthException.invalidEmail;
-  //       // Todo createUserWithEmailAndPassword()の他の例外処理も書こう
-  //     } else {
-  //       print(e);
-  //       return e;
-  //     }
-  //   } catch (e) {
-  //     print(e);
-  //     return e;
-  //   }
-  // }
-
   Future signUpAndSignInWithEmailAndUpgradeAnonymous() async {
     try {
       final AuthCredential credential = EmailAuthProvider.credential(
@@ -55,6 +20,15 @@ class SignUpModel extends ChangeNotifier {
         password: enteredPassword,
       );
       await _auth.currentUser!.linkWithCredential(credential);
+      // anonymousのuserDocRefのデータを、email認証で登録したユーザーのデータでsetを使って置き換えている。
+      final userDocRef =
+          _firestore.collection('users').doc(_auth.currentUser!.uid);
+      // setはuserDocRefのDocument idをもつDocumentにデータを保存する。
+      // addはDocumentに自動生成されたidが付与されたDocumentにデータを保存する。
+      await userDocRef.set({
+        'nickname': enteredNickname,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
       // final Auth.User user = userCredential.user!;
       // final String email = user.email!;
       // _firestore.collection('users').add({
@@ -116,6 +90,41 @@ class SignUpModel extends ChangeNotifier {
       return e;
     }
   }
+
+// createUserWithEmailAndPassword()の説明（アカウント作成後、自動でログインしてくれる）
+// The method is a two-step operation; it will first create the new account (if it does not already exist and the password is valid) and then automatically sign in the user in to that account.
+// Future signUpAndLogIn() async {
+//   try {
+//     final UserCredential userCredential =
+//         await _auth.createUserWithEmailAndPassword(
+//       email: enteredEmail,
+//       password: enteredPassword,
+//     );
+//     final Auth.User user = userCredential.user!;
+//     final String email = user.email!;
+//     _firestore.collection('users').add({
+//       'id': user.uid,
+//       'email': email,
+//       'nickname': enteredNickname,
+//       'createdAt': FieldValue.serverTimestamp(),
+//     });
+//   } on FirebaseAuthException catch (e) {
+//     if (e.code == 'email-already-in-use') {
+//       print('このメールアドレスはすでに使用されています。');
+//       return AuthException.emailAlreadyInUse;
+//     } else if (e.code == 'invalid-email') {
+//       print('このメールアドレスは形式が正しくないです。');
+//       return AuthException.invalidEmail;
+//       // Todo createUserWithEmailAndPassword()の他の例外処理も書こう
+//     } else {
+//       print(e);
+//       return e;
+//     }
+//   } catch (e) {
+//     print(e);
+//     return e;
+//   }
+// }
 
 // Future<void> linkAnonymousWithEmail() async {
   //   final AuthCredential emailAuthCredential = EmailAuthProvider.credential(

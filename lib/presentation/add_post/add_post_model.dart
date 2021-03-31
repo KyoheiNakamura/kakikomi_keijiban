@@ -6,23 +6,26 @@ import 'package:kakikomi_keijiban/domain/post.dart';
 
 class AddPostModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
+  final uid = FirebaseAuth.instance.currentUser!.uid;
 
   String titleValue = '';
-  String contentValue = '';
+  String bodyValue = '';
   String nicknameValue = '';
   String emotionDropdownValue = kPleaseSelect;
   String positionDropdownValue = kPleaseSelect;
   String genderDropdownValue = kPleaseSelect;
   String ageDropdownValue = kPleaseSelect;
   String areaDropdownValue = kPleaseSelect;
-  String uid = FirebaseAuth.instance.currentUser != null
-      ? FirebaseAuth.instance.currentUser!.uid
-      : '';
+  // String uid = FirebaseAuth.instance.currentUser!.uid;
+  // DocumentReference userRef = FirebaseFirestore.instance
+  //     .doc(FirebaseAuth.instance.currentUser!.uid)
+  //     .parent
+  //     .parent!;
 
   List<String> _convertNoSelectedValueToEmpty() {
     List<String> postDataList = [
       titleValue,
-      contentValue,
+      bodyValue,
       nicknameValue,
       emotionDropdownValue,
       positionDropdownValue,
@@ -41,31 +44,54 @@ class AddPostModel extends ChangeNotifier {
   }
 
   Future<void> addPost() async {
-    final posts = _firestore.collection('posts');
+    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
+    final postRef = userRef.collection('posts').doc();
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
 
-    await posts.add({
+    await postRef.set({
+      'id': postRef.id,
       'title': _postDataList[0],
-      'textBody': _postDataList[1],
+      'body': _postDataList[1],
       'nickname': _postDataList[2],
       'emotion': _postDataList[3],
       'position': _postDataList[4],
       'gender': _postDataList[5],
       'age': _postDataList[6],
       'area': _postDataList[7],
-      'uid': uid,
+      // 'uid': uid,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }
 
+  // Future<void> addPost() async {
+  //   final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
+  //   final posts = userRef.collection('posts');
+  //   List<String> _postDataList = _convertNoSelectedValueToEmpty();
+  //
+  //   await posts.add({
+  //     'title': _postDataList[0],
+  //     'body': _postDataList[1],
+  //     'nickname': _postDataList[2],
+  //     'emotion': _postDataList[3],
+  //     'position': _postDataList[4],
+  //     'gender': _postDataList[5],
+  //     'age': _postDataList[6],
+  //     'area': _postDataList[7],
+  //     // 'uid': uid,
+  //     'createdAt': FieldValue.serverTimestamp(),
+  //     'updatedAt': FieldValue.serverTimestamp(),
+  //   });
+  // }
+
   Future<void> updatePost(Post post) async {
-    final collection = _firestore.collection('posts');
+    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
+    final postRef = userRef.collection('posts').doc(post.id);
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
 
-    await collection.doc(post.id).update({
+    await postRef.update({
       'title': _postDataList[0],
-      'textBody': _postDataList[1],
+      'body': _postDataList[1],
       'nickname': _postDataList[2],
       'emotion': _postDataList[3],
       'position': _postDataList[4],
