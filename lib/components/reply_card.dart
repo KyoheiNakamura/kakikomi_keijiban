@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/components/popup_menu_on_card.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
-import 'package:kakikomi_keijiban/home/home_model.dart';
+import 'package:kakikomi_keijiban/presentation/home/home_model.dart';
 import 'package:provider/provider.dart';
 
 class ReplyCardByCard extends StatelessWidget {
@@ -41,6 +41,7 @@ class ReplyCardByCard extends StatelessWidget {
         children: [
           SizedBox(height: 20.0),
           Card(
+            elevation: 0,
             color: kLightPink,
             margin: EdgeInsets.only(top: 20.0),
             shape: RoundedRectangleBorder(
@@ -57,7 +58,7 @@ class ReplyCardByCard extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 15.0),
                     child: Text(
-                      reply.textBody,
+                      reply.body,
                       style: TextStyle(fontSize: 16.0, height: 1.8),
                     ),
                   ),
@@ -75,8 +76,8 @@ class ReplyCardByCard extends StatelessWidget {
           isMe
               ? Positioned.directional(
                   textDirection: TextDirection.ltr,
-                  top: 27.0,
-                  end: -5.0,
+                  top: 26.0,
+                  end: -6.0,
                   child: PopupMenuOnCard(reply: reply),
                 )
               : Container(),

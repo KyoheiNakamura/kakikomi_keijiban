@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
-import 'package:kakikomi_keijiban/reply_to_post/reply_to_post_model.dart';
+import 'package:kakikomi_keijiban/presentation/add_reply_to_post/add_reply_to_post_model.dart';
 import 'package:provider/provider.dart';
 
 // repliedPostかexistingReplyのどちらかを必ずコンストラクタ引数に取る
-class ReplyToPostPage extends StatelessWidget {
-  ReplyToPostPage({this.repliedPost, this.existingReply});
+class AddReplyToPostPage extends StatelessWidget {
+  AddReplyToPostPage({this.repliedPost, this.existingReply});
 
   final Post? repliedPost;
   final Reply? existingReply;
@@ -16,8 +16,8 @@ class ReplyToPostPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isReplyExisting = existingReply != null;
-    return ChangeNotifierProvider<ReplyToPostModel>(
-      create: (context) => ReplyToPostModel(),
+    return ChangeNotifierProvider<AddReplyToPostModel>(
+      create: (context) => AddReplyToPostModel(),
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
@@ -31,7 +31,7 @@ class ReplyToPostPage extends StatelessWidget {
             ),
           ),
         ),
-        body: Consumer<ReplyToPostModel>(
+        body: Consumer<AddReplyToPostModel>(
           builder: (context, model, child) {
             return SingleChildScrollView(
               child: Form(
@@ -45,7 +45,7 @@ class ReplyToPostPage extends StatelessWidget {
                       // content
                       TextFormField(
                         initialValue: isReplyExisting
-                            ? model.contentValue = existingReply!.textBody
+                            ? model.bodyValue = existingReply!.body
                             : null,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -59,7 +59,7 @@ class ReplyToPostPage extends StatelessWidget {
                         // maxLines: null,
                         keyboardType: TextInputType.multiline,
                         onChanged: (newValue) {
-                          model.contentValue = newValue;
+                          model.bodyValue = newValue;
                         },
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
@@ -122,7 +122,8 @@ class ReplyToPostPage extends StatelessWidget {
                         // },
                         // focusNode: _positionFocusNode,
                         focusColor: Colors.pink[50],
-                        value: isReplyExisting
+                        value: isReplyExisting &&
+                                existingReply!.position.isNotEmpty
                             ? model.positionDropdownValue =
                                 existingReply!.position
                             : model.positionDropdownValue,

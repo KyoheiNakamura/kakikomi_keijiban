@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/add_post/add_post_model.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/presentation/add_post/add_post_model.dart';
 import 'package:provider/provider.dart';
 
 class AddPostPage extends StatelessWidget {
@@ -78,7 +78,7 @@ class AddPostPage extends StatelessWidget {
                       // content
                       TextFormField(
                         initialValue: isPostExisting
-                            ? model.contentValue = existingPost!.textBody
+                            ? model.bodyValue = existingPost!.body
                             : null,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -92,7 +92,7 @@ class AddPostPage extends StatelessWidget {
                         maxLines: null,
                         keyboardType: TextInputType.multiline,
                         onChanged: (newValue) {
-                          model.contentValue = newValue;
+                          model.bodyValue = newValue;
                         },
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),

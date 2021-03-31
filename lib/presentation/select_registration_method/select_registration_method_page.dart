@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/constants.dart';
-import 'package:kakikomi_keijiban/select_registration_method_model.dart';
-import 'package:kakikomi_keijiban/sign_in/sign_in_page.dart';
-import 'package:kakikomi_keijiban/sign_up//sign_up_page.dart';
+import 'package:kakikomi_keijiban/presentation/select_registration_method/select_registration_method_model.dart';
+import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_page.dart';
+import 'package:kakikomi_keijiban/presentation/sign_up/sign_up_page.dart';
 import 'package:provider/provider.dart';
 
 class SelectRegistrationMethodPage extends StatelessWidget {

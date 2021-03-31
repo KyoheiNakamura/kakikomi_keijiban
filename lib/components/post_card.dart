@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/components/reply_card.dart';
 import 'package:kakikomi_keijiban/constants.dart';
-import 'package:kakikomi_keijiban/home/home_model.dart';
 import 'package:kakikomi_keijiban/components/popup_menu_on_card.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
-import 'package:kakikomi_keijiban/reply_to_post/reply_to_post_page.dart';
+import 'package:kakikomi_keijiban/presentation/add_reply_to_post/add_reply_to_post_page.dart';
+import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_model.dart';
+import 'package:kakikomi_keijiban/presentation/home/home_model.dart';
 import 'package:provider/provider.dart';
 
 class PostCardByCard extends StatelessWidget {
@@ -33,8 +34,50 @@ class PostCardByCard extends StatelessWidget {
     return formattedPosterInfo;
   }
 
+  Future<void> _showCardDeleteConfirmDialog(
+      BuildContext context, HomeModel model) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+          title: Text('ブックマークの削除'),
+          content: Text('本当に削除しますか？'),
+          contentPadding:
+              EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'キャンセル',
+                style: TextStyle(color: kDarkPink),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+            ),
+            TextButton(
+              child: Text(
+                '削除',
+                style: TextStyle(color: kDarkPink),
+              ),
+              onPressed: () async {
+                await model.deleteBookmarkedPost(post);
+                Navigator.of(context).pop(false);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    // return Consumer<BookmarkedPostsModel>(
+    //     builder: (context, bookmarkedPostModel, child) {
     return Consumer<HomeModel>(builder: (context, model, child) {
       final List<Reply>? replies = model.replies[post.id];
       bool isMe = false;
@@ -70,7 +113,7 @@ class PostCardByCard extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 15.0),
                     child: Text(
-                      post.textBody,
+                      post.body,
                       // maxLines: 3,
                       style: TextStyle(fontSize: 16.0, height: 1.8),
                     ),
@@ -84,7 +127,7 @@ class PostCardByCard extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  ReplyToPostPage(repliedPost: post),
+                                  AddReplyToPostPage(repliedPost: post),
                             ),
                           );
                           await model.getPostsWithReplies();
@@ -131,9 +174,37 @@ class PostCardByCard extends StatelessWidget {
             height: 50.0,
             child: Image.asset('images/anpanman.png'),
           ),
+          Positioned(
+            top: 30.0,
+            left: 28.0,
+            child: post.isBookmarked
+                ? IconButton(
+                    icon: Icon(
+                      Icons.star,
+                      color: Colors.yellow,
+                    ),
+                    onPressed: () async {
+                      // Todo 削除するときにAlertDialog出そう
+                      await model.deleteBookmarkedPost(post);
+                      post.isBookmarked = false;
+                      await model.getBookmarkedPosts();
+                    },
+                  )
+                : IconButton(
+                    icon: Icon(
+                      Icons.star_border_outlined,
+                    ),
+                    onPressed: () async {
+                      await model.addBookmarkedPost(post);
+                      post.isBookmarked = true;
+                      // await model.getBookmarkedPosts();
+                    },
+                  ),
+          ),
         ],
       );
     });
+    // });
   }
 }
 
@@ -198,7 +269,7 @@ class PostCardByCard extends StatelessWidget {
 //                     Padding(
 //                       padding: EdgeInsets.symmetric(vertical: 15.0),
 //                       child: Text(
-//                         post.textBody,
+//                         post.body,
 //                         // maxLines: 3,
 //                         style: TextStyle(fontSize: 16.0, height: 1.8),
 //                       ),

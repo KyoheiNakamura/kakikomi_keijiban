@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/constants.dart';
-import 'package:kakikomi_keijiban/home/home_model.dart';
-import 'package:kakikomi_keijiban/select_registration_method_page.dart';
-import 'package:kakikomi_keijiban/sign_in/sign_in_page.dart';
+import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_page.dart';
+import 'package:kakikomi_keijiban/presentation/home/home_model.dart';
+import 'package:kakikomi_keijiban/presentation/select_registration_method/select_registration_method_page.dart';
+import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_page.dart';
 import 'package:provider/provider.dart';
 
 class AccountDrawer extends StatelessWidget {
@@ -31,23 +32,26 @@ class AccountDrawer extends StatelessWidget {
                               builder: (context) =>
                                   SelectRegistrationMethodPage()),
                         );
-                  // model.getCurrentUser();
                   // Navigator.pop(context);
                 },
               ),
               ListTile(
-                leading: Icon(Icons.favorite_border),
-                title: Text('共感した投稿'),
+                leading: Icon(Icons.star_border),
+                title: Text('ブックマークした投稿'),
                 onTap: () async {
                   isUserLoggedIn
-                      ? print('後で実装するよ！')
+                      ? await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BookmarkedPostsPage()),
+                        )
                       : await Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
                                   SelectRegistrationMethodPage()),
                         );
-                  // model.getCurrentUser();
+                  await model.getPostsWithReplies();
                   // Navigator.pop(context);
                 },
               ),
@@ -64,7 +68,6 @@ class AccountDrawer extends StatelessWidget {
                               builder: (context) =>
                                   SelectRegistrationMethodPage()),
                         );
-                  // model.getCurrentUser();
                   // Navigator.pop(context);
                 },
               ),
