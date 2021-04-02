@@ -8,10 +8,11 @@ class Post {
     this.body = doc['body'];
     this.nickname = doc['nickname'];
     this.emotion = doc['emotion'];
-    this.position = doc['position'];
+    this.position = doc['position'] != '' ? doc['position'] : '';
     this.gender = doc['gender'] != '' ? doc['gender'] : '';
     this.age = doc['age'] != '' ? doc['age'] : '';
     this.area = doc['area'] != '' ? doc['area'] : '';
+    this.categories = doc['categories'];
     this.uid = doc.reference.parent.parent!.id;
     this.isBookmarked = false;
     this._createdAt = doc['createdAt'].toDate();
@@ -30,6 +31,7 @@ class Post {
   String gender = '';
   String age = '';
   String area = '';
+  List<dynamic> categories = [];
   String uid = '';
   bool isBookmarked = false;
   DateTime? _createdAt;

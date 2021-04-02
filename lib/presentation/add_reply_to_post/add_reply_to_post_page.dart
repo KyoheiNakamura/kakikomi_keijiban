@@ -56,7 +56,7 @@ class AddReplyToPostPage extends StatelessWidget {
                           return null;
                         },
                         // maxLength: 1000,
-                        // maxLines: null,
+                        maxLines: null,
                         keyboardType: TextInputType.multiline,
                         onChanged: (newValue) {
                           model.bodyValue = newValue;
@@ -66,7 +66,7 @@ class AddReplyToPostPage extends StatelessWidget {
                           prefixIcon: Icon(Icons.text_fields),
                           labelText: '返信の内容',
                           hintText:
-                              'ハッキリと調べてほしいと言うのなら、病院か保健所へ行って相談することがいいと思います。『グレーゾーンだから』だってもやもやするのはつらいですよね…でも、仕事する(あるいは仕事やめてまた探す)となると…かえってつらくなることもあるのです。仕事できないからって『何もしない』と自分が迷惑することになりかねないし、かえってイヤな思いを背負うこともあるのです。',
+                              'ハッキリと調べてほしいのであれば、病院へ行って相談するのがいいと思います。『グレーゾーンだから』だってもやもやするのはつらいですよね…でも、仕事する(あるいは仕事やめてまた探す)となると…かえってつらくなることもあるのです。仕事できないからって『何もしない』と自分が迷惑することになりかねないし、かえってイヤな思いを背負うこともあるのです。',
                           helperText: '必須',
                           helperStyle: TextStyle(color: kDarkPink),
                           counterText: '1000字以内でご記入ください',

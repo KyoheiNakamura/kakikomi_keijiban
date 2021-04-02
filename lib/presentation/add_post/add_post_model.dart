@@ -12,6 +12,8 @@ class AddPostModel extends ChangeNotifier {
   String bodyValue = '';
   String nicknameValue = '';
   String emotionDropdownValue = kPleaseSelect;
+  String selectedCategory = '';
+  List<String> selectedCategories = [];
   String positionDropdownValue = kPleaseSelect;
   String genderDropdownValue = kPleaseSelect;
   String ageDropdownValue = kPleaseSelect;
@@ -21,6 +23,23 @@ class AddPostModel extends ChangeNotifier {
   //     .doc(FirebaseAuth.instance.currentUser!.uid)
   //     .parent
   //     .parent!;
+  bool isCategoriesValid = true;
+
+  bool validateSelectedCategories() {
+    if (selectedCategories.isEmpty) {
+      isCategoriesValid = false;
+      notifyListeners();
+      return false;
+    } else {
+      isCategoriesValid = true;
+      notifyListeners();
+      return true;
+    }
+  }
+
+  void reload() {
+    notifyListeners();
+  }
 
   List<String> _convertNoSelectedValueToEmpty() {
     List<String> postDataList = [
@@ -58,6 +77,7 @@ class AddPostModel extends ChangeNotifier {
       'gender': _postDataList[5],
       'age': _postDataList[6],
       'area': _postDataList[7],
+      'categories': selectedCategories,
       // 'uid': uid,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
@@ -98,6 +118,7 @@ class AddPostModel extends ChangeNotifier {
       'gender': _postDataList[5],
       'age': _postDataList[6],
       'area': _postDataList[7],
+      'categories': selectedCategories,
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }

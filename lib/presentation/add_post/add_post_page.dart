@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
@@ -40,6 +41,7 @@ class AddPostPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // title
+                      // Todo enter以外の場所をタップしてもTextFieldからfocusがはずれるようにする
                       TextFormField(
                         initialValue: isPostExisting
                             ? model.titleValue = existingPost!.title
@@ -168,7 +170,7 @@ class AddPostPage extends StatelessWidget {
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.mood),
-                          labelText: 'あなたの気持ち',
+                          labelText: 'あなたの気持ち(アイコン)',
                           helperText: '必須',
                           helperStyle: TextStyle(color: kDarkPink),
                         ),
@@ -185,20 +187,100 @@ class AddPostPage extends StatelessWidget {
                       SizedBox(
                         height: 32.0,
                       ),
+                      // Category チップ複数選択
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: model.isCategoriesValid
+                                ? Colors.grey[500]!
+                                : kDarkPink,
+                          ),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(14.0),
+                                  child: Icon(
+                                    Icons.category_outlined,
+                                    color: model.isCategoriesValid
+                                        ? kLightGrey
+                                        : kDarkPink,
+                                  ),
+                                ),
+                                Text(
+                                  'カテゴリー',
+                                  style: TextStyle(
+                                    color: model.isCategoriesValid
+                                        ? Colors.grey[700]
+                                        : kDarkPink,
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: 16.0, right: 16.0, bottom: 14.0),
+                              child: Wrap(
+                                spacing: 8.0,
+                                runSpacing: 2.0,
+                                // alignment: WrapAlignment.center,
+                                children: kCategoryList.map<Widget>((item) {
+                                  return FilterChipWidget(
+                                      chipName: item, model: model);
+                                }).toList(),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.only(left: 10.0, top: 8.0, right: 10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              model.isCategoriesValid ? '必須' : 'カテゴリーを選択してください',
+                              style: TextStyle(
+                                fontSize: 12.0,
+                                color: kDarkPink,
+                              ),
+                            ),
+                            Text(
+                              '1つ以上選択してください',
+                              style: TextStyle(
+                                fontSize: 12.0,
+                                color: kLightGrey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 32.0,
+                      ),
+
                       // position
+                      // Todo positionを複数選択できるようにしよう
                       DropdownButtonFormField(
-                        validator: (value) {
-                          if (value == kPleaseSelect) {
-                            return 'あなたの立場を選択してください';
-                          }
-                          return null;
-                        },
+                        // validator: (value) {
+                        //   if (value == kPleaseSelect) {
+                        //     return 'あなたの立場を選択してください';
+                        //   }
+                        //   return null;
+                        // },
                         // focusNode: _positionFocusNode,
                         focusColor: Colors.pink[50],
-                        value: isPostExisting
-                            ? model.positionDropdownValue =
-                                existingPost!.position
-                            : model.positionDropdownValue,
+                        value:
+                            isPostExisting && existingPost!.position.isNotEmpty
+                                ? model.positionDropdownValue =
+                                    existingPost!.position
+                                : model.positionDropdownValue,
                         icon: Icon(
                           Icons.arrow_downward,
                           // color: kDarkPink,
@@ -209,7 +291,7 @@ class AddPostPage extends StatelessWidget {
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'あなたの立場',
-                          helperText: '必須',
+                          // helperText: '必須',
                           helperStyle: TextStyle(color: kDarkPink),
                           prefixIcon: Icon(Icons.group),
                         ),
@@ -325,11 +407,15 @@ class AddPostPage extends StatelessWidget {
                       // 投稿送信ボタン
                       OutlinedButton(
                         onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
+                          if (model.validateSelectedCategories() &&
+                              _formKey.currentState!.validate()) {
                             isPostExisting
                                 ? await model.updatePost(existingPost!)
                                 : await model.addPost();
-                            Navigator.pop(context);
+                            // Navigator.pop(context);
+                            Navigator.of(context).popUntil(
+                              ModalRoute.withName('/'),
+                            );
                           }
                         },
                         child: Text(
@@ -347,7 +433,7 @@ class AddPostPage extends StatelessWidget {
                           ),
                           side: BorderSide(color: kDarkPink),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -359,3 +445,99 @@ class AddPostPage extends StatelessWidget {
     );
   }
 }
+
+class FilterChipWidget extends StatelessWidget {
+  FilterChipWidget({required this.chipName, required this.model});
+
+  final String chipName;
+  final AddPostModel model;
+
+  @override
+  Widget build(BuildContext context) {
+    bool isSelected = model.selectedCategories.contains(chipName);
+    return FilterChip(
+      label: Text(
+        chipName,
+        style: TextStyle(
+          // color: isSelected ? kDarkPink : Colors.black,
+          color: isSelected ? kDarkPink : Colors.black,
+        ),
+      ),
+      selected: isSelected,
+      onSelected: (_) {
+        isSelected
+            ? model.selectedCategories.remove(chipName)
+            : model.selectedCategories.add(chipName);
+        model.reload();
+        print(model.selectedCategories);
+      },
+      selectedColor: Color(0xFFf3d4d8),
+      selectedShadowColor: kDarkPink,
+      showCheckmark: false,
+    );
+  }
+}
+
+// Category チップ一つ選択
+// Container(
+//   decoration: BoxDecoration(
+//     border: Border.all(color: Colors.grey[500]!),
+//     borderRadius: BorderRadius.circular(5),
+//   ),
+//   child: Column(
+//     crossAxisAlignment: CrossAxisAlignment.start,
+//     children: [
+//       Row(
+//         children: [
+//           Padding(
+//             padding: const EdgeInsets.all(14.0),
+//             child: Icon(
+//               Icons.category_outlined,
+//               color: kLightGrey,
+//             ),
+//           ),
+//           Text(
+//             'カテゴリー',
+//             style: TextStyle(
+//               color: Colors.grey[700],
+//               fontSize: 16.0,
+//             ),
+//           ),
+//         ],
+//       ),
+//       Padding(
+//         padding: EdgeInsets.only(
+//             left: 16.0, right: 16.0, bottom: 14.0),
+//         child: Wrap(
+//           spacing: 16.0,
+//           runSpacing: 2.0,
+//           // alignment: WrapAlignment.center,
+//           children: kCategoryList.map<Widget>((item) {
+//             return ChoiceChip(
+//               label: Text(item),
+//               selected: model.selectedCategory == item,
+//               onSelected: (selected) {
+//                 model.selectedCategory = item;
+//                 model.reload();
+//               },
+//             );
+//           }).toList(),
+//         ),
+//       ),
+//     ],
+//   ),
+// ),
+// Padding(
+//   padding:
+//       EdgeInsets.only(left: 12.0, top: 8.0, right: 12.0),
+//   child: Text(
+//     '必須',
+//     style: TextStyle(
+//       fontSize: 12.0,
+//       color: kDarkPink,
+//     ),
+//   ),
+// ),
+// SizedBox(
+//   height: 32.0,
+// ),
