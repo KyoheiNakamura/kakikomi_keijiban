@@ -4,14 +4,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/domain/bookmarked_post.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 
 class HomeModel extends ChangeNotifier {
+  static final homePage = 'HomePage';
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
+  final uid = FirebaseAuth.instance.currentUser?.uid;
   Auth.User? loggedInUser;
 
   List<Post> _posts = [];
@@ -22,30 +22,6 @@ class HomeModel extends ChangeNotifier {
 
   List<Post> _bookmarkedPosts = [];
   List<Post> get bookmarkedPosts => _bookmarkedPosts;
-
-  Future<void> getBookmarkedPosts() async {
-    final bookmarkedPostsSnapshot = await _firestore
-        .collection('users')
-        .doc(uid)
-        .collection('bookmarkedPosts')
-        .orderBy('createdAt', descending: true)
-        .get();
-    final postSnapshotList = await Future.wait(bookmarkedPostsSnapshot.docs
-        .map((bookmarkedPost) => _firestore
-            .collectionGroup('posts')
-            .where('id', isEqualTo: bookmarkedPost['postId'])
-            // .orderBy('createdAt', descending: true)
-            .get())
-        .toList());
-    final bookmarkedPosts =
-        postSnapshotList.map((postSnapshot) => postSnapshot.docs[0]).toList();
-    print(bookmarkedPosts);
-    _bookmarkedPosts = bookmarkedPosts.map((doc) => Post(doc)).toList();
-    for (int i = 0; i < _bookmarkedPosts.length; i++) {
-      _bookmarkedPosts[i].isBookmarked = true;
-    }
-    notifyListeners();
-  }
 
   void listenAuthStateChanges() {
     _auth.userChanges().listen((Auth.User? user) async {
@@ -74,35 +50,6 @@ class HomeModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addBookmarkedPost(Post post) async {
-    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
-    final bookmarkedPostRef =
-        userRef.collection('bookmarkedPosts').doc(post.id);
-    await bookmarkedPostRef.set({
-      'postId': post.id,
-      'postRef': userRef.collection('posts').doc(post.id),
-      'createdAt': FieldValue.serverTimestamp(),
-    });
-    notifyListeners();
-  }
-
-  Future<void> deleteBookmarkedPost(Post post) async {
-    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
-    final bookmarkedPosts = userRef.collection('bookmarkedPosts').doc(post.id);
-    await bookmarkedPosts.delete();
-  }
-
-  // Future<void> getBookmarkedPosts() async {
-  //   final querySnapshot = await _firestore
-  //       .collection('users')
-  //       .doc(uid)
-  //       .collection('bookmarkedPosts')
-  //       .get();
-  //   final docs = querySnapshot.docs;
-  //   _bookmarkedPosts = docs.map((doc) => BookmarkedPost(doc)).toList();
-  //   notifyListeners();
-  // }
-
   Future<void> getPostsWithReplies() async {
     final querySnapshot = await _firestore
         .collectionGroup('posts')
@@ -111,7 +58,7 @@ class HomeModel extends ChangeNotifier {
     final docs = querySnapshot.docs;
     final posts = docs.map((doc) => Post(doc)).toList();
     _posts = posts;
-    await getBookmarkedPosts();
+    await _getBookmarkedPosts();
     for (int i = 0; i < _posts.length; i++) {
       for (Post bookmarkedPost in _bookmarkedPosts) {
         if (_posts[i].id == bookmarkedPost.id) {
@@ -130,6 +77,43 @@ class HomeModel extends ChangeNotifier {
       _replies[post.id] = replies;
     }
     notifyListeners();
+  }
+
+  Future<void> _getBookmarkedPosts() async {
+    final bookmarkedPostsSnapshot = await _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('bookmarkedPosts')
+        .orderBy('createdAt', descending: true)
+        .get();
+    final postSnapshots = await Future.wait(bookmarkedPostsSnapshot.docs
+        .map((bookmarkedPost) => _firestore
+            .collectionGroup('posts')
+            .where('id', isEqualTo: bookmarkedPost['postId'])
+            // .orderBy('createdAt', descending: true)
+            .get())
+        .toList());
+    final bookmarkedPostDocs =
+        postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
+    _bookmarkedPosts = bookmarkedPostDocs.map((doc) => Post(doc)).toList();
+  }
+
+  Future<void> addBookmarkedPost(Post post) async {
+    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
+    final bookmarkedPostRef =
+        userRef.collection('bookmarkedPosts').doc(post.id);
+    await bookmarkedPostRef.set({
+      'postId': post.id,
+      'postRef': userRef.collection('posts').doc(post.id),
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+    notifyListeners();
+  }
+
+  Future<void> deleteBookmarkedPost(Post post) async {
+    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
+    final bookmarkedPosts = userRef.collection('bookmarkedPosts').doc(post.id);
+    await bookmarkedPosts.delete();
   }
 
   Future<void> deletePostAndReplies(Post post) async {

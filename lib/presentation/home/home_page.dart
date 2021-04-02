@@ -34,13 +34,6 @@ class HomePage extends StatelessWidget {
                         toolbarHeight: 50,
                         elevation: 0,
                         centerTitle: true,
-                        leading: IconButton(
-                          icon: Icon(Icons.account_circle, size: 26),
-                          onPressed: () {
-                            Scaffold.of(context).openDrawer();
-                            // Navigator.pop(context);
-                          },
-                        ),
                         title: Text(
                           'ホーム',
                           style: TextStyle(
@@ -51,7 +44,14 @@ class HomePage extends StatelessWidget {
                         actions: [
                           IconButton(
                             icon: Icon(Icons.search, size: 24),
-                            onPressed: () {},
+                            onPressed: () async {
+                              // await Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //       builder: (context) => SearchPage()),
+                              // );
+                              // await model.getPostsWithReplies();
+                            },
                           ),
                         ],
                         // pinned: true,
@@ -63,7 +63,8 @@ class HomePage extends StatelessWidget {
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
                             final post = posts[index];
-                            return PostCardByCard(post);
+                            return PostCard(
+                                post: post, pageName: HomeModel.homePage);
                             // return PostCard(post);
                           },
                           childCount: posts.length,

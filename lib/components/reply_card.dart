@@ -5,8 +5,8 @@ import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/presentation/home/home_model.dart';
 import 'package:provider/provider.dart';
 
-class ReplyCardByCard extends StatelessWidget {
-  ReplyCardByCard(this.reply);
+class ReplyCard extends StatelessWidget {
+  ReplyCard(this.reply);
 
   final Reply reply;
 

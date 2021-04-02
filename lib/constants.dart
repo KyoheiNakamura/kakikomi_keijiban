@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 const Color kDarkPink = Color(0xFFDC5A6E);
-const Color kPink = Color(0xFFE496A2);
+const Color kPink = Color(0xFFf3d4d8);
 const Color kLightPink = Color(0xFFFFF7FA);
 const Color kLightGrey = Colors.black54;
 
@@ -10,27 +10,73 @@ const String kDoNotSelect = '選択しない';
 
 const List<String> kEmotionList = [
   kPleaseSelect,
+  'うれしい',
+  'かなしい',
+  'つらい',
   '相談',
   '疑問',
   '提案',
   '悩み',
   'エール',
-  'うれしい',
-  'かなしい',
-  'つらい',
   '呼びかけ',
+];
+
+const List<String> kCategoryList = [
+  // kPleaseSelect,
+  'ASD',
+  // 'ASD(自閉症スペクトラム障害)',
+  'ADHD',
+  // 'ADHD(注意欠如・多動性障害)',
+  'SLD',
+  // 'SLD(限局性学習障害)',
+  '大人の発達障害',
+  '発達障害グレーゾーン',
+  '知的障害',
+  '不安障害',
+  'パニック障害',
+  'チック症',
+  '吃音',
+  'うつ病',
+  '双極性障害',
+  // '躁うつ病(双極性障害)',
+  '適応障害',
+  // '新型うつ病(適応障害)',
+  '睡眠障害',
+  '強迫性障害',
+  '統合失調症',
+  '依存症',
+  'パーソナリティ障害',
+  'PTSD',
+  // 'PTSD(心的外傷後ストレス障害)',
+  '愛着障害',
+  'いじめ',
+  '不登校',
+  'ひきこもり',
+  'コミュニケーション',
+  '療育',
+  '薬物療法',
+  '障害者手帳',
+  '障害福祉サービス',
+  'カサンドラ症候群',
+  '就職',
+  '職業選択',
+  'ライフハック',
 ];
 
 const List<String> kPositionList = [
   kPleaseSelect,
   '当事者',
-  '配偶者',
-  '親',
+  '妻',
+  '夫',
+  '母親',
+  '父親',
   '子ども',
   '親戚',
   '友達',
   '同僚',
+  '学生',
   'その他',
+  kDoNotSelect,
 ];
 
 const List<String> kGenderList = [

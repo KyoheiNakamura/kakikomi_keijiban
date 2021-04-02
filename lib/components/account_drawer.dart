@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/home/home_model.dart';
+import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/select_registration_method/select_registration_method_page.dart';
 import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_page.dart';
 import 'package:provider/provider.dart';
@@ -22,10 +23,14 @@ class AccountDrawer extends StatelessWidget {
               Divider(thickness: 1.0),
               ListTile(
                 leading: Icon(Icons.description),
-                title: Text('投稿一覧'),
+                title: Text('自分の投稿'),
                 onTap: () async {
                   isUserLoggedIn
-                      ? print('後で実装するよ！')
+                      ? await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MyPostsPage()),
+                        )
                       : await Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -155,7 +160,6 @@ class ChangingDrawerHeader extends StatelessWidget {
                       await Navigator.push(
                         context,
                         MaterialPageRoute(
-                            // Todo scaffoldのcontextを持ってきたい。keyについて調べよう。
                             builder: (context) =>
                                 SelectRegistrationMethodPage()),
                       );
