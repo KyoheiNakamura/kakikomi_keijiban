@@ -67,9 +67,17 @@ class HomeModel extends ChangeNotifier {
       }
     }
     for (final post in posts) {
+      // final querySnapshot = await _firestore
+      //     .collectionGroup('replies')
+      //     .where('postId', isEqualTo: post.id)
+      //     .orderBy('createdAt')
+      //     .get();
       final querySnapshot = await _firestore
-          .collectionGroup('replies')
-          .where('postId', isEqualTo: post.id)
+          .collection('users')
+          .doc(post.uid)
+          .collection('posts')
+          .doc(post.id)
+          .collection('replies')
           .orderBy('createdAt')
           .get();
       final docs = querySnapshot.docs;

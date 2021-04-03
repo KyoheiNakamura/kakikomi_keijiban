@@ -7,46 +7,52 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 
-class MyPostsModel extends ChangeNotifier {
-  static final myPostsPage = 'MyPostsPage';
+class SearchResultModel extends ChangeNotifier {
+  static final searchPage = 'SearchPage';
   final _firestore = FirebaseFirestore.instance;
   final uid = FirebaseAuth.instance.currentUser?.uid;
   Auth.User? loggedInUser = FirebaseAuth.instance.currentUser;
 
-  List<Post> _myPosts = [];
-  List<Post> get myPosts => _myPosts;
+  List<Post> _searchedPosts = [];
+  List<Post> get searchedPosts => _searchedPosts;
 
-  Map<String, List<Reply>> _repliesToMyPosts = {};
-  Map<String, List<Reply>> get repliesToMyPosts => _repliesToMyPosts;
+  Map<String, List<Reply>> _repliesToSearchedPosts = {};
+  Map<String, List<Reply>> get repliesToSearchedPosts =>
+      _repliesToSearchedPosts;
 
   List<Post> _bookmarkedPosts = [];
   List<Post> get bookmarkedPosts => _bookmarkedPosts;
 
-  Future<void> getMyPostsWithReplies() async {
-    final querySnapshot = await _firestore
-        .collection('users')
-        .doc(uid)
-        .collection('posts')
-        .orderBy('createdAt', descending: true)
-        .get();
+  Future<void> getPostsWithRepliesChosenField(
+      {required String postField, required String value}) async {
+    final QuerySnapshot querySnapshot;
+    // postのfieldの値が配列(array)のとき
+    // Todo positionも複数選択に変える予定なので、おいおいこっちの条件に||で追加するはず
+    if (postField == 'categories') {
+      querySnapshot = await _firestore
+          .collectionGroup('posts')
+          .where(postField, arrayContains: value)
+          .orderBy('createdAt', descending: true)
+          .get();
+    } else {
+      querySnapshot = await _firestore
+          .collectionGroup('posts')
+          .where(postField, isEqualTo: value)
+          .orderBy('createdAt', descending: true)
+          .get();
+    }
     final docs = querySnapshot.docs;
     final posts = docs.map((doc) => Post(doc)).toList();
-    _myPosts = posts;
-    // ブックマークを付けてる
+    _searchedPosts = posts;
     await _getBookmarkedPosts();
-    for (int i = 0; i < _myPosts.length; i++) {
+    for (int i = 0; i < _searchedPosts.length; i++) {
       for (Post bookmarkedPost in _bookmarkedPosts) {
-        if (_myPosts[i].id == bookmarkedPost.id) {
-          _myPosts[i].isBookmarked = true;
+        if (_searchedPosts[i].id == bookmarkedPost.id) {
+          _searchedPosts[i].isBookmarked = true;
         }
       }
     }
     for (final post in posts) {
-      // final querySnapshot = await _firestore
-      //     .collectionGroup('replies')
-      //     .where('postId', isEqualTo: post.id)
-      //     .orderBy('createdAt')
-      //     .get();
       final querySnapshot = await _firestore
           .collection('users')
           .doc(post.uid)
@@ -57,7 +63,7 @@ class MyPostsModel extends ChangeNotifier {
           .get();
       final docs = querySnapshot.docs;
       final replies = docs.map((doc) => Reply(doc)).toList();
-      _repliesToMyPosts[post.id] = replies;
+      _repliesToSearchedPosts[post.id] = replies;
     }
     notifyListeners();
   }

@@ -8,6 +8,18 @@ const Color kLightGrey = Colors.black54;
 const String kPleaseSelect = '選択してください';
 const String kDoNotSelect = '選択しない';
 
+const Map<String, String> kEmotionIcons = {
+  'うれしい': 'images/anpanman.png',
+  'かなしい': 'images/anpanman.png',
+  'つらい': 'images/anpanman.png',
+  '相談': 'images/anpanman.png',
+  '疑問': 'images/anpanman.png',
+  '提案': 'images/anpanman.png',
+  '悩み': 'images/anpanman.png',
+  'エール': 'images/anpanman.png',
+  '呼びかけ': 'images/anpanman.png',
+};
+
 const List<String> kEmotionList = [
   kPleaseSelect,
   'うれしい',
@@ -61,6 +73,7 @@ const List<String> kCategoryList = [
   '就職',
   '職業選択',
   'ライフハック',
+  'その他',
 ];
 
 const List<String> kPositionList = [
@@ -83,6 +96,7 @@ const List<String> kGenderList = [
   kPleaseSelect,
   '男性',
   '女性',
+  'その他',
   kDoNotSelect,
 ];
 
@@ -147,5 +161,6 @@ const List<String> kAreaList = [
   '宮崎県',
   '鹿児島県',
   '沖縄県',
+  'その他',
   kDoNotSelect,
 ];

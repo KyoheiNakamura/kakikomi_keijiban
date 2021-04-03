@@ -34,7 +34,7 @@ class ReplyCard extends StatelessWidget {
     return Consumer<HomeModel>(builder: (context, model, child) {
       bool isMe = false;
       if (model.loggedInUser != null) {
-        isMe = model.loggedInUser!.uid == reply.uid;
+        isMe = model.loggedInUser!.uid == reply.replierId;
       }
       return Stack(
         alignment: AlignmentDirectional.topEnd,

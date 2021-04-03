@@ -7,6 +7,7 @@ import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/presentation/add_post/add_post_page.dart';
 import 'package:kakikomi_keijiban/presentation/home/home_model.dart';
+import 'package:kakikomi_keijiban/presentation/search/search_page.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
@@ -45,12 +46,12 @@ class HomePage extends StatelessWidget {
                           IconButton(
                             icon: Icon(Icons.search, size: 24),
                             onPressed: () async {
-                              // await Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //       builder: (context) => SearchPage()),
-                              // );
-                              // await model.getPostsWithReplies();
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SearchPage()),
+                              );
+                              await model.getPostsWithReplies();
                             },
                           ),
                         ],

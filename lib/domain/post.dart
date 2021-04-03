@@ -12,7 +12,9 @@ class Post {
     this.gender = doc['gender'] != '' ? doc['gender'] : '';
     this.age = doc['age'] != '' ? doc['age'] : '';
     this.area = doc['area'] != '' ? doc['area'] : '';
-    this.categories = doc['categories'];
+    final List<dynamic> _categories = doc['categories'];
+    this.categories = List<String>.from(_categories);
+    // this.categories = doc['categories'];
     this.uid = doc.reference.parent.parent!.id;
     this.isBookmarked = false;
     this._createdAt = doc['createdAt'].toDate();
@@ -31,7 +33,7 @@ class Post {
   String gender = '';
   String age = '';
   String area = '';
-  List<dynamic> categories = [];
+  List<String> categories = [];
   String uid = '';
   bool isBookmarked = false;
   DateTime? _createdAt;

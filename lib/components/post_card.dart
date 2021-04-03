@@ -8,8 +8,8 @@ import 'package:kakikomi_keijiban/presentation/add_reply_to_post/add_reply_to_po
 import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/home/home_model.dart';
 import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_model.dart';
-import 'package:kakikomi_keijiban/presentation/search/search_model.dart';
-import 'package:kakikomi_keijiban/presentation/search/search_page.dart';
+import 'package:kakikomi_keijiban/presentation/search_result/search_result_model.dart';
+import 'package:kakikomi_keijiban/presentation/search_result/search_result_page.dart';
 import 'package:provider/provider.dart';
 
 class PostCard extends StatelessWidget {
@@ -80,28 +80,34 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer4<HomeModel, BookmarkedPostsModel, SearchModel,
+    return Consumer4<HomeModel, BookmarkedPostsModel, SearchResultModel,
             MyPostsModel>(
-        builder: (context, homeModel, bookmarkedPostsModel, searchModel,
+        builder: (context, homeModel, bookmarkedPostsModel, searchResultModel,
             myPostsModel, child) {
       final List<Reply>? replies;
       if (pageName == HomeModel.homePage) {
         replies = homeModel.replies[post.id];
       } else if (pageName == BookmarkedPostsModel.bookmarkedPostsPage) {
         replies = bookmarkedPostsModel.repliesToBookmarkedPosts[post.id];
-      } else if (pageName == SearchModel.searchPage) {
-        replies = searchModel.repliesToChosenCategoryPosts[post.id];
-      } else if (pageName == MyPostsModel.myPostPage) {
+      } else if (pageName == SearchResultModel.searchPage) {
+        replies = searchResultModel.repliesToSearchedPosts[post.id];
+      } else if (pageName == MyPostsModel.myPostsPage) {
         replies = myPostsModel.repliesToMyPosts[post.id];
       } else {
         replies = [];
       }
 
-      // Todo homePage以外でisMeが効いてない問題の修正
       bool isMe = false;
       if (homeModel.loggedInUser != null) {
         isMe = homeModel.loggedInUser!.uid == post.uid;
+      } else if (bookmarkedPostsModel.loggedInUser != null) {
+        isMe = bookmarkedPostsModel.loggedInUser!.uid == post.uid;
+      } else if (searchResultModel.loggedInUser != null) {
+        isMe = searchResultModel.loggedInUser!.uid == post.uid;
+      } else if (myPostsModel.loggedInUser != null) {
+        isMe = myPostsModel.loggedInUser!.uid == post.uid;
       }
+
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Stack(
@@ -117,39 +123,44 @@ class PostCard extends StatelessWidget {
                 ),
                 child: Padding(
                   padding: EdgeInsets.only(
-                      top: 24.0, left: 20.0, right: 20.0, bottom: 24.0),
+                      top: 24.0, left: 20.0, right: 20.0, bottom: 32.0),
                   child: Column(
                     children: [
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Wrap(
-                          spacing: 4.0,
-                          runSpacing: 2.0,
-                          // alignment: WrapAlignment.center,
-                          children: post.categories.map<Widget>((category) {
-                            return ActionChip(
-                              label: Text(
-                                category,
-                                style: TextStyle(
-                                  color: kDarkPink,
+                      // カテゴリーのActionChipを表示してる
+                      Padding(
+                        padding: const EdgeInsets.only(right: 24.0),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Wrap(
+                            spacing: 4.0,
+                            // runSpacing: 2.0,
+                            // alignment: WrapAlignment.center,
+                            children: post.categories.map<Widget>((category) {
+                              return ActionChip(
+                                label: Text(
+                                  category,
+                                  style: TextStyle(
+                                    color: kDarkPink,
+                                  ),
                                 ),
-                              ),
-                              backgroundColor: kLightPink,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                                side: BorderSide(color: kPink),
-                              ),
-                              onPressed: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          SearchPage(category)),
-                                );
-                                await homeModel.getPostsWithReplies();
-                              },
-                            );
-                          }).toList(),
+                                backgroundColor: kLightPink,
+                                pressElevation: 0,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  side: BorderSide(color: kPink),
+                                ),
+                                onPressed: () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            SearchResultPage(category)),
+                                  );
+                                  // await homeModel.getPostsWithReplies();
+                                },
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ),
                       Padding(
@@ -220,8 +231,8 @@ class PostCard extends StatelessWidget {
             isMe
                 ? Positioned.directional(
                     textDirection: TextDirection.ltr,
-                    top: 58.0,
-                    end: 5.0,
+                    top: 30.0,
+                    end: 10.0,
                     child: PopupMenuOnCard(post: post),
                   )
                 : Container(),
@@ -229,14 +240,25 @@ class PostCard extends StatelessWidget {
               // top: 20,
               width: 60.0,
               height: 60.0,
-              child: Image.asset(
-                'images/anpanman.png',
+              child: GestureDetector(
+                child: Image.asset(
+                  kEmotionIcons[post.emotion]!,
+                  // fit: BoxFit.cover,
+                ),
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SearchResultPage(post.emotion)),
+                  );
+                  await homeModel.getPostsWithReplies();
+                },
               ),
             ),
             Positioned.directional(
               textDirection: TextDirection.ltr,
-              top: 58.0,
-              end: 40.0,
+              top: 55.0,
+              end: 10.0,
               child: post.isBookmarked
                   ? IconButton(
                       icon: Icon(

@@ -7,7 +7,7 @@ import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts
 import 'package:kakikomi_keijiban/presentation/home/home_model.dart';
 import 'package:kakikomi_keijiban/presentation/home/home_page.dart';
 import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_model.dart';
-import 'package:kakikomi_keijiban/presentation/search/search_model.dart';
+import 'package:kakikomi_keijiban/presentation/search_result/search_result_model.dart';
 import 'package:kakikomi_keijiban/presentation/select_registration_method/select_registration_method_model.dart';
 import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_model.dart';
 import 'package:kakikomi_keijiban/presentation/sign_up/sign_up_model.dart';
@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AddReplyToPostModel()),
         ChangeNotifierProvider(create: (_) => BookmarkedPostsModel()),
         ChangeNotifierProvider(create: (_) => MyPostsModel()),
-        ChangeNotifierProvider(create: (_) => SearchModel()),
+        ChangeNotifierProvider(create: (_) => SearchResultModel()),
         ChangeNotifierProvider(create: (_) => SelectRegistrationMethodModel()),
         ChangeNotifierProvider(create: (_) => SignInModel()),
         ChangeNotifierProvider(create: (_) => SignUpModel()),
