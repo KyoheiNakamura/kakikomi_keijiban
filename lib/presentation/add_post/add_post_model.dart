@@ -31,8 +31,6 @@ class AddPostModel extends ChangeNotifier {
       notifyListeners();
       return false;
     } else {
-      isCategoriesValid = true;
-      notifyListeners();
       return true;
     }
   }
@@ -63,7 +61,7 @@ class AddPostModel extends ChangeNotifier {
   }
 
   Future<void> addPost() async {
-    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
+    final userRef = _firestore.collection('users').doc(uid);
     final postRef = userRef.collection('posts').doc();
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
 
@@ -84,28 +82,8 @@ class AddPostModel extends ChangeNotifier {
     });
   }
 
-  // Future<void> addPost() async {
-  //   final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
-  //   final posts = userRef.collection('posts');
-  //   List<String> _postDataList = _convertNoSelectedValueToEmpty();
-  //
-  //   await posts.add({
-  //     'title': _postDataList[0],
-  //     'body': _postDataList[1],
-  //     'nickname': _postDataList[2],
-  //     'emotion': _postDataList[3],
-  //     'position': _postDataList[4],
-  //     'gender': _postDataList[5],
-  //     'age': _postDataList[6],
-  //     'area': _postDataList[7],
-  //     // 'uid': uid,
-  //     'createdAt': FieldValue.serverTimestamp(),
-  //     'updatedAt': FieldValue.serverTimestamp(),
-  //   });
-  // }
-
   Future<void> updatePost(Post post) async {
-    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
+    final userRef = _firestore.collection('users').doc(uid);
     final postRef = userRef.collection('posts').doc(post.id);
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
 

@@ -22,7 +22,7 @@ class AddPostPage extends StatelessWidget {
           elevation: 0,
           centerTitle: true,
           title: Text(
-            '新規投稿',
+            isPostExisting ? '編集' : '新規投稿',
             style: TextStyle(
               fontSize: 17.0,
               fontWeight: FontWeight.bold,
@@ -31,6 +31,9 @@ class AddPostPage extends StatelessWidget {
         ),
         body: Consumer<AddPostModel>(
           builder: (context, model, child) {
+            if (isPostExisting && model.selectedCategories.isEmpty) {
+              model.selectedCategories.addAll(existingPost!.categories);
+            }
             return SingleChildScrollView(
               child: Form(
                 key: _formKey,
@@ -231,7 +234,9 @@ class AddPostPage extends StatelessWidget {
                                 // alignment: WrapAlignment.center,
                                 children: kCategoryList.map<Widget>((item) {
                                   return FilterChipWidget(
-                                      chipName: item, model: model);
+                                    chipName: item,
+                                    model: model,
+                                  );
                                 }).toList(),
                               ),
                             ),
@@ -297,6 +302,7 @@ class AddPostPage extends StatelessWidget {
                         ),
                         onChanged: (String? selectedValue) {
                           model.positionDropdownValue = selectedValue!;
+                          print(model.positionDropdownValue);
                         },
                         items: kPositionList.map((String value) {
                           return DropdownMenuItem<String>(
@@ -407,8 +413,10 @@ class AddPostPage extends StatelessWidget {
                       // 投稿送信ボタン
                       OutlinedButton(
                         onPressed: () async {
+                          print('button: ${model.positionDropdownValue}');
                           if (model.validateSelectedCategories() &&
                               _formKey.currentState!.validate()) {
+                            print('button2: ${model.positionDropdownValue}');
                             isPostExisting
                                 ? await model.updatePost(existingPost!)
                                 : await model.addPost();
@@ -445,6 +453,10 @@ class AddPostPage extends StatelessWidget {
     );
   }
 }
+//
+// initialValue: isPostExisting
+// ? model.nicknameValue = existingPost!.nickname
+//     : null,
 
 class FilterChipWidget extends StatelessWidget {
   FilterChipWidget({required this.chipName, required this.model});
@@ -459,11 +471,10 @@ class FilterChipWidget extends StatelessWidget {
       label: Text(
         chipName,
         style: TextStyle(
-          // color: isSelected ? kDarkPink : Colors.black,
-          color: isSelected ? kDarkPink : Colors.black,
+          color: isSelected ? kDarkPink : Colors.grey[800],
         ),
       ),
-      selected: isSelected,
+      selected: isSelected == true,
       onSelected: (_) {
         isSelected
             ? model.selectedCategories.remove(chipName)
@@ -471,7 +482,12 @@ class FilterChipWidget extends StatelessWidget {
         model.reload();
         print(model.selectedCategories);
       },
-      selectedColor: Color(0xFFf3d4d8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: isSelected ? kPink : Colors.grey[500]!),
+      ),
+      backgroundColor: Colors.grey[200],
+      selectedColor: kLightPink,
       selectedShadowColor: kDarkPink,
       showCheckmark: false,
     );

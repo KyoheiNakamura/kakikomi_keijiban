@@ -7,7 +7,7 @@ import 'package:kakikomi_keijiban/domain/reply.dart';
 
 class AddReplyToPostModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
+  final _auth = FirebaseAuth.instance;
 
   String bodyValue = '';
   String nicknameValue = '';
@@ -37,13 +37,14 @@ class AddReplyToPostModel extends ChangeNotifier {
 
   Future<void> addReply(Post repliedPost) async {
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
-    final userRef = _firestore.collection('users').doc(uid);
+    final userRef = _firestore.collection('users').doc(repliedPost.uid);
     final post = userRef.collection('posts').doc(repliedPost.id);
     final replies = post.collection('replies');
 
     await replies.add({
       // 'postId'はhome_modelで使ってる
-      'postId': repliedPost.id,
+      // 'postId': repliedPost.id,
+      'replierId': _auth.currentUser!.uid,
       'body': _postDataList[0],
       'nickname': _postDataList[1],
       'position': _postDataList[2],
@@ -57,7 +58,7 @@ class AddReplyToPostModel extends ChangeNotifier {
 
   Future<void> updateReply(Reply existingReply) async {
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
-    final userRef = _firestore.collection('users').doc(uid);
+    final userRef = _firestore.collection('users').doc(existingReply.uid);
     final post = userRef.collection('posts').doc(existingReply.postId);
     final reply = post.collection('replies').doc(existingReply.id);
     await reply.update({

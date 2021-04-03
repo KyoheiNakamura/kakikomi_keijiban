@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
@@ -11,6 +11,7 @@ class BookmarkedPostsModel extends ChangeNotifier {
   static final bookmarkedPostsPage = 'BookmarkedPostsPage';
   final _firestore = FirebaseFirestore.instance;
   final uid = FirebaseAuth.instance.currentUser!.uid;
+  Auth.User? loggedInUser = FirebaseAuth.instance.currentUser;
 
   List<Post> _bookmarkedPosts = [];
   List<Post> get bookmarkedPosts => _bookmarkedPosts;
@@ -40,9 +41,17 @@ class BookmarkedPostsModel extends ChangeNotifier {
       _bookmarkedPosts[i].isBookmarked = true;
     }
     for (final bookmarkedPost in _bookmarkedPosts) {
+      // final querySnapshot = await _firestore
+      //     .collectionGroup('replies')
+      //     .where('postId', isEqualTo: bookmarkedPost.id)
+      //     .orderBy('createdAt')
+      //     .get();
       final querySnapshot = await _firestore
-          .collectionGroup('replies')
-          .where('postId', isEqualTo: bookmarkedPost.id)
+          .collection('users')
+          .doc(bookmarkedPost.uid)
+          .collection('posts')
+          .doc(bookmarkedPost.id)
+          .collection('replies')
           .orderBy('createdAt')
           .get();
       final docs = querySnapshot.docs;

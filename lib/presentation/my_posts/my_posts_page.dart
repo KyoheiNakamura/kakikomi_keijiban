@@ -4,7 +4,6 @@ import 'package:kakikomi_keijiban/components/post_card.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_model.dart';
-import 'package:kakikomi_keijiban/presentation/search/search_model.dart';
 import 'package:provider/provider.dart';
 
 class MyPostsPage extends StatelessWidget {
@@ -48,7 +47,7 @@ class MyPostsPage extends StatelessWidget {
                         itemBuilder: (BuildContext context, int index) {
                           final post = myPosts[index];
                           return PostCard(
-                              post: post, pageName: MyPostsModel.myPostPage);
+                              post: post, pageName: MyPostsModel.myPostsPage);
                         },
                         itemCount: myPosts.length,
                       ),
