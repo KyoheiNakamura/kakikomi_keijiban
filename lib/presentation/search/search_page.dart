@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/constants.dart';
-import 'package:kakikomi_keijiban/presentation/search/search_model.dart';
-import 'package:kakikomi_keijiban/presentation/search_result/search_result_page.dart';
-import 'package:provider/provider.dart';
+import 'package:kakikomi_keijiban/presentation/search_result_posts/search_result_posts_page.dart';
 
 class SearchPage extends StatelessWidget {
   @override
@@ -17,10 +15,7 @@ class SearchPage extends StatelessWidget {
         centerTitle: true,
         title: Text(
           '検索',
-          style: TextStyle(
-            fontSize: 17.0,
-            fontWeight: FontWeight.bold,
-          ),
+          style: kAppBarTextStyle,
         ),
       ),
       body: SingleChildScrollView(
@@ -145,7 +140,8 @@ class SearchGenreCard extends StatelessWidget {
                           await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => SearchResultPage(value),
+                              builder: (context) =>
+                                  SearchResultPostsPage(value),
                             ),
                           );
                         },
@@ -200,7 +196,7 @@ class SearchGenreCard extends StatelessWidget {
     //                 await Navigator.push(
     //                   context,
     //                   MaterialPageRoute(
-    //                     builder: (context) => SearchResultPage(value),
+    //                     builder: (context) => SearchResultPostsPage(value),
     //                   ),
     //                 );
     //                 // await homeModel.getPostsWithReplies();

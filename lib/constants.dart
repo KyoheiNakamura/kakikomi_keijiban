@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+const Color kDeepDarkPink = Color(0xFFa54352);
 const Color kDarkPink = Color(0xFFDC5A6E);
 const Color kPink = Color(0xFFf3d4d8);
 const Color kLightPink = Color(0xFFFFF7FA);
@@ -164,3 +165,85 @@ const List<String> kAreaList = [
   'その他',
   kDoNotSelect,
 ];
+
+const kTitleTextFormFieldDecoration = InputDecoration(
+  border: OutlineInputBorder(),
+  prefixIcon: Icon(Icons.title),
+  labelText: 'タイトル',
+  hintText: '大人の発達障害とグレーゾーンについて',
+  helperText: '必須',
+  helperStyle: TextStyle(color: kDarkPink),
+  counterText: '50字以内でご記入ください',
+  counterStyle: TextStyle(color: kLightGrey),
+  // counterText: isPostExisting
+  //     ? '${existingPost!.title.length} 字'
+  //     : '${model.titleValue.length} 字',
+);
+
+const kContentTextFormFieldDecoration = InputDecoration(
+  border: OutlineInputBorder(),
+  prefixIcon: Icon(Icons.text_fields),
+  labelText: '投稿の内容',
+  hintText:
+      '自分が大人の発達障害ではないかと疑っているのですが、特徴の濃淡がはっきりせずグレーゾーンに思われるため、確信が持てないのと、親へどう話せばいいかわからず、診断に踏み切れていません。',
+  helperText: '必須',
+  helperStyle: TextStyle(color: kDarkPink),
+  counterText: '1000字以内でご記入ください',
+  counterStyle: TextStyle(color: kLightGrey),
+  // counterText: isPostExisting
+  //     ? '${existingPost!.textBody.length} 字'
+  //     : '${model.contentValue.length} 字',
+);
+
+const kNicknameTextFormFieldDecoration = InputDecoration(
+  border: OutlineInputBorder(),
+  prefixIcon: Icon(Icons.face),
+  labelText: 'ニックネーム',
+  hintText: 'ムセンシティ部',
+  helperText: '必須',
+  helperStyle: TextStyle(color: kDarkPink),
+  counterText: '10字以内でご記入ください',
+  counterStyle: TextStyle(color: kLightGrey),
+  // counterText: isPostExisting
+  //     ? '${existingPost!.nickname.length} 字'
+  //     : '${model.nicknameValue.length} 字',
+);
+
+const kEmotionDropdownButtonFormFieldDecoration = InputDecoration(
+  border: OutlineInputBorder(),
+  prefixIcon: Icon(Icons.mood),
+  labelText: 'あなたの気持ち(アイコン)',
+  helperText: '必須',
+  helperStyle: TextStyle(color: kDarkPink),
+);
+
+const kPositionDropdownButtonFormFieldDecoration = InputDecoration(
+  border: OutlineInputBorder(),
+  labelText: 'あなたの立場',
+  // helperText: '必須',
+  // helperStyle: TextStyle(color: kDarkPink),
+  prefixIcon: Icon(Icons.group),
+);
+
+const kGenderDropdownButtonFormFieldDecoration = InputDecoration(
+  border: OutlineInputBorder(),
+  labelText: 'あなたの性別',
+  prefixIcon: Icon(Icons.lens_outlined),
+);
+
+const kAgeDropdownButtonFormFieldDecoration = InputDecoration(
+  border: OutlineInputBorder(),
+  labelText: 'あなたの年齢',
+  prefixIcon: Icon(Icons.date_range),
+);
+
+const kAreaDropdownButtonFormFieldDecoration = InputDecoration(
+  border: OutlineInputBorder(),
+  labelText: 'お住まいの地域',
+  prefixIcon: Icon(Icons.place_outlined),
+);
+
+const kAppBarTextStyle = TextStyle(
+  fontSize: 17.0,
+  fontWeight: FontWeight.bold,
+);

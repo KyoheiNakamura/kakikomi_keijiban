@@ -1,111 +1,29 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/components/post_card/post_card_model.dart';
 import 'package:kakikomi_keijiban/components/reply_card.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/components/popup_menu_on_card.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
+import 'package:kakikomi_keijiban/mixin/format_poster_data_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply_to_post/add_reply_to_post_page.dart';
-import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_model.dart';
-import 'package:kakikomi_keijiban/presentation/home/home_model.dart';
-import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_model.dart';
-import 'package:kakikomi_keijiban/presentation/search_result/search_result_model.dart';
-import 'package:kakikomi_keijiban/presentation/search_result/search_result_page.dart';
+import 'package:kakikomi_keijiban/presentation/search_result_posts/search_result_posts_page.dart';
 import 'package:provider/provider.dart';
 
-class PostCard extends StatelessWidget {
-  PostCard({required this.post, required this.pageName});
+class PostCard extends StatelessWidget with FormatPosterDataMixin {
+  PostCard({required this.post, required this.replies, this.isMyPostsPage});
 
   final Post post;
-  final String pageName;
-
-  String _getFormattedPosterData(post) {
-    String posterInfo = '';
-    String formattedPosterInfo = '';
-
-    List<String> posterData = [
-      '${post.nickname}さん',
-      post.gender,
-      post.age,
-      post.area,
-      post.position,
-    ];
-
-    for (var data in posterData) {
-      data.isNotEmpty ? posterInfo += '$data/' : posterInfo += '';
-      int lastSlashIndex = posterInfo.length - 1;
-      formattedPosterInfo = posterInfo.substring(0, lastSlashIndex);
-    }
-    return formattedPosterInfo;
-  }
-
-  // Future<void> _showCardDeleteConfirmDialog(
-  //     BuildContext context, HomeModel model) async {
-  //   return showDialog<void>(
-  //     context: context,
-  //     barrierDismissible: false, // user must tap button!
-  //     builder: (BuildContext context) {
-  //       return AlertDialog(
-  //         shape: RoundedRectangleBorder(
-  //           borderRadius: BorderRadius.circular(15.0),
-  //         ),
-  //         title: Text('ブックマークの削除'),
-  //         content: Text('本当に削除しますか？'),
-  //         contentPadding:
-  //             EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
-  //         actions: <Widget>[
-  //           TextButton(
-  //             child: Text(
-  //               'キャンセル',
-  //               style: TextStyle(color: kDarkPink),
-  //             ),
-  //             onPressed: () {
-  //               Navigator.of(context).pop(true);
-  //             },
-  //           ),
-  //           TextButton(
-  //             child: Text(
-  //               '削除',
-  //               style: TextStyle(color: kDarkPink),
-  //             ),
-  //             onPressed: () async {
-  //               await model.deleteBookmarkedPost(post);
-  //               Navigator.of(context).pop(false);
-  //             },
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
+  final List<Reply>? replies;
+  final bool? isMyPostsPage;
 
   @override
   Widget build(BuildContext context) {
-    return Consumer4<HomeModel, BookmarkedPostsModel, SearchResultModel,
-            MyPostsModel>(
-        builder: (context, homeModel, bookmarkedPostsModel, searchResultModel,
-            myPostsModel, child) {
-      final List<Reply>? replies;
-      if (pageName == HomeModel.homePage) {
-        replies = homeModel.replies[post.id];
-      } else if (pageName == BookmarkedPostsModel.bookmarkedPostsPage) {
-        replies = bookmarkedPostsModel.repliesToBookmarkedPosts[post.id];
-      } else if (pageName == SearchResultModel.searchPage) {
-        replies = searchResultModel.repliesToSearchedPosts[post.id];
-      } else if (pageName == MyPostsModel.myPostsPage) {
-        replies = myPostsModel.repliesToMyPosts[post.id];
-      } else {
-        replies = [];
-      }
-
+    return Consumer<PostCardModel>(builder: (context, model, child) {
       bool isMe = false;
-      if (homeModel.loggedInUser != null) {
-        isMe = homeModel.loggedInUser!.uid == post.uid;
-      } else if (bookmarkedPostsModel.loggedInUser != null) {
-        isMe = bookmarkedPostsModel.loggedInUser!.uid == post.uid;
-      } else if (searchResultModel.loggedInUser != null) {
-        isMe = searchResultModel.loggedInUser!.uid == post.uid;
-      } else if (myPostsModel.loggedInUser != null) {
-        isMe = myPostsModel.loggedInUser!.uid == post.uid;
+      if (FirebaseAuth.instance.currentUser != null) {
+        isMe = FirebaseAuth.instance.currentUser!.uid == post.uid;
       }
 
       return Padding(
@@ -117,7 +35,6 @@ class PostCard extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 30.0),
               child: Card(
                 color: Colors.white,
-                // margin: EdgeInsets.all(20.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16.0),
                 ),
@@ -126,7 +43,7 @@ class PostCard extends StatelessWidget {
                       top: 24.0, left: 20.0, right: 20.0, bottom: 32.0),
                   child: Column(
                     children: [
-                      // カテゴリーのActionChipを表示してる
+                      /// カテゴリーのActionChipを表示してる
                       Padding(
                         padding: const EdgeInsets.only(right: 24.0),
                         child: Align(
@@ -139,9 +56,7 @@ class PostCard extends StatelessWidget {
                               return ActionChip(
                                 label: Text(
                                   category,
-                                  style: TextStyle(
-                                    color: kDarkPink,
-                                  ),
+                                  style: TextStyle(color: kDarkPink),
                                 ),
                                 backgroundColor: kLightPink,
                                 pressElevation: 0,
@@ -154,15 +69,16 @@ class PostCard extends StatelessWidget {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            SearchResultPage(category)),
+                                            SearchResultPostsPage(category)),
                                   );
-                                  // await homeModel.getPostsWithReplies();
                                 },
                               );
                             }).toList(),
                           ),
                         ),
                       ),
+
+                      /// title
                       Padding(
                         padding:
                             EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
@@ -171,10 +87,14 @@ class PostCard extends StatelessWidget {
                           style: TextStyle(fontSize: 17.0),
                         ),
                       ),
+
+                      /// posterData
                       Text(
-                        _getFormattedPosterData(post),
+                        getFormattedPosterData(post),
                         style: TextStyle(color: kLightGrey),
                       ),
+
+                      /// body
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 15.0),
                         child: Text(
@@ -186,6 +106,7 @@ class PostCard extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          /// 返信ボタン
                           OutlinedButton(
                             onPressed: () async {
                               await Navigator.push(
@@ -195,7 +116,6 @@ class PostCard extends StatelessWidget {
                                       AddReplyToPostPage(repliedPost: post),
                                 ),
                               );
-                              await homeModel.getPostsWithReplies();
                             },
                             child: Text(
                               '返信する',
@@ -204,22 +124,30 @@ class PostCard extends StatelessWidget {
                             ),
                             style: OutlinedButton.styleFrom(
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15.0),
+                                borderRadius: BorderRadius.circular(16.0),
                               ),
                               side: BorderSide(color: kPink),
                             ),
                           ),
+
+                          /// 更新日時
                           Text(
                             post.updatedAt,
                             style: TextStyle(color: kLightGrey),
                           ),
                         ],
                       ),
+
+                      /// 返信一覧
                       Column(
                         children: replies != null
-                            ? replies.map((reply) {
+                            ? replies!.map((reply) {
                                 // return ReplyCard(reply);
-                                return ReplyCard(reply);
+                                return ReplyCard(
+                                  reply: reply,
+                                  isMe: isMe,
+                                  isMyPostsPage: isMyPostsPage,
+                                );
                               }).toList()
                             : [],
                       ),
@@ -228,7 +156,7 @@ class PostCard extends StatelessWidget {
                 ),
               ),
             ),
-            isMe
+            isMe && isMyPostsPage == true
                 ? Positioned.directional(
                     textDirection: TextDirection.ltr,
                     top: 30.0,
@@ -249,9 +177,9 @@ class PostCard extends StatelessWidget {
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => SearchResultPage(post.emotion)),
+                        builder: (context) =>
+                            SearchResultPostsPage(post.emotion)),
                   );
-                  await homeModel.getPostsWithReplies();
                 },
               ),
             ),
@@ -266,11 +194,8 @@ class PostCard extends StatelessWidget {
                         color: Colors.yellow,
                       ),
                       onPressed: () async {
-                        // Todo 削除するときにAlertDialog出そう
-                        await homeModel.deleteBookmarkedPost(post);
                         post.isBookmarked = false;
-                        await bookmarkedPostsModel
-                            .getBookmarkedPostsWithReplies();
+                        await model.deleteBookmarkedPost(post);
                       },
                     )
                   : IconButton(
@@ -278,9 +203,8 @@ class PostCard extends StatelessWidget {
                         Icons.star_border_outlined,
                       ),
                       onPressed: () async {
-                        await homeModel.addBookmarkedPost(post);
                         post.isBookmarked = true;
-                        // await model.getBookmarkedPosts();
+                        await model.addBookmarkedPost(post);
                       },
                     ),
             ),
@@ -304,7 +228,7 @@ class PostCard extends StatelessWidget {
             //           side: BorderSide(color: kPink),
             //         ),
             //         onPressed: () {
-            //           print('そのチップ($category)の検索結果ページに飛ぶ予定だよ！');
+            //           print('そのチップ($category)の検索結果ページに飛ぶ予定やで。');
             //         },
             //       );
             //     }).toList(),
