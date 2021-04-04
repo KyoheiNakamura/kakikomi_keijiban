@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 
-class HomeModel extends ChangeNotifier {
+class HomePostsModel extends ChangeNotifier {
   static final homePage = 'HomePage';
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
@@ -50,7 +50,9 @@ class HomeModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getPostsWithReplies() async {
+  Future<void> get getPostsWithReplies => _getPostsWithReplies();
+
+  Future<void> _getPostsWithReplies() async {
     final querySnapshot = await _firestore
         .collectionGroup('posts')
         .orderBy('createdAt', descending: true)
@@ -58,7 +60,7 @@ class HomeModel extends ChangeNotifier {
     final docs = querySnapshot.docs;
     final posts = docs.map((doc) => Post(doc)).toList();
     _posts = posts;
-    await _getBookmarkedPosts();
+    await getBookmarkedPosts();
     for (int i = 0; i < _posts.length; i++) {
       for (Post bookmarkedPost in _bookmarkedPosts) {
         if (_posts[i].id == bookmarkedPost.id) {
@@ -84,10 +86,11 @@ class HomeModel extends ChangeNotifier {
       final replies = docs.map((doc) => Reply(doc)).toList();
       _replies[post.id] = replies;
     }
+    print('getPostsWithRepliesしたよ！');
     notifyListeners();
   }
 
-  Future<void> _getBookmarkedPosts() async {
+  Future<void> getBookmarkedPosts() async {
     final bookmarkedPostsSnapshot = await _firestore
         .collection('users')
         .doc(uid)
@@ -104,6 +107,11 @@ class HomeModel extends ChangeNotifier {
     final bookmarkedPostDocs =
         postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
     _bookmarkedPosts = bookmarkedPostDocs.map((doc) => Post(doc)).toList();
+    // postCardでブックマークアイコンの切り替えのために書いてる
+    for (int i = 0; i < _bookmarkedPosts.length; i++) {
+      _bookmarkedPosts[i].isBookmarked = true;
+    }
+    notifyListeners();
   }
 
   Future<void> addBookmarkedPost(Post post) async {
@@ -115,6 +123,7 @@ class HomeModel extends ChangeNotifier {
       'postRef': userRef.collection('posts').doc(post.id),
       'createdAt': FieldValue.serverTimestamp(),
     });
+    post.isBookmarked = true;
     notifyListeners();
   }
 
@@ -122,6 +131,8 @@ class HomeModel extends ChangeNotifier {
     final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
     final bookmarkedPosts = userRef.collection('bookmarkedPosts').doc(post.id);
     await bookmarkedPosts.delete();
+    post.isBookmarked = false;
+    notifyListeners();
   }
 
   Future<void> deletePostAndReplies(Post post) async {

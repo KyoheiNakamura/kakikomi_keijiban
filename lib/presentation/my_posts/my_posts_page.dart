@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:kakikomi_keijiban/components/post_card.dart';
+import 'package:kakikomi_keijiban/components/post_card/post_card.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_model.dart';
@@ -17,7 +17,7 @@ class MyPostsPage extends StatelessWidget {
         return Future.value(true);
       },
       child: ChangeNotifierProvider<MyPostsModel>(
-        create: (context) => MyPostsModel()..getMyPostsWithReplies(),
+        create: (context) => MyPostsModel()..getPostsWithReplies,
         child: SafeArea(
           child: Scaffold(
             appBar: AppBar(
@@ -26,14 +26,11 @@ class MyPostsPage extends StatelessWidget {
               centerTitle: true,
               title: Text(
                 '自分の投稿',
-                style: TextStyle(
-                  fontSize: 17.0,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: kAppBarTextStyle,
               ),
             ),
             body: Consumer<MyPostsModel>(builder: (context, model, child) {
-              final List<Post> myPosts = model.myPosts;
+              final List<Post> myPosts = model.posts;
               return AnnotatedRegion<SystemUiOverlayStyle>(
                 value: SystemUiOverlayStyle.light.copyWith(
                     statusBarColor: Theme.of(context).primaryColorDark),
@@ -41,13 +38,16 @@ class MyPostsPage extends StatelessWidget {
                   child: Container(
                     color: kLightPink,
                     child: RefreshIndicator(
-                      onRefresh: () => model.getMyPostsWithReplies(),
+                      onRefresh: () => model.getPostsWithReplies,
                       child: ListView.builder(
                         padding: EdgeInsets.only(top: 30.0),
                         itemBuilder: (BuildContext context, int index) {
                           final post = myPosts[index];
                           return PostCard(
-                              post: post, pageName: MyPostsModel.myPostsPage);
+                            post: post,
+                            replies: model.replies[post.id],
+                            isMyPostsPage: true,
+                          );
                         },
                         itemCount: myPosts.length,
                       ),

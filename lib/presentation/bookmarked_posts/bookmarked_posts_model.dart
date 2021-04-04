@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
@@ -11,16 +9,16 @@ class BookmarkedPostsModel extends ChangeNotifier {
   static final bookmarkedPostsPage = 'BookmarkedPostsPage';
   final _firestore = FirebaseFirestore.instance;
   final uid = FirebaseAuth.instance.currentUser!.uid;
-  Auth.User? loggedInUser = FirebaseAuth.instance.currentUser;
 
   List<Post> _bookmarkedPosts = [];
-  List<Post> get bookmarkedPosts => _bookmarkedPosts;
+  List<Post> get posts => _bookmarkedPosts;
 
   Map<String, List<Reply>> _repliesToBookmarkedPosts = {};
-  Map<String, List<Reply>> get repliesToBookmarkedPosts =>
-      _repliesToBookmarkedPosts;
+  Map<String, List<Reply>> get replies => _repliesToBookmarkedPosts;
 
-  Future<void> getBookmarkedPostsWithReplies() async {
+  Future<void> get getPostsWithReplies => _getBookmarkedPostsWithReplies();
+
+  Future<void> _getBookmarkedPostsWithReplies() async {
     final bookmarkedPostsSnapshot = await _firestore
         .collection('users')
         .doc(uid)

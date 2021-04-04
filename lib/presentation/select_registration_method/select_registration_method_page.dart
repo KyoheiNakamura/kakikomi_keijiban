@@ -17,10 +17,7 @@ class SelectRegistrationMethodPage extends StatelessWidget {
           centerTitle: true,
           title: Text(
             '会員登録またはログイン',
-            style: TextStyle(
-              fontSize: 17.0,
-              fontWeight: FontWeight.bold,
-            ),
+            style: kAppBarTextStyle,
           ),
         ),
         // Todo めちゃくちゃ簡潔に書けそうなので、後で書き直そう

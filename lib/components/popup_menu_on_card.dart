@@ -1,12 +1,13 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/components/post_card/post_card_model.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/presentation/add_post/add_post_page.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply_to_post/add_reply_to_post_page.dart';
-import 'package:kakikomi_keijiban/presentation/home/home_model.dart';
+import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_model.dart';
 import 'package:provider/provider.dart';
 
 enum PopupMenuItemsOnCard { update, delete }
@@ -21,14 +22,14 @@ class PopupMenuOnCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isPostExisting = post != null;
-    Future<void> _showCardDeleteConfirmDialog(HomeModel model) async {
+    Future<void> _showCardDeleteConfirmDialog(PostCardModel model) async {
       return showDialog<void>(
         context: context,
         barrierDismissible: false, // user must tap button!
         builder: (BuildContext context) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
+              borderRadius: BorderRadius.circular(16.0),
             ),
             title: isPostExisting ? Text('投稿の削除') : Text('返信の削除'),
             content: Text('本当に削除しますか？'),
@@ -53,7 +54,9 @@ class PopupMenuOnCard extends StatelessWidget {
                   isPostExisting
                       ? await model.deletePostAndReplies(post!)
                       : await model.deleteReply(reply!);
-                  Navigator.of(context).pop();
+                  Navigator.of(context).popUntil(
+                    ModalRoute.withName('/'),
+                  );
                 },
               ),
             ],
@@ -62,7 +65,7 @@ class PopupMenuOnCard extends StatelessWidget {
       );
     }
 
-    return Consumer<HomeModel>(builder: (context, model, child) {
+    return Consumer<PostCardModel>(builder: (context, model, child) {
       return PopupMenuButton<PopupMenuItemsOnCard>(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
@@ -78,10 +81,10 @@ class PopupMenuOnCard extends StatelessWidget {
                     : AddReplyToPostPage(existingReply: reply);
               }),
             );
-            await model.getPostsWithReplies();
+            await Provider.of<MyPostsModel>(context, listen: false)
+                .getPostsWithReplies;
           } else if (result == PopupMenuItemsOnCard.delete) {
             await _showCardDeleteConfirmDialog(model);
-            await model.getPostsWithReplies();
           }
         },
         itemBuilder: (BuildContext context) => [

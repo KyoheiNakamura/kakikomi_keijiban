@@ -25,10 +25,7 @@ class AddReplyToPostPage extends StatelessWidget {
           centerTitle: true,
           title: Text(
             '返信',
-            style: TextStyle(
-              fontSize: 17.0,
-              fontWeight: FontWeight.bold,
-            ),
+            style: kAppBarTextStyle,
           ),
         ),
         body: Consumer<AddReplyToPostModel>(
@@ -259,6 +256,9 @@ class AddReplyToPostPage extends StatelessWidget {
                                 ? await model.updateReply(existingReply!)
                                 : await model.addReply(repliedPost!);
                             Navigator.pop(context);
+                            // Navigator.of(context).popUntil(
+                            //   ModalRoute.withName('/'),
+                            // );
                           }
                         },
                         child: Text(

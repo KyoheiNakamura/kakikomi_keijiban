@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:kakikomi_keijiban/components/post_card.dart';
+import 'package:kakikomi_keijiban/components/post_card/post_card.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
-import 'package:kakikomi_keijiban/presentation/search_result/search_result_model.dart';
+import 'package:kakikomi_keijiban/presentation/search_result_posts/search_result_posts_model.dart';
 import 'package:provider/provider.dart';
 
-class SearchResultPage extends StatelessWidget {
-  SearchResultPage(this.searchWord);
+class SearchResultPostsPage extends StatelessWidget {
+  SearchResultPostsPage(this.searchWord);
 
   final String searchWord;
 
@@ -29,8 +29,8 @@ class SearchResultPage extends StatelessWidget {
     } else {
       postField = '';
     }
-    return ChangeNotifierProvider<SearchResultModel>(
-      create: (context) => SearchResultModel()
+    return ChangeNotifierProvider<SearchResultPostsModel>(
+      create: (context) => SearchResultPostsModel()
         ..getPostsWithRepliesChosenField(
           postField: postField,
           value: searchWord,
@@ -42,14 +42,12 @@ class SearchResultPage extends StatelessWidget {
             elevation: 0,
             centerTitle: true,
             title: Text(
-              '$searchWordの検索結果',
-              style: TextStyle(
-                fontSize: 17.0,
-                fontWeight: FontWeight.bold,
-              ),
+              '$searchWord の検索結果',
+              style: kAppBarTextStyle,
             ),
           ),
-          body: Consumer<SearchResultModel>(builder: (context, model, child) {
+          body: Consumer<SearchResultPostsModel>(
+              builder: (context, model, child) {
             final List<Post> chosenCategoryPosts = model.searchedPosts;
             return AnnotatedRegion<SystemUiOverlayStyle>(
               value: SystemUiOverlayStyle.light
@@ -67,7 +65,9 @@ class SearchResultPage extends StatelessWidget {
                       itemBuilder: (BuildContext context, int index) {
                         final post = chosenCategoryPosts[index];
                         return PostCard(
-                            post: post, pageName: SearchResultModel.searchPage);
+                          post: post,
+                          replies: model.repliesToSearchedPosts[post.id],
+                        );
                       },
                       itemCount: chosenCategoryPosts.length,
                     ),

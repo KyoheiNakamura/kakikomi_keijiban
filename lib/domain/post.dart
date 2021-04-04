@@ -13,8 +13,8 @@ class Post {
     this.age = doc['age'] != '' ? doc['age'] : '';
     this.area = doc['area'] != '' ? doc['area'] : '';
     final List<dynamic> _categories = doc['categories'];
+    // List<dynamic>をList<String>に変換してる
     this.categories = List<String>.from(_categories);
-    // this.categories = doc['categories'];
     this.uid = doc.reference.parent.parent!.id;
     this.isBookmarked = false;
     this._createdAt = doc['createdAt'].toDate();

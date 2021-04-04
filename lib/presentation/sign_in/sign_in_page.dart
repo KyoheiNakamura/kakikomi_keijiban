@@ -54,10 +54,7 @@ class SignInPage extends StatelessWidget {
           centerTitle: true,
           title: Text(
             'ログイン',
-            style: TextStyle(
-              fontSize: 17.0,
-              fontWeight: FontWeight.bold,
-            ),
+            style: kAppBarTextStyle,
           ),
         ),
         body: Consumer<SignInModel>(

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_page.dart';
-import 'package:kakikomi_keijiban/presentation/home/home_model.dart';
+import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/select_registration_method/select_registration_method_page.dart';
 import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_page.dart';
@@ -10,7 +10,7 @@ import 'package:provider/provider.dart';
 class AccountDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeModel>(builder: (context, model, child) {
+    return Consumer<HomePostsModel>(builder: (context, model, child) {
       final bool isUserLoggedIn = model.loggedInUser != null &&
           model.loggedInUser!.isAnonymous == false;
       return SizedBox(
@@ -56,7 +56,7 @@ class AccountDrawer extends StatelessWidget {
                               builder: (context) =>
                                   SelectRegistrationMethodPage()),
                         );
-                  await model.getPostsWithReplies();
+                  await model.getPostsWithReplies;
                   // Navigator.pop(context);
                 },
               ),
@@ -90,7 +90,7 @@ class ChangingDrawerHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomeModel>(builder: (context, model, child) {
+    return Consumer<HomePostsModel>(builder: (context, model, child) {
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: isUserLoggedIn

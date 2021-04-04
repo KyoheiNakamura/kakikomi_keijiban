@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
@@ -11,18 +10,19 @@ class MyPostsModel extends ChangeNotifier {
   static final myPostsPage = 'MyPostsPage';
   final _firestore = FirebaseFirestore.instance;
   final uid = FirebaseAuth.instance.currentUser?.uid;
-  Auth.User? loggedInUser = FirebaseAuth.instance.currentUser;
 
   List<Post> _myPosts = [];
-  List<Post> get myPosts => _myPosts;
+  List<Post> get posts => _myPosts;
 
   Map<String, List<Reply>> _repliesToMyPosts = {};
-  Map<String, List<Reply>> get repliesToMyPosts => _repliesToMyPosts;
+  Map<String, List<Reply>> get replies => _repliesToMyPosts;
 
   List<Post> _bookmarkedPosts = [];
   List<Post> get bookmarkedPosts => _bookmarkedPosts;
 
-  Future<void> getMyPostsWithReplies() async {
+  Future<void> get getPostsWithReplies => _getMyPostsWithReplies();
+
+  Future<void> _getMyPostsWithReplies() async {
     final querySnapshot = await _firestore
         .collection('users')
         .doc(uid)

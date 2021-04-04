@@ -54,10 +54,7 @@ class SignUpPage extends StatelessWidget {
           centerTitle: true,
           title: Text(
             '会員登録',
-            style: TextStyle(
-              fontSize: 17.0,
-              fontWeight: FontWeight.bold,
-            ),
+            style: kAppBarTextStyle,
           ),
         ),
         body: Consumer<SignUpModel>(
