@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+const Color kDeepDarkPink = Color(0xFFa54352);
 const Color kDarkPink = Color(0xFFDC5A6E);
 const Color kPink = Color(0xFFf3d4d8);
 const Color kLightPink = Color(0xFFFFF7FA);

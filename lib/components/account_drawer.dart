@@ -42,7 +42,7 @@ class AccountDrawer extends StatelessWidget {
               ),
               ListTile(
                 leading: Icon(Icons.star_border),
-                title: Text('ブックマークした投稿'),
+                title: Text('ブックマーク'),
                 onTap: () async {
                   isUserLoggedIn
                       ? await Navigator.push(

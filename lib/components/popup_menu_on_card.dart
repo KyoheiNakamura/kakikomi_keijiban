@@ -7,6 +7,7 @@ import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/presentation/add_post/add_post_page.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply_to_post/add_reply_to_post_page.dart';
+import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_model.dart';
 import 'package:provider/provider.dart';
 
@@ -54,9 +55,14 @@ class PopupMenuOnCard extends StatelessWidget {
                   isPostExisting
                       ? await model.deletePostAndReplies(post!)
                       : await model.deleteReply(reply!);
-                  Navigator.of(context).popUntil(
-                    ModalRoute.withName('/'),
-                  );
+                  await Provider.of<MyPostsModel>(context, listen: false)
+                      .getPostsWithReplies;
+                  await Provider.of<HomePostsModel>(context, listen: false)
+                      .getPostsWithReplies;
+                  // Navigator.of(context).popUntil(
+                  //   ModalRoute.withName('/'),
+                  // );
+                  Navigator.of(context).pop();
                 },
               ),
             ],

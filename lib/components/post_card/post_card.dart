@@ -143,7 +143,11 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                         children: replies != null
                             ? replies!.map((reply) {
                                 // return ReplyCard(reply);
-                                return ReplyCard(reply: reply, isMe: isMe);
+                                return ReplyCard(
+                                  reply: reply,
+                                  isMe: isMe,
+                                  isMyPostsPage: isMyPostsPage,
+                                );
                               }).toList()
                             : [],
                       ),

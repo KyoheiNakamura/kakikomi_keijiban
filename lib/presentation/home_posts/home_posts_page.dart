@@ -18,13 +18,12 @@ class HomePostsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: _tabs.length, // This is the number of tabs.
+      length: _tabs.length,
       child: Scaffold(
         drawer: SafeArea(child: AccountDrawer()),
         body: Consumer3<HomePostsModel, MyPostsModel, BookmarkedPostsModel>(
             builder: (context, homePostsModel, myPostsModel,
                 bookmarkedPostsModel, child) {
-          // final List<Post> posts = homePostsModel.posts;
           final Map<String, dynamic> tabPresentations = {
             'ホーム': homePostsModel,
             '自分の投稿': myPostsModel,
@@ -39,21 +38,13 @@ class HomePostsPage extends StatelessWidget {
                 child: NestedScrollView(
                   headerSliverBuilder:
                       (BuildContext context, bool innerBoxIsScrolled) {
-                    // These are the slivers that show up in the "outer" scroll view.
                     return <Widget>[
                       SliverOverlapAbsorber(
-                        // This widget takes the overlapping behavior of the SliverAppBar,
-                        // and redirects it to the SliverOverlapInjector below. If it is
-                        // missing, then it is possible for the nested "inner" scroll view
-                        // below to end up under the SliverAppBar even when the inner
-                        // scroll view thinks it has not been scrolled.
-                        // This is not necessary if the "headerSliverBuilder" only builds
-                        // widgets that do not overlap the next sliver.
                         handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
                             context),
                         sliver: SliverAppBar(
                           toolbarHeight: 50,
-                          elevation: 0,
+                          // elevation: 0,
                           centerTitle: true,
                           title: Text(
                             'ホーム',
@@ -66,27 +57,18 @@ class HomePostsPage extends StatelessWidget {
                                 await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => SearchPage()),
+                                    builder: (context) => SearchPage(),
+                                  ),
                                 );
                                 await homePostsModel.getPostsWithReplies;
                               },
                             ),
                           ],
-                          // pinned: true,
                           floating: true,
-                          // This is the title in the app bar.
                           pinned: true,
-                          // The "forceElevated" property causes the SliverAppBar to show
-                          // a shadow. The "innerBoxIsScrolled" parameter is true when the
-                          // inner scroll view is scrolled beyond its "zero" point, i.e.
-                          // when it appears to be scrolled below the SliverAppBar.
-                          // Without this, there are cases where the shadow would appear
-                          // or not appear inappropriately, because the SliverAppBar is
-                          // not actually aware of the precise position of the inner
-                          // scroll views.
+                          // snap: true,
                           forceElevated: innerBoxIsScrolled,
                           bottom: TabBar(
-                            // These are the widgets to put in each tab in the tab bar.
                             tabs: _tabs
                                 .map((String name) => Tab(text: name))
                                 .toList(),
@@ -98,7 +80,6 @@ class HomePostsPage extends StatelessWidget {
 
                   /// タブ名(ページ名)で表示を場合分け
                   body: TabBarView(
-                    // These are the contents of the tab views, below the tabs.
                     children: _tabs.map((String name) {
                       final model = tabPresentations[name];
                       return RefreshIndicator(
@@ -107,25 +88,11 @@ class HomePostsPage extends StatelessWidget {
                           top: false,
                           bottom: false,
                           child: Builder(
-                            // This Builder is needed to provide a BuildContext that is
-                            // "inside" the NestedScrollView, so that
-                            // sliverOverlapAbsorberHandleFor() can find the
-                            // NestedScrollView.
                             builder: (BuildContext context) {
                               return CustomScrollView(
-                                // The "controller" and "primary" members should be left
-                                // unset, so that the NestedScrollView can control this
-                                // inner scroll view.
-                                // If the "controller" property is set, then this scroll
-                                // view will not be associated with the NestedScrollView.
-                                // The PageStorageKey should be unique to this ScrollView;
-                                // it allows the list to remember its scroll position when
-                                // the tab view is not on the screen.
                                 key: PageStorageKey<String>(name),
                                 slivers: <Widget>[
                                   SliverOverlapInjector(
-                                    // This is the flip side of the SliverOverlapAbsorber
-                                    // above.
                                     handle: NestedScrollView
                                         .sliverOverlapAbsorberHandleFor(
                                             context),
@@ -133,25 +100,11 @@ class HomePostsPage extends StatelessWidget {
                                   // Todo 10件まですぐ表示できるようにして、他はその都度描画するみたいなふうにしよう。多分そういうプロパティかなにかがあるはず。
                                   SliverPadding(
                                     padding: EdgeInsets.only(
-                                        top: 30.0, bottom: 60.0),
-
-                                    /// SliverListで場合分け。３パターン渡そう
+                                      top: 30.0,
+                                      bottom: 60.0,
+                                    ),
                                     sliver: TabPresentationSliverList(model)
                                         .getSliverList(),
-                                    // SliverList(
-                                    //   delegate: SliverChildBuilderDelegate(
-                                    //     (context, index) {
-                                    //       final post = posts[index];
-                                    //       return PostCard(
-                                    //         post: post,
-                                    //         replies:
-                                    //             homeModel.replies[post.id],
-                                    //       );
-                                    //       // return PostCard(post);
-                                    //     },
-                                    //     childCount: posts.length,
-                                    //   ),
-                                    // ),
                                   ),
                                 ],
                               );
@@ -166,41 +119,45 @@ class HomePostsPage extends StatelessWidget {
             ),
           );
         }),
-        floatingActionButton:
-            Consumer<HomePostsModel>(builder: (context, homeModel, child) {
-          return FloatingActionButton.extended(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            // elevation: 0,
-            highlightElevation: 0,
-            splashColor: kDarkPink,
-            backgroundColor: Color(0xFFFCF0F5),
-            label: Row(
-              children: [
-                Icon(
-                  Icons.create,
+        floatingActionButton: FloatingActionButton.extended(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          // elevation: 0,
+          highlightElevation: 0,
+          splashColor: kDarkPink,
+          backgroundColor: Color(0xFFFCF0F5),
+          label: Row(
+            children: [
+              Icon(
+                Icons.create,
+                color: kDarkPink,
+              ),
+              SizedBox(width: 8),
+              Text(
+                '投稿',
+                style: TextStyle(
                   color: kDarkPink,
+                  fontSize: 16,
                 ),
-                SizedBox(width: 8),
-                Text(
-                  '投稿',
-                  style: TextStyle(
-                    color: kDarkPink,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AddPostPage()),
-              );
-              await homeModel.getPostsWithReplies;
-            },
-          );
-        }),
+              ),
+            ],
+          ),
+          onPressed: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddPostPage(),
+              ),
+            );
+            await Provider.of<HomePostsModel>(context, listen: false)
+                .getPostsWithReplies;
+            await Provider.of<MyPostsModel>(context, listen: false)
+                .getPostsWithReplies;
+            // await homeModel.getPostsWithReplies;
+          },
+        ),
+        // }),
       ),
     );
   }
@@ -220,6 +177,7 @@ class TabPresentationSliverList {
           return PostCard(
             post: post,
             replies: model.replies[post.id],
+            isMyPostsPage: model is MyPostsModel,
           );
           // return PostCard(post);
         },

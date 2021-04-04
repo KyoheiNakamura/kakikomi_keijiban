@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -60,7 +59,7 @@ class HomePostsModel extends ChangeNotifier {
     final docs = querySnapshot.docs;
     final posts = docs.map((doc) => Post(doc)).toList();
     _posts = posts;
-    await getBookmarkedPosts();
+    await _getBookmarkedPosts();
     for (int i = 0; i < _posts.length; i++) {
       for (Post bookmarkedPost in _bookmarkedPosts) {
         if (_posts[i].id == bookmarkedPost.id) {
@@ -86,11 +85,10 @@ class HomePostsModel extends ChangeNotifier {
       final replies = docs.map((doc) => Reply(doc)).toList();
       _replies[post.id] = replies;
     }
-    print('getPostsWithRepliesしたよ！');
     notifyListeners();
   }
 
-  Future<void> getBookmarkedPosts() async {
+  Future<void> _getBookmarkedPosts() async {
     final bookmarkedPostsSnapshot = await _firestore
         .collection('users')
         .doc(uid)
@@ -114,44 +112,6 @@ class HomePostsModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addBookmarkedPost(Post post) async {
-    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
-    final bookmarkedPostRef =
-        userRef.collection('bookmarkedPosts').doc(post.id);
-    await bookmarkedPostRef.set({
-      'postId': post.id,
-      'postRef': userRef.collection('posts').doc(post.id),
-      'createdAt': FieldValue.serverTimestamp(),
-    });
-    post.isBookmarked = true;
-    notifyListeners();
-  }
-
-  Future<void> deleteBookmarkedPost(Post post) async {
-    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
-    final bookmarkedPosts = userRef.collection('bookmarkedPosts').doc(post.id);
-    await bookmarkedPosts.delete();
-    post.isBookmarked = false;
-    notifyListeners();
-  }
-
-  Future<void> deletePostAndReplies(Post post) async {
-    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
-    final _post = userRef.collection('posts').doc(post.id);
-    final replies = (await _post.collection('replies').get()).docs;
-    for (int i = 0; i < replies.length; i++) {
-      replies[i].reference.delete();
-    }
-    await _post.delete();
-  }
-
-  Future<void> deleteReply(Reply existingReply) async {
-    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
-    final post = userRef.collection('posts').doc(existingReply.postId);
-    final reply = post.collection('replies').doc(existingReply.id);
-    await reply.delete();
-  }
-
   // void getPostsRealtime() {
   //   final snapshots = _firestore.collection('posts').snapshots();
   //   snapshots.listen((snapshot) {
@@ -162,14 +122,4 @@ class HomePostsModel extends ChangeNotifier {
   //     notifyListeners();
   //   });
   // }
-
-// Future getPosts() async {
-//   final querySnapshot = await _firestore.collection('posts').get();
-//   final docs = querySnapshot.docs;
-//   final posts = docs.map((doc) => Post(doc)).toList();
-//   posts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-//   _posts = posts;
-//   notifyListeners();
-// }
-
 }

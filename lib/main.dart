@@ -22,20 +22,25 @@ class MyApp extends StatelessWidget {
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider(
-              create: (_) => HomePostsModel()
-                ..getPostsWithReplies
-                ..listenAuthStateChanges()),
-          ChangeNotifierProvider(create: (_) => PostCardModel()),
+            create: (_) => HomePostsModel()
+              ..getPostsWithReplies
+              ..listenAuthStateChanges(),
+          ),
           ChangeNotifierProvider(
-              create: (_) => MyPostsModel()..getPostsWithReplies),
+            create: (_) => PostCardModel(),
+          ),
           ChangeNotifierProvider(
-              create: (_) => BookmarkedPostsModel()..getPostsWithReplies),
+            create: (_) => MyPostsModel()..getPostsWithReplies,
+          ),
+          ChangeNotifierProvider(
+            create: (_) => BookmarkedPostsModel()..getPostsWithReplies,
+          ),
         ],
         child: MaterialApp(
           title: '発達障害困りごと掲示板',
           theme: ThemeData(
             primaryColor: kDarkPink,
-            primaryColorDark: Color(0xFFa54352),
+            primaryColorDark: kDeepDarkPink,
             accentColor: kDarkPink,
             brightness: Brightness.light,
             fontFamily: 'GenShinGothic',

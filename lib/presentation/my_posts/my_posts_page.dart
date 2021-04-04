@@ -16,47 +16,44 @@ class MyPostsPage extends StatelessWidget {
         );
         return Future.value(true);
       },
-      child: ChangeNotifierProvider<MyPostsModel>(
-        create: (context) => MyPostsModel()..getPostsWithReplies,
-        child: SafeArea(
-          child: Scaffold(
-            appBar: AppBar(
-              toolbarHeight: 50,
-              elevation: 0,
-              centerTitle: true,
-              title: Text(
-                '自分の投稿',
-                style: kAppBarTextStyle,
-              ),
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            toolbarHeight: 50,
+            elevation: 0,
+            centerTitle: true,
+            title: Text(
+              '自分の投稿',
+              style: kAppBarTextStyle,
             ),
-            body: Consumer<MyPostsModel>(builder: (context, model, child) {
-              final List<Post> myPosts = model.posts;
-              return AnnotatedRegion<SystemUiOverlayStyle>(
-                value: SystemUiOverlayStyle.light.copyWith(
-                    statusBarColor: Theme.of(context).primaryColorDark),
-                child: SafeArea(
-                  child: Container(
-                    color: kLightPink,
-                    child: RefreshIndicator(
-                      onRefresh: () => model.getPostsWithReplies,
-                      child: ListView.builder(
-                        padding: EdgeInsets.only(top: 30.0),
-                        itemBuilder: (BuildContext context, int index) {
-                          final post = myPosts[index];
-                          return PostCard(
-                            post: post,
-                            replies: model.replies[post.id],
-                            isMyPostsPage: true,
-                          );
-                        },
-                        itemCount: myPosts.length,
-                      ),
+          ),
+          body: Consumer<MyPostsModel>(builder: (context, model, child) {
+            final List<Post> myPosts = model.posts;
+            return AnnotatedRegion<SystemUiOverlayStyle>(
+              value: SystemUiOverlayStyle.light
+                  .copyWith(statusBarColor: Theme.of(context).primaryColorDark),
+              child: SafeArea(
+                child: Container(
+                  color: kLightPink,
+                  child: RefreshIndicator(
+                    onRefresh: () => model.getPostsWithReplies,
+                    child: ListView.builder(
+                      padding: EdgeInsets.only(top: 30.0),
+                      itemBuilder: (BuildContext context, int index) {
+                        final post = myPosts[index];
+                        return PostCard(
+                          post: post,
+                          replies: model.replies[post.id],
+                          isMyPostsPage: true,
+                        );
+                      },
+                      itemCount: myPosts.length,
                     ),
                   ),
                 ),
-              );
-            }),
-          ),
+              ),
+            );
+          }),
         ),
       ),
     );

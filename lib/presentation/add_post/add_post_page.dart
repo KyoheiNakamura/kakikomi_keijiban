@@ -427,6 +427,7 @@ class FilterChipWidget extends StatelessWidget {
       selectedColor: kLightPink,
       selectedShadowColor: kDarkPink,
       showCheckmark: false,
+      pressElevation: 0,
     );
   }
 }
