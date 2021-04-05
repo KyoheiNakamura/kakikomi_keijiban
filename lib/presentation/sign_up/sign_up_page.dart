@@ -71,6 +71,7 @@ class SignUpPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        /// nickname
                         TextFormField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -90,7 +91,8 @@ class SignUpPage extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 32.0),
-                        // content
+
+                        /// content
                         TextFormField(
                           validator: (value) {
                             // Todo emailのvalidationを書く（正規表現）
@@ -116,7 +118,8 @@ class SignUpPage extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 32.0),
-                        // nickname
+
+                        /// password
                         TextFormField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
@@ -138,11 +141,12 @@ class SignUpPage extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 48.0),
-                        // 投稿送信ボタン
+
+                        /// 投稿送信ボタン
                         OutlinedButton(
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              model.toggleIsLoading();
+                              model.startLoading();
                               clearText();
                               var signInResult = await model
                                   .signUpAndSignInWithEmailAndUpgradeAnonymous();
@@ -159,7 +163,7 @@ class SignUpPage extends StatelessWidget {
                                   ModalRoute.withName('/'),
                                 );
                               }
-                              model.toggleIsLoading();
+                              model.stopLoading();
                             }
                           },
                           child: Text(

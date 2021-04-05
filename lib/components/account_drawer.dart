@@ -83,7 +83,7 @@ class AccountDrawer extends StatelessWidget {
                           ),
                         );
                   await model.getUserProfile();
-                  Navigator.pop(context);
+                  // Navigator.pop(context);
                 },
               ),
             ],
@@ -121,8 +121,8 @@ class ChangingDrawerHeader extends StatelessWidget {
                   ),
                   SizedBox(height: 24.0),
                   TextButton(
-                    onPressed: () {
-                      model.signOut();
+                    onPressed: () async {
+                      await model.signOut();
                       Navigator.pop(context);
                     },
                     child: Text(

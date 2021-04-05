@@ -7,6 +7,17 @@ class ProfileSettingsModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final currentUser = FirebaseAuth.instance.currentUser;
   final uid = FirebaseAuth.instance.currentUser!.uid;
+  bool isLoading = false;
+
+  void startLoading() {
+    isLoading = true;
+    notifyListeners();
+  }
+
+  void stopLoading() {
+    isLoading = false;
+    notifyListeners();
+  }
 
   late String nicknameValue = '';
   late String positionDropdownValue = kPleaseSelect;

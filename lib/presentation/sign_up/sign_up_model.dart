@@ -9,8 +9,13 @@ class SignUpModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   bool isLoading = false;
 
-  void toggleIsLoading() {
-    isLoading = !isLoading;
+  void startLoading() {
+    isLoading = true;
+    notifyListeners();
+  }
+
+  void stopLoading() {
+    isLoading = false;
     notifyListeners();
   }
 
