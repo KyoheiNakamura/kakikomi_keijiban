@@ -42,13 +42,14 @@ const List<String> kCategoryList = [
   // 'ADHD(注意欠如・多動性障害)',
   'SLD',
   // 'SLD(限局性学習障害)',
+
   '大人の発達障害',
   '発達障害グレーゾーン',
   '知的障害',
   '不安障害',
   'パニック障害',
-  'チック症',
-  '吃音',
+  // 'チック症',
+  // '吃音',
   'うつ病',
   '双極性障害',
   // '躁うつ病(双極性障害)',
@@ -73,6 +74,7 @@ const List<String> kCategoryList = [
   'カサンドラ症候群',
   '就職',
   '職業選択',
+  '育児',
   'ライフハック',
   'その他',
 ];
@@ -220,9 +222,9 @@ const kEmotionDropdownButtonFormFieldDecoration = InputDecoration(
 const kPositionDropdownButtonFormFieldDecoration = InputDecoration(
   border: OutlineInputBorder(),
   labelText: 'あなたの立場',
-  // helperText: '必須',
-  // helperStyle: TextStyle(color: kDarkPink),
+  helperStyle: TextStyle(color: kDarkPink),
   prefixIcon: Icon(Icons.group),
+  helperText: '必須',
 );
 
 const kGenderDropdownButtonFormFieldDecoration = InputDecoration(
@@ -246,4 +248,9 @@ const kAreaDropdownButtonFormFieldDecoration = InputDecoration(
 const kAppBarTextStyle = TextStyle(
   fontSize: 17.0,
   fontWeight: FontWeight.bold,
+);
+
+const kDropdownButtonFormFieldTextStyle = TextStyle(
+  color: Colors.black,
+  fontSize: 15.0,
 );

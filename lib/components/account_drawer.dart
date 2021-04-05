@@ -3,6 +3,7 @@ import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_page.dart';
+import 'package:kakikomi_keijiban/presentation/profile_settings/profile_settings_page.dart';
 import 'package:kakikomi_keijiban/presentation/select_registration_method/select_registration_method_page.dart';
 import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_page.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +12,7 @@ class AccountDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<HomePostsModel>(builder: (context, model, child) {
-      final bool isUserLoggedIn = model.loggedInUser != null &&
+      final bool isLoggedInUserNotAnonymous = model.loggedInUser != null &&
           model.loggedInUser!.isAnonymous == false;
       return SizedBox(
         width: MediaQuery.of(context).size.width * 0.8,
@@ -19,13 +20,13 @@ class AccountDrawer extends StatelessWidget {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              ChangingDrawerHeader(isUserLoggedIn),
+              ChangingDrawerHeader(isLoggedInUserNotAnonymous),
               Divider(thickness: 1.0),
               ListTile(
                 leading: Icon(Icons.description),
                 title: Text('自分の投稿'),
                 onTap: () async {
-                  isUserLoggedIn
+                  isLoggedInUserNotAnonymous
                       ? await Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -44,7 +45,7 @@ class AccountDrawer extends StatelessWidget {
                 leading: Icon(Icons.star_border),
                 title: Text('ブックマーク'),
                 onTap: () async {
-                  isUserLoggedIn
+                  isLoggedInUserNotAnonymous
                       ? await Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -65,15 +66,24 @@ class AccountDrawer extends StatelessWidget {
                 leading: Icon(Icons.settings),
                 title: Text('設定'),
                 onTap: () async {
-                  isUserLoggedIn
-                      ? print('後で実装するよ！')
+                  isLoggedInUserNotAnonymous
+                      ? await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ProfileSettingsPage(model.userProfile!),
+                            // ProfileSettingsPage(model.userProfile!),
+                          ),
+                        )
                       : await Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  SelectRegistrationMethodPage()),
+                            builder: (context) =>
+                                SelectRegistrationMethodPage(),
+                          ),
                         );
-                  // Navigator.pop(context);
+                  await model.getUserProfile();
+                  Navigator.pop(context);
                 },
               ),
             ],

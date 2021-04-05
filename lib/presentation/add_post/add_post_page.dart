@@ -2,17 +2,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/domain/user_profile.dart';
 import 'package:kakikomi_keijiban/presentation/add_post/add_post_model.dart';
 import 'package:provider/provider.dart';
 
 class AddPostPage extends StatelessWidget {
-  AddPostPage({this.existingPost});
+  AddPostPage({this.userProfile, this.existingPost});
 
+  final UserProfile? userProfile;
   final Post? existingPost;
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    final bool isUserProfileNotAnonymous = userProfile != null;
     final bool isPostExisting = existingPost != null;
     return ChangeNotifierProvider<AddPostModel>(
       create: (context) => AddPostModel(),
@@ -102,7 +105,10 @@ class AddPostPage extends StatelessWidget {
                           child: TextFormField(
                             initialValue: isPostExisting
                                 ? model.nicknameValue = existingPost!.nickname
-                                : null,
+                                : isUserProfileNotAnonymous
+                                    ? model.nicknameValue =
+                                        userProfile!.nickname
+                                    : null,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'ニックネームを入力してください';
@@ -135,14 +141,51 @@ class AddPostPage extends StatelessWidget {
                             icon: Icon(Icons.arrow_downward),
                             iconSize: 24,
                             elevation: 1,
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 15.0),
+                            style: kDropdownButtonFormFieldTextStyle,
                             decoration:
                                 kEmotionDropdownButtonFormFieldDecoration,
                             onChanged: (String? selectedValue) {
                               model.emotionDropdownValue = selectedValue!;
                             },
                             items: kEmotionList.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+
+                        /// position
+                        // Todo positionを複数選択できるようにしよう
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 32.0),
+                          child: DropdownButtonFormField(
+                            validator: (value) {
+                              if (value == kPleaseSelect) {
+                                return 'あなたの立場を選択してください';
+                              }
+                              return null;
+                            },
+                            value: isPostExisting &&
+                                    existingPost!.position.isNotEmpty
+                                ? model.positionDropdownValue =
+                                    existingPost!.position
+                                : isUserProfileNotAnonymous
+                                    ? model.positionDropdownValue =
+                                        userProfile!.position
+                                    : model.positionDropdownValue,
+                            icon: Icon(Icons.arrow_downward),
+                            iconSize: 24,
+                            elevation: 1,
+                            style: kDropdownButtonFormFieldTextStyle,
+                            decoration:
+                                kPositionDropdownButtonFormFieldDecoration,
+                            onChanged: (String? selectedValue) {
+                              model.positionDropdownValue = selectedValue!;
+                              print(model.positionDropdownValue);
+                            },
+                            items: kPositionList.map((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(value),
@@ -230,42 +273,6 @@ class AddPostPage extends StatelessWidget {
                           ),
                         ),
 
-                        /// position
-                        // Todo positionを複数選択できるようにしよう
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 32.0),
-                          child: DropdownButtonFormField(
-                            // validator: (value) {
-                            //   if (value == kPleaseSelect) {
-                            //     return 'あなたの立場を選択してください';
-                            //   }
-                            //   return null;
-                            // },
-                            value: isPostExisting &&
-                                    existingPost!.position.isNotEmpty
-                                ? model.positionDropdownValue =
-                                    existingPost!.position
-                                : model.positionDropdownValue,
-                            icon: Icon(Icons.arrow_downward),
-                            iconSize: 24,
-                            elevation: 1,
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 15.0),
-                            decoration:
-                                kPositionDropdownButtonFormFieldDecoration,
-                            onChanged: (String? selectedValue) {
-                              model.positionDropdownValue = selectedValue!;
-                              print(model.positionDropdownValue);
-                            },
-                            items: kPositionList.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-
                         /// gender
                         Padding(
                           padding: const EdgeInsets.only(bottom: 32.0),
@@ -274,12 +281,14 @@ class AddPostPage extends StatelessWidget {
                                     existingPost!.gender.isNotEmpty
                                 ? model.genderDropdownValue =
                                     existingPost!.gender
-                                : model.genderDropdownValue,
+                                : isUserProfileNotAnonymous
+                                    ? model.genderDropdownValue =
+                                        userProfile!.gender
+                                    : model.genderDropdownValue,
                             icon: Icon(Icons.arrow_downward),
                             iconSize: 24,
                             elevation: 1,
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 15.0),
+                            style: kDropdownButtonFormFieldTextStyle,
                             decoration:
                                 kGenderDropdownButtonFormFieldDecoration,
                             onChanged: (String? selectedValue) {
@@ -298,15 +307,16 @@ class AddPostPage extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(bottom: 32.0),
                           child: DropdownButtonFormField(
-                            value:
-                                isPostExisting && existingPost!.age.isNotEmpty
-                                    ? model.ageDropdownValue = existingPost!.age
+                            value: isPostExisting &&
+                                    existingPost!.age.isNotEmpty
+                                ? model.ageDropdownValue = existingPost!.age
+                                : isUserProfileNotAnonymous
+                                    ? model.ageDropdownValue = userProfile!.age
                                     : model.ageDropdownValue,
                             icon: Icon(Icons.arrow_downward),
                             iconSize: 24,
                             elevation: 1,
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 15.0),
+                            style: kDropdownButtonFormFieldTextStyle,
                             decoration: kAgeDropdownButtonFormFieldDecoration,
                             onChanged: (String? selectedValue) {
                               model.ageDropdownValue = selectedValue!;
@@ -327,12 +337,14 @@ class AddPostPage extends StatelessWidget {
                             value: isPostExisting &&
                                     existingPost!.area.isNotEmpty
                                 ? model.areaDropdownValue = existingPost!.area
-                                : model.areaDropdownValue,
+                                : isUserProfileNotAnonymous
+                                    ? model.areaDropdownValue =
+                                        userProfile!.area
+                                    : model.areaDropdownValue,
                             icon: Icon(Icons.arrow_downward),
                             iconSize: 24,
                             elevation: 1,
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 15.0),
+                            style: kDropdownButtonFormFieldTextStyle,
                             decoration: kAreaDropdownButtonFormFieldDecoration,
                             onChanged: (String? selectedValue) {
                               model.areaDropdownValue = selectedValue!;
@@ -349,10 +361,8 @@ class AddPostPage extends StatelessWidget {
                         /// 投稿送信ボタン
                         OutlinedButton(
                           onPressed: () async {
-                            print('button: ${model.positionDropdownValue}');
                             if (model.validateSelectedCategories() &&
                                 _formKey.currentState!.validate()) {
-                              print('button2: ${model.positionDropdownValue}');
                               isPostExisting
                                   ? await model.updatePost(existingPost!)
                                   : await model.addPost();

@@ -47,7 +47,7 @@ class HomePostsPage extends StatelessWidget {
                           // elevation: 0,
                           centerTitle: true,
                           title: Text(
-                            'ホーム',
+                            '発達障害困りごと掲示板',
                             style: kAppBarTextStyle,
                           ),
                           actions: [
@@ -66,7 +66,7 @@ class HomePostsPage extends StatelessWidget {
                           ],
                           floating: true,
                           pinned: true,
-                          // snap: true,
+                          snap: true,
                           forceElevated: innerBoxIsScrolled,
                           bottom: TabBar(
                             tabs: _tabs
@@ -147,7 +147,10 @@ class HomePostsPage extends StatelessWidget {
             await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => AddPostPage(),
+                builder: (context) => AddPostPage(
+                    userProfile:
+                        Provider.of<HomePostsModel>(context, listen: false)
+                            .userProfile),
               ),
             );
             await Provider.of<HomePostsModel>(context, listen: false)

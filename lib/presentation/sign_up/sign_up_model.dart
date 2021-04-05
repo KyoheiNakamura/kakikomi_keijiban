@@ -7,6 +7,12 @@ import 'package:google_sign_in/google_sign_in.dart';
 class SignUpModel extends ChangeNotifier {
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
+  bool isLoading = false;
+
+  void toggleIsLoading() {
+    isLoading = !isLoading;
+    notifyListeners();
+  }
 
   String enteredEmail = '';
   String enteredPassword = '';
@@ -19,14 +25,21 @@ class SignUpModel extends ChangeNotifier {
         password: enteredPassword,
       );
       await _auth.currentUser!.linkWithCredential(credential);
+      // Auth.UserのcurrentUserにdisplayNameをセットした。
+      await _auth.currentUser!.updateProfile(
+        displayName: enteredNickname,
+      );
       // anonymousのuserDocRefのデータを、email認証で登録したユーザーのデータでsetを使って置き換えている。
       final userDocRef =
           _firestore.collection('users').doc(_auth.currentUser!.uid);
       // setはuserDocRefのDocument idをもつDocumentにデータを保存する。
-      // addはDocumentに自動生成されたidが付与されたDocumentにデータを保存する。
       await userDocRef.set({
         'nickname': enteredNickname,
-        'updatedAt': FieldValue.serverTimestamp(),
+        'position': '',
+        'gender': '',
+        'age': '',
+        'area': '',
+        'createdAt': FieldValue.serverTimestamp(),
       });
       // final Auth.User user = userCredential.user!;
       // final String email = user.email!;

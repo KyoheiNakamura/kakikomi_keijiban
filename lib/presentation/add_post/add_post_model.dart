@@ -6,6 +6,7 @@ import 'package:kakikomi_keijiban/domain/post.dart';
 
 class AddPostModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
+  final currentUser = FirebaseAuth.instance.currentUser;
   final uid = FirebaseAuth.instance.currentUser!.uid;
 
   String titleValue = '';
@@ -18,11 +19,6 @@ class AddPostModel extends ChangeNotifier {
   String genderDropdownValue = kPleaseSelect;
   String ageDropdownValue = kPleaseSelect;
   String areaDropdownValue = kPleaseSelect;
-  // String uid = FirebaseAuth.instance.currentUser!.uid;
-  // DocumentReference userRef = FirebaseFirestore.instance
-  //     .doc(FirebaseAuth.instance.currentUser!.uid)
-  //     .parent
-  //     .parent!;
   bool isCategoriesValid = true;
 
   bool validateSelectedCategories() {

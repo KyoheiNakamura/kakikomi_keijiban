@@ -1,25 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
-class User {
-  User(DocumentSnapshot doc) {
+class UserProfile {
+  UserProfile(DocumentSnapshot doc) {
     this.id = doc.id;
-    this.nickname = doc['nickName'];
-    this._createdAt = doc['createdAt'].toDate();
+    this.nickname = doc['nickname'];
+    this.position = doc['position'];
+    this.gender = doc['gender'];
+    this.age = doc['age'];
+    this.area = doc['area'];
     this._updatedAt = doc['updatedAt'].toDate();
   }
 
   String id = '';
   String nickname = '';
-  String password = '';
-  DateTime? _createdAt;
+  String position = '';
+  String gender = '';
+  String age = '';
+  String area = '';
   DateTime? _updatedAt;
 
-  String get createdAt => _formatDate(_createdAt);
   String get updatedAt => _formatDate(_updatedAt);
 
   String _formatDate(date) {
-    final formatter = DateFormat('yyyy年MM月dd日 HH時mm分');
+    final formatter = DateFormat('yyyy/MM/dd HH:mm');
     return date != null ? formatter.format(date) : '';
   }
 }

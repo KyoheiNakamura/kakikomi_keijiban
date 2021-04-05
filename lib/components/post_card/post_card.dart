@@ -8,6 +8,9 @@ import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/mixin/format_poster_data_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply_to_post/add_reply_to_post_page.dart';
+import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_model.dart';
+import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
+import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/search_result_posts/search_result_posts_page.dart';
 import 'package:provider/provider.dart';
 
@@ -112,10 +115,23 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      AddReplyToPostPage(repliedPost: post),
+                                  builder: (context) => AddReplyToPostPage(
+                                      userProfile: Provider.of<HomePostsModel>(
+                                              context,
+                                              listen: false)
+                                          .userProfile,
+                                      repliedPost: post),
                                 ),
                               );
+                              await Provider.of<HomePostsModel>(context,
+                                      listen: false)
+                                  .getPostsWithReplies;
+                              await Provider.of<MyPostsModel>(context,
+                                      listen: false)
+                                  .getPostsWithReplies;
+                              await Provider.of<BookmarkedPostsModel>(context,
+                                      listen: false)
+                                  .getPostsWithReplies;
                             },
                             child: Text(
                               '返信する',
@@ -196,6 +212,14 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                       onPressed: () async {
                         post.isBookmarked = false;
                         await model.deleteBookmarkedPost(post);
+                        await Provider.of<BookmarkedPostsModel>(context,
+                                listen: false)
+                            .getPostsWithReplies;
+                        await Provider.of<HomePostsModel>(context,
+                                listen: false)
+                            .getPostsWithReplies;
+                        await Provider.of<MyPostsModel>(context, listen: false)
+                            .getPostsWithReplies;
                       },
                     )
                   : IconButton(
@@ -205,6 +229,14 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                       onPressed: () async {
                         post.isBookmarked = true;
                         await model.addBookmarkedPost(post);
+                        await Provider.of<BookmarkedPostsModel>(context,
+                                listen: false)
+                            .getPostsWithReplies;
+                        await Provider.of<HomePostsModel>(context,
+                                listen: false)
+                            .getPostsWithReplies;
+                        await Provider.of<MyPostsModel>(context, listen: false)
+                            .getPostsWithReplies;
                       },
                     ),
             ),
