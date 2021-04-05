@@ -6,7 +6,14 @@ import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 
 class PostCardModel extends ChangeNotifier {
+  final _firestore = FirebaseFirestore.instance;
   final uid = FirebaseAuth.instance.currentUser?.uid;
+  bool isLoading = false;
+
+  void toggleIsLoading() {
+    isLoading = !isLoading;
+    notifyListeners();
+  }
 
   Future<void> addBookmarkedPost(Post post) async {
     final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
@@ -27,14 +34,29 @@ class PostCardModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> _deleteBookmarkedPostsForAllUsers(Post post) async {
+    List<Future> futures = [];
+    final querySnapshot = await _firestore
+        .collectionGroup('bookmarkedPosts')
+        .where('postId', isEqualTo: post.id)
+        .get();
+    final bookmarkedPosts =
+        querySnapshot.docs.map((doc) => doc.reference).toList();
+    for (int i = 0; i < bookmarkedPosts.length; i++) {
+      futures.add(bookmarkedPosts[i].delete());
+    }
+    await Future.wait(futures);
+  }
+
   Future<void> deletePostAndReplies(Post post) async {
     final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
     final _post = userRef.collection('posts').doc(post.id);
+    await _post.delete();
+    await _deleteBookmarkedPostsForAllUsers(post);
     final replies = (await _post.collection('replies').get()).docs;
     for (int i = 0; i < replies.length; i++) {
       replies[i].reference.delete();
     }
-    await _post.delete();
     notifyListeners();
   }
 

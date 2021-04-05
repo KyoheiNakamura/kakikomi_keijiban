@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
+import 'package:kakikomi_keijiban/domain/user_profile.dart';
 
 class HomePostsModel extends ChangeNotifier {
   static final homePage = 'HomePage';
@@ -12,6 +13,7 @@ class HomePostsModel extends ChangeNotifier {
   final _auth = FirebaseAuth.instance;
   final uid = FirebaseAuth.instance.currentUser?.uid;
   Auth.User? loggedInUser;
+  UserProfile? userProfile;
 
   List<Post> _posts = [];
   List<Post> get posts => _posts;
@@ -36,11 +38,23 @@ class HomePostsModel extends ChangeNotifier {
             'nickname': '名無し',
             'createdAt': FieldValue.serverTimestamp(),
           });
+        } else {
+          userProfile = UserProfile(userDoc);
         }
         this.loggedInUser = user;
       }
       notifyListeners();
     });
+  }
+
+  Future<void> getUserProfile() async {
+    if (loggedInUser!.isAnonymous == false) {
+      final userDoc =
+          await _firestore.collection('users').doc(loggedInUser!.uid).get();
+      userProfile = UserProfile(userDoc);
+      print('final Dance!!!');
+    }
+    notifyListeners();
   }
 
   void signOut() async {

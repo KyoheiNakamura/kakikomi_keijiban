@@ -43,7 +43,7 @@ class Post {
   String get updatedAt => _formatDate(_updatedAt);
 
   String _formatDate(date) {
-    final formatter = DateFormat('yyyy年MM月dd日 HH時mm分');
+    final formatter = DateFormat('yyyy/MM/dd HH:mm');
     return date != null ? formatter.format(date) : '';
   }
 }
