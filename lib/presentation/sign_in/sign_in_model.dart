@@ -4,7 +4,17 @@ import 'package:kakikomi_keijiban/enum.dart';
 
 class SignInModel extends ChangeNotifier {
   final _auth = FirebaseAuth.instance;
-  // final _firestore = FirebaseFirestore.instance;
+  bool isLoading = false;
+
+  void startLoading() {
+    isLoading = true;
+    notifyListeners();
+  }
+
+  void stopLoading() {
+    isLoading = false;
+    notifyListeners();
+  }
 
   String enteredEmail = '';
   String enteredPassword = '';

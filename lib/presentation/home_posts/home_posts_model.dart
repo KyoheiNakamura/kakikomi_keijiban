@@ -38,7 +38,7 @@ class HomePostsModel extends ChangeNotifier {
             'nickname': '名無し',
             'createdAt': FieldValue.serverTimestamp(),
           });
-        } else {
+        } else if (!user.isAnonymous) {
           userProfile = UserProfile(userDoc);
         }
         this.loggedInUser = user;
@@ -57,7 +57,7 @@ class HomePostsModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void signOut() async {
+  Future<void> signOut() async {
     await _auth.signOut();
     loggedInUser = null;
     notifyListeners();

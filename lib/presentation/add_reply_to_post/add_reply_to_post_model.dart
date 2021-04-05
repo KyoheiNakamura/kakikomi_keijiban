@@ -8,6 +8,17 @@ import 'package:kakikomi_keijiban/domain/reply.dart';
 class AddReplyToPostModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
+  bool isLoading = false;
+
+  void startLoading() {
+    isLoading = true;
+    notifyListeners();
+  }
+
+  void stopLoading() {
+    isLoading = false;
+    notifyListeners();
+  }
 
   String bodyValue = '';
   String nicknameValue = '';
