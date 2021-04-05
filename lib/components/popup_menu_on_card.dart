@@ -25,58 +25,60 @@ class PopupMenuOnCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isPostExisting = post != null;
-    Future<void> _showCardDeleteConfirmDialog(PostCardModel model) async {
+    Future<void> _showCardDeleteConfirmDialog() async {
       return showDialog<void>(
         context: context,
         barrierDismissible: false, // user must tap button!
         builder: (BuildContext context) {
-          return LoadingSpinner(
-            inAsyncCall: model.isLoading,
-            child: AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
+          return Consumer<PostCardModel>(builder: (context, model, child) {
+            return LoadingSpinner(
+              inAsyncCall: model.isLoading,
+              child: AlertDialog(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
+                title: isPostExisting ? Text('投稿の削除') : Text('返信の削除'),
+                content: Text('本当に削除しますか？'),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text(
+                      'キャンセル',
+                      style: TextStyle(color: kDarkPink),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: Text(
+                      '削除',
+                      style: TextStyle(color: kDarkPink),
+                    ),
+                    onPressed: () async {
+                      model.startLoading();
+                      isPostExisting
+                          ? await model.deletePostAndReplies(post!)
+                          : await model.deleteReply(reply!);
+                      await Provider.of<MyPostsModel>(context, listen: false)
+                          .getPostsWithReplies;
+                      await Provider.of<HomePostsModel>(context, listen: false)
+                          .getPostsWithReplies;
+                      await Provider.of<BookmarkedPostsModel>(context,
+                              listen: false)
+                          .getPostsWithReplies;
+                      model.stopLoading();
+                      Navigator.of(context).pop();
+                      // Navigator.of(context).popUntil(
+                      //   ModalRoute.withName('/'),
+                      // );
+                    },
+                  ),
+                ],
               ),
-              title: isPostExisting ? Text('投稿の削除') : Text('返信の削除'),
-              content: Text('本当に削除しますか？'),
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
-              actions: <Widget>[
-                TextButton(
-                  child: Text(
-                    'キャンセル',
-                    style: TextStyle(color: kDarkPink),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                TextButton(
-                  child: Text(
-                    '削除',
-                    style: TextStyle(color: kDarkPink),
-                  ),
-                  onPressed: () async {
-                    model.toggleIsLoading();
-                    isPostExisting
-                        ? await model.deletePostAndReplies(post!)
-                        : await model.deleteReply(reply!);
-                    await Provider.of<MyPostsModel>(context, listen: false)
-                        .getPostsWithReplies;
-                    await Provider.of<HomePostsModel>(context, listen: false)
-                        .getPostsWithReplies;
-                    await Provider.of<BookmarkedPostsModel>(context,
-                            listen: false)
-                        .getPostsWithReplies;
-                    model.toggleIsLoading();
-                    Navigator.of(context).pop();
-                    // Navigator.of(context).popUntil(
-                    //   ModalRoute.withName('/'),
-                    // );
-                  },
-                ),
-              ],
-            ),
-          );
+            );
+          });
         },
       );
     }
@@ -108,7 +110,7 @@ class PopupMenuOnCard extends StatelessWidget {
             await Provider.of<MyPostsModel>(context, listen: false)
                 .getPostsWithReplies;
           } else if (result == PopupMenuItemsOnCard.delete) {
-            await _showCardDeleteConfirmDialog(model);
+            await _showCardDeleteConfirmDialog();
           }
         },
         itemBuilder: (BuildContext context) => [

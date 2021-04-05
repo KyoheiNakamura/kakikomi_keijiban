@@ -10,8 +10,13 @@ class PostCardModel extends ChangeNotifier {
   final uid = FirebaseAuth.instance.currentUser?.uid;
   bool isLoading = false;
 
-  void toggleIsLoading() {
-    isLoading = !isLoading;
+  void startLoading() {
+    isLoading = true;
+    notifyListeners();
+  }
+
+  void stopLoading() {
+    isLoading = false;
     notifyListeners();
   }
 
