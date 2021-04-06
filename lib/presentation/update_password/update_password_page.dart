@@ -3,27 +3,27 @@ import 'package:kakikomi_keijiban/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/enum.dart';
 import 'package:kakikomi_keijiban/mixin/show_auth_error_dialog_mixin.dart';
-import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_model.dart';
+import 'package:kakikomi_keijiban/presentation/update_password/update_password_model.dart';
 import 'package:provider/provider.dart';
 
-class SignInPage extends StatelessWidget with ShowAuthErrorDialogMixin {
+class UpdatePasswordPage extends StatelessWidget with ShowAuthErrorDialogMixin {
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<SignInModel>(
-      create: (context) => SignInModel(),
+    return ChangeNotifierProvider<UpdatePasswordModel>(
+      create: (context) => UpdatePasswordModel(),
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
           elevation: 0,
           centerTitle: true,
           title: Text(
-            'ログイン',
+            'パスワードの変更',
             style: kAppBarTextStyle,
           ),
         ),
-        body: Consumer<SignInModel>(
+        body: Consumer<UpdatePasswordModel>(
           builder: (context, model, child) {
             return LoadingSpinner(
               inAsyncCall: model.isLoading,
@@ -32,89 +32,91 @@ class SignInPage extends StatelessWidget with ShowAuthErrorDialogMixin {
                   key: _formKey,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 48.0, horizontal: 24.0),
+                        vertical: 32.0, horizontal: 24.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // content
-                        TextFormField(
-                          validator: (value) {
-                            // Todo emailのvalidationを書く（正規表現）
-                            // if (value == null ||
-                            //     value.isEmpty ||
-                            //     RegExp(r"/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)")
-                            //         .hasMatch(model.enteredEmail)) {
-                            //   return 'メールアドレスを入力してください';
-                            // }
-                            if (value == null || value.isEmpty) {
-                              return 'メールアドレスを入力してください';
-                            }
-                            return null;
-                          },
-                          onChanged: (newValue) {
-                            model.enteredEmail = newValue;
-                          },
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            // prefixIcon: Icon(Icons.text_fields),
-                            labelText: 'メールアドレス',
-                          ),
+                        /// currentEmail
+                        Text('メールアドレス'),
+                        SizedBox(height: 8.0),
+                        Text(
+                          model.email,
+                          style: TextStyle(fontSize: 17.0),
                         ),
                         SizedBox(height: 32.0),
-                        // nickname
+
+                        /// currentPassword
                         TextFormField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'パスワードを入力してください';
                             } else if (value.length < 8) {
+                              // Todo 半角英数記号の正規表現を書く
                               return '8文字以上の半角英数記号でご記入ください';
                             }
                             return null;
                           },
                           onChanged: (newValue) {
-                            model.enteredPassword = newValue;
+                            model.enteredCurrentPassword = newValue;
+                          },
+                          obscureText: true,
+                          autofocus: true,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            // prefixIcon: Icon(Icons.text_fields),
+                            labelText: '現在のパスワード',
+                          ),
+                        ),
+                        SizedBox(height: 32.0),
+
+                        /// newPassword
+                        TextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'パスワードを入力してください';
+                            } else if (value.length < 8) {
+                              // Todo 半角英数記号の正規表現を書く
+                              return '8文字以上の半角英数記号でご記入ください';
+                            }
+                            return null;
+                          },
+                          onChanged: (newValue) {
+                            model.enteredNewPassword = newValue;
                           },
                           obscureText: true,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
                             // prefixIcon: Icon(Icons.password),
-                            labelText: 'パスワード（8文字以上の半角英数記号）',
+                            labelText: '新しいパスワード（8文字以上の半角英数記号）',
                           ),
                         ),
-                        SizedBox(height: 48.0),
-                        // 投稿送信ボタン
+                        SizedBox(height: 40.0),
+
+                        /// 投稿送信ボタン
                         OutlinedButton(
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               model.startLoading();
-
-                              var signInResult = await model.signIn();
+                              var signInResult = await model.updatePassword();
                               if (signInResult ==
-                                  AuthException.emailAlreadyInUse) {
-                                await showAuthErrorDialog(
-                                    context, 'このメールアドレスは\nすでに使用されています。');
-                              } else if (signInResult ==
-                                  AuthException.userNotFound) {
-                                await showAuthErrorDialog(
-                                    context, 'このメールアドレスは\n登録されていません。');
-                              } else if (signInResult ==
-                                  AuthException.invalidEmail) {
-                                await showAuthErrorDialog(
-                                    context, 'このメールアドレスは形式が正しくありません。');
-                              } else if (signInResult ==
-                                  AuthException.wrongPassword) {
-                                await showAuthErrorDialog(
-                                    context, 'パスワードが正しくありません。');
+                                  AuthException.requiresRecentLogin) {
+                                await showAuthErrorDialog(context,
+                                    '最後にログインしてから時間が経っています。\nお手数ですが一度ログアウトしたのち、再度ログインしてからもう一度お試しください。');
                               } else {
                                 Navigator.of(context).popUntil(
                                   ModalRoute.withName('/'),
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('パスワードが変更されました。'),
+                                  ),
                                 );
                               }
                               model.stopLoading();
                             }
                           },
                           child: Text(
-                            'ログインする',
+                            'パスワードを変更する',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,

@@ -2,50 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/enum.dart';
+import 'package:kakikomi_keijiban/mixin/show_auth_error_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/sign_up/sign_up_model.dart';
 import 'package:provider/provider.dart';
 
-class SignUpPage extends StatelessWidget {
+class SignUpPage extends StatelessWidget with ShowAuthErrorDialogMixin {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  void clearText() {
-    _emailController.clear();
-    _passwordController.clear();
-  }
 
   @override
   Widget build(BuildContext context) {
-    Future<void> _showAuthErrorDialog(String errorMessage) async {
-      return await showDialog<void>(
-        context: context,
-        barrierDismissible: false, // user must tap button!
-        builder: (BuildContext context) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            // title: Text('認証エラー'),
-            content: Text(errorMessage),
-            contentPadding:
-                EdgeInsets.only(left: 24.0, top: 24.0, right: 24.0, bottom: 0),
-            actions: <Widget>[
-              TextButton(
-                child: Text(
-                  'OK',
-                  style: TextStyle(color: kDarkPink),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
-
     return ChangeNotifierProvider<SignUpModel>(
       create: (context) => SignUpModel(),
       child: Scaffold(
@@ -107,7 +72,6 @@ class SignUpPage extends StatelessWidget {
                             }
                             return null;
                           },
-                          controller: _emailController,
                           onChanged: (newValue) {
                             model.enteredEmail = newValue;
                           },
@@ -129,7 +93,6 @@ class SignUpPage extends StatelessWidget {
                             }
                             return null;
                           },
-                          controller: _passwordController,
                           onChanged: (newValue) {
                             model.enteredPassword = newValue;
                           },
@@ -147,17 +110,16 @@ class SignUpPage extends StatelessWidget {
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               model.startLoading();
-                              clearText();
                               var signInResult = await model
                                   .signUpAndSignInWithEmailAndUpgradeAnonymous();
                               if (signInResult ==
                                   AuthException.emailAlreadyInUse) {
-                                await _showAuthErrorDialog(
-                                    'このメールアドレスは\nすでに使用されています。');
+                                await showAuthErrorDialog(
+                                    context, 'このメールアドレスは\nすでに使用されています。');
                               } else if (signInResult ==
                                   AuthException.invalidEmail) {
-                                await _showAuthErrorDialog(
-                                    'このメールアドレスは\n形式が正しくありません。');
+                                await showAuthErrorDialog(
+                                    context, 'このメールアドレスは\n形式が正しくありません。');
                               } else {
                                 Navigator.of(context).popUntil(
                                   ModalRoute.withName('/'),

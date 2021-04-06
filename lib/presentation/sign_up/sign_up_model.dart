@@ -132,7 +132,6 @@ class SignUpModel extends ChangeNotifier {
 //     } else if (e.code == 'invalid-email') {
 //       print('このメールアドレスは形式が正しくないです。');
 //       return AuthException.invalidEmail;
-//       // Todo createUserWithEmailAndPassword()の他の例外処理も書こう
 //     } else {
 //       print(e);
 //       return e;

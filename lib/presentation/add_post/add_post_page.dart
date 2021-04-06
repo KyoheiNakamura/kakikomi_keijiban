@@ -93,6 +93,7 @@ class AddPostPage extends StatelessWidget {
                                 return null;
                               },
                               // maxLength: 1000,
+                              minLines: 3,
                               maxLines: null,
                               keyboardType: TextInputType.multiline,
                               onChanged: (newValue) {

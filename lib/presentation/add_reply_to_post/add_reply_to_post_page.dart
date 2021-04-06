@@ -67,6 +67,7 @@ class AddReplyToPostPage extends StatelessWidget {
                             },
                             // maxLength: 1000,
                             maxLines: null,
+                            minLines: 3,
                             keyboardType: TextInputType.multiline,
                             onChanged: (newValue) {
                               model.bodyValue = newValue;
