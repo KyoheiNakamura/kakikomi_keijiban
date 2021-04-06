@@ -9,7 +9,8 @@ class UserProfile {
     this.gender = doc['gender'];
     this.age = doc['age'];
     this.area = doc['area'];
-    this._updatedAt = doc['updatedAt'].toDate();
+    // this._updatedAt = doc['updatedAt'].toDate();
+    // print(doc['updatedAt'].toDate());
   }
 
   String id = '';
@@ -18,12 +19,12 @@ class UserProfile {
   String gender = '';
   String age = '';
   String area = '';
-  DateTime? _updatedAt;
-
-  String get updatedAt => _formatDate(_updatedAt);
-
-  String _formatDate(date) {
-    final formatter = DateFormat('yyyy/MM/dd HH:mm');
-    return date != null ? formatter.format(date) : '';
-  }
+  // DateTime? _updatedAt;
+  //
+  // String get updatedAt => _formatDate(_updatedAt);
+  //
+  // String _formatDate(date) {
+  //   final formatter = DateFormat('yyyy/MM/dd HH:mm');
+  //   return date != null ? formatter.format(date) : '';
+  // }
 }
