@@ -37,16 +37,41 @@ class BookmarkedPostsPage extends StatelessWidget {
                 color: kLightPink,
                 child: RefreshIndicator(
                   onRefresh: () => model.getPostsWithReplies,
-                  child: ListView.builder(
-                    padding: EdgeInsets.only(top: 30.0),
-                    itemBuilder: (BuildContext context, int index) {
-                      final post = bookmarkedPosts[index];
-                      return PostCard(
-                        post: post,
-                        replies: model.replies[post.id],
-                      );
+                  child: NotificationListener<ScrollNotification>(
+                    onNotification: (notification) {
+                      if (notification.metrics.pixels ==
+                          notification.metrics.maxScrollExtent) {
+                        if (model.isLoading) {
+                          return false;
+                        } else {
+                          if (model.canLoadMore) {
+                            // ignore: unnecessary_statements
+                            model.loadPostsWithReplies;
+                          }
+                        }
+                      } else {
+                        return false;
+                      }
+                      return false;
                     },
-                    itemCount: bookmarkedPosts.length,
+                    child: ListView.builder(
+                      padding: EdgeInsets.only(top: 30.0),
+                      itemBuilder: (BuildContext context, int index) {
+                        final post = bookmarkedPosts[index];
+                        return Column(
+                          children: [
+                            PostCard(
+                              post: post,
+                              replies: model.replies[post.id],
+                            ),
+                            post == bookmarkedPosts.last && model.isLoading
+                                ? CircularProgressIndicator()
+                                : SizedBox(),
+                          ],
+                        );
+                      },
+                      itemCount: bookmarkedPosts.length,
+                    ),
                   ),
                 ),
               ),

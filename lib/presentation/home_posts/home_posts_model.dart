@@ -8,7 +8,6 @@ import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/user_profile.dart';
 
 class HomePostsModel extends ChangeNotifier {
-  static final homePage = 'HomePage';
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
   final uid = FirebaseAuth.instance.currentUser?.uid;
@@ -17,12 +16,149 @@ class HomePostsModel extends ChangeNotifier {
 
   List<Post> _posts = [];
   List<Post> get posts => _posts;
-
   Map<String, List<Reply>> _replies = {};
   Map<String, List<Reply>> get replies => _replies;
 
-  List<Post> _bookmarkedPosts = [];
-  List<Post> get bookmarkedPosts => _bookmarkedPosts;
+  QueryDocumentSnapshot? lastVisibleOfTheBatch;
+  int loadLimit = 10;
+  // // bool isPostsExisting = false;
+  bool canLoadMore = false;
+  bool isLoading = false;
+
+  void startLoading() {
+    isLoading = true;
+    notifyListeners();
+  }
+
+  void stopLoading() {
+    isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> get getPostsWithReplies => _getPostsWithReplies();
+  Future<void> get loadPostsWithReplies => _loadPostsWithReplies();
+
+  Future<void> _getPostsWithReplies() async {
+    startLoading();
+
+    Query queryBatch = FirebaseFirestore.instance
+        .collectionGroup('posts')
+        .orderBy('createdAt', descending: true)
+        .limit(loadLimit);
+    final querySnapshot = await queryBatch.get();
+    final docs = querySnapshot.docs;
+    _posts = [];
+    List<Post> posts;
+    if (docs.length == 0) {
+      // isPostsExisting = false;
+      canLoadMore = false;
+      posts = [];
+      _posts = posts;
+    } else if (docs.length < loadLimit) {
+      // isPostsExisting = true;
+      canLoadMore = false;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      posts = docs.map((doc) => Post(doc)).toList();
+      _posts = posts;
+    } else {
+      // isPostsExisting = true;
+      canLoadMore = true;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      posts = docs.map((doc) => Post(doc)).toList();
+      _posts = posts;
+    }
+    await _addBookmarkToPosts();
+    await _getRepliesToPosts();
+
+    stopLoading();
+    notifyListeners();
+  }
+
+  Future<void> _loadPostsWithReplies() async {
+    startLoading();
+
+    Query queryBatch = FirebaseFirestore.instance
+        .collectionGroup('posts')
+        .orderBy('createdAt', descending: true)
+        .startAfterDocument(lastVisibleOfTheBatch!)
+        .limit(loadLimit);
+    // queryBatch = queryBatch.startAfterDocument(lastVisibleOfTheBatch!);
+    final querySnapshot = await queryBatch.get();
+    final docs = querySnapshot.docs;
+    List<Post> posts;
+    if (docs.length == 0) {
+      // isPostsExisting = false;
+      canLoadMore = false;
+      posts = [];
+      _posts += posts;
+    } else if (docs.length < loadLimit) {
+      // isPostsExisting = true;
+      canLoadMore = false;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      posts = docs.map((doc) => Post(doc)).toList();
+      _posts += posts;
+    } else {
+      // isPostsExisting = true;
+      canLoadMore = true;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      posts = docs.map((doc) => Post(doc)).toList();
+      _posts += posts;
+    }
+    await _addBookmarkToPosts();
+    await _getRepliesToPosts();
+
+    stopLoading();
+    notifyListeners();
+  }
+
+  Future<void> _addBookmarkToPosts() async {
+    List<Post> _bookmarkedPosts = [];
+    final bookmarkedPostsSnapshot = await _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('bookmarkedPosts')
+        .orderBy('createdAt', descending: true)
+        .get();
+    final postSnapshots = await Future.wait(bookmarkedPostsSnapshot.docs
+        .map((bookmarkedPost) => _firestore
+            .collectionGroup('posts')
+            .where('id', isEqualTo: bookmarkedPost['postId'])
+            // .orderBy('createdAt', descending: true)
+            .get())
+        .toList());
+    final bookmarkedPostDocs =
+        postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
+    _bookmarkedPosts = bookmarkedPostDocs.map((doc) => Post(doc)).toList();
+    // postCardでブックマークアイコンの切り替えのために書いてる
+    for (int i = 0; i < _bookmarkedPosts.length; i++) {
+      _bookmarkedPosts[i].isBookmarked = true;
+    }
+    for (int i = 0; i < _posts.length; i++) {
+      for (Post bookmarkedPost in _bookmarkedPosts) {
+        if (_posts[i].id == bookmarkedPost.id) {
+          _posts[i].isBookmarked = true;
+        }
+      }
+    }
+  }
+
+  Future<void> _getRepliesToPosts() async {
+    if (_posts.isNotEmpty) {
+      for (final post in _posts) {
+        final querySnapshot = await _firestore
+            .collection('users')
+            .doc(post.uid)
+            .collection('posts')
+            .doc(post.id)
+            .collection('replies')
+            .orderBy('createdAt')
+            .get();
+        final docs = querySnapshot.docs;
+        final replies = docs.map((doc) => Reply(doc)).toList();
+        _replies[post.id] = replies;
+      }
+    }
+  }
 
   void listenAuthStateChanges() {
     _auth.userChanges().listen((Auth.User? user) async {
@@ -63,70 +199,7 @@ class HomePostsModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> get getPostsWithReplies => _getPostsWithReplies();
-
-  Future<void> _getPostsWithReplies() async {
-    final querySnapshot = await _firestore
-        .collectionGroup('posts')
-        .orderBy('createdAt', descending: true)
-        .get();
-    final docs = querySnapshot.docs;
-    final posts = docs.map((doc) => Post(doc)).toList();
-    _posts = posts;
-    await _getBookmarkedPosts();
-    for (int i = 0; i < _posts.length; i++) {
-      for (Post bookmarkedPost in _bookmarkedPosts) {
-        if (_posts[i].id == bookmarkedPost.id) {
-          _posts[i].isBookmarked = true;
-        }
-      }
-    }
-    for (final post in posts) {
-      // final querySnapshot = await _firestore
-      //     .collectionGroup('replies')
-      //     .where('postId', isEqualTo: post.id)
-      //     .orderBy('createdAt')
-      //     .get();
-      final querySnapshot = await _firestore
-          .collection('users')
-          .doc(post.uid)
-          .collection('posts')
-          .doc(post.id)
-          .collection('replies')
-          .orderBy('createdAt')
-          .get();
-      final docs = querySnapshot.docs;
-      final replies = docs.map((doc) => Reply(doc)).toList();
-      _replies[post.id] = replies;
-    }
-    notifyListeners();
-  }
-
-  Future<void> _getBookmarkedPosts() async {
-    final bookmarkedPostsSnapshot = await _firestore
-        .collection('users')
-        .doc(uid)
-        .collection('bookmarkedPosts')
-        .orderBy('createdAt', descending: true)
-        .get();
-    final postSnapshots = await Future.wait(bookmarkedPostsSnapshot.docs
-        .map((bookmarkedPost) => _firestore
-            .collectionGroup('posts')
-            .where('id', isEqualTo: bookmarkedPost['postId'])
-            // .orderBy('createdAt', descending: true)
-            .get())
-        .toList());
-    final bookmarkedPostDocs =
-        postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
-    _bookmarkedPosts = bookmarkedPostDocs.map((doc) => Post(doc)).toList();
-    // postCardでブックマークアイコンの切り替えのために書いてる
-    for (int i = 0; i < _bookmarkedPosts.length; i++) {
-      _bookmarkedPosts[i].isBookmarked = true;
-    }
-    notifyListeners();
-  }
-
-  // void getPostsRealtime() {
+// void getPostsRealtime() {
   //   final snapshots = _firestore.collection('posts').snapshots();
   //   snapshots.listen((snapshot) {
   //     final docs = snapshot.docs;

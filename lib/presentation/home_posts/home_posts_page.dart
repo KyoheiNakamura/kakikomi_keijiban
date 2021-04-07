@@ -24,7 +24,7 @@ class HomePostsPage extends StatelessWidget {
         body: Consumer3<HomePostsModel, MyPostsModel, BookmarkedPostsModel>(
             builder: (context, homePostsModel, myPostsModel,
                 bookmarkedPostsModel, child) {
-          final Map<String, dynamic> tabPresentations = {
+          final Map<String, dynamic> _tabPresentations = {
             'ホーム': homePostsModel,
             '自分の投稿': myPostsModel,
             'ブックマーク': bookmarkedPostsModel,
@@ -35,85 +35,61 @@ class HomePostsPage extends StatelessWidget {
             child: SafeArea(
               child: Container(
                 color: kLightPink,
-                child: NestedScrollView(
-                  headerSliverBuilder:
-                      (BuildContext context, bool innerBoxIsScrolled) {
-                    return <Widget>[
-                      SliverOverlapAbsorber(
-                        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
-                            context),
-                        sliver: SliverAppBar(
-                          toolbarHeight: 50,
-                          // elevation: 0,
-                          centerTitle: true,
-                          title: Text(
-                            '発達障害困りごと掲示板',
-                            style: kAppBarTextStyle,
-                          ),
-                          actions: [
-                            IconButton(
-                              icon: Icon(Icons.search, size: 24),
-                              onPressed: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SearchPage(),
-                                  ),
-                                );
-                                await homePostsModel.getPostsWithReplies;
-                              },
+                child: Stack(
+                  children: [
+                    NestedScrollView(
+                      headerSliverBuilder:
+                          (BuildContext context, bool innerBoxIsScrolled) {
+                        return <Widget>[
+                          SliverOverlapAbsorber(
+                            handle:
+                                NestedScrollView.sliverOverlapAbsorberHandleFor(
+                                    context),
+                            sliver: SliverAppBar(
+                              toolbarHeight: 50,
+                              // elevation: 0,
+                              centerTitle: true,
+                              title: Text(
+                                '発達障害困りごと掲示板',
+                                style: kAppBarTextStyle,
+                              ),
+                              actions: [
+                                IconButton(
+                                  icon: Icon(Icons.search, size: 24),
+                                  onPressed: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => SearchPage(),
+                                      ),
+                                    );
+                                    await homePostsModel.getPostsWithReplies;
+                                  },
+                                ),
+                              ],
+                              floating: true,
+                              pinned: true,
+                              snap: true,
+                              forceElevated: innerBoxIsScrolled,
+                              bottom: TabBar(
+                                tabs: _tabs
+                                    .map((String name) => Tab(text: name))
+                                    .toList(),
+                              ),
                             ),
-                          ],
-                          floating: true,
-                          pinned: true,
-                          snap: true,
-                          forceElevated: innerBoxIsScrolled,
-                          bottom: TabBar(
-                            tabs: _tabs
-                                .map((String name) => Tab(text: name))
-                                .toList(),
                           ),
-                        ),
-                      ),
-                    ];
-                  },
+                        ];
+                      },
 
-                  /// タブ名(ページ名)で表示を場合分け
-                  body: TabBarView(
-                    children: _tabs.map((String name) {
-                      final model = tabPresentations[name];
-                      return RefreshIndicator(
-                        onRefresh: () => model.getPostsWithReplies,
-                        child: SafeArea(
-                          top: false,
-                          bottom: false,
-                          child: Builder(
-                            builder: (BuildContext context) {
-                              return CustomScrollView(
-                                key: PageStorageKey<String>(name),
-                                slivers: <Widget>[
-                                  SliverOverlapInjector(
-                                    handle: NestedScrollView
-                                        .sliverOverlapAbsorberHandleFor(
-                                            context),
-                                  ),
-                                  // Todo 10件まですぐ表示できるようにして、他はその都度描画するみたいなふうにしよう。多分そういうプロパティかなにかがあるはず。
-                                  SliverPadding(
-                                    padding: EdgeInsets.only(
-                                      top: 30.0,
-                                      bottom: 60.0,
-                                    ),
-                                    sliver: TabPresentationSliverList(model)
-                                        .getSliverList(),
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
+                      /// タブ名(ページ名)で表示を場合分け
+                      body: TabBarView(
+                        children: _tabs.map((String name) {
+                          final model = _tabPresentations[name];
+                          return TabBarViewChild(name: name, model: model);
+                        }).toList(),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -166,25 +142,80 @@ class HomePostsPage extends StatelessWidget {
   }
 }
 
-class TabPresentationSliverList {
-  TabPresentationSliverList(this.model);
+class TabBarViewChild extends StatelessWidget {
+  TabBarViewChild({required this.name, required this.model});
 
+  final String name;
   final model;
 
-  SliverList getSliverList() {
+  @override
+  Widget build(BuildContext context) {
     final List<Post> posts = model.posts;
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          final post = posts[index];
-          return PostCard(
-            post: post,
-            replies: model.replies[post.id],
-            isMyPostsPage: model is MyPostsModel,
-          );
-          // return PostCard(post);
-        },
-        childCount: posts.length,
+    return RefreshIndicator(
+      onRefresh: () => model.getPostsWithReplies,
+      child: SafeArea(
+        top: false,
+        bottom: false,
+        child: Builder(
+          builder: (BuildContext context) {
+            return NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                print('notification: $notification');
+                print('pixels: ${notification.metrics.pixels}');
+                print('max: ${notification.metrics.maxScrollExtent}');
+                if (notification.metrics.pixels ==
+                    notification.metrics.maxScrollExtent) {
+                  if (model.isLoading) {
+                    return false;
+                  } else {
+                    if (model.canLoadMore) {
+                      // ignore: unnecessary_statements
+                      model.loadPostsWithReplies;
+                    }
+                  }
+                } else {
+                  return false;
+                }
+                return false;
+              },
+              child: CustomScrollView(
+                key: PageStorageKey<String>(name),
+                slivers: [
+                  SliverOverlapInjector(
+                    handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                        context),
+                  ),
+                  SliverPadding(
+                    padding: EdgeInsets.only(
+                      top: 30.0,
+                      bottom: 60.0,
+                    ),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final post = posts[index];
+                          return Column(
+                            children: [
+                              PostCard(
+                                post: post,
+                                replies: model.replies[post.id],
+                                isMyPostsPage: model is MyPostsModel,
+                              ),
+                              post == posts.last && model.isLoading
+                                  ? CircularProgressIndicator()
+                                  : SizedBox(),
+                            ],
+                          );
+                        },
+                        childCount: posts.length,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
