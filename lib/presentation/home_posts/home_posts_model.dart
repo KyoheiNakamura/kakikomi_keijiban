@@ -47,25 +47,21 @@ class HomePostsModel extends ChangeNotifier {
         .limit(loadLimit);
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
-    _posts = [];
-    List<Post> posts;
+    _posts.clear();
     if (docs.length == 0) {
       // isPostsExisting = false;
       canLoadMore = false;
-      posts = [];
-      _posts = posts;
+      _posts = [];
     } else if (docs.length < loadLimit) {
       // isPostsExisting = true;
       canLoadMore = false;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      posts = docs.map((doc) => Post(doc)).toList();
-      _posts = posts;
+      _posts = docs.map((doc) => Post(doc)).toList();
     } else {
       // isPostsExisting = true;
       canLoadMore = true;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      posts = docs.map((doc) => Post(doc)).toList();
-      _posts = posts;
+      _posts = docs.map((doc) => Post(doc)).toList();
     }
     await _addBookmarkToPosts();
     await _getRepliesToPosts();
@@ -85,24 +81,20 @@ class HomePostsModel extends ChangeNotifier {
     // queryBatch = queryBatch.startAfterDocument(lastVisibleOfTheBatch!);
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
-    List<Post> posts;
     if (docs.length == 0) {
       // isPostsExisting = false;
       canLoadMore = false;
-      posts = [];
-      _posts += posts;
+      _posts += [];
     } else if (docs.length < loadLimit) {
       // isPostsExisting = true;
       canLoadMore = false;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      posts = docs.map((doc) => Post(doc)).toList();
-      _posts += posts;
+      _posts += docs.map((doc) => Post(doc)).toList();
     } else {
       // isPostsExisting = true;
       canLoadMore = true;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      posts = docs.map((doc) => Post(doc)).toList();
-      _posts += posts;
+      _posts += docs.map((doc) => Post(doc)).toList();
     }
     await _addBookmarkToPosts();
     await _getRepliesToPosts();
@@ -112,7 +104,7 @@ class HomePostsModel extends ChangeNotifier {
   }
 
   Future<void> _addBookmarkToPosts() async {
-    List<Post> _bookmarkedPosts = [];
+    // List<Post> _bookmarkedPosts = [];
     final bookmarkedPostsSnapshot = await _firestore
         .collection('users')
         .doc(uid)
@@ -128,14 +120,11 @@ class HomePostsModel extends ChangeNotifier {
         .toList());
     final bookmarkedPostDocs =
         postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
-    _bookmarkedPosts = bookmarkedPostDocs.map((doc) => Post(doc)).toList();
-    // postCardでブックマークアイコンの切り替えのために書いてる
-    for (int i = 0; i < _bookmarkedPosts.length; i++) {
-      _bookmarkedPosts[i].isBookmarked = true;
-    }
+
+    // これで十分疑惑
     for (int i = 0; i < _posts.length; i++) {
-      for (Post bookmarkedPost in _bookmarkedPosts) {
-        if (_posts[i].id == bookmarkedPost.id) {
+      for (QueryDocumentSnapshot bookmarkedPostDoc in bookmarkedPostDocs) {
+        if (_posts[i].id == bookmarkedPostDoc.id) {
           _posts[i].isBookmarked = true;
         }
       }

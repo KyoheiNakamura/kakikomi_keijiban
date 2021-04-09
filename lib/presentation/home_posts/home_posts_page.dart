@@ -9,6 +9,7 @@ import 'package:kakikomi_keijiban/presentation/add_post/add_post_page.dart';
 import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_model.dart';
+import 'package:kakikomi_keijiban/presentation/my_replies/my_replies_model.dart';
 import 'package:kakikomi_keijiban/presentation/search/search_page.dart';
 import 'package:provider/provider.dart';
 
@@ -27,6 +28,7 @@ class HomePostsPage extends StatelessWidget {
           final Map<String, dynamic> _tabPresentations = {
             'ホーム': homePostsModel,
             '自分の投稿': myPostsModel,
+            // '自分の返信': myRepliesModel,
             'ブックマーク': bookmarkedPostsModel,
           };
           return AnnotatedRegion<SystemUiOverlayStyle>(

@@ -3,22 +3,23 @@ import 'package:flutter/material.dart';
 const Color kDeepDarkPink = Color(0xFFa54352);
 const Color kDarkPink = Color(0xFFDC5A6E);
 const Color kPink = Color(0xFFf3d4d8);
-const Color kLightPink = Color(0xFFFFF7FA);
+const Color kLightPink = Color(0xFFFCF0F5);
+const Color kUltraLightPink = Color(0xFFFFF7FA);
 const Color kLightGrey = Colors.black54;
 
 const String kPleaseSelect = '選択してください';
 const String kDoNotSelect = '選択しない';
 
 const Map<String, String> kEmotionIcons = {
-  'うれしい': 'images/anpanman.png',
-  'かなしい': 'images/anpanman.png',
-  'つらい': 'images/anpanman.png',
-  '相談': 'images/anpanman.png',
-  '疑問': 'images/anpanman.png',
-  '提案': 'images/anpanman.png',
-  '悩み': 'images/anpanman.png',
-  'エール': 'images/anpanman.png',
-  '呼びかけ': 'images/anpanman.png',
+  'うれしい': 'lib/assets/images/anpanman.png',
+  'かなしい': 'lib/assets/images/anpanman.png',
+  'つらい': 'lib/assets/images/anpanman.png',
+  '相談': 'lib/assets/images/anpanman.png',
+  '疑問': 'lib/assets/images/anpanman.png',
+  '提案': 'lib/assets/images/anpanman.png',
+  '悩み': 'lib/assets/images/anpanman.png',
+  'エール': 'lib/assets/images/anpanman.png',
+  '呼びかけ': 'lib/assets/images/anpanman.png',
 };
 
 const List<String> kEmotionList = [
@@ -42,9 +43,9 @@ const List<String> kCategoryList = [
   // 'ADHD(注意欠如・多動性障害)',
   'SLD',
   // 'SLD(限局性学習障害)',
-
   '大人の発達障害',
   '発達障害グレーゾーン',
+  'アスペルガー',
   '知的障害',
   '不安障害',
   'パニック障害',
@@ -71,12 +72,12 @@ const List<String> kCategoryList = [
   '薬物療法',
   '障害者手帳',
   '障害福祉サービス',
-  'カサンドラ症候群',
+  'カサンドラ',
   '就職',
   '職業選択',
   '育児',
   'ライフハック',
-  'その他',
+  'その他のカテゴリー',
 ];
 
 const List<String> kPositionList = [
@@ -91,7 +92,7 @@ const List<String> kPositionList = [
   '友達',
   '同僚',
   '学生',
-  'その他',
+  'その他の立場',
   kDoNotSelect,
 ];
 
@@ -99,7 +100,7 @@ const List<String> kGenderList = [
   kPleaseSelect,
   '男性',
   '女性',
-  'その他',
+  'その他の性別',
   kDoNotSelect,
 ];
 
@@ -164,7 +165,7 @@ const List<String> kAreaList = [
   '宮崎県',
   '鹿児島県',
   '沖縄県',
-  'その他',
+  '海外',
   kDoNotSelect,
 ];
 
@@ -225,6 +226,13 @@ const kPositionDropdownButtonFormFieldDecoration = InputDecoration(
   helperStyle: TextStyle(color: kDarkPink),
   prefixIcon: Icon(Icons.group),
   helperText: '必須',
+);
+
+const kPositionDropdownButtonFormFieldDecorationForReply = InputDecoration(
+  border: OutlineInputBorder(),
+  labelText: 'あなたの立場',
+  helperStyle: TextStyle(color: kDarkPink),
+  prefixIcon: Icon(Icons.group),
 );
 
 const kGenderDropdownButtonFormFieldDecoration = InputDecoration(

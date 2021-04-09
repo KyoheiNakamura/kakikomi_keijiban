@@ -61,7 +61,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                   category,
                                   style: TextStyle(color: kDarkPink),
                                 ),
-                                backgroundColor: kLightPink,
+                                backgroundColor: kUltraLightPink,
                                 pressElevation: 0,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
@@ -100,11 +100,13 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                       /// body
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 15.0),
+                        // child: SizedBox(
+                        //   width: double.infinity,
                         child: Text(
                           post.body,
-                          // maxLines: 3,
                           style: TextStyle(fontSize: 16.0, height: 1.8),
                         ),
+                        // ),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -115,12 +117,11 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => AddReplyToPostPage(
+                                  builder: (context) => AddReplyToPostPage(post,
                                       userProfile: Provider.of<HomePostsModel>(
                                               context,
                                               listen: false)
-                                          .userProfile,
-                                      repliedPost: post),
+                                          .userProfile),
                                 ),
                               );
                               await Provider.of<HomePostsModel>(context,
@@ -143,6 +144,14 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                 borderRadius: BorderRadius.circular(16.0),
                               ),
                               side: BorderSide(color: kPink),
+                            ),
+                          ),
+
+                          /// 返信数
+                          Text(
+                            '${post.replyCount}件の返信',
+                            style: TextStyle(
+                              color: kLightGrey,
                             ),
                           ),
 
@@ -172,6 +181,8 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                 ),
               ),
             ),
+
+            /// PopupMenu
             isMe && isMyPostsPage == true
                 ? Positioned.directional(
                     textDirection: TextDirection.ltr,
@@ -180,6 +191,8 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                     child: PopupMenuOnCard(post: post),
                   )
                 : Container(),
+
+            /// EmotionImageButton
             Positioned(
               // top: 20,
               width: 60.0,
@@ -199,6 +212,8 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                 },
               ),
             ),
+
+            /// ブックマークを切り替えるスターアイコン
             Positioned.directional(
               textDirection: TextDirection.ltr,
               top: 55.0,
@@ -212,14 +227,13 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                       onPressed: () async {
                         post.isBookmarked = false;
                         await model.deleteBookmarkedPost(post);
-                        await Provider.of<BookmarkedPostsModel>(context,
-                                listen: false)
+                        // await context
+                        //     .read<BookmarkedPostsModel>()
+                        //     .getPostsWithReplies;
+                        await context
+                            .read<HomePostsModel>()
                             .getPostsWithReplies;
-                        await Provider.of<HomePostsModel>(context,
-                                listen: false)
-                            .getPostsWithReplies;
-                        await Provider.of<MyPostsModel>(context, listen: false)
-                            .getPostsWithReplies;
+                        await context.read<MyPostsModel>().getPostsWithReplies;
                       },
                     )
                   : IconButton(
@@ -229,14 +243,13 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                       onPressed: () async {
                         post.isBookmarked = true;
                         await model.addBookmarkedPost(post);
-                        await Provider.of<BookmarkedPostsModel>(context,
-                                listen: false)
+                        await context
+                            .read<BookmarkedPostsModel>()
                             .getPostsWithReplies;
-                        await Provider.of<HomePostsModel>(context,
-                                listen: false)
+                        await context
+                            .read<HomePostsModel>()
                             .getPostsWithReplies;
-                        await Provider.of<MyPostsModel>(context, listen: false)
-                            .getPostsWithReplies;
+                        await context.read<MyPostsModel>().getPostsWithReplies;
                       },
                     ),
             ),

@@ -25,8 +25,10 @@ class PostCardModel extends ChangeNotifier {
     final bookmarkedPostRef =
         userRef.collection('bookmarkedPosts').doc(post.id);
     await bookmarkedPostRef.set({
+      /// bookmarkedPosts自身のIDにはpostIdと同じIDをsetしている
+      'userId': bookmarkedPostRef.id,
       'postId': post.id,
-      'postRef': userRef.collection('posts').doc(post.id),
+      // 'postRef': userRef.collection('posts').doc(post.id),
       'createdAt': FieldValue.serverTimestamp(),
     });
     notifyListeners();
@@ -67,9 +69,14 @@ class PostCardModel extends ChangeNotifier {
 
   Future<void> deleteReply(Reply existingReply) async {
     final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
-    final post = userRef.collection('posts').doc(existingReply.postId);
-    final reply = post.collection('replies').doc(existingReply.id);
+    final postRef = userRef.collection('posts').doc(existingReply.postId);
+    final reply = postRef.collection('replies').doc(existingReply.id);
     await reply.delete();
+
+    final DocumentSnapshot postDoc = await postRef.get();
+    await postRef.update({
+      'replyCount': postDoc['replyCount'] - 1,
+    });
     notifyListeners();
   }
 }

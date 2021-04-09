@@ -2,8 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/constants.dart';
+import 'package:kakikomi_keijiban/domain/post.dart';
 
-class AddPostModel extends ChangeNotifier {
+class UpdatePostModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final currentUser = FirebaseAuth.instance.currentUser;
   final uid = FirebaseAuth.instance.currentUser!.uid;
@@ -21,13 +22,13 @@ class AddPostModel extends ChangeNotifier {
   String areaDropdownValue = kPleaseSelect;
   bool isCategoriesValid = true;
 
-  Future<void> addPost() async {
+  Future<void> updatePost(Post post) async {
     final userRef = _firestore.collection('users').doc(uid);
-    final postRef = userRef.collection('posts').doc();
+    final postRef = userRef.collection('posts').doc(post.id);
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
+    print(_postDataList);
 
-    await postRef.set({
-      'id': postRef.id,
+    await postRef.update({
       'title': _postDataList[0],
       'body': _postDataList[1],
       'nickname': _postDataList[2],
@@ -37,9 +38,6 @@ class AddPostModel extends ChangeNotifier {
       'age': _postDataList[6],
       'area': _postDataList[7],
       'categories': selectedCategories,
-      'userId': uid,
-      'replyCount': 0,
-      'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -45,51 +46,24 @@ class BookmarkedPostsModel extends ChangeNotifier {
         .limit(loadLimit);
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
-    _bookmarkedPosts = [];
-    List<Post> posts;
+    _bookmarkedPosts.clear();
     if (docs.length == 0) {
       // isPostsExisting = false;
       canLoadMore = false;
-      posts = [];
-      _bookmarkedPosts = posts;
+      _bookmarkedPosts = [];
     } else if (docs.length < loadLimit) {
       // isPostsExisting = true;
       canLoadMore = false;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      final postSnapshots = await Future.wait(docs
-          .map((bookmarkedPost) => _firestore
-              .collectionGroup('posts')
-              .where('id', isEqualTo: bookmarkedPost['postId'])
-              // .orderBy('createdAt', descending: true)
-              .get())
-          .toList());
-      final bookmarkedPostDocs =
-          postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
-      posts = bookmarkedPostDocs.map((doc) => Post(doc)).toList();
-      _bookmarkedPosts = posts;
-      for (int i = 0; i < _bookmarkedPosts.length; i++) {
-        _bookmarkedPosts[i].isBookmarked = true;
-      }
+      _bookmarkedPosts = await _getBookmarkedPosts(docs);
+      _addBookmarkToPosts(_bookmarkedPosts);
     } else {
       // isPostsExisting = true;
       canLoadMore = true;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      final postSnapshots = await Future.wait(docs
-          .map((bookmarkedPost) => _firestore
-              .collectionGroup('posts')
-              .where('id', isEqualTo: bookmarkedPost['postId'])
-              // .orderBy('createdAt', descending: true)
-              .get())
-          .toList());
-      final bookmarkedPostDocs =
-          postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
-      posts = bookmarkedPostDocs.map((doc) => Post(doc)).toList();
-      _bookmarkedPosts = posts;
-      for (int i = 0; i < _bookmarkedPosts.length; i++) {
-        _bookmarkedPosts[i].isBookmarked = true;
-      }
+      _bookmarkedPosts = await _getBookmarkedPosts(docs);
+      _addBookmarkToPosts(_bookmarkedPosts);
     }
-    // await _addBookmarkToPosts();
     await _getRepliesToPosts();
 
     stopLoading();
@@ -108,27 +82,17 @@ class BookmarkedPostsModel extends ChangeNotifier {
         .limit(loadLimit);
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
-    List<Post> posts;
+    // List<Post> posts;
     if (docs.length == 0) {
       // isPostsExisting = false;
       canLoadMore = false;
-      posts = [];
-      _bookmarkedPosts += posts;
+      // posts = [];
+      _bookmarkedPosts += [];
     } else if (docs.length < loadLimit) {
       // isPostsExisting = true;
       canLoadMore = false;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      final postSnapshots = await Future.wait(docs
-          .map((bookmarkedPost) => _firestore
-              .collectionGroup('posts')
-              .where('id', isEqualTo: bookmarkedPost['postId'])
-              // .orderBy('createdAt', descending: true)
-              .get())
-          .toList());
-      final bookmarkedPostDocs =
-          postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
-      posts = bookmarkedPostDocs.map((doc) => Post(doc)).toList();
-      _bookmarkedPosts += posts;
+      _bookmarkedPosts += await _getBookmarkedPosts(docs);
       for (int i = 0; i < _bookmarkedPosts.length; i++) {
         _bookmarkedPosts[i].isBookmarked = true;
       }
@@ -136,26 +100,34 @@ class BookmarkedPostsModel extends ChangeNotifier {
       // isPostsExisting = true;
       canLoadMore = true;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      final postSnapshots = await Future.wait(docs
-          .map((bookmarkedPost) => _firestore
-              .collectionGroup('posts')
-              .where('id', isEqualTo: bookmarkedPost['postId'])
-              // .orderBy('createdAt', descending: true)
-              .get())
-          .toList());
-      final bookmarkedPostDocs =
-          postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
-      posts = bookmarkedPostDocs.map((doc) => Post(doc)).toList();
-      _bookmarkedPosts += posts;
-      for (int i = 0; i < _bookmarkedPosts.length; i++) {
-        _bookmarkedPosts[i].isBookmarked = true;
-      }
+      _bookmarkedPosts += await _getBookmarkedPosts(docs);
+      _addBookmarkToPosts(_bookmarkedPosts);
     }
-    // await _addBookmarkToPosts();
+
     await _getRepliesToPosts();
 
     stopLoading();
     notifyListeners();
+  }
+
+  Future<List<Post>> _getBookmarkedPosts(
+      List<QueryDocumentSnapshot> docs) async {
+    final postSnapshots = await Future.wait(docs
+        .map((bookmarkedPost) => _firestore
+            .collectionGroup('posts')
+            .where('id', isEqualTo: bookmarkedPost['postId'])
+            // .orderBy('createdAt', descending: true)
+            .get())
+        .toList());
+    final bookmarkedPostDocs =
+        postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
+    return bookmarkedPostDocs.map((doc) => Post(doc)).toList();
+  }
+
+  void _addBookmarkToPosts(List<Post> bookmarkedPosts) {
+    for (int i = 0; i < _bookmarkedPosts.length; i++) {
+      _bookmarkedPosts[i].isBookmarked = true;
+    }
   }
 
   Future<void> _getRepliesToPosts() async {
@@ -175,45 +147,4 @@ class BookmarkedPostsModel extends ChangeNotifier {
       }
     }
   }
-
-  // Future<void> _getBookmarkedPostsWithReplies() async {
-  //   final bookmarkedPostsSnapshot = await _firestore
-  //       .collection('users')
-  //       .doc(uid)
-  //       .collection('bookmarkedPosts')
-  //       .orderBy('createdAt', descending: true)
-  //       .get();
-  //   final postSnapshots = await Future.wait(bookmarkedPostsSnapshot.docs
-  //       .map((bookmarkedPost) => _firestore
-  //       .collectionGroup('posts')
-  //       .where('id', isEqualTo: bookmarkedPost['postId'])
-  //   // .orderBy('createdAt', descending: true)
-  //       .get())
-  //       .toList());
-  //   final bookmarkedPostDocs =
-  //   postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
-  //   _bookmarkedPosts = bookmarkedPostDocs.map((doc) => Post(doc)).toList();
-  //   for (int i = 0; i < _bookmarkedPosts.length; i++) {
-  //     _bookmarkedPosts[i].isBookmarked = true;
-  //   }
-  //   for (final bookmarkedPost in _bookmarkedPosts) {
-  //     // final querySnapshot = await _firestore
-  //     //     .collectionGroup('replies')
-  //     //     .where('postId', isEqualTo: bookmarkedPost.id)
-  //     //     .orderBy('createdAt')
-  //     //     .get();
-  //     final querySnapshot = await _firestore
-  //         .collection('users')
-  //         .doc(bookmarkedPost.uid)
-  //         .collection('posts')
-  //         .doc(bookmarkedPost.id)
-  //         .collection('replies')
-  //         .orderBy('createdAt')
-  //         .get();
-  //     final docs = querySnapshot.docs;
-  //     final replies = docs.map((doc) => Reply(doc)).toList();
-  //     _repliesToBookmarkedPosts[bookmarkedPost.id] = replies;
-  //   }
-  //   notifyListeners();
-  // }
 }

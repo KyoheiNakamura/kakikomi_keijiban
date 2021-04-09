@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/constants.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/domain/reply.dart';
 
-class AddReplyToPostModel extends ChangeNotifier {
+class UpdateReplyToPostModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
   bool isLoading = false;
@@ -63,28 +63,19 @@ class AddReplyToPostModel extends ChangeNotifier {
     return postDataList;
   }
 
-  Future<void> addReply(Post repliedPost) async {
+  Future<void> updateReply(Reply existingReply) async {
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
-    final userRef = _firestore.collection('users').doc(repliedPost.uid);
-    final postRef = userRef.collection('posts').doc(repliedPost.id);
-    final replyRef = postRef.collection('replies').doc();
-
-    await replyRef.set({
-      'id': replyRef.id,
-      'postId': repliedPost.id,
-      'replierId': _auth.currentUser!.uid,
+    final userRef = _firestore.collection('users').doc(existingReply.userId);
+    final post = userRef.collection('posts').doc(existingReply.postId);
+    final reply = post.collection('replies').doc(existingReply.id);
+    await reply.update({
       'body': _postDataList[0],
       'nickname': _postDataList[1],
       'position': _postDataList[2],
       'gender': _postDataList[3],
       'age': _postDataList[4],
       'area': _postDataList[5],
-      'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
-    });
-
-    await postRef.update({
-      'replyCount': repliedPost.replyCount + 1,
     });
   }
 }

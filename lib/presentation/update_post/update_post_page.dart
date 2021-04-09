@@ -2,15 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/constants.dart';
+import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/user_profile.dart';
-import 'package:kakikomi_keijiban/presentation/add_post/add_post_model.dart';
+import 'package:kakikomi_keijiban/presentation/update_post/update_post_model.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:keyboard_actions/keyboard_actions_config.dart';
+import 'package:keyboard_actions/keyboard_actions_item.dart';
 import 'package:provider/provider.dart';
 
-class AddPostPage extends StatelessWidget {
-  AddPostPage({this.userProfile});
+class UpdatePostPage extends StatelessWidget {
+  UpdatePostPage(this.existingPost, {this.userProfile});
 
+  final Post existingPost;
   final UserProfile? userProfile;
   final _formKey = GlobalKey<FormState>();
   final FocusNode _focusNodeContent = FocusNode();
@@ -59,20 +62,24 @@ class AddPostPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isUserProfileNotAnonymous = userProfile != null;
-    return ChangeNotifierProvider<AddPostModel>(
-      create: (context) => AddPostModel(),
+    return ChangeNotifierProvider<UpdatePostModel>(
+      create: (context) => UpdatePostModel(),
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
           elevation: 0,
           centerTitle: true,
           title: Text(
-            '新規投稿',
+            '編集',
             style: kAppBarTextStyle,
           ),
         ),
-        body: Consumer<AddPostModel>(
+        body: Consumer<UpdatePostModel>(
           builder: (context, model, child) {
+            if (model.selectedCategories.isEmpty) {
+              model.selectedCategories.addAll(existingPost.categories);
+            }
+
             return LoadingSpinner(
               inAsyncCall: model.isLoading,
               child: KeyboardActions(
@@ -92,7 +99,8 @@ class AddPostPage extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: TextFormField(
-                              initialValue: null,
+                              initialValue: model.titleValue =
+                                  existingPost.title,
                               validator: model.validateTitleCallback,
                               onChanged: (newValue) {
                                 model.titleValue = newValue;
@@ -106,12 +114,12 @@ class AddPostPage extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: TextFormField(
                               focusNode: _focusNodeContent,
-                              initialValue: null,
+                              initialValue: model.bodyValue = existingPost.body,
                               validator: model.validateContentCallback,
                               // maxLength: 1000,
-                              minLines: 5,
+                              minLines: 3,
                               maxLines: null,
-                              keyboardType: TextInputType.multiline,
+                              // keyboardType: TextInputType.multiline,
                               onChanged: (newValue) {
                                 model.bodyValue = newValue;
                               },
@@ -123,9 +131,8 @@ class AddPostPage extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: TextFormField(
-                              initialValue: isUserProfileNotAnonymous
-                                  ? model.nicknameValue = userProfile!.nickname
-                                  : null,
+                              initialValue: model.nicknameValue =
+                                  existingPost.nickname,
                               validator: model.validateNicknameCallback,
                               onChanged: (newValue) {
                                 model.nicknameValue = newValue;
@@ -139,7 +146,8 @@ class AddPostPage extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: DropdownButtonFormField(
                               validator: model.validateEmotionCallback,
-                              value: model.emotionDropdownValue,
+                              value: model.emotionDropdownValue =
+                                  existingPost.emotion,
                               icon: Icon(Icons.arrow_downward),
                               iconSize: 24,
                               elevation: 1,
@@ -164,10 +172,13 @@ class AddPostPage extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: DropdownButtonFormField(
                               validator: model.validatePositionCallback,
-                              value: isUserProfileNotAnonymous
+                              value: existingPost.position.isNotEmpty
                                   ? model.positionDropdownValue =
-                                      userProfile!.position
-                                  : model.positionDropdownValue,
+                                      existingPost.position
+                                  : isUserProfileNotAnonymous
+                                      ? model.positionDropdownValue =
+                                          userProfile!.position
+                                      : model.positionDropdownValue,
                               icon: Icon(Icons.arrow_downward),
                               iconSize: 24,
                               elevation: 1,
@@ -176,7 +187,6 @@ class AddPostPage extends StatelessWidget {
                                   kPositionDropdownButtonFormFieldDecoration,
                               onChanged: (String? selectedValue) {
                                 model.positionDropdownValue = selectedValue!;
-                                print(model.positionDropdownValue);
                               },
                               items: kPositionList.map((String value) {
                                 return DropdownMenuItem<String>(
@@ -273,10 +283,13 @@ class AddPostPage extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: DropdownButtonFormField(
-                              value: isUserProfileNotAnonymous
+                              value: existingPost.gender.isNotEmpty
                                   ? model.genderDropdownValue =
-                                      userProfile!.gender
-                                  : model.genderDropdownValue,
+                                      existingPost.gender
+                                  : isUserProfileNotAnonymous
+                                      ? model.genderDropdownValue =
+                                          userProfile!.gender
+                                      : model.genderDropdownValue,
                               icon: Icon(Icons.arrow_downward),
                               iconSize: 24,
                               elevation: 1,
@@ -299,9 +312,12 @@ class AddPostPage extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: DropdownButtonFormField(
-                              value: isUserProfileNotAnonymous
-                                  ? model.ageDropdownValue = userProfile!.age
-                                  : model.ageDropdownValue,
+                              value: existingPost.age.isNotEmpty
+                                  ? model.ageDropdownValue = existingPost.age
+                                  : isUserProfileNotAnonymous
+                                      ? model.ageDropdownValue =
+                                          userProfile!.age
+                                      : model.ageDropdownValue,
                               icon: Icon(Icons.arrow_downward),
                               iconSize: 24,
                               elevation: 1,
@@ -323,9 +339,12 @@ class AddPostPage extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 48.0),
                             child: DropdownButtonFormField(
-                              value: isUserProfileNotAnonymous
-                                  ? model.areaDropdownValue = userProfile!.area
-                                  : model.areaDropdownValue,
+                              value: existingPost.area.isNotEmpty
+                                  ? model.areaDropdownValue = existingPost.area
+                                  : isUserProfileNotAnonymous
+                                      ? model.areaDropdownValue =
+                                          userProfile!.area
+                                      : model.areaDropdownValue,
                               icon: Icon(Icons.arrow_downward),
                               iconSize: 24,
                               elevation: 1,
@@ -350,7 +369,7 @@ class AddPostPage extends StatelessWidget {
                               if (model.validateSelectedCategories() &&
                                   _formKey.currentState!.validate()) {
                                 model.startLoading();
-                                await model.addPost();
+                                await model.updatePost(existingPost);
                                 model.stopLoading();
                                 Navigator.pop(context);
                                 // Navigator.of(context).popUntil(
@@ -359,7 +378,7 @@ class AddPostPage extends StatelessWidget {
                               }
                             },
                             child: Text(
-                              '投稿する',
+                              '更新する',
                               style: TextStyle(
                                 color: kDarkPink,
                                 fontSize: 16,
@@ -392,7 +411,7 @@ class FilterChipWidget extends StatelessWidget {
   FilterChipWidget({required this.chipName, required this.model});
 
   final String chipName;
-  final AddPostModel model;
+  final UpdatePostModel model;
 
   @override
   Widget build(BuildContext context) {
@@ -410,7 +429,6 @@ class FilterChipWidget extends StatelessWidget {
             ? model.selectedCategories.remove(chipName)
             : model.selectedCategories.add(chipName);
         model.reload();
-        print(model.selectedCategories);
       },
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -424,67 +442,3 @@ class FilterChipWidget extends StatelessWidget {
     );
   }
 }
-
-// Category チップ一つ選択
-// Container(
-//   decoration: BoxDecoration(
-//     border: Border.all(color: Colors.grey[500]!),
-//     borderRadius: BorderRadius.circular(5),
-//   ),
-//   child: Column(
-//     crossAxisAlignment: CrossAxisAlignment.start,
-//     children: [
-//       Row(
-//         children: [
-//           Padding(
-//             padding: const EdgeInsets.all(14.0),
-//             child: Icon(
-//               Icons.category_outlined,
-//               color: kLightGrey,
-//             ),
-//           ),
-//           Text(
-//             'カテゴリー',
-//             style: TextStyle(
-//               color: Colors.grey[700],
-//               fontSize: 16.0,
-//             ),
-//           ),
-//         ],
-//       ),
-//       Padding(
-//         padding: EdgeInsets.only(
-//             left: 16.0, right: 16.0, bottom: 14.0),
-//         child: Wrap(
-//           spacing: 16.0,
-//           runSpacing: 2.0,
-//           // alignment: WrapAlignment.center,
-//           children: kCategoryList.map<Widget>((item) {
-//             return ChoiceChip(
-//               label: Text(item),
-//               selected: model.selectedCategory == item,
-//               onSelected: (selected) {
-//                 model.selectedCategory = item;
-//                 model.reload();
-//               },
-//             );
-//           }).toList(),
-//         ),
-//       ),
-//     ],
-//   ),
-// ),
-// Padding(
-//   padding:
-//       EdgeInsets.only(left: 12.0, top: 8.0, right: 12.0),
-//   child: Text(
-//     '必須',
-//     style: TextStyle(
-//       fontSize: 12.0,
-//       color: kDarkPink,
-//     ),
-//   ),
-// ),
-// SizedBox(
-//   height: 32.0,
-// ),

@@ -16,6 +16,7 @@ class Post {
     // List<dynamic>をList<String>に変換してる
     this.categories = List<String>.from(_categories);
     this.uid = doc.reference.parent.parent!.id;
+    this.replyCount = doc['replyCount'];
     this.isBookmarked = false;
     this._createdAt = doc['createdAt'].toDate();
     if (doc['updatedAt'] != null) {
@@ -35,6 +36,7 @@ class Post {
   String area = '';
   List<String> categories = [];
   String uid = '';
+  int replyCount = 0;
   bool isBookmarked = false;
   DateTime? _createdAt;
   DateTime? _updatedAt;
