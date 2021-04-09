@@ -4,8 +4,8 @@ import 'package:intl/intl.dart';
 class Reply {
   Reply(DocumentSnapshot doc) {
     this.id = doc.id;
-    this.postId = doc.reference.parent.parent!.id;
-    this.uid = doc.reference.parent.parent!.parent.parent!.id;
+    this.postId = doc['postId'];
+    this.userId = doc.reference.parent.parent!.parent.parent!.id;
     this.replierId = doc['replierId'];
     this.body = doc['body'];
     this.nickname = doc['nickname'];
@@ -24,7 +24,7 @@ class Reply {
 
   String id = '';
   String postId = '';
-  String uid = '';
+  String userId = '';
   String replierId = '';
   String body = '';
   String nickname = '';
