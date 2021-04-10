@@ -125,7 +125,7 @@ class AddPostPage extends StatelessWidget {
                             child: TextFormField(
                               initialValue: isUserProfileNotAnonymous
                                   ? model.nicknameValue = userProfile!.nickname
-                                  : null,
+                                  : model.nicknameValue = '匿名',
                               validator: model.validateNicknameCallback,
                               onChanged: (newValue) {
                                 model.nicknameValue = newValue;
@@ -163,7 +163,7 @@ class AddPostPage extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: DropdownButtonFormField(
-                              validator: model.validatePositionCallback,
+                              // validator: model.validatePositionCallback,
                               value: isUserProfileNotAnonymous
                                   ? model.positionDropdownValue =
                                       userProfile!.position

@@ -16,6 +16,10 @@ class BookmarkedPostsModel extends ChangeNotifier {
   Map<String, List<Reply>> _repliesToBookmarkedPosts = {};
   Map<String, List<Reply>> get replies => _repliesToBookmarkedPosts;
 
+  List<Reply> _rawReplies = [];
+  Map<String, List<Reply>> _repliesToReply = {};
+  Map<String, List<Reply>> get repliesToReply => _repliesToReply;
+
   Future<void> get getPostsWithReplies => _getBookmarkedPostsWithReplies();
   Future<void> get loadPostsWithReplies => _loadBookmarkedPostsWithReplies();
 
@@ -64,7 +68,9 @@ class BookmarkedPostsModel extends ChangeNotifier {
       _bookmarkedPosts = await _getBookmarkedPosts(docs);
       _addBookmarkToPosts(_bookmarkedPosts);
     }
+
     await _getRepliesToPosts();
+    await _getRepliesToReplies();
 
     stopLoading();
     notifyListeners();
@@ -105,6 +111,7 @@ class BookmarkedPostsModel extends ChangeNotifier {
     }
 
     await _getRepliesToPosts();
+    await _getRepliesToReplies();
 
     stopLoading();
     notifyListeners();
@@ -144,6 +151,26 @@ class BookmarkedPostsModel extends ChangeNotifier {
         final docs = querySnapshot.docs;
         final replies = docs.map((doc) => Reply(doc)).toList();
         _repliesToBookmarkedPosts[post.id] = replies;
+      }
+    }
+  }
+
+  Future<void> _getRepliesToReplies() async {
+    if (_rawReplies.isNotEmpty) {
+      for (final reply in _rawReplies) {
+        final querySnapshot = await _firestore
+            .collection('users')
+            .doc(reply.uid)
+            .collection('posts')
+            .doc(reply.postId)
+            .collection('replies')
+            .doc(reply.id)
+            .collection('repliesToReply')
+            .orderBy('createdAt')
+            .get();
+        final docs = querySnapshot.docs;
+        final repliesToReply = docs.map((doc) => Reply(doc)).toList();
+        _repliesToReply[reply.id] = repliesToReply;
       }
     }
   }

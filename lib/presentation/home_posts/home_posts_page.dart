@@ -162,9 +162,6 @@ class TabBarViewChild extends StatelessWidget {
           builder: (BuildContext context) {
             return NotificationListener<ScrollNotification>(
               onNotification: (notification) {
-                print('notification: $notification');
-                print('pixels: ${notification.metrics.pixels}');
-                print('max: ${notification.metrics.maxScrollExtent}');
                 if (notification.metrics.pixels ==
                     notification.metrics.maxScrollExtent) {
                   if (model.isLoading) {
@@ -201,7 +198,7 @@ class TabBarViewChild extends StatelessWidget {
                               PostCard(
                                 post: post,
                                 replies: model.replies[post.id],
-                                isMyPostsPage: model is MyPostsModel,
+                                givenModel: model,
                               ),
                               post == posts.last && model.isLoading
                                   ? CircularProgressIndicator()

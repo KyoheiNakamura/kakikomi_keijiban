@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:kakikomi_keijiban/domain/reply.dart';
 
 class Post {
   Post(DocumentSnapshot doc) {
@@ -18,6 +19,8 @@ class Post {
     this.uid = doc.reference.parent.parent!.id;
     this.replyCount = doc['replyCount'];
     this.isBookmarked = false;
+    this.isReplyShown = false;
+    this.replies = [];
     this._createdAt = doc['createdAt'].toDate();
     if (doc['updatedAt'] != null) {
       final updatedDate = doc['updatedAt'].toDate();
@@ -38,6 +41,8 @@ class Post {
   String uid = '';
   int replyCount = 0;
   bool isBookmarked = false;
+  bool isReplyShown = false;
+  List<Reply> replies = [];
   DateTime? _createdAt;
   DateTime? _updatedAt;
 

@@ -1,13 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/components/post_card/post_card_model.dart';
-import 'package:kakikomi_keijiban/components/reply_card.dart';
+import 'package:kakikomi_keijiban/components/reply_card/reply_card.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/components/popup_menu_on_card.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/mixin/format_poster_data_mixin.dart';
-import 'package:kakikomi_keijiban/presentation/add_reply_to_post/add_reply_to_post_page.dart';
+import 'package:kakikomi_keijiban/presentation/add_reply/add_reply_page.dart';
 import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_model.dart';
@@ -15,11 +15,12 @@ import 'package:kakikomi_keijiban/presentation/search_result_posts/search_result
 import 'package:provider/provider.dart';
 
 class PostCard extends StatelessWidget with FormatPosterDataMixin {
-  PostCard({required this.post, required this.replies, this.isMyPostsPage});
+  PostCard(
+      {required this.post, required this.replies, required this.givenModel});
 
   final Post post;
   final List<Reply>? replies;
-  final bool? isMyPostsPage;
+  final givenModel;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +29,6 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
       if (FirebaseAuth.instance.currentUser != null) {
         isMe = FirebaseAuth.instance.currentUser!.uid == post.uid;
       }
-
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Stack(
@@ -43,7 +43,12 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                 ),
                 child: Padding(
                   padding: EdgeInsets.only(
-                      top: 24.0, left: 20.0, right: 20.0, bottom: 32.0),
+                    // top: 24.0, left: 20.0, right: 20.0, bottom: 32.0),
+                    top: 24.0,
+                    left: 20.0,
+                    right: 20.0,
+                    bottom: replies == null || replies!.isEmpty ? 32.0 : 0,
+                  ),
                   child: Column(
                     children: [
                       /// カテゴリーのActionChipを表示してる
@@ -117,21 +122,23 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => AddReplyToPostPage(post,
-                                      userProfile: Provider.of<HomePostsModel>(
-                                              context,
-                                              listen: false)
-                                          .userProfile),
+                                  builder: (context) => AddReplyPage(
+                                    repliedPost: post,
+                                    userProfile: Provider.of<HomePostsModel>(
+                                      context,
+                                      listen: false,
+                                    ).userProfile,
+                                  ),
                                 ),
                               );
-                              await Provider.of<HomePostsModel>(context,
-                                      listen: false)
+                              await context
+                                  .read<HomePostsModel>()
                                   .getPostsWithReplies;
-                              await Provider.of<MyPostsModel>(context,
-                                      listen: false)
+                              await context
+                                  .read<MyPostsModel>()
                                   .getPostsWithReplies;
-                              await Provider.of<BookmarkedPostsModel>(context,
-                                      listen: false)
+                              await context
+                                  .read<BookmarkedPostsModel>()
                                   .getPostsWithReplies;
                             },
                             child: Text(
@@ -147,14 +154,6 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                             ),
                           ),
 
-                          /// 返信数
-                          Text(
-                            '${post.replyCount}件の返信',
-                            style: TextStyle(
-                              color: kLightGrey,
-                            ),
-                          ),
-
                           /// 更新日時
                           Text(
                             post.updatedAt,
@@ -163,18 +162,52 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                         ],
                       ),
 
-                      /// 返信一覧
+                      /// 返信
                       Column(
-                        children: replies != null
-                            ? replies!.map((reply) {
-                                // return ReplyCard(reply);
-                                return ReplyCard(
-                                  reply: reply,
-                                  isMe: isMe,
-                                  isMyPostsPage: isMyPostsPage,
-                                );
-                              }).toList()
-                            : [],
+                        children: [
+                          /// 返信一覧
+                          Column(
+                            children: post.isReplyShown && replies != null
+                                ? replies!.map((reply) {
+                                    return ReplyCard(
+                                      reply: reply,
+                                      repliedReplies:
+                                          givenModel.repliesToReply[reply.id],
+                                      isMe: isMe,
+                                    );
+                                  }).toList()
+                                : [],
+                          ),
+
+                          /// 返信数
+                          replies != null
+                              ? replies!.isNotEmpty
+                                  ? post.isReplyShown
+                                      ? TextButton(
+                                          onPressed: () async {
+                                            model.closeReplies(post);
+                                          },
+                                          child: Text(
+                                            '返信を閉じる',
+                                            style: TextStyle(
+                                              color: Colors.blueAccent,
+                                            ),
+                                          ),
+                                        )
+                                      : TextButton(
+                                          onPressed: () async {
+                                            model.openReplies(post);
+                                          },
+                                          child: Text(
+                                            '${post.replyCount}件の返信',
+                                            style: TextStyle(
+                                              color: Colors.blueAccent,
+                                            ),
+                                          ),
+                                        )
+                                  : SizedBox()
+                              : SizedBox(),
+                        ],
                       ),
                     ],
                   ),
@@ -183,7 +216,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
             ),
 
             /// PopupMenu
-            isMe && isMyPostsPage == true
+            isMe == true
                 ? Positioned.directional(
                     textDirection: TextDirection.ltr,
                     top: 30.0,
@@ -225,11 +258,8 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                         color: Colors.yellow,
                       ),
                       onPressed: () async {
-                        post.isBookmarked = false;
+                        model.turnOffStar(post);
                         await model.deleteBookmarkedPost(post);
-                        // await context
-                        //     .read<BookmarkedPostsModel>()
-                        //     .getPostsWithReplies;
                         await context
                             .read<HomePostsModel>()
                             .getPostsWithReplies;
@@ -241,7 +271,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                         Icons.star_border_outlined,
                       ),
                       onPressed: () async {
-                        post.isBookmarked = true;
+                        model.turnOnStar(post);
                         await model.addBookmarkedPost(post);
                         await context
                             .read<BookmarkedPostsModel>()
@@ -253,32 +283,6 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                       },
                     ),
             ),
-            // Positioned.directional(
-            //   textDirection: TextDirection.ltr,
-            //   top: 26.0,
-            //   start: 0,
-            //   child: Wrap(
-            //     spacing: 2.0,
-            //     runSpacing: 2.0,
-            //     // alignment: WrapAlignment.center,
-            //     children: post.categories.map<Widget>((category) {
-            //       return ActionChip(
-            //         label: Text(
-            //           category,
-            //           style: TextStyle(color: kDarkPink),
-            //         ),
-            //         backgroundColor: kLightPink,
-            //         shape: RoundedRectangleBorder(
-            //           borderRadius: BorderRadius.circular(20),
-            //           side: BorderSide(color: kPink),
-            //         ),
-            //         onPressed: () {
-            //           print('そのチップ($category)の検索結果ページに飛ぶ予定やで。');
-            //         },
-            //       );
-            //     }).toList(),
-            //   ),
-            // ),
           ],
         ),
       );

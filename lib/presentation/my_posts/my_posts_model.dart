@@ -16,6 +16,10 @@ class MyPostsModel extends ChangeNotifier {
   Map<String, List<Reply>> _repliesToMyPosts = {};
   Map<String, List<Reply>> get replies => _repliesToMyPosts;
 
+  List<Reply> _rawReplies = [];
+  Map<String, List<Reply>> _repliesToReply = {};
+  Map<String, List<Reply>> get repliesToReply => _repliesToReply;
+
   Future<void> get getPostsWithReplies => _getMyPostsWithReplies();
   Future<void> get loadPostsWithReplies => _loadMyPostsWithReplies();
 
@@ -64,6 +68,7 @@ class MyPostsModel extends ChangeNotifier {
     }
     await _addBookmarkToPosts();
     await _getRepliesToPosts();
+    await _getRepliesToReplies();
 
     stopLoading();
     notifyListeners();
@@ -98,6 +103,7 @@ class MyPostsModel extends ChangeNotifier {
     }
     await _addBookmarkToPosts();
     await _getRepliesToPosts();
+    await _getRepliesToReplies();
 
     stopLoading();
     notifyListeners();
@@ -144,6 +150,26 @@ class MyPostsModel extends ChangeNotifier {
         final docs = querySnapshot.docs;
         final replies = docs.map((doc) => Reply(doc)).toList();
         _repliesToMyPosts[post.id] = replies;
+      }
+    }
+  }
+
+  Future<void> _getRepliesToReplies() async {
+    if (_rawReplies.isNotEmpty) {
+      for (final reply in _rawReplies) {
+        final querySnapshot = await _firestore
+            .collection('users')
+            .doc(reply.uid)
+            .collection('posts')
+            .doc(reply.postId)
+            .collection('replies')
+            .doc(reply.id)
+            .collection('repliesToReply')
+            .orderBy('createdAt')
+            .get();
+        final docs = querySnapshot.docs;
+        final repliesToReply = docs.map((doc) => Reply(doc)).toList();
+        _repliesToReply[reply.id] = repliesToReply;
       }
     }
   }

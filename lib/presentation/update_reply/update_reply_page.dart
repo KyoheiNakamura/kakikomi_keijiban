@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/constants.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/user_profile.dart';
-import 'package:kakikomi_keijiban/presentation/add_reply_to_post/add_reply_to_post_model.dart';
+import 'package:kakikomi_keijiban/presentation/update_reply/update_reply_model.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:provider/provider.dart';
 
-class AddReplyToPostPage extends StatelessWidget {
-  AddReplyToPostPage(this.repliedPost, {this.userProfile});
+class UpdateReplyPage extends StatelessWidget {
+  UpdateReplyPage(this.existingReply, {this.userProfile});
 
-  final Post repliedPost;
+  final Reply existingReply;
   final UserProfile? userProfile;
   final _formKey = GlobalKey<FormState>();
   final FocusNode _focusNodeContent = FocusNode();
@@ -60,8 +60,8 @@ class AddReplyToPostPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isUserProfileNotAnonymous = userProfile != null;
-    return ChangeNotifierProvider<AddReplyToPostModel>(
-      create: (context) => AddReplyToPostModel(),
+    return ChangeNotifierProvider<UpdateReplyModel>(
+      create: (context) => UpdateReplyModel(),
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
@@ -72,7 +72,7 @@ class AddReplyToPostPage extends StatelessWidget {
             style: kAppBarTextStyle,
           ),
         ),
-        body: Consumer<AddReplyToPostModel>(
+        body: Consumer<UpdateReplyModel>(
           builder: (context, model, child) {
             return LoadingSpinner(
               inAsyncCall: model.isLoading,
@@ -90,7 +90,7 @@ class AddReplyToPostPage extends StatelessWidget {
                           /// content
                           TextFormField(
                             focusNode: _focusNodeContent,
-                            initialValue: null,
+                            initialValue: model.bodyValue = existingReply.body,
                             validator: model.validateContentCallback,
                             // maxLength: 1000,
                             maxLines: null,
@@ -105,9 +105,8 @@ class AddReplyToPostPage extends StatelessWidget {
 
                           /// nickname
                           TextFormField(
-                            initialValue: isUserProfileNotAnonymous
-                                ? model.nicknameValue = userProfile!.nickname
-                                : null,
+                            initialValue: model.nicknameValue =
+                                existingReply.nickname,
                             validator: model.validateNicknameCallback,
                             onChanged: (newValue) {
                               model.nicknameValue = newValue;
@@ -120,10 +119,13 @@ class AddReplyToPostPage extends StatelessWidget {
                           /// position
                           DropdownButtonFormField(
                             focusColor: Colors.pink[50],
-                            value: isUserProfileNotAnonymous
+                            value: existingReply.position.isNotEmpty
                                 ? model.positionDropdownValue =
-                                    userProfile!.position
-                                : model.positionDropdownValue,
+                                    existingReply.position
+                                : isUserProfileNotAnonymous
+                                    ? model.positionDropdownValue =
+                                        userProfile!.position
+                                    : model.positionDropdownValue,
                             icon: Icon(
                               Icons.arrow_downward,
                               // color: kDarkPink,
@@ -149,10 +151,13 @@ class AddReplyToPostPage extends StatelessWidget {
                           DropdownButtonFormField(
                             // focusNode: _genderFocusNode,
                             focusColor: Colors.pink[50],
-                            value: isUserProfileNotAnonymous
+                            value: existingReply.gender.isNotEmpty
                                 ? model.genderDropdownValue =
-                                    userProfile!.gender
-                                : model.genderDropdownValue,
+                                    existingReply.gender
+                                : isUserProfileNotAnonymous
+                                    ? model.genderDropdownValue =
+                                        userProfile!.gender
+                                    : model.genderDropdownValue,
                             icon: Icon(
                               Icons.arrow_downward,
                               // color: kDarkPink,
@@ -178,9 +183,11 @@ class AddReplyToPostPage extends StatelessWidget {
                           DropdownButtonFormField(
                             // focusNode: _ageFocusNode,
                             focusColor: Colors.pink[50],
-                            value: isUserProfileNotAnonymous
-                                ? model.ageDropdownValue = userProfile!.age
-                                : model.ageDropdownValue,
+                            value: existingReply.age.isNotEmpty
+                                ? model.ageDropdownValue = existingReply.age
+                                : isUserProfileNotAnonymous
+                                    ? model.ageDropdownValue = userProfile!.age
+                                    : model.ageDropdownValue,
                             icon: Icon(
                               Icons.arrow_downward,
                               // color: kDarkPink,
@@ -205,9 +212,12 @@ class AddReplyToPostPage extends StatelessWidget {
                           DropdownButtonFormField(
                             // focusNode: _areaFocusNode,
                             focusColor: Colors.pink[50],
-                            value: isUserProfileNotAnonymous
-                                ? model.areaDropdownValue = userProfile!.area
-                                : model.areaDropdownValue,
+                            value: existingReply.area.isNotEmpty
+                                ? model.areaDropdownValue = existingReply.area
+                                : isUserProfileNotAnonymous
+                                    ? model.areaDropdownValue =
+                                        userProfile!.area
+                                    : model.areaDropdownValue,
                             icon: Icon(
                               Icons.arrow_downward,
                               // color: kDarkPink,
@@ -235,7 +245,7 @@ class AddReplyToPostPage extends StatelessWidget {
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
                                 model.startLoading();
-                                await model.addReply(repliedPost);
+                                await model.updateReply(existingReply);
                                 model.stopLoading();
                                 Navigator.pop(context);
                                 // Navigator.of(context).popUntil(
@@ -244,7 +254,7 @@ class AddReplyToPostPage extends StatelessWidget {
                               }
                             },
                             child: Text(
-                              '返信する',
+                              '更新する',
                               style: TextStyle(
                                 color: kDarkPink,
                                 fontSize: 16,

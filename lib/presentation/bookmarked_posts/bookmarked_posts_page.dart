@@ -63,6 +63,7 @@ class BookmarkedPostsPage extends StatelessWidget {
                             PostCard(
                               post: post,
                               replies: model.replies[post.id],
+                              givenModel: model,
                             ),
                             post == bookmarkedPosts.last && model.isLoading
                                 ? CircularProgressIndicator()

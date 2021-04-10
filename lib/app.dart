@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/components/post_card/post_card_model.dart';
+import 'package:kakikomi_keijiban/components/reply_card/reply_card_model.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
@@ -17,11 +18,8 @@ class App extends StatelessWidget {
         providers: [
           ChangeNotifierProvider(
             create: (_) => HomePostsModel()
-              ..getPostsWithReplies
-              ..listenAuthStateChanges(),
-          ),
-          ChangeNotifierProvider(
-            create: (_) => PostCardModel(),
+              ..listenAuthStateChanges()
+              ..getPostsWithReplies,
           ),
           ChangeNotifierProvider(
             create: (_) => MyPostsModel()..getPostsWithReplies,
@@ -31,6 +29,12 @@ class App extends StatelessWidget {
           // ),
           ChangeNotifierProvider(
             create: (_) => BookmarkedPostsModel()..getPostsWithReplies,
+          ),
+          ChangeNotifierProvider(
+            create: (_) => PostCardModel(),
+          ),
+          ChangeNotifierProvider(
+            create: (_) => ReplyCardModel(),
           ),
         ],
         child: MaterialApp(
