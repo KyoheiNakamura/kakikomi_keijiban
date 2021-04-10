@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,6 +19,9 @@ class HomePostsModel extends ChangeNotifier {
   List<Post> get posts => _posts;
   Map<String, List<Reply>> _replies = {};
   Map<String, List<Reply>> get replies => _replies;
+  List<Reply> _rawReplies = [];
+  Map<String, List<Reply>> _repliesToReply = {};
+  Map<String, List<Reply>> get repliesToReply => _repliesToReply;
 
   QueryDocumentSnapshot? lastVisibleOfTheBatch;
   int loadLimit = 10;
@@ -48,6 +52,7 @@ class HomePostsModel extends ChangeNotifier {
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
     _posts.clear();
+    _rawReplies.clear();
     if (docs.length == 0) {
       // isPostsExisting = false;
       canLoadMore = false;
@@ -65,6 +70,7 @@ class HomePostsModel extends ChangeNotifier {
     }
     await _addBookmarkToPosts();
     await _getRepliesToPosts();
+    await _getRepliesToReplies();
 
     stopLoading();
     notifyListeners();
@@ -98,6 +104,7 @@ class HomePostsModel extends ChangeNotifier {
     }
     await _addBookmarkToPosts();
     await _getRepliesToPosts();
+    await _getRepliesToReplies();
 
     stopLoading();
     notifyListeners();
@@ -121,7 +128,7 @@ class HomePostsModel extends ChangeNotifier {
     final bookmarkedPostDocs =
         postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
 
-    // これで十分疑惑
+    // bookmark付けてる
     for (int i = 0; i < _posts.length; i++) {
       for (QueryDocumentSnapshot bookmarkedPostDoc in bookmarkedPostDocs) {
         if (_posts[i].id == bookmarkedPostDoc.id) {
@@ -144,7 +151,28 @@ class HomePostsModel extends ChangeNotifier {
             .get();
         final docs = querySnapshot.docs;
         final replies = docs.map((doc) => Reply(doc)).toList();
+        _rawReplies += replies;
         _replies[post.id] = replies;
+      }
+    }
+  }
+
+  Future<void> _getRepliesToReplies() async {
+    if (_rawReplies.isNotEmpty) {
+      for (final reply in _rawReplies) {
+        final querySnapshot = await _firestore
+            .collection('users')
+            .doc(reply.uid)
+            .collection('posts')
+            .doc(reply.postId)
+            .collection('replies')
+            .doc(reply.id)
+            .collection('repliesToReply')
+            .orderBy('createdAt')
+            .get();
+        final docs = querySnapshot.docs;
+        final repliesToReply = docs.map((doc) => Reply(doc)).toList();
+        _repliesToReply[reply.id] = repliesToReply;
       }
     }
   }
@@ -160,7 +188,7 @@ class HomePostsModel extends ChangeNotifier {
           // setはuserDocのDocument idをもつDocumentにデータを保存する。
           // addは自動生成されたidが付与されたDocumentにデータを保存する。
           await userDoc.reference.set({
-            'nickname': '名無し',
+            'nickname': '匿名',
             'createdAt': FieldValue.serverTimestamp(),
           });
         } else if (!user.isAnonymous) {

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 
-class UpdateReplyToPostModel extends ChangeNotifier {
+class UpdateReplyModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
   bool isLoading = false;
@@ -65,7 +65,7 @@ class UpdateReplyToPostModel extends ChangeNotifier {
 
   Future<void> updateReply(Reply existingReply) async {
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
-    final userRef = _firestore.collection('users').doc(existingReply.userId);
+    final userRef = _firestore.collection('users').doc(existingReply.uid);
     final post = userRef.collection('posts').doc(existingReply.postId);
     final reply = post.collection('replies').doc(existingReply.id);
     await reply.update({

@@ -67,6 +67,7 @@ class SearchResultPostsPage extends StatelessWidget {
                         return PostCard(
                           post: post,
                           replies: model.repliesToSearchedPosts[post.id],
+                          givenModel: model,
                         );
                       },
                       itemCount: chosenCategoryPosts.length,

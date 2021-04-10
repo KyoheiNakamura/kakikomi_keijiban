@@ -10,7 +10,7 @@ import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/update_post/update_post_page.dart';
-import 'package:kakikomi_keijiban/presentation/update_reply_to_post/update_reply_to_post_page.dart';
+import 'package:kakikomi_keijiban/presentation/update_reply/update_reply_page.dart';
 import 'package:provider/provider.dart';
 
 enum PopupMenuItemsOnCard { update, delete }
@@ -96,20 +96,17 @@ class PopupMenuOnCard extends StatelessWidget {
                 return isPostExisting
                     ? UpdatePostPage(
                         post!,
-                        userProfile:
-                            Provider.of<HomePostsModel>(context, listen: false)
-                                .userProfile,
+                        userProfile: context.read<HomePostsModel>().userProfile,
                       )
-                    : UpdateReplyToPostPage(
+                    : UpdateReplyPage(
                         reply!,
-                        userProfile:
-                            Provider.of<HomePostsModel>(context, listen: false)
-                                .userProfile,
+                        userProfile: context.read<HomePostsModel>().userProfile,
                       );
               }),
             );
-            await Provider.of<MyPostsModel>(context, listen: false)
-                .getPostsWithReplies;
+            await context.read<MyPostsModel>().getPostsWithReplies;
+            await context.read<HomePostsModel>().getPostsWithReplies;
+            await context.read<BookmarkedPostsModel>().getPostsWithReplies;
           } else if (result == PopupMenuItemsOnCard.delete) {
             await _showCardDeleteConfirmDialog();
           }

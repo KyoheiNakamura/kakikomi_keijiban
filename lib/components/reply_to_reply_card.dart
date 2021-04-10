@@ -1,15 +1,15 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/components/popup_menu_on_card.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/mixin/format_poster_data_mixin.dart';
 
-class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
-  ReplyCard({required this.reply, required this.isMe, this.isMyPostsPage});
+class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
+  ReplyToReplyCard({required this.repliedReply, required this.isMe});
 
-  final Reply reply;
+  final Reply repliedReply;
   final bool isMe;
-  final bool? isMyPostsPage;
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +18,9 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
       children: [
         SizedBox(height: 20.0),
         Card(
-          elevation: 1.0,
-          color: kUltraLightPink,
-          margin: EdgeInsets.only(top: 20.0),
+          // elevation: 1.0,
+          color: Colors.white,
+          margin: EdgeInsets.only(bottom: 20.0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
             // side: BorderSide(
@@ -32,21 +32,32 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
             padding: EdgeInsets.all(20.0),
             child: Column(
               children: [
-                Text(
-                  getFormattedPosterData(reply),
-                  style: TextStyle(color: kLightGrey),
+                Row(
+                  children: [
+                    Transform(
+                      alignment: Alignment.center,
+                      transform: Matrix4.rotationY(math.pi),
+                      child: Icon(Icons.reply),
+                    ),
+                    Flexible(
+                      child: Text(
+                        getFormattedPosterData(repliedReply),
+                        style: TextStyle(color: kLightGrey),
+                      ),
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 15.0),
                   child: Text(
-                    reply.body,
+                    repliedReply.body,
                     style: TextStyle(fontSize: 16.0, height: 1.8),
                   ),
                 ),
                 Align(
                   alignment: Alignment.centerRight,
                   child: Text(
-                    reply.createdAt,
+                    repliedReply.createdAt,
                     style: TextStyle(color: kLightGrey),
                   ),
                 ),
@@ -54,12 +65,12 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
             ),
           ),
         ),
-        isMe && isMyPostsPage == true
+        isMe == true
             ? Positioned.directional(
                 textDirection: TextDirection.ltr,
-                top: 26.0,
+                top: 10.0,
                 end: -6.0,
-                child: PopupMenuOnCard(reply: reply),
+                child: PopupMenuOnCard(reply: repliedReply),
               )
             : Container(),
       ],

@@ -63,7 +63,7 @@ class MyRepliesPage extends StatelessWidget {
                               PostCard(
                                 post: post,
                                 replies: model.replies[post.id],
-                                isMyPostsPage: true,
+                                givenModel: model,
                               ),
                               post == postsWithMyReplies.last && model.isLoading
                                   ? CircularProgressIndicator()

@@ -8,7 +8,23 @@ import 'package:kakikomi_keijiban/domain/reply.dart';
 class PostCardModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final uid = FirebaseAuth.instance.currentUser?.uid;
+  final List<Reply> replies = [];
   bool isLoading = false;
+
+  Future<List<Reply>> getRepliesToPost(Post post) async {
+    final querySnapshot = await _firestore
+        .collection('users')
+        .doc(post.uid)
+        .collection('posts')
+        .doc(post.id)
+        .collection('replies')
+        .orderBy('createdAt')
+        .get();
+    final docs = querySnapshot.docs;
+    // postドメインにrepliesを持たせたので、postCardPageで戻り値をrepliesに入れてやる
+    final replies = docs.map((doc) => Reply(doc)).toList();
+    return replies;
+  }
 
   void startLoading() {
     isLoading = true;
@@ -17,6 +33,26 @@ class PostCardModel extends ChangeNotifier {
 
   void stopLoading() {
     isLoading = false;
+    notifyListeners();
+  }
+
+  void openReplies(Post post) {
+    post.isReplyShown = true;
+    notifyListeners();
+  }
+
+  void closeReplies(Post post) {
+    post.isReplyShown = false;
+    notifyListeners();
+  }
+
+  void turnOnStar(Post post) {
+    post.isBookmarked = true;
+    notifyListeners();
+  }
+
+  void turnOffStar(Post post) {
+    post.isBookmarked = false;
     notifyListeners();
   }
 
