@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/enum.dart';
 
 class UpdatePasswordModel extends ChangeNotifier {
-  final _auth = FirebaseAuth.instance;
   final User currentUser = FirebaseAuth.instance.currentUser!;
   final String email = FirebaseAuth.instance.currentUser!.email!;
   String enteredCurrentPassword = '';

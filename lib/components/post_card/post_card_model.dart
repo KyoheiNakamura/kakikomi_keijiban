@@ -8,10 +8,9 @@ import 'package:kakikomi_keijiban/domain/reply.dart';
 class PostCardModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final uid = FirebaseAuth.instance.currentUser?.uid;
-  final List<Reply> replies = [];
   bool isLoading = false;
 
-  Future<List<Reply>> getRepliesToPost(Post post) async {
+  Future<void> getRepliesToPost(Post post) async {
     final querySnapshot = await _firestore
         .collection('users')
         .doc(post.uid)
@@ -21,9 +20,10 @@ class PostCardModel extends ChangeNotifier {
         .orderBy('createdAt')
         .get();
     final docs = querySnapshot.docs;
-    // postドメインにrepliesを持たせたので、postCardPageで戻り値をrepliesに入れてやる
     final replies = docs.map((doc) => Reply(doc)).toList();
-    return replies;
+    // postドメインにrepliesを持たせているので、postCardでpost.repliesに入れてやる
+    post.replies = replies;
+    notifyListeners();
   }
 
   void startLoading() {

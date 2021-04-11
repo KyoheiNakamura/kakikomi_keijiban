@@ -62,7 +62,9 @@ class PopupMenuOnCard extends StatelessWidget {
                           ? await model.deletePostAndReplies(post!)
                           : await model.deleteReply(reply!);
                       await context.read<MyPostsModel>().getPostsWithReplies;
-                      await context.read<HomePostsModel>().getPostsWithReplies;
+                      await context
+                          .read<HomePostsModel>()
+                          .getPostsWithReplies(kAllPostsTab);
                       await context
                           .read<BookmarkedPostsModel>()
                           .getPostsWithReplies;
@@ -105,7 +107,9 @@ class PopupMenuOnCard extends StatelessWidget {
               }),
             );
             await context.read<MyPostsModel>().getPostsWithReplies;
-            await context.read<HomePostsModel>().getPostsWithReplies;
+            await context
+                .read<HomePostsModel>()
+                .getPostsWithReplies(kAllPostsTab);
             await context.read<BookmarkedPostsModel>().getPostsWithReplies;
           } else if (result == PopupMenuItemsOnCard.delete) {
             await _showCardDeleteConfirmDialog();

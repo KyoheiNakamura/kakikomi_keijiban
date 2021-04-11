@@ -5,30 +5,32 @@ import 'package:kakikomi_keijiban/components/reply_card/reply_card.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/components/popup_menu_on_card.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
-import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/mixin/format_poster_data_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply/add_reply_page.dart';
-import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
-import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/search_result_posts/search_result_posts_page.dart';
 import 'package:provider/provider.dart';
 
 class PostCard extends StatelessWidget with FormatPosterDataMixin {
-  PostCard(
-      {required this.post, required this.replies, required this.givenModel});
+  PostCard({
+    required this.post,
+    required this.passedModel,
+    this.tabName,
+  });
 
   final Post post;
-  final List<Reply>? replies;
-  final givenModel;
+  final passedModel;
+  final String? tabName;
 
   @override
   Widget build(BuildContext context) {
+    post.replies = tabName != null
+        ? passedModel.getReplies(tabName)[post.id]
+        : passedModel.replies[post.id];
+    final bool isMe = FirebaseAuth.instance.currentUser != null
+        ? FirebaseAuth.instance.currentUser!.uid == post.uid
+        : false;
     return Consumer<PostCardModel>(builder: (context, model, child) {
-      bool isMe = false;
-      if (FirebaseAuth.instance.currentUser != null) {
-        isMe = FirebaseAuth.instance.currentUser!.uid == post.uid;
-      }
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
         child: Stack(
@@ -124,22 +126,24 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                 MaterialPageRoute(
                                   builder: (context) => AddReplyPage(
                                     repliedPost: post,
-                                    userProfile: Provider.of<HomePostsModel>(
-                                      context,
-                                      listen: false,
-                                    ).userProfile,
+                                    userProfile: context
+                                        .read<HomePostsModel>()
+                                        .userProfile,
                                   ),
                                 ),
                               );
-                              await context
-                                  .read<HomePostsModel>()
-                                  .getPostsWithReplies;
-                              await context
-                                  .read<MyPostsModel>()
-                                  .getPostsWithReplies;
-                              await context
-                                  .read<BookmarkedPostsModel>()
-                                  .getPostsWithReplies;
+                              model.getRepliesToPost(post);
+                              // if (tabName != null) {
+                              //   await context
+                              //       .read<HomePostsModel>()
+                              //       .getPostsWithReplies(kAllPostsTab);
+                              //   await context
+                              //       .read<HomePostsModel>()
+                              //       .getPostsWithReplies(kMyPostsTab);
+                              //   await context
+                              //       .read<HomePostsModel>()
+                              //       .getPostsWithReplies(kBookmarkedPostsTab);
+                              // }
                             },
                             child: Text(
                               '返信する',
@@ -167,14 +171,13 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                         children: [
                           /// 返信一覧
                           Column(
-                            children: replies != null
+                            children: post.replies != null
                                 // children: post.isReplyShown && replies != null
-                                ? replies!.map((reply) {
+                                ? post.replies!.map((reply) {
                                     return ReplyCard(
                                       reply: reply,
-                                      repliedReplies:
-                                          givenModel.repliesToReply[reply.id],
-                                      isMe: isMe,
+                                      passedModel: passedModel,
+                                      tabName: tabName,
                                     );
                                   }).toList()
                                 : [],
@@ -260,11 +263,14 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                       ),
                       onPressed: () async {
                         model.turnOffStar(post);
+                        // Todo 後で修正する
                         await model.deleteBookmarkedPost(post);
                         await context
                             .read<HomePostsModel>()
-                            .getPostsWithReplies;
-                        await context.read<MyPostsModel>().getPostsWithReplies;
+                            .getPostsWithReplies(kAllPostsTab);
+                        await context
+                            .read<HomePostsModel>()
+                            .getPostsWithReplies(kMyPostsTab);
                       },
                     )
                   : IconButton(
@@ -273,14 +279,17 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                       ),
                       onPressed: () async {
                         model.turnOnStar(post);
+                        // Todo 後で修正する
                         await model.addBookmarkedPost(post);
                         await context
-                            .read<BookmarkedPostsModel>()
-                            .getPostsWithReplies;
+                            .read<HomePostsModel>()
+                            .getPostsWithReplies(kBookmarkedPostsTab);
                         await context
                             .read<HomePostsModel>()
-                            .getPostsWithReplies;
-                        await context.read<MyPostsModel>().getPostsWithReplies;
+                            .getPostsWithReplies(kAllPostsTab);
+                        await context
+                            .read<HomePostsModel>()
+                            .getPostsWithReplies(kMyPostsTab);
                       },
                     ),
             ),

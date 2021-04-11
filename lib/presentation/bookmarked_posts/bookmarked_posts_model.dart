@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -88,20 +87,16 @@ class BookmarkedPostsModel extends ChangeNotifier {
         .limit(loadLimit);
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
-    // List<Post> posts;
     if (docs.length == 0) {
       // isPostsExisting = false;
       canLoadMore = false;
-      // posts = [];
       _bookmarkedPosts += [];
     } else if (docs.length < loadLimit) {
       // isPostsExisting = true;
       canLoadMore = false;
       lastVisibleOfTheBatch = docs[docs.length - 1];
       _bookmarkedPosts += await _getBookmarkedPosts(docs);
-      for (int i = 0; i < _bookmarkedPosts.length; i++) {
-        _bookmarkedPosts[i].isBookmarked = true;
-      }
+      _addBookmarkToPosts(_bookmarkedPosts);
     } else {
       // isPostsExisting = true;
       canLoadMore = true;

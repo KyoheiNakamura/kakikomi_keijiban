@@ -6,7 +6,7 @@ class Reply {
     this.id = doc.id;
     this.postId = doc['postId'];
     this.replyId = doc['replyId'];
-    this.uid = doc.reference.parent.parent!.parent.parent!.id;
+    this.uid = doc.reference.parent.parent!.parent.parent!.parent.parent!.id;
     this.replierId = doc['replierId'];
     this.body = doc['body'];
     this.nickname = doc['nickname'];

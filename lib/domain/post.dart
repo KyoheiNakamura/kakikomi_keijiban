@@ -20,7 +20,7 @@ class Post {
     this.replyCount = doc['replyCount'];
     this.isBookmarked = false;
     this.isReplyShown = false;
-    this.isDraft = doc['isDraft'];
+    // this.isDraft = doc['isDraft'];
     this.replies = [];
     this._createdAt = doc['createdAt'].toDate();
     if (doc['updatedAt'] != null) {
@@ -44,7 +44,7 @@ class Post {
   bool isBookmarked = false;
   bool isReplyShown = false;
   bool isDraft = false;
-  List<Reply> replies = [];
+  List<Reply>? replies = [];
   DateTime? _createdAt;
   DateTime? _updatedAt;
 
