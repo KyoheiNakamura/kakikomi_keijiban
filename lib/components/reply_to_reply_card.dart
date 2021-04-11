@@ -18,9 +18,9 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
       children: [
         SizedBox(height: 20.0),
         Card(
-          // elevation: 1.0,
+          elevation: 0,
           color: Colors.white,
-          margin: EdgeInsets.only(bottom: 20.0),
+          // margin: EdgeInsets.only(bottom: 20.0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
             // side: BorderSide(
@@ -35,7 +35,7 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                 Row(
                   children: [
                     Transform(
-                      alignment: Alignment.center,
+                      alignment: Alignment.topCenter,
                       transform: Matrix4.rotationY(math.pi),
                       child: Icon(Icons.reply),
                     ),

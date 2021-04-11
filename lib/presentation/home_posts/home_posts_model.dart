@@ -185,10 +185,16 @@ class HomePostsModel extends ChangeNotifier {
         final userDoc =
             await _firestore.collection('users').doc(user.uid).get();
         if (!userDoc.exists) {
-          // setはuserDocのDocument idをもつDocumentにデータを保存する。
+          // setはuserDocのDocumentIdをもつDocumentにデータを保存する。
           // addは自動生成されたidが付与されたDocumentにデータを保存する。
           await userDoc.reference.set({
+            'userId': user.uid,
             'nickname': '匿名',
+            'position': '',
+            'gender': '',
+            'age': '',
+            'area': '',
+            'postCount': 0,
             'createdAt': FieldValue.serverTimestamp(),
           });
         } else if (!user.isAnonymous) {

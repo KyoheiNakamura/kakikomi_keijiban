@@ -259,7 +259,7 @@ class AddPostPage extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  '1つ以上選択してください',
+                                  '5つ以内で選択してください',
                                   style: TextStyle(
                                     fontSize: 12.0,
                                     color: kLightGrey,

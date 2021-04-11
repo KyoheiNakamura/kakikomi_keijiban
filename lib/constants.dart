@@ -193,7 +193,7 @@ const kContentTextFormFieldDecoration = InputDecoration(
       '自分が大人の発達障害ではないかと疑っているのですが、特徴の濃淡がはっきりせずグレーゾーンに思われるため、確信が持てないのと、親へどう話せばいいかわからず、診断に踏み切れていません。',
   helperText: '必須',
   helperStyle: TextStyle(color: kDarkPink),
-  counterText: '1000字以内でご記入ください',
+  counterText: '1500字以内でご記入ください',
   counterStyle: TextStyle(color: kLightGrey),
   // counterText: isPostExisting
   //     ? '${existingPost!.textBody.length} 字'

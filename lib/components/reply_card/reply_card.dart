@@ -30,7 +30,7 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
         children: [
           SizedBox(height: 20.0),
           Card(
-            // elevation: 1.0,
+            elevation: 0,
             color: kUltraLightPink,
             margin: EdgeInsets.only(top: 20.0),
             shape: RoundedRectangleBorder(
@@ -120,9 +120,16 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                 Column(
                   children: repliedReplies != null
                       ? repliedReplies!.map((reply) {
-                          return ReplyToReplyCard(
-                            repliedReply: reply,
-                            isMe: isMe,
+                          return Column(
+                            children: [
+                              ReplyToReplyCard(
+                                repliedReply: reply,
+                                isMe: isMe,
+                              ),
+                              repliedReplies!.last == reply
+                                  ? SizedBox(height: 24.0)
+                                  : SizedBox(),
+                            ],
                           );
                         }).toList()
                       : [],

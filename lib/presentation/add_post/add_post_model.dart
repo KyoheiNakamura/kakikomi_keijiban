@@ -8,6 +8,9 @@ class AddPostModel extends ChangeNotifier {
   final currentUser = FirebaseAuth.instance.currentUser;
   final uid = FirebaseAuth.instance.currentUser!.uid;
   bool isLoading = false;
+  bool isCategoriesValid = true;
+  // postドメインに持たせる
+  bool isDraft = false;
 
   String titleValue = '';
   String bodyValue = '';
@@ -19,7 +22,6 @@ class AddPostModel extends ChangeNotifier {
   String genderDropdownValue = kPleaseSelect;
   String ageDropdownValue = kPleaseSelect;
   String areaDropdownValue = kPleaseSelect;
-  bool isCategoriesValid = true;
 
   Future<void> addPost() async {
     final userRef = _firestore.collection('users').doc(uid);
@@ -39,6 +41,8 @@ class AddPostModel extends ChangeNotifier {
       'categories': selectedCategories,
       'userId': uid,
       'replyCount': 0,
+      // Todo 下書き機能を実装しよう
+      'isDraft': isDraft,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
@@ -77,8 +81,8 @@ class AddPostModel extends ChangeNotifier {
   String? validateContentCallback(String? value) {
     if (value == null || value.isEmpty) {
       return '投稿の内容を入力してください';
-    } else if (value.length > 1000) {
-      return '1000字以内でご記入ください';
+    } else if (value.length > 1500) {
+      return '1500字以内でご記入ください';
     }
     return null;
   }
@@ -107,7 +111,7 @@ class AddPostModel extends ChangeNotifier {
   }
 
   bool validateSelectedCategories() {
-    if (selectedCategories.isEmpty) {
+    if (selectedCategories.isEmpty || selectedCategories.length > 5) {
       isCategoriesValid = false;
       notifyListeners();
       return false;

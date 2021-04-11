@@ -9,6 +9,7 @@ class AddReplyModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
   bool isLoading = false;
+  bool isDraft = false;
 
   void startLoading() {
     isLoading = true;
@@ -23,8 +24,8 @@ class AddReplyModel extends ChangeNotifier {
   String? validateContentCallback(String? value) {
     if (value == null || value.isEmpty) {
       return '返信の内容を入力してください';
-    } else if (value.length > 1000) {
-      return '1000字以内でご記入ください';
+    } else if (value.length > 1500) {
+      return '1500字以内でご記入ください';
     }
     return null;
   }
@@ -80,6 +81,7 @@ class AddReplyModel extends ChangeNotifier {
       'gender': _replyDataList[3],
       'age': _replyDataList[4],
       'area': _replyDataList[5],
+      'isDraft': isDraft,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
@@ -107,6 +109,7 @@ class AddReplyModel extends ChangeNotifier {
       'gender': _replyDataList[3],
       'age': _replyDataList[4],
       'area': _replyDataList[5],
+      'isDraft': isDraft,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
