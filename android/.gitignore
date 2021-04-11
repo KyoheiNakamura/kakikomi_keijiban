@@ -11,4 +11,4 @@ GeneratedPluginRegistrant.java
 key.properties
 
 # Firebase config files
-app/src/**/google-services.json
+/app/src/**/google-services.json

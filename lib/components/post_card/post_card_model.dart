@@ -62,10 +62,26 @@ class PostCardModel extends ChangeNotifier {
         userRef.collection('bookmarkedPosts').doc(post.id);
     await bookmarkedPostRef.set({
       /// bookmarkedPosts自身のIDにはpostIdと同じIDをsetしている
-      'userId': bookmarkedPostRef.id,
+      'id': post.id,
       'postId': post.id,
-      // 'postRef': userRef.collection('posts').doc(post.id),
+      'userId': uid,
       'createdAt': FieldValue.serverTimestamp(),
+
+      // Todo やっぱりbookmarkしたpostの中身を全部持たせよう
+      /// 参照元のデータが更新されたことをCloud FunctionsのFirestoreトリガーで検出し、
+      /// 参照元のデータを持つドキュメントを各ドキュメントのサブコレクションから抽出し、データを更新する。
+      // 'title': post.title,
+      // 'body': post.body,
+      // 'nickname': post.nickname,
+      // 'emotion': post.emotion,
+      // 'position': post.position,
+      // 'gender': post.gender,
+      // 'age': post.age,
+      // 'area': post.area,
+      // 'categories': post.categories,
+      // 'posterId': post.uid,
+      // 'replyCount': 0,
+      // 'isDraft': post.isDraft,
     });
     notifyListeners();
   }

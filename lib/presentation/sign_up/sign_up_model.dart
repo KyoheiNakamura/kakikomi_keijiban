@@ -39,11 +39,13 @@ class SignUpModel extends ChangeNotifier {
           _firestore.collection('users').doc(_auth.currentUser!.uid);
       // setはuserDocRefのDocument idをもつDocumentにデータを保存する。
       await userDocRef.set({
+        'userId': _auth.currentUser!.uid,
         'nickname': enteredNickname,
         'position': '',
         'gender': '',
         'age': '',
         'area': '',
+        'postCount': 0,
         'createdAt': FieldValue.serverTimestamp(),
       });
       // final Auth.User user = userCredential.user!;

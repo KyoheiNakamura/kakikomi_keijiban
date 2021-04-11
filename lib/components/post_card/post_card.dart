@@ -43,12 +43,12 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                 ),
                 child: Padding(
                   padding: EdgeInsets.only(
-                    // top: 24.0, left: 20.0, right: 20.0, bottom: 32.0),
-                    top: 24.0,
-                    left: 20.0,
-                    right: 20.0,
-                    bottom: replies == null || replies!.isEmpty ? 32.0 : 0,
-                  ),
+                      top: 24.0, left: 20.0, right: 20.0, bottom: 32.0
+                      // top: 24.0,
+                      // left: 20.0,
+                      // right: 20.0,
+                      // bottom: replies == null || replies!.isEmpty ? 32.0 : 0,
+                      ),
                   child: Column(
                     children: [
                       /// カテゴリーのActionChipを表示してる
@@ -167,7 +167,8 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                         children: [
                           /// 返信一覧
                           Column(
-                            children: post.isReplyShown && replies != null
+                            children: replies != null
+                                // children: post.isReplyShown && replies != null
                                 ? replies!.map((reply) {
                                     return ReplyCard(
                                       reply: reply,
@@ -180,33 +181,33 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                           ),
 
                           /// 返信数
-                          replies != null
-                              ? replies!.isNotEmpty
-                                  ? post.isReplyShown
-                                      ? TextButton(
-                                          onPressed: () async {
-                                            model.closeReplies(post);
-                                          },
-                                          child: Text(
-                                            '返信を閉じる',
-                                            style: TextStyle(
-                                              color: Colors.blueAccent,
-                                            ),
-                                          ),
-                                        )
-                                      : TextButton(
-                                          onPressed: () async {
-                                            model.openReplies(post);
-                                          },
-                                          child: Text(
-                                            '${post.replyCount}件の返信',
-                                            style: TextStyle(
-                                              color: Colors.blueAccent,
-                                            ),
-                                          ),
-                                        )
-                                  : SizedBox()
-                              : SizedBox(),
+                          // replies != null
+                          //     ? replies!.isNotEmpty
+                          //         ? post.isReplyShown
+                          //             ? TextButton(
+                          //                 onPressed: () async {
+                          //                   model.closeReplies(post);
+                          //                 },
+                          //                 child: Text(
+                          //                   '返信を閉じる',
+                          //                   style: TextStyle(
+                          //                     color: Colors.blueAccent,
+                          //                   ),
+                          //                 ),
+                          //               )
+                          //             : TextButton(
+                          //                 onPressed: () async {
+                          //                   model.openReplies(post);
+                          //                 },
+                          //                 child: Text(
+                          //                   '${post.replyCount}件の返信',
+                          //                   style: TextStyle(
+                          //                     color: Colors.blueAccent,
+                          //                   ),
+                          //                 ),
+                          //               )
+                          //         : SizedBox()
+                          //     : SizedBox(),
                         ],
                       ),
                     ],

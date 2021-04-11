@@ -34,12 +34,14 @@ class UpdateProfileModel extends ChangeNotifier {
     );
 
     await userRef.update({
+      'userId': uid,
       'nickname': _userProfileList[0],
       'position': _userProfileList[1],
       'gender': _userProfileList[2],
       'age': _userProfileList[3],
       'area': _userProfileList[4],
-      'updatedAt': FieldValue.serverTimestamp(),
+      // Todo あとでやる
+      'postCount': 0,
     });
   }
 

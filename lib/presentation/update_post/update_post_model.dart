@@ -9,6 +9,7 @@ class UpdatePostModel extends ChangeNotifier {
   final currentUser = FirebaseAuth.instance.currentUser;
   final uid = FirebaseAuth.instance.currentUser!.uid;
   bool isLoading = false;
+  bool isCategoriesValid = true;
 
   String titleValue = '';
   String bodyValue = '';
@@ -20,7 +21,7 @@ class UpdatePostModel extends ChangeNotifier {
   String genderDropdownValue = kPleaseSelect;
   String ageDropdownValue = kPleaseSelect;
   String areaDropdownValue = kPleaseSelect;
-  bool isCategoriesValid = true;
+  bool isDraft = false;
 
   Future<void> updatePost(Post post) async {
     final userRef = _firestore.collection('users').doc(uid);
@@ -37,6 +38,7 @@ class UpdatePostModel extends ChangeNotifier {
       'gender': _postDataList[5],
       'age': _postDataList[6],
       'area': _postDataList[7],
+      'isDraft': isDraft,
       'categories': selectedCategories,
       'updatedAt': FieldValue.serverTimestamp(),
     });
@@ -75,8 +77,8 @@ class UpdatePostModel extends ChangeNotifier {
   String? validateContentCallback(String? value) {
     if (value == null || value.isEmpty) {
       return '投稿の内容を入力してください';
-    } else if (value.length > 1000) {
-      return '1000字以内でご記入ください';
+    } else if (value.length > 1500) {
+      return '1500字以内でご記入ください';
     }
     return null;
   }
@@ -105,7 +107,7 @@ class UpdatePostModel extends ChangeNotifier {
   }
 
   bool validateSelectedCategories() {
-    if (selectedCategories.isEmpty) {
+    if (selectedCategories.isEmpty || selectedCategories.length > 5) {
       isCategoriesValid = false;
       notifyListeners();
       return false;

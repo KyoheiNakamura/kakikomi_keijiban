@@ -1,0 +1,300 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isUserAuthenticated(userId) {
+      return request.auth.uId == userId;
+    }
+
+    function isValidUser(user) {
+      return user.size() == 8
+        && 'userId' in user && user.userId is string
+        && 'nickname' in user && user.nickname is string
+        && 'position' in user && user.position is string
+        && 'gender' in user && user.gender is string
+        && 'age' in user && user.age is string
+        && 'area' in user && user.area is string
+        && 'postCount' in user && user.postCount is int
+        && 'createdAt' in user && user.createdAt is timestamp
+      ;
+    }
+
+    function isValidPost(post) {
+      return post.size() == 15
+        && 'userId' in post && post.userId is string
+        && 'id' in post && post.id is string
+        && 'nickname' in post && post.nickname is string
+        && 'position' in post && post.position is string
+        && 'gender' in post && post.gender is string
+        && 'age' in post && post.age is string
+        && 'area' in post && post.area is string
+        && 'title' in post && post.title is string
+        && 'body' in post && post.body is string
+        && 'emotion' in post && post.emotion is string
+        && 'isDraft' in post && post.isDraft is bool
+        && 'categories' in post && post.categories is array
+        && 'replyCount' in post && post.replyCount is int
+        && 'createdAt' in post && post.createdAt is timestamp
+        && 'updatedAt' in post && post.updatedAt is timestamp
+      ;
+    }
+
+    function isValidReply(reply) {
+      return reply.size() == 11
+        && 'postId' in reply && reply.postId is string
+        && 'id' in reply && reply.id is string
+        && 'replierId' in reply && reply.replierId is string
+        && 'body' in reply && reply.body is string
+        && 'nickname' in reply && reply.nickname is string
+        && 'position' in reply && reply.position is string
+        && 'gender' in reply && reply.gender is string
+        && 'age' in reply && reply.age is string
+        && 'area' in reply && reply.area is string
+        && 'isDraft' in reply && reply.isDraft is bool
+        && 'createdAt' in reply && reply.createdAt is timestamp
+        && 'updatedAt' in reply && reply.updatedAt is timestamp
+      ;
+    }
+
+    function isValidReplyToReply(reply) {
+      return reply.size() == 12
+        && 'replyId' in reply && reply.replyId is string
+        && 'postId' in reply && reply.postId is string
+        && 'id' in reply && reply.id is string
+        && 'replierId' in reply && reply.replierId is string
+        && 'body' in reply && reply.body is string
+        && 'nickname' in reply && reply.nickname is string
+        && 'position' in reply && reply.position is string
+        && 'gender' in reply && reply.gender is string
+        && 'age' in reply && reply.age is string
+        && 'area' in reply && reply.area is string
+        && 'isDraft' in reply && reply.isDraft is bool
+        && 'createdAt' in reply && reply.createdAt is timestamp
+        && 'updatedAt' in reply && reply.updatedAt is timestamp
+      ;
+    }
+
+
+
+    match /users/{userId} {
+      allow get: if isAuthenticated();
+      allow create: if isUserAuthenticated(userId)
+      // スキーマ検証
+        && isValidUser(request.resource.data)
+      // バリデーション
+        && request.resource.data.userId == userId
+        && request.resource.data.nickname.size() <= 10
+        && request.resource.data.position.size() <= 10
+        && request.resource.data.gender.size() <= 10
+        && request.resource.data.age.size() <= 10
+        && request.resource.data.area.size() <= 10
+        && request.resource.data.postCount >= 0
+        && request.resource.data.postCount < 10000
+        && request.resource.data.createdAt == request.time
+      ;
+      allow update: if isAuthenticated()
+      // スキーマ検証
+        && isValidUser(request.resource.data)
+      // バリデーション
+        && request.resource.data.userId == userId
+        && request.resource.data.nickname.size() <= 10
+        && request.resource.data.position.size() <= 10
+        && request.resource.data.gender.size() <= 10
+        && request.resource.data.age.size() <= 10
+        && request.resource.data.area.size() <= 10
+        && request.resource.data.postCount.size() >= 0
+      //   && (request.resource.data.postCount == resource.data.postCount
+      //   ||  request.resource.data.postCount == resource.data.postCount + 1
+      //   ||  request.resource.data.postCount == resource.data.postCount - 1
+      // )
+        && request.resource.data.createdAt == resource.data.createdAt
+      ;
+
+      // /users/{userId}/posts
+      match /posts/{postId} {
+        // draftの時は isUserAuthenticated(userId) にする
+        allow read: if isAuthenticated(userId); 
+        allow create: if isUserAuthenticated(userId)
+        // スキーマ検証
+          && isValidPost(request.resource.data)
+        // バリデーション
+          && request.resource.data.userId == userId
+          && request.resource.data.id == postId
+        // draftの時は >= 0 にする
+          && request.resource.data.nickname.size() > 0
+          && request.resource.data.nickname.size() <= 10
+          && request.resource.data.position.size() <= 10
+          && request.resource.data.gender.size() <= 10
+          && request.resource.data.age.size() <= 10
+          && request.resource.data.area.size() <= 10
+        // draftの時は >= 0 にする
+          && request.resource.data.emotion.size() > 0
+          && request.resource.data.emotion.size() <= 10
+        // draftの時は >= 0 にする
+          && request.resource.data.title.size() > 0
+          && request.resource.data.title.size() <= 50
+        // draftの時は >= 0 にする
+          && request.resource.data.body.size() > 0
+          && request.resource.data.body.size() <= 1500
+        // draftの時は >= 0 にする
+          && request.resource.data.categories.size() >= 1
+          && request.resource.data.categories.size() <= 5
+          && request.resource.data.replyCount == 0
+          && request.resource.data.createdAt == request.time
+          && request.resource.data.updatedAt == request.time
+        ;
+        allow update: if isUserAuthenticated(userId)
+        // スキーマ検証
+          && isValidPost(request.resource.data)
+        // バリデーション
+          && request.resource.data.userId == resource.data.userId
+          && request.resource.data.id == resource.data.postId
+        // draftの時は >= 0 にする
+          && request.resource.data.nickname.size() > 0
+          && request.resource.data.nickname.size() <= 10
+          && request.resource.data.position.size() <= 10
+          && request.resource.data.gender.size() <= 10
+          && request.resource.data.age.size() <= 10
+          && request.resource.data.area.size() <= 10
+        // draftの時は >= 0 にする
+          && request.resource.data.emotion.size() > 0
+          && request.resource.data.emotion.size() <= 10
+        // draftの時は >= 0 にする
+          && request.resource.data.title.size() > 0
+          && request.resource.data.title.size() <= 50
+        // draftの時は >= 0 にする
+          && request.resource.data.body.size() > 0
+          && request.resource.data.body.size() <= 1500
+        // draftの時は >= 0 にする
+          && request.resource.data.categories.size() >= 1
+          && request.resource.data.categories.size() <= 5
+          && request.resource.data.replyCount.size() >= 0
+        //   && (request.resource.data.replyCount == resource.data.replyCount
+        //   ||  request.resource.data.replyCount == resource.data.replyCount + 1
+        //   ||  request.resource.data.replyCount == resource.data.replyCount - 1
+        // )
+          && request.resource.data.createdAt == resource.data.createdAt
+          && request.resource.data.updatedAt == request.time
+        ;
+        allow delete: if isUserAuthenticated(userId);
+
+        // /users/{userId}/posts/{postId}/replies
+        match /replies/{replyId} {
+          allow read: if isAuthenticated(userId); 
+          allow create: if isAuthenticated(userId)
+          // スキーマ検証
+            && isValidReply(request.resource.data)
+          // バリデーション
+            && request.resource.data.postId == postId
+            && request.resource.data.id == id
+          // Todo replierId文字制限かける？autoGenerateIdの文字数いくらよ？？とりあえず50にしとく
+            && request.resource.data.replierId.size() <= 50
+          // draftの時は >= 0 にする
+            && request.resource.data.nickname.size() > 0
+            && request.resource.data.nickname.size() <= 10
+            && request.resource.data.position.size() <= 10
+            && request.resource.data.gender.size() <= 10
+            && request.resource.data.age.size() <= 10
+            && request.resource.data.area.size() <= 10
+          // draftの時は >= 0 にする
+            && request.resource.data.body.size() > 0
+            && request.resource.data.body.size() <= 1500
+            && request.resource.data.createdAt == request.time
+            && request.resource.data.updatedAt == request.time
+          ;
+          allow update: if isUserAuthenticated(resource.data.replierId)
+          // スキーマ検証
+            && isValidReply(request.resource.data.replierId)
+          // バリデーション
+            && request.resource.data.postId == resource.data.postId
+            && request.resource.data.id == resource.data.id
+          // Todo replierId文字制限かける？autoGenerateIdの文字数いくらよ？？とりあえず50にしとく
+            && request.resource.data.replierId == resource.data.replierId
+          // draftの時は >= 0 にする
+            && request.resource.data.nickname.size() > 0
+            && request.resource.data.nickname.size() <= 10
+            && request.resource.data.position.size() <= 10
+            && request.resource.data.gender.size() <= 10
+            && request.resource.data.age.size() <= 10
+            && request.resource.data.area.size() <= 10
+          // draftの時は >= 0 にする
+            && request.resource.data.body.size() > 0
+            && request.resource.data.body.size() <= 1500
+            && request.resource.data.createdAt == resource.data.createdAt
+            && request.resource.data.updatedAt == request.time
+          ;
+          allow delete: if isUserAuthenticated(resource.data.replierId);
+
+          // /users/{userId}/posts/{postId}/replies/{replyId}/repliesToReply
+          match /repliesToReply/{repliesToReplyId} {
+            allow read: if isAuthenticated(userId); 
+            allow create: if isAuthenticated(userId)
+            // スキーマ検証
+              && isValidReplyToReply(request.resource.data)
+            // バリデーション
+              && request.resource.data.postId == postId
+              && request.resource.data.replyId == replyId
+              && request.resource.data.id == id
+            // Todo autoGenerateIdの文字数いくらよ？？とりあえず50にしとく。
+              && request.resource.data.replierId.size() <= 50
+            // draftの時は >= 0 にする
+              && request.resource.data.nickname.size() > 0
+              && request.resource.data.nickname.size() <= 10
+              && request.resource.data.position.size() <= 10
+              && request.resource.data.gender.size() <= 10
+              && request.resource.data.age.size() <= 10
+              && request.resource.data.area.size() <= 10
+            // draftの時は >= 0 にする
+              && request.resource.data.body.size() > 0
+              && request.resource.data.body.size() <= 1500
+              && request.resource.data.createdAt == request.time
+              && request.resource.data.updatedAt == request.time
+            ;
+            allow update: if isUserAuthenticated(resource.data.replierId)
+            // スキーマ検証
+              && isValidReply(request.resource.data.replierId)
+            // バリデーション
+              && request.resource.data.postId == resource.data.postId
+              && request.resource.data.replyId == resource.data.replyId
+              && request.resource.data.id == resource.data.id
+            // Todo autoGenerateIdの文字数いくらよ？？とりあえず50にしとく。
+              && request.resource.data.replierId == resource.data.replierId
+            // draftの時は >= 0 にする
+              && request.resource.data.nickname.size() > 0
+              && request.resource.data.nickname.size() <= 10
+              && request.resource.data.position.size() <= 10
+              && request.resource.data.gender.size() <= 10
+              && request.resource.data.age.size() <= 10
+              && request.resource.data.area.size() <= 10
+            // draftの時は >= 0 にする
+              && request.resource.data.body.size() > 0
+              && request.resource.data.body.size() <= 1500
+              && request.resource.data.createdAt == resource.data.createdAt
+              && request.resource.data.updatedAt == request.time
+            ;
+            allow delete: if isUserAuthenticated(resource.data.replierId);
+          }
+        }
+      }
+      // /users/{userId}/bookmarkedPosts
+
+      // /users/{userId}/draftPosts
+
+      // /users/{userId}/draftReplies
+
+      // /users/{userId}/draftRepliesToReply
+
+    }
+  }
+}
+
+// request はルールの記述のどこからでもアクセスできる（グローバルに定義されている）値です。
+// request.auth：ユーザーの認証情報に関する値が参照できる
+// request.resource.data：来るやつ・クライアントから送られてくるフィールドとその値が参照できる
+// resource.data：居るやつ・ドキュメントに格納されているフィールドとその値が参照できる
+
+// if request.time < timestamp.date(2021, 4, 21);

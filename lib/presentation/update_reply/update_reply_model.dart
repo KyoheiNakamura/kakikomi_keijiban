@@ -8,6 +8,7 @@ class UpdateReplyModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
   bool isLoading = false;
+  bool isDraft = false;
 
   void startLoading() {
     isLoading = true;
@@ -22,8 +23,8 @@ class UpdateReplyModel extends ChangeNotifier {
   String? validateContentCallback(String? value) {
     if (value == null || value.isEmpty) {
       return '返信の内容を入力してください';
-    } else if (value.length > 1000) {
-      return '1000字以内でご記入ください';
+    } else if (value.length > 1500) {
+      return '1500字以内でご記入ください';
     }
     return null;
   }
@@ -66,15 +67,37 @@ class UpdateReplyModel extends ChangeNotifier {
   Future<void> updateReply(Reply existingReply) async {
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
     final userRef = _firestore.collection('users').doc(existingReply.uid);
-    final post = userRef.collection('posts').doc(existingReply.postId);
-    final reply = post.collection('replies').doc(existingReply.id);
-    await reply.update({
+    final postRef = userRef.collection('posts').doc(existingReply.postId);
+    final replyRef = postRef.collection('replies').doc(existingReply.id);
+
+    await replyRef.update({
       'body': _postDataList[0],
       'nickname': _postDataList[1],
       'position': _postDataList[2],
       'gender': _postDataList[3],
       'age': _postDataList[4],
       'area': _postDataList[5],
+      'isDraft': isDraft,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> updateReplyToReply(Reply repliedReply) async {
+    List<String> _postDataList = _convertNoSelectedValueToEmpty();
+    final userRef = _firestore.collection('users').doc(repliedReply.uid);
+    final postRef = userRef.collection('posts').doc(repliedReply.postId);
+    final replyRef = postRef.collection('replies').doc(repliedReply.id);
+    final replyToReplyRef =
+        replyRef.collection('repliesToReply').doc(repliedReply.id);
+
+    await replyToReplyRef.update({
+      'body': _postDataList[0],
+      'nickname': _postDataList[1],
+      'position': _postDataList[2],
+      'gender': _postDataList[3],
+      'age': _postDataList[4],
+      'area': _postDataList[5],
+      'isDraft': isDraft,
       'updatedAt': FieldValue.serverTimestamp(),
     });
   }
