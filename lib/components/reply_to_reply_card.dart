@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/components/popup_menu_on_card.dart';
 import 'package:kakikomi_keijiban/constants.dart';
@@ -6,13 +7,15 @@ import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/mixin/format_poster_data_mixin.dart';
 
 class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
-  ReplyToReplyCard({required this.repliedReply, required this.isMe});
+  ReplyToReplyCard({required this.replyToReply});
 
-  final Reply repliedReply;
-  final bool isMe;
+  final Reply replyToReply;
 
   @override
   Widget build(BuildContext context) {
+    final bool isMe = FirebaseAuth.instance.currentUser != null
+        ? FirebaseAuth.instance.currentUser!.uid == replyToReply.uid
+        : false;
     return Stack(
       alignment: AlignmentDirectional.topEnd,
       children: [
@@ -41,7 +44,7 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                     ),
                     Flexible(
                       child: Text(
-                        getFormattedPosterData(repliedReply),
+                        getFormattedPosterData(replyToReply),
                         style: TextStyle(color: kLightGrey),
                       ),
                     ),
@@ -50,14 +53,14 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 15.0),
                   child: Text(
-                    repliedReply.body,
+                    replyToReply.body,
                     style: TextStyle(fontSize: 16.0, height: 1.8),
                   ),
                 ),
                 Align(
                   alignment: Alignment.centerRight,
                   child: Text(
-                    repliedReply.createdAt,
+                    replyToReply.createdAt,
                     style: TextStyle(color: kLightGrey),
                   ),
                 ),
@@ -70,7 +73,7 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                 textDirection: TextDirection.ltr,
                 top: 10.0,
                 end: -6.0,
-                child: PopupMenuOnCard(reply: repliedReply),
+                child: PopupMenuOnCard(reply: replyToReply),
               )
             : Container(),
       ],

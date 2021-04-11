@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/enum.dart';
 
 class UpdateEmailModel extends ChangeNotifier {
-  final _auth = FirebaseAuth.instance;
   final User currentUser = FirebaseAuth.instance.currentUser!;
   final String currentEmail = FirebaseAuth.instance.currentUser!.email!;
   String enteredNewEmail = '';

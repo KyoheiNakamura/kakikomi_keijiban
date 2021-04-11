@@ -2,17 +2,28 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 
 class ReplyCardModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final uid = FirebaseAuth.instance.currentUser?.uid;
   bool isLoading = false;
-  bool isRepliesShown = false;
 
-  void toggleIsRepliesShown() {
-    isRepliesShown = !isRepliesShown;
+  Future<void> getRepliesToReply(Reply reply) async {
+    final querySnapshot = await _firestore
+        .collection('users')
+        .doc(reply.uid)
+        .collection('posts')
+        .doc(reply.postId)
+        .collection('replies')
+        .doc(reply.id)
+        .collection('repliesToReply')
+        .orderBy('createdAt')
+        .get();
+    final docs = querySnapshot.docs;
+    final repliesToReply = docs.map((doc) => Reply(doc)).toList();
+    // replyドメインにrepliesToReplyを持たせているので、postCardでreply.repliesToReplyに入れてやる
+    reply.repliesToReply = repliesToReply;
     notifyListeners();
   }
 

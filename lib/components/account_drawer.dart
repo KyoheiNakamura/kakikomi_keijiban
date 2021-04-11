@@ -57,7 +57,7 @@ class AccountDrawer extends StatelessWidget {
                               builder: (context) =>
                                   SelectRegistrationMethodPage()),
                         );
-                  await model.getPostsWithReplies;
+                  await model.getPostsWithReplies(kAllPostsTab);
                   // Navigator.pop(context);
                 },
               ),

@@ -6,155 +6,151 @@ import 'package:kakikomi_keijiban/components/post_card/post_card.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/presentation/add_post/add_post_page.dart';
-import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
-import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_model.dart';
-import 'package:kakikomi_keijiban/presentation/my_replies/my_replies_model.dart';
 import 'package:kakikomi_keijiban/presentation/search/search_page.dart';
 import 'package:provider/provider.dart';
 
 class HomePostsPage extends StatelessWidget {
-  final List<String> _tabs = <String>['ホーム', '自分の投稿', 'ブックマーク'];
+  final List<String> _tabs = <String>[
+    kAllPostsTab,
+    kMyPostsTab,
+    kBookmarkedPostsTab
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: _tabs.length,
-      child: Scaffold(
-        drawer: SafeArea(child: AccountDrawer()),
-        body: Consumer3<HomePostsModel, MyPostsModel, BookmarkedPostsModel>(
-            builder: (context, homePostsModel, myPostsModel,
-                bookmarkedPostsModel, child) {
-          final Map<String, dynamic> _tabPresentations = {
-            'ホーム': homePostsModel,
-            '自分の投稿': myPostsModel,
-            // '自分の返信': myRepliesModel,
-            'ブックマーク': bookmarkedPostsModel,
-          };
-          return AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle.light
-                .copyWith(statusBarColor: Theme.of(context).primaryColorDark),
-            child: SafeArea(
-              child: Container(
-                color: kLightPink,
-                child: Stack(
-                  children: [
-                    NestedScrollView(
-                      headerSliverBuilder:
-                          (BuildContext context, bool innerBoxIsScrolled) {
-                        return <Widget>[
-                          SliverOverlapAbsorber(
-                            handle:
-                                NestedScrollView.sliverOverlapAbsorberHandleFor(
-                                    context),
-                            sliver: SliverAppBar(
-                              toolbarHeight: 50,
-                              // elevation: 0,
-                              centerTitle: true,
-                              title: Text(
-                                '発達障害困りごと掲示板',
-                                style: kAppBarTextStyle,
-                              ),
-                              actions: [
-                                IconButton(
-                                  icon: Icon(Icons.search, size: 24),
-                                  onPressed: () async {
-                                    await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => SearchPage(),
-                                      ),
-                                    );
-                                    await homePostsModel.getPostsWithReplies;
-                                  },
+    return ChangeNotifierProvider<HomePostsModel>(
+      create: (context) => HomePostsModel()..init(),
+      child: DefaultTabController(
+        length: _tabs.length,
+        child: Scaffold(
+          drawer: SafeArea(child: AccountDrawer()),
+          body: Consumer<HomePostsModel>(builder: (context, model, child) {
+            return AnnotatedRegion<SystemUiOverlayStyle>(
+              value: SystemUiOverlayStyle.light
+                  .copyWith(statusBarColor: Theme.of(context).primaryColorDark),
+              child: SafeArea(
+                child: Container(
+                  color: kLightPink,
+                  child: Stack(
+                    children: [
+                      NestedScrollView(
+                        headerSliverBuilder:
+                            (BuildContext context, bool innerBoxIsScrolled) {
+                          return <Widget>[
+                            SliverOverlapAbsorber(
+                              handle: NestedScrollView
+                                  .sliverOverlapAbsorberHandleFor(context),
+                              sliver: SliverAppBar(
+                                toolbarHeight: 50,
+                                // elevation: 0,
+                                centerTitle: true,
+                                title: Text(
+                                  '発達障害困りごと掲示板',
+                                  style: kAppBarTextStyle,
                                 ),
-                              ],
-                              floating: true,
-                              pinned: true,
-                              snap: true,
-                              forceElevated: innerBoxIsScrolled,
-                              bottom: TabBar(
-                                tabs: _tabs
-                                    .map((String name) => Tab(text: name))
-                                    .toList(),
+                                actions: [
+                                  IconButton(
+                                    icon: Icon(Icons.search, size: 24),
+                                    onPressed: () async {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => SearchPage(),
+                                        ),
+                                      );
+                                      await model
+                                          .getPostsWithReplies(kAllPostsTab);
+                                    },
+                                  ),
+                                ],
+                                floating: true,
+                                pinned: true,
+                                snap: true,
+                                forceElevated: innerBoxIsScrolled,
+                                bottom: TabBar(
+                                  tabs: _tabs
+                                      .map((String name) => Tab(text: name))
+                                      .toList(),
+                                ),
                               ),
                             ),
-                          ),
-                        ];
-                      },
+                          ];
+                        },
 
-                      /// タブ名(ページ名)で表示を場合分け
-                      body: TabBarView(
-                        children: _tabs.map((String name) {
-                          final model = _tabPresentations[name];
-                          return TabBarViewChild(name: name, model: model);
-                        }).toList(),
+                        /// タブ名(ページ名)で表示を場合分け
+                        body: TabBarView(
+                          children: _tabs.map((String name) {
+                            return TabBarViewChild(tabName: name, model: model);
+                          }).toList(),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ),
-          );
-        }),
-        floatingActionButton: FloatingActionButton.extended(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          // elevation: 0,
-          highlightElevation: 0,
-          splashColor: kDarkPink,
-          backgroundColor: Color(0xFFFCF0F5),
-          label: Row(
-            children: [
-              Icon(
-                Icons.create,
-                color: kDarkPink,
-              ),
-              SizedBox(width: 8),
-              Text(
-                '投稿',
-                style: TextStyle(
-                  color: kDarkPink,
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-          onPressed: () async {
-            await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AddPostPage(
-                    userProfile:
-                        Provider.of<HomePostsModel>(context, listen: false)
-                            .userProfile),
               ),
             );
-            await Provider.of<HomePostsModel>(context, listen: false)
-                .getPostsWithReplies;
-            await Provider.of<MyPostsModel>(context, listen: false)
-                .getPostsWithReplies;
-            // await homeModel.getPostsWithReplies;
-          },
+          }),
+          floatingActionButton: FloatingActionButton.extended(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            // elevation: 0,
+            highlightElevation: 0,
+            splashColor: kDarkPink,
+            backgroundColor: Color(0xFFFCF0F5),
+            label: Row(
+              children: [
+                Icon(
+                  Icons.create,
+                  color: kDarkPink,
+                ),
+                SizedBox(width: 8),
+                Text(
+                  '投稿',
+                  style: TextStyle(
+                    color: kDarkPink,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddPostPage(
+                    userProfile: context.read<HomePostsModel>().userProfile,
+                  ),
+                ),
+              );
+              await context
+                  .read<HomePostsModel>()
+                  .getPostsWithReplies(kAllPostsTab);
+              await context
+                  .read<HomePostsModel>()
+                  .getPostsWithReplies(kMyPostsTab);
+              // await homeModel.getPostsWithReplies;
+            },
+          ),
+          // }),
         ),
-        // }),
       ),
     );
   }
 }
 
 class TabBarViewChild extends StatelessWidget {
-  TabBarViewChild({required this.name, required this.model});
+  TabBarViewChild({required this.tabName, required this.model});
 
-  final String name;
-  final model;
+  final String tabName;
+  final HomePostsModel model;
 
   @override
   Widget build(BuildContext context) {
-    final List<Post> posts = model.posts;
+    final List<Post> posts = model.getPosts(tabName);
     return RefreshIndicator(
-      onRefresh: () => model.getPostsWithReplies,
+      onRefresh: () => model.getPostsWithReplies(tabName),
       child: SafeArea(
         top: false,
         bottom: false,
@@ -167,9 +163,9 @@ class TabBarViewChild extends StatelessWidget {
                   if (model.isLoading) {
                     return false;
                   } else {
-                    if (model.canLoadMore) {
+                    if (model.getCanLoadMore(tabName)) {
                       // ignore: unnecessary_statements
-                      model.loadPostsWithReplies;
+                      model.loadPostsWithReplies(tabName);
                     }
                   }
                 } else {
@@ -178,7 +174,7 @@ class TabBarViewChild extends StatelessWidget {
                 return false;
               },
               child: CustomScrollView(
-                key: PageStorageKey<String>(name),
+                key: PageStorageKey<String>(tabName),
                 slivers: [
                   SliverOverlapInjector(
                     handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
@@ -197,8 +193,8 @@ class TabBarViewChild extends StatelessWidget {
                             children: [
                               PostCard(
                                 post: post,
-                                replies: model.replies[post.id],
-                                givenModel: model,
+                                passedModel: model,
+                                tabName: tabName,
                               ),
                               post == posts.last && model.isLoading
                                   ? CircularProgressIndicator()

@@ -1,12 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 
 class UpdateReplyModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
-  final _auth = FirebaseAuth.instance;
   bool isLoading = false;
   bool isDraft = false;
 

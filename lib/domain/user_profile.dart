@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
 
 class UserProfile {
   UserProfile(DocumentSnapshot doc) {
@@ -10,7 +9,6 @@ class UserProfile {
     this.age = doc['age'];
     this.area = doc['area'];
     // this._updatedAt = doc['updatedAt'].toDate();
-    // print(doc['updatedAt'].toDate());
   }
 
   String id = '';

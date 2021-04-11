@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/components/popup_menu_on_card.dart';
 import 'package:kakikomi_keijiban/components/reply_card/reply_card_model.dart';
@@ -6,24 +7,30 @@ import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/mixin/format_poster_data_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply/add_reply_page.dart';
-import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
-import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_model.dart';
 import 'package:provider/provider.dart';
 
 class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
   ReplyCard({
     required this.reply,
-    required this.repliedReplies,
-    required this.isMe,
+    required this.passedModel,
+    this.tabName,
   });
 
   final Reply reply;
-  final List<Reply>? repliedReplies;
-  final bool isMe;
+  final passedModel;
+  final String? tabName;
 
   @override
   Widget build(BuildContext context) {
+    // Todo 返信後のrepliesToReplyはreplyCardModelでquery出してとってきたら良き？
+    // Todo postと同じ要領でreplyドメインにrepliesToReply持たせよう。
+    reply.repliesToReply = tabName != null
+        ? passedModel.getRepliesToReply(tabName)[reply.id]
+        : passedModel.repliesToReply[reply.id];
+    final bool isMe = FirebaseAuth.instance.currentUser != null
+        ? FirebaseAuth.instance.currentUser!.uid == reply.uid
+        : false;
     return Consumer<ReplyCardModel>(builder: (context, model, child) {
       return Stack(
         alignment: AlignmentDirectional.topEnd,
@@ -75,15 +82,16 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                   ),
                                 ),
                               );
-                              await context
-                                  .read<HomePostsModel>()
-                                  .getPostsWithReplies;
-                              await context
-                                  .read<MyPostsModel>()
-                                  .getPostsWithReplies;
-                              await context
-                                  .read<BookmarkedPostsModel>()
-                                  .getPostsWithReplies;
+                              model.getRepliesToReply(reply);
+                              // await context
+                              //     .read<HomePostsModel>()
+                              //     .getPostsWithReplies(kAllPostsTab);
+                              // await context
+                              //     .read<MyPostsModel>()
+                              //     .getPostsWithReplies;
+                              // await context
+                              //     .read<BookmarkedPostsModel>()
+                              //     .getPostsWithReplies;
                             },
                             child: Text(
                               '返信する',
@@ -118,15 +126,12 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
 
                 /// 返信一覧
                 Column(
-                  children: repliedReplies != null
-                      ? repliedReplies!.map((reply) {
+                  children: reply.repliesToReply != null
+                      ? reply.repliesToReply!.map((reply) {
                           return Column(
                             children: [
-                              ReplyToReplyCard(
-                                repliedReply: reply,
-                                isMe: isMe,
-                              ),
-                              repliedReplies!.last == reply
+                              ReplyToReplyCard(replyToReply: reply),
+                              reply.repliesToReply!.last == reply
                                   ? SizedBox(height: 24.0)
                                   : SizedBox(),
                             ],
