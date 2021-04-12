@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class Reply {
   Reply(DocumentSnapshot doc) {
@@ -33,7 +34,7 @@ class Reply {
   String gender = '';
   String age = '';
   String area = '';
-  List<Reply>? repliesToReply = [];
+  List<ReplyToReply>? repliesToReply = [];
   DateTime? _createdAt;
   DateTime? _updatedAt;
 

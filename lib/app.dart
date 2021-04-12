@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/components/post_card/post_card_model.dart';
 import 'package:kakikomi_keijiban/components/reply_card/reply_card_model.dart';
+import 'package:kakikomi_keijiban/components/reply_to_reply_card/reply_to_reply_card_model.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_page.dart';
 import 'package:provider/provider.dart';
@@ -10,11 +12,17 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider<AppModel>(
+          create: (context) => AppModel()..listenAuthStateChanges(),
+        ),
         ChangeNotifierProvider<PostCardModel>(
           create: (context) => PostCardModel(),
         ),
         ChangeNotifierProvider<ReplyCardModel>(
           create: (context) => ReplyCardModel(),
+        ),
+        ChangeNotifierProvider<ReplyToReplyCardModel>(
+          create: (context) => ReplyToReplyCardModel(),
         ),
       ],
       child: MaterialApp(

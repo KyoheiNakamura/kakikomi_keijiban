@@ -1,43 +1,38 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/components/post_card/post_card_model.dart';
+import 'package:kakikomi_keijiban/components/reply_card/reply_card_model.dart';
 import 'package:kakikomi_keijiban/constants.dart';
-import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
-import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_model.dart';
-import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
-import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_model.dart';
-import 'package:kakikomi_keijiban/presentation/update_post/update_post_page.dart';
+import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/presentation/update_reply/update_reply_page.dart';
 import 'package:provider/provider.dart';
 
 enum PopupMenuItemsOnCard { update, delete }
 
-// postかreplyのどちらかを必ずコンストラクタの引数に取る
-class PopupMenuOnCard extends StatelessWidget {
-  PopupMenuOnCard({this.post, this.reply});
+class PopupMenuOnReplyCard extends StatelessWidget {
+  PopupMenuOnReplyCard({required this.reply, required this.post});
 
-  final Post? post;
-  final Reply? reply;
+  final Reply reply;
+  final Post post;
 
   @override
   Widget build(BuildContext context) {
-    final bool isPostExisting = post != null;
     Future<void> _showCardDeleteConfirmDialog() async {
       return showDialog<void>(
         context: context,
         barrierDismissible: false, // user must tap button!
         builder: (BuildContext context) {
-          return Consumer<PostCardModel>(builder: (context, model, child) {
+          return Consumer<ReplyCardModel>(builder: (context, model, child) {
             return LoadingSpinner(
               inAsyncCall: model.isLoading,
               child: AlertDialog(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16.0),
                 ),
-                title: isPostExisting ? Text('投稿の削除') : Text('返信の削除'),
+                title: Text('返信の削除'),
                 content: Text('本当に削除しますか？'),
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
@@ -58,16 +53,12 @@ class PopupMenuOnCard extends StatelessWidget {
                     ),
                     onPressed: () async {
                       model.startLoading();
-                      isPostExisting
-                          ? await model.deletePostAndReplies(post!)
-                          : await model.deleteReply(reply!);
-                      await context.read<MyPostsModel>().getPostsWithReplies;
+                      await model.deleteReplyAndRepliesToReply(reply);
                       await context
-                          .read<HomePostsModel>()
-                          .getPostsWithReplies(kAllPostsTab);
-                      await context
-                          .read<BookmarkedPostsModel>()
-                          .getPostsWithReplies;
+                          .read<PostCardModel>()
+                          .getRepliesToPost(post);
+                      await model.getRepliesToReply(reply);
+
                       model.stopLoading();
                       Navigator.of(context).pop();
                       // Navigator.of(context).popUntil(
@@ -83,9 +74,12 @@ class PopupMenuOnCard extends StatelessWidget {
       );
     }
 
-    return Consumer<PostCardModel>(builder: (context, model, child) {
+    return Consumer<ReplyCardModel>(builder: (context, model, child) {
       return PopupMenuButton<PopupMenuItemsOnCard>(
-        icon: Icon(Icons.more_horiz),
+        icon: Icon(
+          Icons.more_horiz,
+          color: kLightGrey,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
         ),
@@ -95,22 +89,13 @@ class PopupMenuOnCard extends StatelessWidget {
             await Navigator.push(
               context,
               MaterialPageRoute(builder: (context) {
-                return isPostExisting
-                    ? UpdatePostPage(
-                        post!,
-                        userProfile: context.read<HomePostsModel>().userProfile,
-                      )
-                    : UpdateReplyPage(
-                        reply!,
-                        userProfile: context.read<HomePostsModel>().userProfile,
-                      );
+                return UpdateReplyPage(
+                  reply,
+                  userProfile: context.read<AppModel>().userProfile,
+                );
               }),
             );
-            await context.read<MyPostsModel>().getPostsWithReplies;
-            await context
-                .read<HomePostsModel>()
-                .getPostsWithReplies(kAllPostsTab);
-            await context.read<BookmarkedPostsModel>().getPostsWithReplies;
+            await context.read<PostCardModel>().getRepliesToPost(post);
           } else if (result == PopupMenuItemsOnCard.delete) {
             await _showCardDeleteConfirmDialog();
           }

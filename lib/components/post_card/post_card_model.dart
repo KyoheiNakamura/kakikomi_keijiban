@@ -21,7 +21,7 @@ class PostCardModel extends ChangeNotifier {
         .get();
     final docs = querySnapshot.docs;
     final replies = docs.map((doc) => Reply(doc)).toList();
-    // postドメインにrepliesを持たせているので、postCardでpost.repliesに入れてやる
+    // postドメインにrepliesを持たせているので、postCardでpost.repliesに入れてやってる
     post.replies = replies;
     notifyListeners();
   }
@@ -109,26 +109,13 @@ class PostCardModel extends ChangeNotifier {
 
   Future<void> deletePostAndReplies(Post post) async {
     final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
-    final _post = userRef.collection('posts').doc(post.id);
-    await _post.delete();
+    final postRef = userRef.collection('posts').doc(post.id);
+    await postRef.delete();
     await _deleteBookmarkedPostsForAllUsers(post);
-    final replies = (await _post.collection('replies').get()).docs;
+    final replies = (await postRef.collection('replies').get()).docs;
     for (int i = 0; i < replies.length; i++) {
       replies[i].reference.delete();
     }
-    notifyListeners();
-  }
-
-  Future<void> deleteReply(Reply existingReply) async {
-    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
-    final postRef = userRef.collection('posts').doc(existingReply.postId);
-    final reply = postRef.collection('replies').doc(existingReply.id);
-    await reply.delete();
-
-    final DocumentSnapshot postDoc = await postRef.get();
-    await postRef.update({
-      'replyCount': postDoc['replyCount'] - 1,
-    });
     notifyListeners();
   }
 }

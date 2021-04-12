@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/user_profile.dart';
-import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/update_profile/update_profile_model.dart';
 import 'package:provider/provider.dart';
 
@@ -189,9 +189,7 @@ class UpdateProfilePage extends StatelessWidget {
                                 await model.updateUserProfile();
                                 model.stopLoading();
                                 // Navigator.pop(context);
-                                await Provider.of<HomePostsModel>(context,
-                                        listen: false)
-                                    .getUserProfile();
+                                await context.read<AppModel>().getUserProfile();
                                 Navigator.of(context).popUntil(
                                   ModalRoute.withName('/'),
                                 );

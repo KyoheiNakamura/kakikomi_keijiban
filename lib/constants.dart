@@ -7,7 +7,7 @@ const Color kLightPink = Color(0xFFFCF0F5);
 const Color kUltraLightPink = Color(0xFFFFF7FA);
 const Color kLightGrey = Colors.black54;
 
-const kAllPostsTab = 'ホーム';
+const kAllPostsTab = '最新の投稿';
 const kMyPostsTab = '自分の投稿';
 const kBookmarkedPostsTab = 'ブックマーク';
 

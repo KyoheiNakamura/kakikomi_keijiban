@@ -48,7 +48,7 @@ class SearchResultPostsPage extends StatelessWidget {
           ),
           body: Consumer<SearchResultPostsModel>(
               builder: (context, model, child) {
-            final List<Post> chosenCategoryPosts = model.searchedPosts;
+            final List<Post> chosenCategoryPosts = model.posts;
             return AnnotatedRegion<SystemUiOverlayStyle>(
               value: SystemUiOverlayStyle.light
                   .copyWith(statusBarColor: Theme.of(context).primaryColorDark),
@@ -60,16 +60,44 @@ class SearchResultPostsPage extends StatelessWidget {
                       postField: postField,
                       value: searchWord,
                     ),
-                    child: ListView.builder(
-                      padding: EdgeInsets.only(top: 30.0),
-                      itemBuilder: (BuildContext context, int index) {
-                        final post = chosenCategoryPosts[index];
-                        return PostCard(
-                          post: post,
-                          passedModel: model,
-                        );
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (notification) {
+                        if (notification.metrics.pixels ==
+                            notification.metrics.maxScrollExtent) {
+                          if (model.isLoading) {
+                            return false;
+                          } else {
+                            if (model.canLoadMore) {
+                              model.loadPostsWithRepliesChosenField(
+                                postField: postField,
+                                value: searchWord,
+                              );
+                            }
+                          }
+                        } else {
+                          return false;
+                        }
+                        return false;
                       },
-                      itemCount: chosenCategoryPosts.length,
+                      child: ListView.builder(
+                        padding: EdgeInsets.only(top: 30.0),
+                        itemBuilder: (BuildContext context, int index) {
+                          final post = chosenCategoryPosts[index];
+                          return Column(
+                            children: [
+                              PostCard(
+                                post: post,
+                                passedModel: model,
+                              ),
+                              post == chosenCategoryPosts.last &&
+                                      model.isLoading
+                                  ? CircularProgressIndicator()
+                                  : SizedBox(),
+                            ],
+                          );
+                        },
+                        itemCount: chosenCategoryPosts.length,
+                      ),
                     ),
                   ),
                 ),

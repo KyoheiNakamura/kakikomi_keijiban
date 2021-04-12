@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/components/account_drawer.dart';
 import 'package:kakikomi_keijiban/components/post_card/post_card.dart';
 import 'package:kakikomi_keijiban/constants.dart';
@@ -91,48 +92,47 @@ class HomePostsPage extends StatelessWidget {
               ),
             );
           }),
-          floatingActionButton: FloatingActionButton.extended(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            // elevation: 0,
-            highlightElevation: 0,
-            splashColor: kDarkPink,
-            backgroundColor: Color(0xFFFCF0F5),
-            label: Row(
-              children: [
-                Icon(
-                  Icons.create,
-                  color: kDarkPink,
-                ),
-                SizedBox(width: 8),
-                Text(
-                  '投稿',
-                  style: TextStyle(
+          floatingActionButton:
+              Consumer<HomePostsModel>(builder: (context, model, child) {
+            return FloatingActionButton.extended(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              // elevation: 0,
+              highlightElevation: 0,
+              splashColor: kDarkPink,
+              backgroundColor: Color(0xFFFCF0F5),
+              label: Row(
+                children: [
+                  Icon(
+                    Icons.create,
                     color: kDarkPink,
-                    fontSize: 16,
                   ),
-                ),
-              ],
-            ),
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddPostPage(
-                    userProfile: context.read<HomePostsModel>().userProfile,
+                  SizedBox(width: 8),
+                  Text(
+                    '投稿',
+                    style: TextStyle(
+                      color: kDarkPink,
+                      fontSize: 16,
+                    ),
                   ),
-                ),
-              );
-              await context
-                  .read<HomePostsModel>()
-                  .getPostsWithReplies(kAllPostsTab);
-              await context
-                  .read<HomePostsModel>()
-                  .getPostsWithReplies(kMyPostsTab);
-              // await homeModel.getPostsWithReplies;
-            },
-          ),
+                ],
+              ),
+              onPressed: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddPostPage(
+                      userProfile: context.read<AppModel>().userProfile,
+                    ),
+                  ),
+                );
+                await model.getPostsWithReplies(kAllPostsTab);
+                await model.getPostsWithReplies(kMyPostsTab);
+                // await homeModel.getPostsWithReplies;
+              },
+            );
+          }),
           // }),
         ),
       ),
@@ -188,6 +188,8 @@ class TabBarViewChild extends StatelessWidget {
                     sliver: SliverList(
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
+                          // RangeError (index): Invalid value: Valid value range is empty: 1
+                          // Todo postsが空じゃない時にpostに入れる
                           final post = posts[index];
                           return Column(
                             children: [

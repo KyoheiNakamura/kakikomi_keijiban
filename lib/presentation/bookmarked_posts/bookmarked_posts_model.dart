@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
+import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class BookmarkedPostsModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
@@ -16,8 +17,8 @@ class BookmarkedPostsModel extends ChangeNotifier {
   Map<String, List<Reply>> get replies => _repliesToBookmarkedPosts;
 
   List<Reply> _rawReplies = [];
-  Map<String, List<Reply>> _repliesToReply = {};
-  Map<String, List<Reply>> get repliesToReply => _repliesToReply;
+  Map<String, List<ReplyToReply>> _repliesToReply = {};
+  Map<String, List<ReplyToReply>> get repliesToReply => _repliesToReply;
 
   Future<void> get getPostsWithReplies => _getBookmarkedPostsWithReplies();
   Future<void> get loadPostsWithReplies => _loadBookmarkedPostsWithReplies();
@@ -49,7 +50,8 @@ class BookmarkedPostsModel extends ChangeNotifier {
         .limit(loadLimit);
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
-    _bookmarkedPosts.clear();
+    this._bookmarkedPosts.clear();
+    this._rawReplies.clear();
     if (docs.length == 0) {
       // isPostsExisting = false;
       canLoadMore = false;
@@ -145,6 +147,7 @@ class BookmarkedPostsModel extends ChangeNotifier {
             .get();
         final docs = querySnapshot.docs;
         final replies = docs.map((doc) => Reply(doc)).toList();
+        this._rawReplies += replies;
         _repliesToBookmarkedPosts[post.id] = replies;
       }
     }
@@ -164,7 +167,7 @@ class BookmarkedPostsModel extends ChangeNotifier {
             .orderBy('createdAt')
             .get();
         final docs = querySnapshot.docs;
-        final repliesToReply = docs.map((doc) => Reply(doc)).toList();
+        final repliesToReply = docs.map((doc) => ReplyToReply(doc)).toList();
         _repliesToReply[reply.id] = repliesToReply;
       }
     }

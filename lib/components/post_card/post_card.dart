@@ -1,13 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/components/post_card/post_card_model.dart';
 import 'package:kakikomi_keijiban/components/reply_card/reply_card.dart';
 import 'package:kakikomi_keijiban/constants.dart';
-import 'package:kakikomi_keijiban/components/popup_menu_on_card.dart';
+import 'package:kakikomi_keijiban/components/popup_menu_on_post_card.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/mixin/format_poster_data_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply/add_reply_page.dart';
-import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/search_result_posts/search_result_posts_page.dart';
 import 'package:provider/provider.dart';
 
@@ -27,8 +26,8 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
     post.replies = tabName != null
         ? passedModel.getReplies(tabName)[post.id]
         : passedModel.replies[post.id];
-    final bool isMe = FirebaseAuth.instance.currentUser != null
-        ? FirebaseAuth.instance.currentUser!.uid == post.uid
+    final bool isMe = context.read<AppModel>().loggedInUser != null
+        ? context.read<AppModel>().loggedInUser!.uid == post.uid
         : false;
     return Consumer<PostCardModel>(builder: (context, model, child) {
       return Padding(
@@ -126,24 +125,12 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                 MaterialPageRoute(
                                   builder: (context) => AddReplyPage(
                                     repliedPost: post,
-                                    userProfile: context
-                                        .read<HomePostsModel>()
-                                        .userProfile,
+                                    userProfile:
+                                        context.read<AppModel>().userProfile,
                                   ),
                                 ),
                               );
-                              model.getRepliesToPost(post);
-                              // if (tabName != null) {
-                              //   await context
-                              //       .read<HomePostsModel>()
-                              //       .getPostsWithReplies(kAllPostsTab);
-                              //   await context
-                              //       .read<HomePostsModel>()
-                              //       .getPostsWithReplies(kMyPostsTab);
-                              //   await context
-                              //       .read<HomePostsModel>()
-                              //       .getPostsWithReplies(kBookmarkedPostsTab);
-                              // }
+                              await model.getRepliesToPost(post);
                             },
                             child: Text(
                               '返信する',
@@ -175,6 +162,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                 // children: post.isReplyShown && replies != null
                                 ? post.replies!.map((reply) {
                                     return ReplyCard(
+                                      post: post,
                                       reply: reply,
                                       passedModel: passedModel,
                                       tabName: tabName,
@@ -225,7 +213,11 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                     textDirection: TextDirection.ltr,
                     top: 30.0,
                     end: 10.0,
-                    child: PopupMenuOnCard(post: post),
+                    child: PopupMenuOnPostCard(
+                      post: post,
+                      passedModel: passedModel,
+                      tabName: tabName,
+                    ),
                   )
                 : Container(),
 
@@ -265,31 +257,25 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                         model.turnOffStar(post);
                         // Todo 後で修正する
                         await model.deleteBookmarkedPost(post);
-                        await context
-                            .read<HomePostsModel>()
-                            .getPostsWithReplies(kAllPostsTab);
-                        await context
-                            .read<HomePostsModel>()
-                            .getPostsWithReplies(kMyPostsTab);
+                        // if (tabName != null) {
+                        //   await passedModel.getPostsWithReplies(kAllPostsTab);
+                        //   await passedModel.getPostsWithReplies(kMyPostsTab);
+                        // }
                       },
                     )
                   : IconButton(
                       icon: Icon(
                         Icons.star_border_outlined,
+                        color: kLightGrey,
                       ),
                       onPressed: () async {
                         model.turnOnStar(post);
                         // Todo 後で修正する
                         await model.addBookmarkedPost(post);
-                        await context
-                            .read<HomePostsModel>()
-                            .getPostsWithReplies(kBookmarkedPostsTab);
-                        await context
-                            .read<HomePostsModel>()
-                            .getPostsWithReplies(kAllPostsTab);
-                        await context
-                            .read<HomePostsModel>()
-                            .getPostsWithReplies(kMyPostsTab);
+                        if (tabName != null) {
+                          await passedModel
+                              .getPostsWithReplies(kBookmarkedPostsTab);
+                        }
                       },
                     ),
             ),

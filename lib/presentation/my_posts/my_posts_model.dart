@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
+import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class MyPostsModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
@@ -17,8 +18,8 @@ class MyPostsModel extends ChangeNotifier {
   Map<String, List<Reply>> get replies => _repliesToMyPosts;
 
   List<Reply> _rawReplies = [];
-  Map<String, List<Reply>> _repliesToReply = {};
-  Map<String, List<Reply>> get repliesToReply => _repliesToReply;
+  Map<String, List<ReplyToReply>> _repliesToReply = {};
+  Map<String, List<ReplyToReply>> get repliesToReply => _repliesToReply;
 
   Future<void> get getPostsWithReplies => _getMyPostsWithReplies();
   Future<void> get loadPostsWithReplies => _loadMyPostsWithReplies();
@@ -126,7 +127,6 @@ class MyPostsModel extends ChangeNotifier {
     final bookmarkedPostDocs =
         postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
 
-    // これで十分疑惑
     for (int i = 0; i < _myPosts.length; i++) {
       for (QueryDocumentSnapshot bookmarkedPostDoc in bookmarkedPostDocs) {
         if (_myPosts[i].id == bookmarkedPostDoc.id) {
@@ -168,7 +168,7 @@ class MyPostsModel extends ChangeNotifier {
             .orderBy('createdAt')
             .get();
         final docs = querySnapshot.docs;
-        final repliesToReply = docs.map((doc) => Reply(doc)).toList();
+        final repliesToReply = docs.map((doc) => ReplyToReply(doc)).toList();
         _repliesToReply[reply.id] = repliesToReply;
       }
     }

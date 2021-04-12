@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
-class Reply {
-  Reply(DocumentSnapshot doc) {
+class ReplyToReply {
+  ReplyToReply(DocumentSnapshot doc) {
     this.id = doc.id;
     this.postId = doc['postId'];
     this.replyId = doc['replyId'];
