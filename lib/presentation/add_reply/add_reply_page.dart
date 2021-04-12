@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
@@ -11,11 +12,11 @@ import 'package:provider/provider.dart';
 
 // repliedPostかrepliedReplyのどちらかを必ず取る
 class AddReplyPage extends StatelessWidget {
-  AddReplyPage({this.repliedPost, this.repliedReply, this.userProfile});
+  AddReplyPage({this.repliedPost, this.repliedReply});
 
   final Post? repliedPost;
   final Reply? repliedReply;
-  final UserProfile? userProfile;
+
   final _formKey = GlobalKey<FormState>();
   final FocusNode _focusNodeContent = FocusNode();
 
@@ -62,6 +63,7 @@ class AddReplyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final UserProfile? userProfile = context.read<AppModel>().userProfile;
     final bool isUserProfileNotAnonymous = userProfile != null;
     return ChangeNotifierProvider<AddReplyModel>(
       create: (context) => AddReplyModel(),
@@ -109,8 +111,8 @@ class AddReplyPage extends StatelessWidget {
                           /// nickname
                           TextFormField(
                             initialValue: isUserProfileNotAnonymous
-                                ? model.nicknameValue = userProfile!.nickname
-                                : null,
+                                ? model.nicknameValue = userProfile.nickname
+                                : model.nicknameValue = '匿名',
                             validator: model.validateNicknameCallback,
                             onChanged: (newValue) {
                               model.nicknameValue = newValue;
@@ -124,7 +126,7 @@ class AddReplyPage extends StatelessWidget {
                             focusColor: Colors.pink[50],
                             value: isUserProfileNotAnonymous
                                 ? model.positionDropdownValue =
-                                    userProfile!.position
+                                    userProfile.position
                                 : model.positionDropdownValue,
                             icon: Icon(
                               Icons.arrow_downward,
@@ -152,8 +154,7 @@ class AddReplyPage extends StatelessWidget {
                             // focusNode: _genderFocusNode,
                             focusColor: Colors.pink[50],
                             value: isUserProfileNotAnonymous
-                                ? model.genderDropdownValue =
-                                    userProfile!.gender
+                                ? model.genderDropdownValue = userProfile.gender
                                 : model.genderDropdownValue,
                             icon: Icon(
                               Icons.arrow_downward,
@@ -181,7 +182,7 @@ class AddReplyPage extends StatelessWidget {
                             // focusNode: _ageFocusNode,
                             focusColor: Colors.pink[50],
                             value: isUserProfileNotAnonymous
-                                ? model.ageDropdownValue = userProfile!.age
+                                ? model.ageDropdownValue = userProfile.age
                                 : model.ageDropdownValue,
                             icon: Icon(
                               Icons.arrow_downward,
@@ -208,7 +209,7 @@ class AddReplyPage extends StatelessWidget {
                             // focusNode: _areaFocusNode,
                             focusColor: Colors.pink[50],
                             value: isUserProfileNotAnonymous
-                                ? model.areaDropdownValue = userProfile!.area
+                                ? model.areaDropdownValue = userProfile.area
                                 : model.areaDropdownValue,
                             icon: Icon(
                               Icons.arrow_downward,

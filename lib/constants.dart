@@ -228,10 +228,10 @@ const kEmotionDropdownButtonFormFieldDecoration = InputDecoration(
 
 const kPositionDropdownButtonFormFieldDecoration = InputDecoration(
   border: OutlineInputBorder(),
-  labelText: 'あなたの立場',
-  helperStyle: TextStyle(color: kDarkPink),
   prefixIcon: Icon(Icons.group),
-  helperText: '必須',
+  labelText: 'あなたの立場',
+  // helperText: '必須',
+  // helperStyle: TextStyle(color: kDarkPink),
 );
 
 const kPositionDropdownButtonFormFieldDecorationForReply = InputDecoration(

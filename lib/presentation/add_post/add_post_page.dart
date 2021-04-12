@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/user_profile.dart';
@@ -9,9 +10,8 @@ import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:provider/provider.dart';
 
 class AddPostPage extends StatelessWidget {
-  AddPostPage({this.userProfile});
+  AddPostPage();
 
-  final UserProfile? userProfile;
   final _formKey = GlobalKey<FormState>();
   final FocusNode _focusNodeContent = FocusNode();
 
@@ -58,6 +58,7 @@ class AddPostPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final UserProfile? userProfile = context.read<AppModel>().userProfile;
     final bool isUserProfileNotAnonymous = userProfile != null;
     return ChangeNotifierProvider<AddPostModel>(
       create: (context) => AddPostModel(),
@@ -124,7 +125,7 @@ class AddPostPage extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: TextFormField(
                               initialValue: isUserProfileNotAnonymous
-                                  ? model.nicknameValue = userProfile!.nickname
+                                  ? model.nicknameValue = userProfile.nickname
                                   : model.nicknameValue = '匿名',
                               validator: model.validateNicknameCallback,
                               onChanged: (newValue) {
@@ -150,35 +151,6 @@ class AddPostPage extends StatelessWidget {
                                 model.emotionDropdownValue = selectedValue!;
                               },
                               items: kEmotionList.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-
-                          /// position
-                          // Todo positionを複数選択できるようにしよう
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 32.0),
-                            child: DropdownButtonFormField(
-                              // validator: model.validatePositionCallback,
-                              value: isUserProfileNotAnonymous
-                                  ? model.positionDropdownValue =
-                                      userProfile!.position
-                                  : model.positionDropdownValue,
-                              icon: Icon(Icons.arrow_downward),
-                              iconSize: 24,
-                              elevation: 1,
-                              style: kDropdownButtonFormFieldTextStyle,
-                              decoration:
-                                  kPositionDropdownButtonFormFieldDecoration,
-                              onChanged: (String? selectedValue) {
-                                model.positionDropdownValue = selectedValue!;
-                                print(model.positionDropdownValue);
-                              },
-                              items: kPositionList.map((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
                                   child: Text(value),
@@ -269,13 +241,42 @@ class AddPostPage extends StatelessWidget {
                             ),
                           ),
 
+                          /// position
+                          // Todo positionを複数選択できるようにしよう
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 32.0),
+                            child: DropdownButtonFormField(
+                              // validator: model.validatePositionCallback,
+                              value: isUserProfileNotAnonymous
+                                  ? model.positionDropdownValue =
+                                      userProfile.position
+                                  : model.positionDropdownValue,
+                              icon: Icon(Icons.arrow_downward),
+                              iconSize: 24,
+                              elevation: 1,
+                              style: kDropdownButtonFormFieldTextStyle,
+                              decoration:
+                                  kPositionDropdownButtonFormFieldDecoration,
+                              onChanged: (String? selectedValue) {
+                                model.positionDropdownValue = selectedValue!;
+                                print(model.positionDropdownValue);
+                              },
+                              items: kPositionList.map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+
                           /// gender
                           Padding(
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: DropdownButtonFormField(
                               value: isUserProfileNotAnonymous
                                   ? model.genderDropdownValue =
-                                      userProfile!.gender
+                                      userProfile.gender
                                   : model.genderDropdownValue,
                               icon: Icon(Icons.arrow_downward),
                               iconSize: 24,
@@ -300,7 +301,7 @@ class AddPostPage extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: DropdownButtonFormField(
                               value: isUserProfileNotAnonymous
-                                  ? model.ageDropdownValue = userProfile!.age
+                                  ? model.ageDropdownValue = userProfile.age
                                   : model.ageDropdownValue,
                               icon: Icon(Icons.arrow_downward),
                               iconSize: 24,
@@ -324,7 +325,7 @@ class AddPostPage extends StatelessWidget {
                             padding: const EdgeInsets.only(bottom: 48.0),
                             child: DropdownButtonFormField(
                               value: isUserProfileNotAnonymous
-                                  ? model.areaDropdownValue = userProfile!.area
+                                  ? model.areaDropdownValue = userProfile.area
                                   : model.areaDropdownValue,
                               icon: Icon(Icons.arrow_downward),
                               iconSize: 24,

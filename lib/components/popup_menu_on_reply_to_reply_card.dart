@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/components/loading_spinner.dart';
-import 'package:kakikomi_keijiban/components/post_card/post_card_model.dart';
 import 'package:kakikomi_keijiban/components/reply_card/reply_card_model.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';

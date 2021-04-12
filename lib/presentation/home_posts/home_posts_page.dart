@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/components/account_drawer.dart';
 import 'package:kakikomi_keijiban/components/post_card/post_card.dart';
 import 'package:kakikomi_keijiban/constants.dart';
@@ -122,9 +121,7 @@ class HomePostsPage extends StatelessWidget {
                 await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AddPostPage(
-                      userProfile: context.read<AppModel>().userProfile,
-                    ),
+                    builder: (context) => AddPostPage(),
                   ),
                 );
                 await model.getPostsWithReplies(kAllPostsTab);
