@@ -30,7 +30,11 @@ class AppModel extends ChangeNotifier {
             'area': '',
             'postCount': 0,
             'createdAt': FieldValue.serverTimestamp(),
+            'updatedAt': FieldValue.serverTimestamp(),
           });
+          final newUserDoc =
+              await _firestore.collection('users').doc(user.uid).get();
+          userProfile = UserProfile(newUserDoc);
         } else if (!user.isAnonymous) {
           userProfile = UserProfile(userDoc);
         }

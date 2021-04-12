@@ -42,6 +42,7 @@ class UpdateProfileModel extends ChangeNotifier {
       'area': _userProfileList[4],
       // Todo あとでやる
       'postCount': 0,
+      'updatedAt': FieldValue.serverTimestamp(),
     });
   }
 

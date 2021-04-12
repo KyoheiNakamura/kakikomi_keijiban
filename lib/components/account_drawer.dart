@@ -30,19 +30,23 @@ class AccountDrawer extends StatelessWidget {
                 leading: Icon(Icons.description),
                 title: Text('自分の投稿'),
                 onTap: () async {
-                  isLoggedInUserNotAnonymous
-                      ? await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MyPostsPage()),
-                        )
-                      : await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  SelectRegistrationMethodPage()),
-                        );
-                  // Navigator.pop(context);
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => MyPostsPage()),
+                  );
+                  // isLoggedInUserNotAnonymous
+                  //     ? await Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) => MyPostsPage()),
+                  //       )
+                  //     : await Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) =>
+                  //                 SelectRegistrationMethodPage()),
+                  //       );
+                  // // Navigator.pop(context);
                 },
               ),
               ListTile(
@@ -53,37 +57,49 @@ class AccountDrawer extends StatelessWidget {
                 ),
                 title: Text('自分の返信'),
                 onTap: () async {
-                  isLoggedInUserNotAnonymous
-                      ? await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => MyRepliesPage()),
-                        )
-                      : await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  SelectRegistrationMethodPage()),
-                        );
-                  // Navigator.pop(context);
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MyRepliesPage(),
+                    ),
+                  );
+                  // isLoggedInUserNotAnonymous
+                  //     ? await Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) => MyRepliesPage()),
+                  //       )
+                  //     : await Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) =>
+                  //                 SelectRegistrationMethodPage()),
+                  //       );
+                  // // Navigator.pop(context);
                 },
               ),
               ListTile(
                 leading: Icon(Icons.star_border),
                 title: Text('ブックマーク'),
                 onTap: () async {
-                  isLoggedInUserNotAnonymous
-                      ? await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BookmarkedPostsPage()),
-                        )
-                      : await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  SelectRegistrationMethodPage()),
-                        );
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BookmarkedPostsPage(),
+                    ),
+                  );
+                  // isLoggedInUserNotAnonymous
+                  //     ? await Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) => BookmarkedPostsPage()),
+                  //       )
+                  //     : await Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) =>
+                  //                 SelectRegistrationMethodPage()),
+                  //       );
                   await model.getPostsWithReplies(kAllPostsTab);
                   // Navigator.pop(context);
                 },
@@ -110,7 +126,6 @@ class AccountDrawer extends StatelessWidget {
                                 SelectRegistrationMethodPage(),
                           ),
                         );
-                  // await model.getUserProfile();
                   // Navigator.pop(context);
                 },
               ),

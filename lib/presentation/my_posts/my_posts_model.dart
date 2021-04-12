@@ -82,7 +82,7 @@ class MyPostsModel extends ChangeNotifier {
         .collection('users')
         .doc(uid)
         .collection('posts')
-        .orderBy('createdAt', descending: true)
+        .orderBy('updatedAt', descending: true)
         .startAfterDocument(lastVisibleOfTheBatch!)
         .limit(loadLimit);
     final querySnapshot = await queryBatch.get();
