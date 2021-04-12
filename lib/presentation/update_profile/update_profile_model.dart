@@ -19,11 +19,11 @@ class UpdateProfileModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  late String nicknameValue = '';
-  late String positionDropdownValue = kPleaseSelect;
-  late String genderDropdownValue = kPleaseSelect;
-  late String ageDropdownValue = kPleaseSelect;
-  late String areaDropdownValue = kPleaseSelect;
+  String nicknameValue = '';
+  String positionDropdownValue = kPleaseSelect;
+  String genderDropdownValue = kPleaseSelect;
+  String ageDropdownValue = kPleaseSelect;
+  String areaDropdownValue = kPleaseSelect;
 
   Future<void> updateUserProfile() async {
     final userRef = _firestore.collection('users').doc(uid);

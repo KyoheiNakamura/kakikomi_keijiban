@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/components/popup_menu_on_reply_card.dart';
@@ -76,8 +75,6 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                 MaterialPageRoute(
                                   builder: (context) => AddReplyPage(
                                     repliedReply: reply,
-                                    userProfile:
-                                        context.read<AppModel>().userProfile,
                                   ),
                                 ),
                               );

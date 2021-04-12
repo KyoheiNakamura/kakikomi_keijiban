@@ -125,8 +125,6 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                 MaterialPageRoute(
                                   builder: (context) => AddReplyPage(
                                     repliedPost: post,
-                                    userProfile:
-                                        context.read<AppModel>().userProfile,
                                   ),
                                 ),
                               );
