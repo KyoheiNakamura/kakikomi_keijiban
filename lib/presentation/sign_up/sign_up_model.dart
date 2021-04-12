@@ -47,6 +47,7 @@ class SignUpModel extends ChangeNotifier {
         'area': '',
         'postCount': 0,
         'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
       });
       // final Auth.User user = userCredential.user!;
       // final String email = user.email!;
