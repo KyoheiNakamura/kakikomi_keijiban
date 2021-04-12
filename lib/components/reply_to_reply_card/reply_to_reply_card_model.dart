@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
-class ReplyCardModel extends ChangeNotifier {
+class ReplyToReplyCardModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final uid = FirebaseAuth.instance.currentUser?.uid;
   bool isLoading = false;
@@ -23,7 +23,12 @@ class ReplyCardModel extends ChangeNotifier {
         .get();
     final docs = querySnapshot.docs;
     final repliesToReply = docs.map((doc) => ReplyToReply(doc)).toList();
+    // replyドメインにrepliesToReplyを持たせているので、postCardでreply.repliesToReplyに入れてやる
     reply.repliesToReply = repliesToReply;
+    notifyListeners();
+  }
+
+  void reload() {
     notifyListeners();
   }
 

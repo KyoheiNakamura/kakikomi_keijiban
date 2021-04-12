@@ -1,8 +1,11 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/constants.dart';
 import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_page.dart';
+import 'package:kakikomi_keijiban/presentation/my_replies/my_replies_page.dart';
 import 'package:kakikomi_keijiban/presentation/select_registration_method/select_registration_method_page.dart';
 import 'package:kakikomi_keijiban/presentation/settings/settings_page.dart';
 import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_page.dart';
@@ -12,8 +15,9 @@ class AccountDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<HomePostsModel>(builder: (context, model, child) {
-      final bool isLoggedInUserNotAnonymous = model.loggedInUser != null &&
-          model.loggedInUser!.isAnonymous == false;
+      final bool isLoggedInUserNotAnonymous =
+          context.read<AppModel>().loggedInUser != null &&
+              context.read<AppModel>().loggedInUser!.isAnonymous == false;
       return SizedBox(
         width: MediaQuery.of(context).size.width * 0.8,
         child: Drawer(
@@ -31,6 +35,29 @@ class AccountDrawer extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) => MyPostsPage()),
+                        )
+                      : await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  SelectRegistrationMethodPage()),
+                        );
+                  // Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Transform(
+                  alignment: Alignment.topCenter,
+                  transform: Matrix4.rotationY(math.pi),
+                  child: Icon(Icons.reply),
+                ),
+                title: Text('自分の返信'),
+                onTap: () async {
+                  isLoggedInUserNotAnonymous
+                      ? await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MyRepliesPage()),
                         )
                       : await Navigator.push(
                           context,
@@ -72,7 +99,8 @@ class AccountDrawer extends StatelessWidget {
                           MaterialPageRoute(
                             builder: (context) =>
                                 // UpdateProfilePage(model.userProfile!),
-                                SettingsPage(model.userProfile!),
+                                SettingsPage(
+                                    context.read<AppModel>().userProfile!),
                           ),
                         )
                       : await Navigator.push(
@@ -108,22 +136,20 @@ class ChangingDrawerHeader extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    model.userProfile!.nickname,
+                    context.read<AppModel>().userProfile!.nickname,
                     style: TextStyle(fontSize: 24),
                   ),
                   Text(
-                    model.loggedInUser!.email!,
+                    context.read<AppModel>().loggedInUser!.email!,
                     style: TextStyle(fontSize: 20.0),
                   ),
                   SizedBox(height: 24.0),
                   TextButton(
                     onPressed: () async {
-                      await model.signOut();
+                      await context.read<AppModel>().signOut();
                       Navigator.pop(context);
                     },
-                    child: Text(
-                      'ログアウト',
-                    ),
+                    child: Text('ログアウト'),
                   )
                 ],
               )

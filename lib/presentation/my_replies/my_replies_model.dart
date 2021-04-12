@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
+import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class MyRepliesModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
@@ -15,6 +16,10 @@ class MyRepliesModel extends ChangeNotifier {
 
   Map<String, List<Reply>> _repliesToMyPosts = {};
   Map<String, List<Reply>> get replies => _repliesToMyPosts;
+
+  List<Reply> _rawReplies = [];
+  Map<String, List<ReplyToReply>> _repliesToReply = {};
+  Map<String, List<ReplyToReply>> get repliesToReply => _repliesToReply;
 
   Future<void> get getPostsWithReplies => _getPostsWithMyReplies();
   Future<void> get loadPostsWithReplies => _loadPostsWithMyReplies();
@@ -46,6 +51,7 @@ class MyRepliesModel extends ChangeNotifier {
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
     _postsWithMyReplies.clear();
+    this._rawReplies.clear();
     if (docs.length == 0) {
       // isPostsExisting = false;
       canLoadMore = false;
@@ -63,6 +69,7 @@ class MyRepliesModel extends ChangeNotifier {
     }
     await _addBookmarkToPosts();
     await _getRepliesToPosts();
+    await _getRepliesToReplies();
 
     stopLoading();
     notifyListeners();
@@ -96,6 +103,7 @@ class MyRepliesModel extends ChangeNotifier {
     }
     await _addBookmarkToPosts();
     await _getRepliesToPosts();
+    await _getRepliesToReplies();
 
     stopLoading();
     notifyListeners();
@@ -114,7 +122,6 @@ class MyRepliesModel extends ChangeNotifier {
   }
 
   Future<void> _addBookmarkToPosts() async {
-    // List<Post> _bookmarkedPosts = [];
     final bookmarkedPostsSnapshot = await _firestore
         .collection('users')
         .doc(uid)
@@ -131,7 +138,6 @@ class MyRepliesModel extends ChangeNotifier {
     final bookmarkedPostDocs =
         postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
 
-    // これで十分疑惑
     for (int i = 0; i < _postsWithMyReplies.length; i++) {
       for (QueryDocumentSnapshot bookmarkedPostDoc in bookmarkedPostDocs) {
         if (_postsWithMyReplies[i].id == bookmarkedPostDoc.id) {
@@ -154,7 +160,28 @@ class MyRepliesModel extends ChangeNotifier {
             .get();
         final docs = querySnapshot.docs;
         final replies = docs.map((doc) => Reply(doc)).toList();
+        this._rawReplies += replies;
         _repliesToMyPosts[post.id] = replies;
+      }
+    }
+  }
+
+  Future<void> _getRepliesToReplies() async {
+    if (_rawReplies.isNotEmpty) {
+      for (final reply in _rawReplies) {
+        final querySnapshot = await _firestore
+            .collection('users')
+            .doc(reply.uid)
+            .collection('posts')
+            .doc(reply.postId)
+            .collection('replies')
+            .doc(reply.id)
+            .collection('repliesToReply')
+            .orderBy('createdAt')
+            .get();
+        final docs = querySnapshot.docs;
+        final repliesToReply = docs.map((doc) => ReplyToReply(doc)).toList();
+        _repliesToReply[reply.id] = repliesToReply;
       }
     }
   }
