@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/enum.dart';
+import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class SignUpModel extends ChangeNotifier {

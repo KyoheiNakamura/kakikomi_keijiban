@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/enum.dart';
+import 'package:kakikomi_keijiban/common/enum.dart';
 
 class SignInModel extends ChangeNotifier {
   final _auth = FirebaseAuth.instance;

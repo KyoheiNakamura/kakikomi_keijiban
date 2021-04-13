@@ -18,6 +18,7 @@ class MyPostsModel extends ChangeNotifier {
   Map<String, List<Reply>> get replies => _repliesToMyPosts;
 
   List<Reply> _rawReplies = [];
+
   Map<String, List<ReplyToReply>> _repliesToReply = {};
   Map<String, List<ReplyToReply>> get repliesToReply => _repliesToReply;
 
@@ -29,6 +30,30 @@ class MyPostsModel extends ChangeNotifier {
   // bool isPostsExisting = false;
   bool canLoadMore = false;
   bool isLoading = false;
+
+  Future<void> refreshThePostOfPostsAfterUpdated({
+    required Post oldPost,
+    required int indexOfPost,
+  }) async {
+    // 更新後のpostを取得
+    final doc = await _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('posts')
+        .doc(oldPost.id)
+        .get();
+    Post newPost = Post(doc);
+    // 更新前のpostをpostsから削除
+    _myPosts.removeAt(indexOfPost);
+    // 更新後のpostをpostsに追加
+    _myPosts.insert(indexOfPost, newPost);
+    notifyListeners();
+  }
+
+  void removeThePostOfPostsAfterDeleted(Post post) {
+    _myPosts.remove(post);
+    notifyListeners();
+  }
 
   void startLoading() {
     isLoading = true;
@@ -52,6 +77,7 @@ class MyPostsModel extends ChangeNotifier {
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
     _myPosts.clear();
+    _rawReplies.clear();
     if (docs.length == 0) {
       // isPostsExisting = false;
       canLoadMore = false;
@@ -149,6 +175,7 @@ class MyPostsModel extends ChangeNotifier {
             .get();
         final docs = querySnapshot.docs;
         final replies = docs.map((doc) => Reply(doc)).toList();
+        this._rawReplies += replies;
         _repliesToMyPosts[post.id] = replies;
       }
     }
@@ -169,7 +196,7 @@ class MyPostsModel extends ChangeNotifier {
             .get();
         final docs = querySnapshot.docs;
         final repliesToReply = docs.map((doc) => ReplyToReply(doc)).toList();
-        _repliesToReply[reply.id] = repliesToReply;
+        this._repliesToReply[reply.id] = repliesToReply;
       }
     }
   }

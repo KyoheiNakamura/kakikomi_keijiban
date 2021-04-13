@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/components/loading_spinner.dart';
-import 'package:kakikomi_keijiban/constants.dart';
-import 'package:kakikomi_keijiban/enum.dart';
-import 'package:kakikomi_keijiban/mixin/show_auth_error_dialog_mixin.dart';
+import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
+import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/enum.dart';
+import 'package:kakikomi_keijiban/common/mixin/show_auth_error_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_model.dart';
 import 'package:provider/provider.dart';
 

@@ -17,6 +17,7 @@ class BookmarkedPostsModel extends ChangeNotifier {
   Map<String, List<Reply>> get replies => _repliesToBookmarkedPosts;
 
   List<Reply> _rawReplies = [];
+
   Map<String, List<ReplyToReply>> _repliesToReply = {};
   Map<String, List<ReplyToReply>> get repliesToReply => _repliesToReply;
 
@@ -28,6 +29,30 @@ class BookmarkedPostsModel extends ChangeNotifier {
   // bool isPostsExisting = false;
   bool canLoadMore = false;
   bool isLoading = false;
+
+  Future<void> refreshThePostOfPostsAfterUpdated({
+    required Post oldPost,
+    required int indexOfPost,
+  }) async {
+    // 更新後のpostを取得
+    final doc = await _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('posts')
+        .doc(oldPost.id)
+        .get();
+    Post newPost = Post(doc);
+    // 更新前のpostをpostsから削除
+    _bookmarkedPosts.removeAt(indexOfPost);
+    // 更新後のpostをpostsに追加
+    _bookmarkedPosts.insert(indexOfPost, newPost);
+    notifyListeners();
+  }
+
+  void removeThePostOfPostsAfterDeleted(Post post) {
+    _bookmarkedPosts.remove(post);
+    notifyListeners();
+  }
 
   void startLoading() {
     isLoading = true;

@@ -27,6 +27,30 @@ class SearchResultPostsModel extends ChangeNotifier {
   bool canLoadMore = false;
   bool isLoading = false;
 
+  Future<void> refreshThePostOfPostsAfterUpdated({
+    required Post oldPost,
+    required int indexOfPost,
+  }) async {
+    // 更新後のpostを取得
+    final doc = await _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('posts')
+        .doc(oldPost.id)
+        .get();
+    Post newPost = Post(doc);
+    // 更新前のpostをpostsから削除
+    _searchedPosts.removeAt(indexOfPost);
+    // 更新後のpostをpostsに追加
+    _searchedPosts.insert(indexOfPost, newPost);
+    notifyListeners();
+  }
+
+  void removeThePostOfPostsAfterDeleted(Post post) {
+    _searchedPosts.remove(post);
+    notifyListeners();
+  }
+
   void startLoading() {
     isLoading = true;
     notifyListeners();

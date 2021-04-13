@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:kakikomi_keijiban/components/account_drawer.dart';
-import 'package:kakikomi_keijiban/components/post_card/post_card.dart';
-import 'package:kakikomi_keijiban/constants.dart';
+import 'package:kakikomi_keijiban/common/components/account_drawer.dart';
+import 'package:kakikomi_keijiban/common/components/post_card/post_card.dart';
+import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/presentation/add_post/add_post_page.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
@@ -126,7 +126,6 @@ class HomePostsPage extends StatelessWidget {
                 );
                 await model.getPostsWithReplies(kAllPostsTab);
                 await model.getPostsWithReplies(kMyPostsTab);
-                // await homeModel.getPostsWithReplies;
               },
             );
           }),
@@ -192,6 +191,7 @@ class TabBarViewChild extends StatelessWidget {
                             children: [
                               PostCard(
                                 post: post,
+                                indexOfPost: index,
                                 passedModel: model,
                                 tabName: tabName,
                               ),
