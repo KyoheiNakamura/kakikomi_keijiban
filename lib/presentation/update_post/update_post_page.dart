@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/components/loading_spinner.dart';
-import 'package:kakikomi_keijiban/constants.dart';
+import 'package:kakikomi_keijiban/app_model.dart';
+import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
+import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/user_profile.dart';
 import 'package:kakikomi_keijiban/presentation/update_post/update_post_model.dart';
@@ -11,10 +12,9 @@ import 'package:keyboard_actions/keyboard_actions_item.dart';
 import 'package:provider/provider.dart';
 
 class UpdatePostPage extends StatelessWidget {
-  UpdatePostPage(this.existingPost, {this.userProfile});
+  UpdatePostPage(this.existingPost);
 
   final Post existingPost;
-  final UserProfile? userProfile;
   final _formKey = GlobalKey<FormState>();
   final FocusNode _focusNodeContent = FocusNode();
 
@@ -61,6 +61,7 @@ class UpdatePostPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final UserProfile? userProfile = context.read<AppModel>().userProfile;
     final bool isUserProfileNotAnonymous = userProfile != null;
     return ChangeNotifierProvider<UpdatePostModel>(
       create: (context) => UpdatePostModel(),
@@ -166,37 +167,6 @@ class UpdatePostPage extends StatelessWidget {
                             ),
                           ),
 
-                          /// position
-                          // Todo positionを複数選択できるようにしよう
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 32.0),
-                            child: DropdownButtonFormField(
-                              validator: model.validatePositionCallback,
-                              value: existingPost.position.isNotEmpty
-                                  ? model.positionDropdownValue =
-                                      existingPost.position
-                                  : isUserProfileNotAnonymous
-                                      ? model.positionDropdownValue =
-                                          userProfile!.position
-                                      : model.positionDropdownValue,
-                              icon: Icon(Icons.arrow_downward),
-                              iconSize: 24,
-                              elevation: 1,
-                              style: kDropdownButtonFormFieldTextStyle,
-                              decoration:
-                                  kPositionDropdownButtonFormFieldDecoration,
-                              onChanged: (String? selectedValue) {
-                                model.positionDropdownValue = selectedValue!;
-                              },
-                              items: kPositionList.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            ),
-                          ),
-
                           /// category チップ複数選択
                           Container(
                             decoration: BoxDecoration(
@@ -279,6 +249,37 @@ class UpdatePostPage extends StatelessWidget {
                             ),
                           ),
 
+                          /// position
+                          // Todo positionを複数選択できるようにしよう
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 32.0),
+                            child: DropdownButtonFormField(
+                              // validator: model.validatePositionCallback,
+                              value: existingPost.position.isNotEmpty
+                                  ? model.positionDropdownValue =
+                                      existingPost.position
+                                  : isUserProfileNotAnonymous
+                                      ? model.positionDropdownValue =
+                                          userProfile.position
+                                      : model.positionDropdownValue,
+                              icon: Icon(Icons.arrow_downward),
+                              iconSize: 24,
+                              elevation: 1,
+                              style: kDropdownButtonFormFieldTextStyle,
+                              decoration:
+                                  kPositionDropdownButtonFormFieldDecoration,
+                              onChanged: (String? selectedValue) {
+                                model.positionDropdownValue = selectedValue!;
+                              },
+                              items: kPositionList.map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ),
+
                           /// gender
                           Padding(
                             padding: const EdgeInsets.only(bottom: 32.0),
@@ -288,7 +289,7 @@ class UpdatePostPage extends StatelessWidget {
                                       existingPost.gender
                                   : isUserProfileNotAnonymous
                                       ? model.genderDropdownValue =
-                                          userProfile!.gender
+                                          userProfile.gender
                                       : model.genderDropdownValue,
                               icon: Icon(Icons.arrow_downward),
                               iconSize: 24,
@@ -315,8 +316,7 @@ class UpdatePostPage extends StatelessWidget {
                               value: existingPost.age.isNotEmpty
                                   ? model.ageDropdownValue = existingPost.age
                                   : isUserProfileNotAnonymous
-                                      ? model.ageDropdownValue =
-                                          userProfile!.age
+                                      ? model.ageDropdownValue = userProfile.age
                                       : model.ageDropdownValue,
                               icon: Icon(Icons.arrow_downward),
                               iconSize: 24,
@@ -343,7 +343,7 @@ class UpdatePostPage extends StatelessWidget {
                                   ? model.areaDropdownValue = existingPost.area
                                   : isUserProfileNotAnonymous
                                       ? model.areaDropdownValue =
-                                          userProfile!.area
+                                          userProfile.area
                                       : model.areaDropdownValue,
                               icon: Icon(Icons.arrow_downward),
                               iconSize: 24,

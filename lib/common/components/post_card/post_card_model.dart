@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
+import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class PostCardModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
@@ -24,6 +25,56 @@ class PostCardModel extends ChangeNotifier {
     // postドメインにrepliesを持たせているので、postCardでpost.repliesに入れてやってる
     post.replies = replies;
     notifyListeners();
+  }
+
+  Future<void> getAllRepliesToPost(Post post) async {
+    final querySnapshot = await _firestore
+        .collection('users')
+        .doc(post.uid)
+        .collection('posts')
+        .doc(post.id)
+        .collection('replies')
+        .orderBy('createdAt')
+        .get();
+    final docs = querySnapshot.docs;
+    final replies = docs.map((doc) => Reply(doc)).toList();
+    // postドメインにrepliesを持たせているので、postCardでpost.repliesに入れてやってる
+    post.replies = replies;
+
+    for (int i = 0; i < replies.length; i++) {
+      var reply = replies[i];
+      var _querySnapshot = await _firestore
+          .collection('users')
+          .doc(reply.uid)
+          .collection('posts')
+          .doc(reply.postId)
+          .collection('replies')
+          .doc(reply.id)
+          .collection('repliesToReply')
+          .orderBy('createdAt')
+          .get();
+      var _docs = _querySnapshot.docs;
+      var _repliesToReplies = _docs.map((doc) => ReplyToReply(doc)).toList();
+      reply.repliesToReply = _repliesToReplies;
+    }
+    notifyListeners();
+
+    // // indexed forでもよい。listが必要なわけではないので。
+    // replies.map((reply) async {
+    //   var _querySnapshot = await _firestore
+    //       .collection('users')
+    //       .doc(reply.uid)
+    //       .collection('posts')
+    //       .doc(reply.postId)
+    //       .collection('replies')
+    //       .doc(reply.id)
+    //       .collection('repliesToReply')
+    //       .orderBy('createdAt')
+    //       .get();
+    //   var _docs = _querySnapshot.docs;
+    //   var _repliesToReplies = _docs.map((doc) => ReplyToReply(doc)).toList();
+    //   reply.repliesToReply = _repliesToReplies;
+    // }).toList();
   }
 
   void startLoading() {

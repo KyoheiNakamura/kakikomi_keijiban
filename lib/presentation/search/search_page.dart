@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/constants.dart';
+import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/presentation/search_result_posts/search_result_posts_page.dart';
 
 class SearchPage extends StatelessWidget {

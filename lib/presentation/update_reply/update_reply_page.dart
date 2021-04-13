@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/components/loading_spinner.dart';
-import 'package:kakikomi_keijiban/constants.dart';
+import 'package:kakikomi_keijiban/app_model.dart';
+import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
+import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/user_profile.dart';
 import 'package:kakikomi_keijiban/presentation/update_reply/update_reply_model.dart';
@@ -9,10 +10,9 @@ import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:provider/provider.dart';
 
 class UpdateReplyPage extends StatelessWidget {
-  UpdateReplyPage(this.existingReply, {this.userProfile});
+  UpdateReplyPage(this.existingReply);
 
   final Reply existingReply;
-  final UserProfile? userProfile;
   final _formKey = GlobalKey<FormState>();
   final FocusNode _focusNodeContent = FocusNode();
 
@@ -59,6 +59,7 @@ class UpdateReplyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final UserProfile? userProfile = context.read<AppModel>().userProfile;
     final bool isUserProfileNotAnonymous = userProfile != null;
     return ChangeNotifierProvider<UpdateReplyModel>(
       create: (context) => UpdateReplyModel(),
@@ -124,7 +125,7 @@ class UpdateReplyPage extends StatelessWidget {
                                     existingReply.position
                                 : isUserProfileNotAnonymous
                                     ? model.positionDropdownValue =
-                                        userProfile!.position
+                                        userProfile.position
                                     : model.positionDropdownValue,
                             icon: Icon(
                               Icons.arrow_downward,
@@ -156,7 +157,7 @@ class UpdateReplyPage extends StatelessWidget {
                                     existingReply.gender
                                 : isUserProfileNotAnonymous
                                     ? model.genderDropdownValue =
-                                        userProfile!.gender
+                                        userProfile.gender
                                     : model.genderDropdownValue,
                             icon: Icon(
                               Icons.arrow_downward,
@@ -186,7 +187,7 @@ class UpdateReplyPage extends StatelessWidget {
                             value: existingReply.age.isNotEmpty
                                 ? model.ageDropdownValue = existingReply.age
                                 : isUserProfileNotAnonymous
-                                    ? model.ageDropdownValue = userProfile!.age
+                                    ? model.ageDropdownValue = userProfile.age
                                     : model.ageDropdownValue,
                             icon: Icon(
                               Icons.arrow_downward,
@@ -215,8 +216,7 @@ class UpdateReplyPage extends StatelessWidget {
                             value: existingReply.area.isNotEmpty
                                 ? model.areaDropdownValue = existingReply.area
                                 : isUserProfileNotAnonymous
-                                    ? model.areaDropdownValue =
-                                        userProfile!.area
+                                    ? model.areaDropdownValue = userProfile.area
                                     : model.areaDropdownValue,
                             icon: Icon(
                               Icons.arrow_downward,

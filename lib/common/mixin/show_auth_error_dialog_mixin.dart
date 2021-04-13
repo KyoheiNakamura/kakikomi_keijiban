@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/constants.dart';
+import 'package:kakikomi_keijiban/common/constants.dart';
 
 mixin ShowAuthErrorDialogMixin {
   Future<void> showAuthErrorDialog(

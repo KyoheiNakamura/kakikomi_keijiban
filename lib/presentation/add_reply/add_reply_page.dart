@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
-import 'package:kakikomi_keijiban/components/loading_spinner.dart';
-import 'package:kakikomi_keijiban/constants.dart';
+import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
+import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/user_profile.dart';

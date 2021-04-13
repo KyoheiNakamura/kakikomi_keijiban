@@ -5,3 +5,5 @@ enum AuthException {
   userNotFound,
   wrongPassword
 }
+
+enum PopupMenuItemsOnCard { update, delete }

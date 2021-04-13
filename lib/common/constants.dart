@@ -193,8 +193,9 @@ const kContentTextFormFieldDecoration = InputDecoration(
   border: OutlineInputBorder(),
   prefixIcon: Icon(Icons.text_fields),
   labelText: '投稿の内容',
-  hintText:
-      '自分が大人の発達障害ではないかと疑っているのですが、特徴の濃淡がはっきりせずグレーゾーンに思われるため、確信が持てないのと、親へどう話せばいいかわからず、診断に踏み切れていません。',
+  hintText: '''
+自分が大人の発達障害ではないかと疑っているのですが、特徴の濃淡がはっきりせずグレーゾーンに思われるため確信が持てないのと、
+親へどう話せばいいかわからず診断に踏み切れていません。''',
   helperText: '必須',
   helperStyle: TextStyle(color: kDarkPink),
   counterText: '1500字以内でご記入ください',

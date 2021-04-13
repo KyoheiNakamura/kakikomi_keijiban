@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:kakikomi_keijiban/components/post_card/post_card.dart';
-import 'package:kakikomi_keijiban/constants.dart';
+import 'package:kakikomi_keijiban/common/components/post_card/post_card.dart';
+import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_model.dart';
 import 'package:provider/provider.dart';
@@ -64,6 +64,7 @@ class MyPostsPage extends StatelessWidget {
                             children: [
                               PostCard(
                                 post: post,
+                                indexOfPost: index,
                                 passedModel: model,
                               ),
                               post == myPosts.last && model.isLoading

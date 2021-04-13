@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
-import 'package:kakikomi_keijiban/constants.dart';
+import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_page.dart';

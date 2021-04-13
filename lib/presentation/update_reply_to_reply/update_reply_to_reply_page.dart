@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/components/loading_spinner.dart';
-import 'package:kakikomi_keijiban/constants.dart';
+import 'package:kakikomi_keijiban/app_model.dart';
+import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
+import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 import 'package:kakikomi_keijiban/domain/user_profile.dart';
 import 'package:kakikomi_keijiban/presentation/update_reply_to_reply/update_reply_to_reply_model.dart';
@@ -59,6 +60,7 @@ class UpdateReplyToReplyPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final UserProfile? userProfile = context.read<AppModel>().userProfile;
     final bool isUserProfileNotAnonymous = userProfile != null;
     return ChangeNotifierProvider<UpdateReplyToReplyModel>(
       create: (context) => UpdateReplyToReplyModel(),
@@ -125,7 +127,7 @@ class UpdateReplyToReplyPage extends StatelessWidget {
                                     existingReplyToReply.position
                                 : isUserProfileNotAnonymous
                                     ? model.positionDropdownValue =
-                                        userProfile!.position
+                                        userProfile.position
                                     : model.positionDropdownValue,
                             icon: Icon(
                               Icons.arrow_downward,
@@ -157,7 +159,7 @@ class UpdateReplyToReplyPage extends StatelessWidget {
                                     existingReplyToReply.gender
                                 : isUserProfileNotAnonymous
                                     ? model.genderDropdownValue =
-                                        userProfile!.gender
+                                        userProfile.gender
                                     : model.genderDropdownValue,
                             icon: Icon(
                               Icons.arrow_downward,
@@ -188,7 +190,7 @@ class UpdateReplyToReplyPage extends StatelessWidget {
                                 ? model.ageDropdownValue =
                                     existingReplyToReply.age
                                 : isUserProfileNotAnonymous
-                                    ? model.ageDropdownValue = userProfile!.age
+                                    ? model.ageDropdownValue = userProfile.age
                                     : model.ageDropdownValue,
                             icon: Icon(
                               Icons.arrow_downward,
@@ -218,8 +220,7 @@ class UpdateReplyToReplyPage extends StatelessWidget {
                                 ? model.areaDropdownValue =
                                     existingReplyToReply.area
                                 : isUserProfileNotAnonymous
-                                    ? model.areaDropdownValue =
-                                        userProfile!.area
+                                    ? model.areaDropdownValue = userProfile.area
                                     : model.areaDropdownValue,
                             icon: Icon(
                               Icons.arrow_downward,

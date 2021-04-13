@@ -3,7 +3,7 @@ import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/constants.dart';
+import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
@@ -114,6 +114,104 @@ class HomePostsModel extends ChangeNotifier {
     } else if (tabName == kBookmarkedPostsTab) {
       await _loadBookmarkedPostsWithReplies();
     }
+  }
+
+  Future<void> refreshThePostOfPostsAfterUpdated({
+    required String tabName,
+    required Post oldPost,
+    required int indexOfPost,
+  }) async {
+    if (tabName == kAllPostsTab) {
+      await _refreshThePostOfAllPostsAfterUpdated(
+          oldPost: oldPost, indexOfPost: indexOfPost);
+    } else if (tabName == kMyPostsTab) {
+      await _refreshThePostOfMyPostsAfterUpdated(
+          oldPost: oldPost, indexOfPost: indexOfPost);
+    } else if (tabName == kBookmarkedPostsTab) {
+      await _refreshThePostOfBookmarkedPostsAfterUpdated(
+          oldPost: oldPost, indexOfPost: indexOfPost);
+    }
+  }
+
+  void removeThePostOfPostsAfterDeleted({
+    required String tabName,
+    required Post post,
+  }) {
+    if (tabName == kAllPostsTab) {
+      _removeThePostOfAllPostsAfterDeleted(post);
+    } else if (tabName == kMyPostsTab) {
+      _removeThePostOfMyPostsAfterDeleted(post);
+    } else if (tabName == kBookmarkedPostsTab) {
+      _removeThePostOfBookmarkedPostsAfterDeleted(post);
+    }
+  }
+
+  Future<void> _refreshThePostOfAllPostsAfterUpdated({
+    required Post oldPost,
+    required int indexOfPost,
+  }) async {
+    // 更新後のpostを取得
+    final doc = await _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('posts')
+        .doc(oldPost.id)
+        .get();
+    Post newPost = Post(doc);
+    // 更新前のpostをpostsから削除
+    _allPosts.removeAt(indexOfPost);
+    // 更新後のpostをpostsに追加
+    _allPosts.insert(indexOfPost, newPost);
+    notifyListeners();
+  }
+
+  void _removeThePostOfAllPostsAfterDeleted(Post post) {
+    _allPosts.remove(post);
+    notifyListeners();
+  }
+
+  Future<void> _refreshThePostOfMyPostsAfterUpdated(
+      {required Post oldPost, required int indexOfPost}) async {
+    // 更新後のpostを取得
+    final doc = await _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('posts')
+        .doc(oldPost.id)
+        .get();
+    Post newPost = Post(doc);
+    // 更新前のpostをpostsから削除
+    _myPosts.removeAt(indexOfPost);
+    // 更新後のpostをpostsに追加
+    _myPosts.insert(indexOfPost, newPost);
+    notifyListeners();
+  }
+
+  void _removeThePostOfMyPostsAfterDeleted(Post post) {
+    _myPosts.remove(post);
+    notifyListeners();
+  }
+
+  Future<void> _refreshThePostOfBookmarkedPostsAfterUpdated(
+      {required Post oldPost, required int indexOfPost}) async {
+    // 更新後のpostを取得
+    final doc = await _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('posts')
+        .doc(oldPost.id)
+        .get();
+    Post newPost = Post(doc);
+    // 更新前のpostをpostsから削除
+    _bookmarkedPosts.removeAt(indexOfPost);
+    // 更新後のpostをpostsに追加
+    _bookmarkedPosts.insert(indexOfPost, newPost);
+    notifyListeners();
+  }
+
+  void _removeThePostOfBookmarkedPostsAfterDeleted(Post post) {
+    _bookmarkedPosts.remove(post);
+    notifyListeners();
   }
 
   Future<void> _getAllPostsWithReplies() async {

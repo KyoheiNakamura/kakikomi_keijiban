@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/constants.dart';
+import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/domain/user_profile.dart';
 import 'package:kakikomi_keijiban/presentation/settings/settings_model.dart';
 import 'package:kakikomi_keijiban/presentation/update_email/update_email_page.dart';
