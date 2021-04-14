@@ -46,6 +46,12 @@ class AddPostModel extends ChangeNotifier {
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
+
+    final userDoc = await userRef.get();
+
+    await userRef.update({
+      'postCount': userDoc['postCount'] + 1,
+    });
   }
 
   List<String> _convertNoSelectedValueToEmpty() {

@@ -9,7 +9,7 @@ import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/common/mixin/format_poster_data_mixin.dart';
-import 'package:kakikomi_keijiban/presentation/add_reply/add_reply_page.dart';
+import 'package:kakikomi_keijiban/presentation/add_reply_to_reply/add_reply_to_reply_page.dart';
 import 'package:kakikomi_keijiban/presentation/update_reply/update_reply_page.dart';
 import 'package:provider/provider.dart';
 
@@ -69,9 +69,8 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => AddReplyPage(
-                                    repliedReply: reply,
-                                  ),
+                                  builder: (context) =>
+                                      AddReplyToReplyPage(reply),
                                 ),
                               );
                               await model.getRepliesToReply(reply);

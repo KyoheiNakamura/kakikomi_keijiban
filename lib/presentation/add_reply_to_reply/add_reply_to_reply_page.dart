@@ -2,17 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/user_profile.dart';
-import 'package:kakikomi_keijiban/presentation/add_reply/add_reply_model.dart';
+import 'package:kakikomi_keijiban/presentation/add_reply_to_reply/add_reply_to_reply_model.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:keyboard_actions/keyboard_actions_config.dart';
 import 'package:provider/provider.dart';
 
-class AddReplyPage extends StatelessWidget {
-  AddReplyPage(this.repliedPost);
+class AddReplyToReplyPage extends StatelessWidget {
+  AddReplyToReplyPage(this.repliedReply);
 
-  final Post repliedPost;
+  final Reply repliedReply;
 
   final _formKey = GlobalKey<FormState>();
   final FocusNode _focusNodeContent = FocusNode();
@@ -62,8 +62,8 @@ class AddReplyPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final UserProfile? userProfile = context.read<AppModel>().userProfile;
     final bool isUserProfileNotAnonymous = userProfile != null;
-    return ChangeNotifierProvider<AddReplyModel>(
-      create: (context) => AddReplyModel(),
+    return ChangeNotifierProvider<AddReplyToReplyModel>(
+      create: (context) => AddReplyToReplyModel(),
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
@@ -74,7 +74,7 @@ class AddReplyPage extends StatelessWidget {
             style: kAppBarTextStyle,
           ),
         ),
-        body: Consumer<AddReplyModel>(
+        body: Consumer<AddReplyToReplyModel>(
           builder: (context, model, child) {
             return LoadingSpinner(
               inAsyncCall: model.isLoading,
@@ -233,7 +233,7 @@ class AddReplyPage extends StatelessWidget {
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
                                 model.startLoading();
-                                await model.addReplyToPost(repliedPost);
+                                await model.addReplyToReply(repliedReply);
                                 model.stopLoading();
                                 Navigator.pop(context);
                                 // Navigator.of(context).popUntil(
