@@ -232,9 +232,7 @@ class AddReplyPage extends StatelessWidget {
                           OutlinedButton(
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
-                                model.startLoading();
                                 await model.addReplyToPost(repliedPost);
-                                model.stopLoading();
                                 Navigator.pop(context);
                                 // Navigator.of(context).popUntil(
                                 //   ModalRoute.withName('/'),

@@ -26,6 +26,8 @@ class UpdateProfileModel extends ChangeNotifier {
   String areaDropdownValue = kPleaseSelect;
 
   Future<void> updateUserProfile() async {
+    startLoading();
+
     final userRef = _firestore.collection('users').doc(uid);
     List<String> _userProfileList = _convertNoSelectedValueToEmpty();
 
@@ -44,6 +46,8 @@ class UpdateProfileModel extends ChangeNotifier {
       'postCount': 0,
       'updatedAt': FieldValue.serverTimestamp(),
     });
+
+    stopLoading();
   }
 
   List<String> _convertNoSelectedValueToEmpty() {
