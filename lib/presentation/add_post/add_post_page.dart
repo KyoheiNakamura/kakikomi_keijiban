@@ -350,9 +350,9 @@ class AddPostPage extends StatelessWidget {
                             onPressed: () async {
                               if (model.validateSelectedCategories() &&
                                   _formKey.currentState!.validate()) {
-                                model.startLoading();
+                                // model.startLoading();
                                 await model.addPost();
-                                model.stopLoading();
+                                // model.stopLoading();
                                 Navigator.pop(context);
                                 // Navigator.of(context).popUntil(
                                 //   ModalRoute.withName('/'),

@@ -185,9 +185,7 @@ class UpdateProfilePage extends StatelessWidget {
                           OutlinedButton(
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
-                                model.startLoading();
                                 await model.updateUserProfile();
-                                model.stopLoading();
                                 // Navigator.pop(context);
                                 await context.read<AppModel>().getUserProfile();
                                 Navigator.of(context).popUntil(

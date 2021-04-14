@@ -24,11 +24,15 @@ class AddPostModel extends ChangeNotifier {
   String areaDropdownValue = kPleaseSelect;
 
   Future<void> addPost() async {
+    startLoading();
+
+    WriteBatch _batch = _firestore.batch();
+
     final userRef = _firestore.collection('users').doc(uid);
     final postRef = userRef.collection('posts').doc();
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
 
-    await postRef.set({
+    _batch.set(postRef, {
       'id': postRef.id,
       'title': _postDataList[0],
       'body': _postDataList[1],
@@ -49,9 +53,19 @@ class AddPostModel extends ChangeNotifier {
 
     final userDoc = await userRef.get();
 
-    await userRef.update({
+    _batch.update(userRef, {
       'postCount': userDoc['postCount'] + 1,
     });
+
+    try {
+      await _batch.commit();
+    } catch (e) {
+      print('addPostのバッチ処理中のエラーです');
+      print(e.toString());
+      throw ('エラーが発生しました');
+    }
+
+    stopLoading();
   }
 
   List<String> _convertNoSelectedValueToEmpty() {

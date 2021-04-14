@@ -65,12 +65,16 @@ class AddReplyModel extends ChangeNotifier {
   }
 
   Future<void> addReplyToPost(Post repliedPost) async {
+    startLoading();
+
+    WriteBatch _batch = _firestore.batch();
+
     List<String> _replyDataList = _convertNoSelectedValueToEmpty();
     final userRef = _firestore.collection('users').doc(repliedPost.uid);
     final postRef = userRef.collection('posts').doc(repliedPost.id);
     final replyRef = postRef.collection('replies').doc();
 
-    await replyRef.set({
+    _batch.set(replyRef, {
       'id': replyRef.id,
       'postId': repliedPost.id,
       'replierId': _auth.currentUser!.uid,
@@ -85,8 +89,18 @@ class AddReplyModel extends ChangeNotifier {
       'updatedAt': FieldValue.serverTimestamp(),
     });
 
-    await postRef.update({
+    _batch.update(postRef, {
       'replyCount': repliedPost.replyCount + 1,
     });
+
+    try {
+      await _batch.commit();
+    } catch (e) {
+      print('addReplyのバッチ処理中のエラーです');
+      print(e.toString());
+      throw ('エラーが発生しました');
+    }
+
+    stopLoading();
   }
 }

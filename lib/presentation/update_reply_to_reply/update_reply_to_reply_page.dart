@@ -70,7 +70,7 @@ class UpdateReplyToReplyPage extends StatelessWidget {
           elevation: 0,
           centerTitle: true,
           title: Text(
-            '返信',
+            '編集',
             style: kAppBarTextStyle,
           ),
         ),
