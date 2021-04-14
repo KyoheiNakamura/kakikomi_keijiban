@@ -10,6 +10,7 @@ class PostCardModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final uid = FirebaseAuth.instance.currentUser?.uid;
   bool isLoading = false;
+  final List<Reply> repliesToPost = [];
 
   Future<void> getRepliesToPost(Post post) async {
     final querySnapshot = await _firestore
@@ -42,8 +43,8 @@ class PostCardModel extends ChangeNotifier {
     post.replies = replies;
 
     for (int i = 0; i < replies.length; i++) {
-      var reply = replies[i];
-      var _querySnapshot = await _firestore
+      final reply = replies[i];
+      final _querySnapshot = await _firestore
           .collection('users')
           .doc(reply.uid)
           .collection('posts')
@@ -53,8 +54,8 @@ class PostCardModel extends ChangeNotifier {
           .collection('repliesToReply')
           .orderBy('createdAt')
           .get();
-      var _docs = _querySnapshot.docs;
-      var _repliesToReplies = _docs.map((doc) => ReplyToReply(doc)).toList();
+      final _docs = _querySnapshot.docs;
+      final _repliesToReplies = _docs.map((doc) => ReplyToReply(doc)).toList();
       reply.repliesToReply = _repliesToReplies;
     }
     notifyListeners();
