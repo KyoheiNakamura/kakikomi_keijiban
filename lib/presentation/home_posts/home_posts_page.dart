@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:kakikomi_keijiban/common/components/account_drawer.dart';
+import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
@@ -30,62 +31,67 @@ class HomePostsPage extends StatelessWidget {
               value: SystemUiOverlayStyle.light
                   .copyWith(statusBarColor: Theme.of(context).primaryColorDark),
               child: SafeArea(
-                child: Container(
-                  color: kLightPink,
-                  child: Stack(
-                    children: [
-                      NestedScrollView(
-                        headerSliverBuilder:
-                            (BuildContext context, bool innerBoxIsScrolled) {
-                          return <Widget>[
-                            SliverOverlapAbsorber(
-                              handle: NestedScrollView
-                                  .sliverOverlapAbsorberHandleFor(context),
-                              sliver: SliverAppBar(
-                                toolbarHeight: 50,
-                                // elevation: 0,
-                                centerTitle: true,
-                                title: Text(
-                                  '発達障害困りごと掲示板',
-                                  style: kAppBarTextStyle,
-                                ),
-                                actions: [
-                                  IconButton(
-                                    icon: Icon(Icons.search, size: 24),
-                                    onPressed: () async {
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => SearchPage(),
-                                        ),
-                                      );
-                                      await model
-                                          .getPostsWithReplies(kAllPostsTab);
-                                    },
+                child: LoadingSpinner(
+                  inAsyncCall: model.isModalLoading,
+                  // dismissible: true,
+                  child: Container(
+                    color: kLightPink,
+                    child: Stack(
+                      children: [
+                        NestedScrollView(
+                          headerSliverBuilder:
+                              (BuildContext context, bool innerBoxIsScrolled) {
+                            return <Widget>[
+                              SliverOverlapAbsorber(
+                                handle: NestedScrollView
+                                    .sliverOverlapAbsorberHandleFor(context),
+                                sliver: SliverAppBar(
+                                  toolbarHeight: 50,
+                                  // elevation: 0,
+                                  centerTitle: true,
+                                  title: Text(
+                                    '発達障害困りごと掲示板',
+                                    style: kAppBarTextStyle,
                                   ),
-                                ],
-                                floating: true,
-                                pinned: true,
-                                snap: true,
-                                forceElevated: innerBoxIsScrolled,
-                                bottom: TabBar(
-                                  tabs: _tabs
-                                      .map((String name) => Tab(text: name))
-                                      .toList(),
+                                  actions: [
+                                    IconButton(
+                                      icon: Icon(Icons.search, size: 24),
+                                      onPressed: () async {
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => SearchPage(),
+                                          ),
+                                        );
+                                        await model
+                                            .getPostsWithReplies(kAllPostsTab);
+                                      },
+                                    ),
+                                  ],
+                                  floating: true,
+                                  pinned: true,
+                                  snap: true,
+                                  forceElevated: innerBoxIsScrolled,
+                                  bottom: TabBar(
+                                    tabs: _tabs
+                                        .map((String name) => Tab(text: name))
+                                        .toList(),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ];
-                        },
+                            ];
+                          },
 
-                        /// タブ名(ページ名)で表示を場合分け
-                        body: TabBarView(
-                          children: _tabs.map((String name) {
-                            return TabBarViewChild(tabName: name, model: model);
-                          }).toList(),
+                          /// タブ名(ページ名)で表示を場合分け
+                          body: TabBarView(
+                            children: _tabs.map((String name) {
+                              return TabBarViewChild(
+                                  tabName: name, model: model);
+                            }).toList(),
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

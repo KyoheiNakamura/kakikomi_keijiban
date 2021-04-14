@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/common/constants.dart';
 
 class LoadingSpinner extends StatelessWidget {
   final bool inAsyncCall;
@@ -36,7 +37,8 @@ class LoadingSpinner extends StatelessWidget {
       }
       final modal = [
         new Opacity(
-          child: ModalBarrier(dismissible: dismissible, color: color),
+          child: ModalBarrier(dismissible: dismissible),
+          // child: ModalBarrier(dismissible: dismissible, color: color),
           opacity: opacity,
         ),
         layOutProgressIndicator

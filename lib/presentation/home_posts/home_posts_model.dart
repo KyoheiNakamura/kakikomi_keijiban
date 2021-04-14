@@ -32,9 +32,12 @@ class HomePostsModel extends ChangeNotifier {
   bool _bookmarkedPostsCanLoadMore = false;
 
   bool isLoading = false;
+  bool isModalLoading = false;
 
   Future<void> init() async {
+    startModalLoading();
     await _getAllPostsWithReplies();
+    stopModalLoading();
     await _getMyPostsWithReplies();
     await _getBookmarkedPostsWithReplies();
   }
@@ -556,6 +559,16 @@ class HomePostsModel extends ChangeNotifier {
 
   void stopLoading() {
     isLoading = false;
+    notifyListeners();
+  }
+
+  void startModalLoading() {
+    isModalLoading = true;
+    notifyListeners();
+  }
+
+  void stopModalLoading() {
+    isModalLoading = false;
     notifyListeners();
   }
 

@@ -21,6 +21,7 @@ class BookmarkedPostsModel extends ChangeNotifier {
   // bool isPostsExisting = false;
   bool canLoadMore = false;
   bool isLoading = false;
+  bool isModalLoading = false;
 
   Future<void> refreshThePostOfPostsAfterUpdated({
     required Post oldPost,
@@ -56,8 +57,24 @@ class BookmarkedPostsModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void startModalLoading() {
+    isModalLoading = true;
+    notifyListeners();
+  }
+
+  void stopModalLoading() {
+    isModalLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> init() async {
+    startModalLoading();
+    await _getBookmarkedPostsWithReplies();
+    stopModalLoading();
+  }
+
   Future<void> _getBookmarkedPostsWithReplies() async {
-    startLoading();
+    startModalLoading();
 
     Query queryBatch = _firestore
         .collection('users')
@@ -88,7 +105,7 @@ class BookmarkedPostsModel extends ChangeNotifier {
 
     await _getReplies();
 
-    stopLoading();
+    stopModalLoading();
     notifyListeners();
   }
 
