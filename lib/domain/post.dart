@@ -44,7 +44,7 @@ class Post {
   bool isBookmarked = false;
   bool isReplyShown = false;
   bool isDraft = false;
-  List<Reply>? replies = [];
+  List<Reply> replies = [];
   DateTime? _createdAt;
   DateTime? _updatedAt;
 

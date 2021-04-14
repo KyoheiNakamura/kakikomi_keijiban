@@ -37,36 +37,38 @@ class ReplyCardModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteReplyToReply(ReplyToReply replyToReply) async {
-    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
-    final postRef = userRef.collection('posts').doc(replyToReply.postId);
-    final replyRef = postRef.collection('replies').doc(replyToReply.replyId);
-    final replyToRepliesRef =
-        replyRef.collection('repliesToReply').doc(replyToReply.id);
-    await replyToRepliesRef.delete();
-
-    final DocumentSnapshot postDoc = await postRef.get();
-    await postRef.update({
-      'replyCount': postDoc['replyCount'] - 1,
-    });
-    notifyListeners();
-  }
-
-  Future<void> deleteReplyAndRepliesToReply(Reply existingReply) async {
-    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
-    final postRef = userRef.collection('posts').doc(existingReply.postId);
-    final replyRef = postRef.collection('replies').doc(existingReply.id);
-    await replyRef.delete();
-    final repliesToReply =
-        (await replyRef.collection('repliesToReply').get()).docs;
-    for (int i = 0; i < repliesToReply.length; i++) {
-      repliesToReply[i].reference.delete();
-    }
-
-    final DocumentSnapshot postDoc = await postRef.get();
-    await postRef.update({
-      'replyCount': postDoc['replyCount'] - 1,
-    });
-    notifyListeners();
-  }
+  // Future<void> deleteReplyToReply(ReplyToReply replyToReply) async {
+  //   final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
+  //   final postRef = userRef.collection('posts').doc(replyToReply.postId);
+  //   final replyRef = postRef.collection('replies').doc(replyToReply.replyId);
+  //   final replyToRepliesRef =
+  //       replyRef.collection('repliesToReply').doc(replyToReply.id);
+  //   await replyToRepliesRef.delete();
+  //
+  //   final DocumentSnapshot postDoc = await postRef.get();
+  //   await postRef.update({
+  //     'replyCount': postDoc['replyCount'] - 1,
+  //   });
+  //   notifyListeners();
+  // }
+  //
+  // Future<void> deleteReplyAndRepliesToReply(Reply existingReply) async {
+  //   final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
+  //   final postRef = userRef.collection('posts').doc(existingReply.postId);
+  //   final replyRef = postRef.collection('replies').doc(existingReply.id);
+  //
+  //   await replyRef.delete();
+  //   final repliesToReply =
+  //       (await replyRef.collection('repliesToReply').get()).docs;
+  //   for (int i = 0; i < repliesToReply.length; i++) {
+  //     repliesToReply[i].reference.delete();
+  //   }
+  //
+  //   final numberOfRepliesToReply = existingReply.repliesToReply.length;
+  //   final DocumentSnapshot postDoc = await postRef.get();
+  //   await postRef.update({
+  //     'replyCount': postDoc['replyCount'] - (1 + numberOfRepliesToReply),
+  //   });
+  //   notifyListeners();
+  // }
 }

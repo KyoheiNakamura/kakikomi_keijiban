@@ -34,7 +34,7 @@ class Reply {
   String gender = '';
   String age = '';
   String area = '';
-  List<ReplyToReply>? repliesToReply = [];
+  List<ReplyToReply> repliesToReply = [];
   DateTime? _createdAt;
   DateTime? _updatedAt;
 
