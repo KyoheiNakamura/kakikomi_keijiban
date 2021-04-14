@@ -124,9 +124,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => AddReplyPage(
-                                    repliedPost: post,
-                                  ),
+                                  builder: (context) => AddReplyPage(post),
                                 ),
                               );
                               await model.getAllRepliesToPost(post);
