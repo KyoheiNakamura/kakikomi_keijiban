@@ -20,6 +20,7 @@ dependencies:
   provider: ^5.0.0
   google_sign_in: ^5.0.1
   keyboard_actions: ^3.4.0
+  flutter_native_splash: ^1.1.7+1
 
 dev_dependencies:
   flutter_test:
@@ -34,5 +35,9 @@ flutter:
     - family: GenShinGothic
       fonts:
         - asset: lib/assets/fonts/GenShinGothic/GenShinGothic-Regular.ttf
+
+flutter_native_splash:
+  image: "lib/assets/images/anpanman.png"
+  color: "FCF0F5"
 
 

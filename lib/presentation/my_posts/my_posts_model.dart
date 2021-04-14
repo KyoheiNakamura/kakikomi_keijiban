@@ -22,39 +22,12 @@ class MyPostsModel extends ChangeNotifier {
   // bool isPostsExisting = false;
   bool canLoadMore = false;
   bool isLoading = false;
+  bool isModalLoading = false;
 
-  Future<void> refreshThePostOfPostsAfterUpdated({
-    required Post oldPost,
-    required int indexOfPost,
-  }) async {
-    // 更新後のpostを取得
-    final doc = await _firestore
-        .collection('users')
-        .doc(uid)
-        .collection('posts')
-        .doc(oldPost.id)
-        .get();
-    final newPost = Post(doc);
-    // 更新前のpostをpostsから削除
-    this._myPosts.removeAt(indexOfPost);
-    // 更新後のpostをpostsに追加
-    this._myPosts.insert(indexOfPost, newPost);
-    notifyListeners();
-  }
-
-  void removeThePostOfPostsAfterDeleted(Post post) {
-    this._myPosts.remove(post);
-    notifyListeners();
-  }
-
-  void startLoading() {
-    isLoading = true;
-    notifyListeners();
-  }
-
-  void stopLoading() {
-    isLoading = false;
-    notifyListeners();
+  Future<void> init() async {
+    startModalLoading();
+    await _getMyPostsWithReplies();
+    stopModalLoading();
   }
 
   Future<void> _getMyPostsWithReplies() async {
@@ -177,5 +150,49 @@ class MyPostsModel extends ChangeNotifier {
         reply.repliesToReply = _repliesToReplies;
       }
     }
+  }
+
+  Future<void> refreshThePostOfPostsAfterUpdated({
+    required Post oldPost,
+    required int indexOfPost,
+  }) async {
+    // 更新後のpostを取得
+    final doc = await _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('posts')
+        .doc(oldPost.id)
+        .get();
+    final newPost = Post(doc);
+    // 更新前のpostをpostsから削除
+    this._myPosts.removeAt(indexOfPost);
+    // 更新後のpostをpostsに追加
+    this._myPosts.insert(indexOfPost, newPost);
+    notifyListeners();
+  }
+
+  void removeThePostOfPostsAfterDeleted(Post post) {
+    this._myPosts.remove(post);
+    notifyListeners();
+  }
+
+  void startLoading() {
+    isLoading = true;
+    notifyListeners();
+  }
+
+  void stopLoading() {
+    isLoading = false;
+    notifyListeners();
+  }
+
+  void startModalLoading() {
+    isModalLoading = true;
+    notifyListeners();
+  }
+
+  void stopModalLoading() {
+    isModalLoading = false;
+    notifyListeners();
   }
 }

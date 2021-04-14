@@ -8,6 +8,14 @@ import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class SearchResultPostsModel extends ChangeNotifier {
+  SearchResultPostsModel({
+    required String postField,
+    required String searchWord,
+  }) {
+    this.postField = postField;
+    this.searchWord = searchWord;
+  }
+
   final _firestore = FirebaseFirestore.instance;
   final uid = FirebaseAuth.instance.currentUser?.uid;
 
@@ -19,46 +27,19 @@ class SearchResultPostsModel extends ChangeNotifier {
   // bool isPostsExisting = false;
   bool canLoadMore = false;
   bool isLoading = false;
+  bool isModalLoading = false;
 
-  Future<void> refreshThePostOfPostsAfterUpdated({
-    required Post oldPost,
-    required int indexOfPost,
-  }) async {
-    // 更新後のpostを取得
-    final doc = await _firestore
-        .collection('users')
-        .doc(uid)
-        .collection('posts')
-        .doc(oldPost.id)
-        .get();
-    final newPost = Post(doc);
-    // 更新前のpostをpostsから削除
-    this._searchedPosts.removeAt(indexOfPost);
-    // 更新後のpostをpostsに追加
-    this._searchedPosts.insert(indexOfPost, newPost);
-    notifyListeners();
+  String postField = '';
+  String searchWord = '';
+
+  Future<void> init() async {
+    startModalLoading();
+    await getPostsWithRepliesChosenField();
+    stopModalLoading();
   }
 
-  void removeThePostOfPostsAfterDeleted(Post post) {
-    this._searchedPosts.remove(post);
-    notifyListeners();
-  }
-
-  void startLoading() {
-    isLoading = true;
-    notifyListeners();
-  }
-
-  void stopLoading() {
-    isLoading = false;
-    notifyListeners();
-  }
-
-  Future<void> getPostsWithRepliesChosenField({
-    required String postField,
-    required String value,
-  }) async {
-    startLoading();
+  Future<void> getPostsWithRepliesChosenField() async {
+    startModalLoading();
 
     final Query queryBatch;
     // postのfieldの値が配列(array)のとき
@@ -66,13 +47,13 @@ class SearchResultPostsModel extends ChangeNotifier {
     if (postField == 'categories') {
       queryBatch = _firestore
           .collectionGroup('posts')
-          .where(postField, arrayContains: value)
+          .where(postField, arrayContains: searchWord)
           .orderBy('createdAt', descending: true)
           .limit(loadLimit);
     } else {
       queryBatch = _firestore
           .collectionGroup('posts')
-          .where(postField, isEqualTo: value)
+          .where(postField, isEqualTo: searchWord)
           .orderBy('createdAt', descending: true)
           .limit(loadLimit);
     }
@@ -97,12 +78,11 @@ class SearchResultPostsModel extends ChangeNotifier {
     await _addBookmarkToPosts();
     await _getReplies();
 
-    stopLoading();
+    stopModalLoading();
     notifyListeners();
   }
 
-  Future<void> loadPostsWithRepliesChosenField(
-      {required String postField, required String value}) async {
+  Future<void> loadPostsWithRepliesChosenField() async {
     startLoading();
 
     final Query queryBatch;
@@ -111,14 +91,14 @@ class SearchResultPostsModel extends ChangeNotifier {
     if (postField == 'categories') {
       queryBatch = _firestore
           .collectionGroup('posts')
-          .where(postField, arrayContains: value)
+          .where(postField, arrayContains: searchWord)
           .orderBy('createdAt', descending: true)
           .startAfterDocument(lastVisibleOfTheBatch!)
           .limit(loadLimit);
     } else {
       queryBatch = _firestore
           .collectionGroup('posts')
-          .where(postField, isEqualTo: value)
+          .where(postField, isEqualTo: searchWord)
           .orderBy('createdAt', descending: true)
           .startAfterDocument(lastVisibleOfTheBatch!)
           .limit(loadLimit);
@@ -200,5 +180,49 @@ class SearchResultPostsModel extends ChangeNotifier {
         reply.repliesToReply = _repliesToReplies;
       }
     }
+  }
+
+  Future<void> refreshThePostOfPostsAfterUpdated({
+    required Post oldPost,
+    required int indexOfPost,
+  }) async {
+    // 更新後のpostを取得
+    final doc = await _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('posts')
+        .doc(oldPost.id)
+        .get();
+    final newPost = Post(doc);
+    // 更新前のpostをpostsから削除
+    this._searchedPosts.removeAt(indexOfPost);
+    // 更新後のpostをpostsに追加
+    this._searchedPosts.insert(indexOfPost, newPost);
+    notifyListeners();
+  }
+
+  void removeThePostOfPostsAfterDeleted(Post post) {
+    this._searchedPosts.remove(post);
+    notifyListeners();
+  }
+
+  void startLoading() {
+    isLoading = true;
+    notifyListeners();
+  }
+
+  void stopLoading() {
+    isLoading = false;
+    notifyListeners();
+  }
+
+  void startModalLoading() {
+    isModalLoading = true;
+    notifyListeners();
+  }
+
+  void stopModalLoading() {
+    isModalLoading = false;
+    notifyListeners();
   }
 }
