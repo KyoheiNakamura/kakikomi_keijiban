@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
-import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
+// import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card_model.dart';
 import 'package:kakikomi_keijiban/common/components/reply_card/reply_card_model.dart';
 import 'package:kakikomi_keijiban/common/components/reply_to_reply_card/reply_to_reply_card.dart';
@@ -109,17 +109,16 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
 
                 /// 返信一覧
                 Column(
-                  children: reply.repliesToReply != null &&
-                          reply.repliesToReply!.isNotEmpty
-                      ? reply.repliesToReply!.map((replyToReply) {
+                  children: reply.repliesToReply.isNotEmpty
+                      ? reply.repliesToReply.map((replyToReply) {
                           return Column(
                             children: [
                               ReplyToReplyCard(
                                 replyToReply: replyToReply,
                                 reply: reply,
                               ),
-                              reply.repliesToReply!.isNotEmpty &&
-                                      reply.repliesToReply!.last == replyToReply
+                              reply.repliesToReply.isNotEmpty &&
+                                      reply.repliesToReply.last == replyToReply
                                   ? SizedBox(height: 24.0)
                                   : SizedBox(),
                             ],
@@ -152,62 +151,62 @@ class PopupMenuOnReplyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Future<void> _showCardDeleteConfirmDialog() async {
-      return showDialog<void>(
-        context: context,
-        barrierDismissible: false, // user must tap button!
-        builder: (BuildContext context) {
-          return Consumer<ReplyCardModel>(builder: (context, model, child) {
-            return LoadingSpinner(
-              inAsyncCall: model.isLoading,
-              child: AlertDialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                title: Text('返信の削除'),
-                content: Text('本当に削除しますか？'),
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
-                actions: <Widget>[
-                  TextButton(
-                    child: Text(
-                      'キャンセル',
-                      style: TextStyle(color: kDarkPink),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                  TextButton(
-                    child: Text(
-                      '削除',
-                      style: TextStyle(color: kDarkPink),
-                    ),
-                    onPressed: () async {
-                      model.startLoading();
-                      await model.deleteReplyAndRepliesToReply(reply);
-                      await context
-                          .read<PostCardModel>()
-                          .getAllRepliesToPost(post);
-                      // await context
-                      //     .read<PostCardModel>()
-                      //     .getRepliesToPost(post);
-                      // await model.getRepliesToReply(reply);
-
-                      model.stopLoading();
-                      Navigator.of(context).pop();
-                      // Navigator.of(context).popUntil(
-                      //   ModalRoute.withName('/'),
-                      // );
-                    },
-                  ),
-                ],
-              ),
-            );
-          });
-        },
-      );
-    }
+    // Future<void> _showCardDeleteConfirmDialog() async {
+    //   return showDialog<void>(
+    //     context: context,
+    //     barrierDismissible: false, // user must tap button!
+    //     builder: (BuildContext context) {
+    //       return Consumer<ReplyCardModel>(builder: (context, model, child) {
+    //         return LoadingSpinner(
+    //           inAsyncCall: model.isLoading,
+    //           child: AlertDialog(
+    //             shape: RoundedRectangleBorder(
+    //               borderRadius: BorderRadius.circular(16.0),
+    //             ),
+    //             title: Text('返信の削除'),
+    //             content: Text('本当に削除しますか？'),
+    //             contentPadding:
+    //                 EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+    //             actions: <Widget>[
+    //               TextButton(
+    //                 child: Text(
+    //                   'キャンセル',
+    //                   style: TextStyle(color: kDarkPink),
+    //                 ),
+    //                 onPressed: () {
+    //                   Navigator.of(context).pop();
+    //                 },
+    //               ),
+    //               TextButton(
+    //                 child: Text(
+    //                   '削除',
+    //                   style: TextStyle(color: kDarkPink),
+    //                 ),
+    //                 onPressed: () async {
+    //                   model.startLoading();
+    //                   await model.deleteReplyAndRepliesToReply(reply);
+    //                   await context
+    //                       .read<PostCardModel>()
+    //                       .getAllRepliesToPost(post);
+    //                   // await context
+    //                   //     .read<PostCardModel>()
+    //                   //     .getRepliesToPost(post);
+    //                   // await model.getRepliesToReply(reply);
+    //
+    //                   model.stopLoading();
+    //                   Navigator.of(context).pop();
+    //                   // Navigator.of(context).popUntil(
+    //                   //   ModalRoute.withName('/'),
+    //                   // );
+    //                 },
+    //               ),
+    //             ],
+    //           ),
+    //         );
+    //       });
+    //     },
+    //   );
+    // }
 
     return Consumer<ReplyCardModel>(builder: (context, model, child) {
       return PopupMenuButton<PopupMenuItemsOnCard>(
@@ -230,9 +229,10 @@ class PopupMenuOnReplyCard extends StatelessWidget {
             await context.read<PostCardModel>().getAllRepliesToPost(post);
             // await context.read<PostCardModel>().getRepliesToPost(post);
             // await model.getRepliesToReply(reply);
-          } else if (result == PopupMenuItemsOnCard.delete) {
-            await _showCardDeleteConfirmDialog();
           }
+          // else if (result == PopupMenuItemsOnCard.delete) {
+          //   await _showCardDeleteConfirmDialog();
+          // }
         },
         itemBuilder: (BuildContext context) => [
           PopupMenuItem<PopupMenuItemsOnCard>(
@@ -251,23 +251,23 @@ class PopupMenuOnReplyCard extends StatelessWidget {
               ),
             ),
           ),
-          PopupMenuDivider(),
-          PopupMenuItem<PopupMenuItemsOnCard>(
-            value: PopupMenuItemsOnCard.delete,
-            child: Container(
-              width: 100.0,
-              child: Row(
-                children: [
-                  Icon(Icons.delete, color: kLightGrey),
-                  SizedBox(width: 8.0),
-                  Text(
-                    '削除する',
-                    style: TextStyle(color: kLightGrey),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          // PopupMenuDivider(),
+          // PopupMenuItem<PopupMenuItemsOnCard>(
+          //   value: PopupMenuItemsOnCard.delete,
+          //   child: Container(
+          //     width: 100.0,
+          //     child: Row(
+          //       children: [
+          //         Icon(Icons.delete, color: kLightGrey),
+          //         SizedBox(width: 8.0),
+          //         Text(
+          //           '削除する',
+          //           style: TextStyle(color: kLightGrey),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
         ],
       );
     });

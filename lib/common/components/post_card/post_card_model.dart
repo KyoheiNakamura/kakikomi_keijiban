@@ -145,29 +145,29 @@ class PostCardModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _deleteBookmarkedPostsForAllUsers(Post post) async {
-    List<Future> futures = [];
-    final querySnapshot = await _firestore
-        .collectionGroup('bookmarkedPosts')
-        .where('postId', isEqualTo: post.id)
-        .get();
-    final bookmarkedPosts =
-        querySnapshot.docs.map((doc) => doc.reference).toList();
-    for (int i = 0; i < bookmarkedPosts.length; i++) {
-      futures.add(bookmarkedPosts[i].delete());
-    }
-    await Future.wait(futures);
-  }
-
-  Future<void> deletePostAndReplies(Post post) async {
-    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
-    final postRef = userRef.collection('posts').doc(post.id);
-    await postRef.delete();
-    await _deleteBookmarkedPostsForAllUsers(post);
-    final replies = (await postRef.collection('replies').get()).docs;
-    for (int i = 0; i < replies.length; i++) {
-      replies[i].reference.delete();
-    }
-    notifyListeners();
-  }
+  // Future<void> _deleteBookmarkedPostsForAllUsers(Post post) async {
+  //   List<Future> futures = [];
+  //   final querySnapshot = await _firestore
+  //       .collectionGroup('bookmarkedPosts')
+  //       .where('postId', isEqualTo: post.id)
+  //       .get();
+  //   final bookmarkedPosts =
+  //       querySnapshot.docs.map((doc) => doc.reference).toList();
+  //   for (int i = 0; i < bookmarkedPosts.length; i++) {
+  //     futures.add(bookmarkedPosts[i].delete());
+  //   }
+  //   await Future.wait(futures);
+  // }
+  //
+  // Future<void> deletePostAndReplies(Post post) async {
+  //   final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
+  //   final postRef = userRef.collection('posts').doc(post.id);
+  //   await postRef.delete();
+  //   await _deleteBookmarkedPostsForAllUsers(post);
+  //   final replies = (await postRef.collection('replies').get()).docs;
+  //   for (int i = 0; i < replies.length; i++) {
+  //     replies[i].reference.delete();
+  //   }
+  //   notifyListeners();
+  // }
 }
