@@ -86,7 +86,9 @@ class HomePostsPage extends StatelessWidget {
                           body: TabBarView(
                             children: _tabs.map((String name) {
                               return TabBarViewChild(
-                                  tabName: name, model: model);
+                                tabName: name,
+                                model: model,
+                              );
                             }).toList(),
                           ),
                         ),
