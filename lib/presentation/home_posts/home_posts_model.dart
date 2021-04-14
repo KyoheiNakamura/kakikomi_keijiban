@@ -16,30 +16,21 @@ class HomePostsModel extends ChangeNotifier {
   List<Post> _myPosts = [];
   List<Post> _bookmarkedPosts = [];
 
-  Map<String, List<Reply>> _allReplies = {};
-  Map<String, List<Reply>> _myReplies = {};
-  Map<String, List<Reply>> _bookmarkedReplies = {};
+  Query? _allPostsQuery;
+  Query? _myPostsQuery;
+  Query? _bookmarkedPostsQuery;
 
-  List<Reply> _allRawReplies = [];
-  List<Reply> _myRawReplies = [];
-  List<Reply> _bookmarkedRawReplies = [];
+  QueryDocumentSnapshot? _allPostsLastVisible;
+  QueryDocumentSnapshot? _myPostsLastVisible;
+  QueryDocumentSnapshot? _bookmarkedPostsLastVisible;
 
-  Map<String, List<ReplyToReply>> _allRepliesToReply = {};
-  Map<String, List<ReplyToReply>> _myRepliesToReply = {};
-  Map<String, List<ReplyToReply>> _bookmarkedRepliesToReply = {};
+  int _loadLimit = 10;
+  // bool isPostsExisting = false;
 
-  Query? allPostsQuery;
-  Query? myPostsQuery;
-  Query? bookmarkedPostsQuery;
-
-  QueryDocumentSnapshot? allPostsLastVisible;
-  QueryDocumentSnapshot? myPostsLastVisible;
-  QueryDocumentSnapshot? bookmarkedPostsLastVisible;
-  int loadLimit = 10;
-  // // bool isPostsExisting = false;
   bool _allPostsCanLoadMore = false;
   bool _myPostsCanLoadMore = false;
   bool _bookmarkedPostsCanLoadMore = false;
+
   bool isLoading = false;
 
   Future<void> init() async {
@@ -57,30 +48,6 @@ class HomePostsModel extends ChangeNotifier {
       return this._bookmarkedPosts;
     } else {
       return [];
-    }
-  }
-
-  Map<String, List<Reply>> getReplies(String tabName) {
-    if (tabName == kAllPostsTab) {
-      return this._allReplies;
-    } else if (tabName == kMyPostsTab) {
-      return this._myReplies;
-    } else if (tabName == kBookmarkedPostsTab) {
-      return this._bookmarkedReplies;
-    } else {
-      return {};
-    }
-  }
-
-  Map<String, List<ReplyToReply>> getRepliesToReply(String tabName) {
-    if (tabName == kAllPostsTab) {
-      return this._allRepliesToReply;
-    } else if (tabName == kMyPostsTab) {
-      return this._myRepliesToReply;
-    } else if (tabName == kBookmarkedPostsTab) {
-      return this._bookmarkedRepliesToReply;
-    } else {
-      return {};
     }
   }
 
@@ -159,14 +126,14 @@ class HomePostsModel extends ChangeNotifier {
         .get();
     Post newPost = Post(doc);
     // 更新前のpostをpostsから削除
-    _allPosts.removeAt(indexOfPost);
+    this._allPosts.removeAt(indexOfPost);
     // 更新後のpostをpostsに追加
-    _allPosts.insert(indexOfPost, newPost);
+    this._allPosts.insert(indexOfPost, newPost);
     notifyListeners();
   }
 
   void _removeThePostOfAllPostsAfterDeleted(Post post) {
-    _allPosts.remove(post);
+    this._allPosts.remove(post);
     notifyListeners();
   }
 
@@ -181,14 +148,14 @@ class HomePostsModel extends ChangeNotifier {
         .get();
     Post newPost = Post(doc);
     // 更新前のpostをpostsから削除
-    _myPosts.removeAt(indexOfPost);
+    this._myPosts.removeAt(indexOfPost);
     // 更新後のpostをpostsに追加
-    _myPosts.insert(indexOfPost, newPost);
+    this._myPosts.insert(indexOfPost, newPost);
     notifyListeners();
   }
 
   void _removeThePostOfMyPostsAfterDeleted(Post post) {
-    _myPosts.remove(post);
+    this._myPosts.remove(post);
     notifyListeners();
   }
 
@@ -201,49 +168,47 @@ class HomePostsModel extends ChangeNotifier {
         .collection('posts')
         .doc(oldPost.id)
         .get();
-    Post newPost = Post(doc);
+    final newPost = Post(doc);
     // 更新前のpostをpostsから削除
-    _bookmarkedPosts.removeAt(indexOfPost);
+    this._bookmarkedPosts.removeAt(indexOfPost);
     // 更新後のpostをpostsに追加
-    _bookmarkedPosts.insert(indexOfPost, newPost);
+    this._bookmarkedPosts.insert(indexOfPost, newPost);
     notifyListeners();
   }
 
   void _removeThePostOfBookmarkedPostsAfterDeleted(Post post) {
-    _bookmarkedPosts.remove(post);
+    this._bookmarkedPosts.remove(post);
     notifyListeners();
   }
 
   Future<void> _getAllPostsWithReplies() async {
     startLoading();
 
-    this.allPostsQuery = FirebaseFirestore.instance
+    this._allPostsQuery = FirebaseFirestore.instance
         .collectionGroup('posts')
         .orderBy('createdAt', descending: true)
-        .limit(loadLimit);
-    final querySnapshot = await this.allPostsQuery!.get();
+        .limit(_loadLimit);
+    final querySnapshot = await this._allPostsQuery!.get();
     final docs = querySnapshot.docs;
     this._allPosts.clear();
-    _allRawReplies.clear();
     if (docs.length == 0) {
       // isPostsExisting = false;
-      _allPostsCanLoadMore = false;
+      this._allPostsCanLoadMore = false;
       this._allPosts = [];
-    } else if (docs.length < loadLimit) {
+    } else if (docs.length < _loadLimit) {
       // isPostsExisting = true;
-      _allPostsCanLoadMore = false;
-      allPostsLastVisible = docs[docs.length - 1];
+      this._allPostsCanLoadMore = false;
+      this._allPostsLastVisible = docs[docs.length - 1];
       this._allPosts = docs.map((doc) => Post(doc)).toList();
     } else {
       // isPostsExisting = true;
-      _allPostsCanLoadMore = true;
-      allPostsLastVisible = docs[docs.length - 1];
+      this._allPostsCanLoadMore = true;
+      this._allPostsLastVisible = docs[docs.length - 1];
       this._allPosts = docs.map((doc) => Post(doc)).toList();
     }
 
-    await _addBookmarkToPosts(this._allPosts);
-    await _getAllRepliesToPosts();
-    await _getAllRepliesToReplies();
+    await _addBookmarkToAllPosts();
+    await _getAllReplies();
 
     stopLoading();
     notifyListeners();
@@ -252,32 +217,31 @@ class HomePostsModel extends ChangeNotifier {
   Future<void> _loadAllPostsWithReplies() async {
     startLoading();
 
-    this.allPostsQuery = FirebaseFirestore.instance
+    this._allPostsQuery = FirebaseFirestore.instance
         .collectionGroup('posts')
         .orderBy('createdAt', descending: true)
-        .startAfterDocument(allPostsLastVisible!)
-        .limit(loadLimit);
-    final querySnapshot = await this.allPostsQuery!.get();
+        .startAfterDocument(_allPostsLastVisible!)
+        .limit(_loadLimit);
+    final querySnapshot = await this._allPostsQuery!.get();
     final docs = querySnapshot.docs;
     if (docs.length == 0) {
       // isPostsExisting = false;
-      _allPostsCanLoadMore = false;
+      this._allPostsCanLoadMore = false;
       this._allPosts += [];
-    } else if (docs.length < loadLimit) {
+    } else if (docs.length < _loadLimit) {
       // isPostsExisting = true;
-      _allPostsCanLoadMore = false;
-      allPostsLastVisible = docs[docs.length - 1];
+      this._allPostsCanLoadMore = false;
+      this._allPostsLastVisible = docs[docs.length - 1];
       this._allPosts += docs.map((doc) => Post(doc)).toList();
     } else {
       // isPostsExisting = true;
-      _allPostsCanLoadMore = true;
-      allPostsLastVisible = docs[docs.length - 1];
+      this._allPostsCanLoadMore = true;
+      this._allPostsLastVisible = docs[docs.length - 1];
       this._allPosts += docs.map((doc) => Post(doc)).toList();
     }
 
-    await _addBookmarkToPosts(this._allPosts);
-    await _getAllRepliesToPosts();
-    await _getAllRepliesToReplies();
+    await _addBookmarkToAllPosts();
+    await _getAllReplies();
 
     stopLoading();
     notifyListeners();
@@ -286,34 +250,33 @@ class HomePostsModel extends ChangeNotifier {
   Future<void> _getMyPostsWithReplies() async {
     startLoading();
 
-    this.myPostsQuery = _firestore
+    this._myPostsQuery = _firestore
         .collection('users')
         .doc(uid)
         .collection('posts')
         .orderBy('updatedAt', descending: true)
-        .limit(loadLimit);
-    final querySnapshot = await this.myPostsQuery!.get();
+        .limit(_loadLimit);
+    final querySnapshot = await this._myPostsQuery!.get();
     final docs = querySnapshot.docs;
     this._myPosts.clear();
     if (docs.length == 0) {
       // isPostsExisting = false;
       this._myPostsCanLoadMore = false;
       this._myPosts = [];
-    } else if (docs.length < loadLimit) {
+    } else if (docs.length < _loadLimit) {
       // isPostsExisting = true;
       this._myPostsCanLoadMore = false;
-      myPostsLastVisible = docs[docs.length - 1];
+      this._myPostsLastVisible = docs[docs.length - 1];
       this._myPosts = docs.map((doc) => Post(doc)).toList();
     } else {
       // isPostsExisting = true;
       this._myPostsCanLoadMore = true;
-      myPostsLastVisible = docs[docs.length - 1];
+      this._myPostsLastVisible = docs[docs.length - 1];
       this._myPosts = docs.map((doc) => Post(doc)).toList();
     }
 
-    await _addBookmarkToPosts(this._myPosts);
-    await _getMyRepliesToPosts();
-    await _getMyRepliesToReplies();
+    await _addBookmarkToMyPosts();
+    await _getMyReplies();
 
     stopLoading();
     notifyListeners();
@@ -322,34 +285,33 @@ class HomePostsModel extends ChangeNotifier {
   Future<void> _loadMyPostsWithReplies() async {
     startLoading();
 
-    this.myPostsQuery = _firestore
+    this._myPostsQuery = _firestore
         .collection('users')
         .doc(uid)
         .collection('posts')
         .orderBy('createdAt', descending: true)
-        .startAfterDocument(myPostsLastVisible!)
-        .limit(loadLimit);
-    final querySnapshot = await this.myPostsQuery!.get();
+        .startAfterDocument(this._myPostsLastVisible!)
+        .limit(_loadLimit);
+    final querySnapshot = await this._myPostsQuery!.get();
     final docs = querySnapshot.docs;
     if (docs.length == 0) {
       // isPostsExisting = false;
       this._myPostsCanLoadMore = false;
       this._myPosts += [];
-    } else if (docs.length < loadLimit) {
+    } else if (docs.length < _loadLimit) {
       // isPostsExisting = true;
       this._myPostsCanLoadMore = false;
-      myPostsLastVisible = docs[docs.length - 1];
+      this._myPostsLastVisible = docs[docs.length - 1];
       this._myPosts += docs.map((doc) => Post(doc)).toList();
     } else {
       // isPostsExisting = true;
       this._myPostsCanLoadMore = true;
-      myPostsLastVisible = docs[docs.length - 1];
+      this._myPostsLastVisible = docs[docs.length - 1];
       this._myPosts += docs.map((doc) => Post(doc)).toList();
     }
 
-    await _addBookmarkToPosts(this._myPosts);
-    await _getMyRepliesToPosts();
-    await _getMyRepliesToReplies();
+    await _addBookmarkToMyPosts();
+    await _getMyReplies();
 
     stopLoading();
     notifyListeners();
@@ -358,33 +320,32 @@ class HomePostsModel extends ChangeNotifier {
   Future<void> _getBookmarkedPostsWithReplies() async {
     startLoading();
 
-    this.bookmarkedPostsQuery = _firestore
+    this._bookmarkedPostsQuery = _firestore
         .collection('users')
         .doc(uid)
         .collection('bookmarkedPosts')
         .orderBy('createdAt', descending: true)
-        .limit(loadLimit);
-    final querySnapshot = await this.bookmarkedPostsQuery!.get();
+        .limit(_loadLimit);
+    final querySnapshot = await this._bookmarkedPostsQuery!.get();
     final docs = querySnapshot.docs;
     this._bookmarkedPosts.clear();
     if (docs.length == 0) {
       // isPostsExisting = false;
       this._bookmarkedPostsCanLoadMore = false;
       this._bookmarkedPosts = [];
-    } else if (docs.length < loadLimit) {
+    } else if (docs.length < _loadLimit) {
       // isPostsExisting = true;
       this._bookmarkedPostsCanLoadMore = false;
-      bookmarkedPostsLastVisible = docs[docs.length - 1];
+      this._bookmarkedPostsLastVisible = docs[docs.length - 1];
       this._bookmarkedPosts = await _getBookmarkedPosts(docs);
     } else {
       // isPostsExisting = true;
       this._bookmarkedPostsCanLoadMore = true;
-      bookmarkedPostsLastVisible = docs[docs.length - 1];
+      this._bookmarkedPostsLastVisible = docs[docs.length - 1];
       this._bookmarkedPosts = await _getBookmarkedPosts(docs);
     }
 
-    await _getBookmarkedRepliesToPosts();
-    await _getBookmarkedRepliesToReplies();
+    await _getBookmarkedReplies();
 
     stopLoading();
     notifyListeners();
@@ -393,40 +354,41 @@ class HomePostsModel extends ChangeNotifier {
   Future<void> _loadBookmarkedPostsWithReplies() async {
     startLoading();
 
-    this.bookmarkedPostsQuery = _firestore
+    this._bookmarkedPostsQuery = _firestore
         .collection('users')
         .doc(uid)
         .collection('bookmarkedPosts')
         .orderBy('createdAt', descending: true)
-        .startAfterDocument(bookmarkedPostsLastVisible!)
-        .limit(loadLimit);
-    final querySnapshot = await this.bookmarkedPostsQuery!.get();
+        .startAfterDocument(_bookmarkedPostsLastVisible!)
+        .limit(_loadLimit);
+    final querySnapshot = await this._bookmarkedPostsQuery!.get();
     final docs = querySnapshot.docs;
     if (docs.length == 0) {
       // isPostsExisting = false;
       this._bookmarkedPostsCanLoadMore = false;
       this._bookmarkedPosts += [];
-    } else if (docs.length < loadLimit) {
+    } else if (docs.length < _loadLimit) {
       // isPostsExisting = true;
       this._bookmarkedPostsCanLoadMore = false;
-      bookmarkedPostsLastVisible = docs[docs.length - 1];
+      this._bookmarkedPostsLastVisible = docs[docs.length - 1];
       this._bookmarkedPosts += await _getBookmarkedPosts(docs);
     } else {
       // isPostsExisting = true;
       this._bookmarkedPostsCanLoadMore = true;
-      bookmarkedPostsLastVisible = docs[docs.length - 1];
+      this._bookmarkedPostsLastVisible = docs[docs.length - 1];
       this._bookmarkedPosts += await _getBookmarkedPosts(docs);
     }
 
-    await _getBookmarkedRepliesToPosts();
-    await _getBookmarkedRepliesToReplies();
+    await _getBookmarkedReplies();
 
     stopLoading();
     notifyListeners();
   }
 
+  // Todo bookmarkedPosts/{bookmarkedPost_id}にbookmarkしたpostのidのみじゃなくて、中身を全部持たせる。
   Future<List<Post>> _getBookmarkedPosts(
-      List<QueryDocumentSnapshot> docs) async {
+    List<QueryDocumentSnapshot> docs,
+  ) async {
     final postSnapshots = await Future.wait(docs
         .map((bookmarkedPost) => _firestore
             .collectionGroup('posts')
@@ -443,95 +405,62 @@ class HomePostsModel extends ChangeNotifier {
     return bookmarkedPosts;
   }
 
-  Future<void> _addBookmarkToPosts(List<Post> posts) async {
-    // List<Post> _bookmarkedPosts = [];
+  Future<void> _addBookmarkToAllPosts() async {
     final bookmarkedPostsSnapshot = await _firestore
         .collection('users')
         .doc(uid)
         .collection('bookmarkedPosts')
-        .orderBy('createdAt', descending: true)
+        // .orderBy('createdAt', descending: true)
         .get();
-    final postSnapshots = await Future.wait(bookmarkedPostsSnapshot.docs
-        .map((bookmarkedPost) => _firestore
-            .collectionGroup('posts')
-            .where('id', isEqualTo: bookmarkedPost['postId'])
-            // .orderBy('createdAt', descending: true)
-            .get())
-        .toList());
-    final bookmarkedPostDocs =
-        postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
-
-    // postsにbookmark付けてる
-    for (int i = 0; i < posts.length; i++) {
-      for (QueryDocumentSnapshot bookmarkedPostDoc in bookmarkedPostDocs) {
-        if (posts[i].id == bookmarkedPostDoc.id) {
-          posts[i].isBookmarked = true;
+    final List<String> bookmarkedPostsIds = bookmarkedPostsSnapshot.docs
+        .map((bookmarkedPost) => bookmarkedPost.id)
+        .toList();
+    for (int i = 0; i < this._allPosts.length; i++) {
+      for (int n = 0; n < bookmarkedPostsIds.length; n++) {
+        if (this._allPosts[i].id == bookmarkedPostsIds[n]) {
+          this._allPosts[i].isBookmarked = true;
         }
       }
     }
   }
 
-  Future<void> _getAllRepliesToPosts() async {
-    if (_allPosts.isNotEmpty) {
-      for (final post in _allPosts) {
-        final querySnapshot = await _firestore
-            .collection('users')
-            .doc(post.uid)
-            .collection('posts')
-            .doc(post.id)
-            .collection('replies')
-            .orderBy('createdAt')
-            .get();
-        final docs = querySnapshot.docs;
-        final _replies = docs.map((doc) => Reply(doc)).toList();
-        this._allRawReplies += _replies;
-        this._allReplies[post.id] = _replies;
+  Future<void> _addBookmarkToMyPosts() async {
+    final bookmarkedPostsSnapshot = await _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('bookmarkedPosts')
+        // .orderBy('createdAt', descending: true)
+        .get();
+    final List<String> bookmarkedPostsIds = bookmarkedPostsSnapshot.docs
+        .map((bookmarkedPost) => bookmarkedPost.id)
+        .toList();
+    for (int i = 0; i < this._myPosts.length; i++) {
+      for (int n = 0; n < bookmarkedPostsIds.length; n++) {
+        if (this._myPosts[i].id == bookmarkedPostsIds[n]) {
+          this._myPosts[i].isBookmarked = true;
+        }
       }
     }
   }
 
-  Future<void> _getMyRepliesToPosts() async {
-    if (_myPosts.isNotEmpty) {
-      for (final post in _myPosts) {
-        final querySnapshot = await _firestore
-            .collection('users')
-            .doc(post.uid)
-            .collection('posts')
-            .doc(post.id)
-            .collection('replies')
-            .orderBy('createdAt')
-            .get();
-        final docs = querySnapshot.docs;
-        final _replies = docs.map((doc) => Reply(doc)).toList();
-        this._myRawReplies += _replies;
-        this._myReplies[post.id] = _replies;
-      }
-    }
-  }
+  Future<void> _getAllReplies() async {
+    for (int i = 0; i < _allPosts.length; i++) {
+      final post = _allPosts[i];
+      final querySnapshot = await _firestore
+          .collection('users')
+          .doc(post.uid)
+          .collection('posts')
+          .doc(post.id)
+          .collection('replies')
+          .orderBy('createdAt')
+          .get();
+      final docs = querySnapshot.docs;
+      final _replies = docs.map((doc) => Reply(doc)).toList();
+      post.replies = _replies;
 
-  Future<void> _getBookmarkedRepliesToPosts() async {
-    if (_bookmarkedPosts.isNotEmpty) {
-      for (final post in _bookmarkedPosts) {
-        final querySnapshot = await _firestore
-            .collection('users')
-            .doc(post.uid)
-            .collection('posts')
-            .doc(post.id)
-            .collection('replies')
-            .orderBy('createdAt')
-            .get();
-        final docs = querySnapshot.docs;
-        final _replies = docs.map((doc) => Reply(doc)).toList();
-        this._bookmarkedRawReplies += _replies;
-        this._bookmarkedReplies[post.id] = _replies;
-      }
-    }
-  }
-
-  Future<void> _getAllRepliesToReplies() async {
-    if (_allRawReplies.isNotEmpty) {
-      for (final reply in _allRawReplies) {
-        final querySnapshot = await _firestore
+      for (int i = 0; i < _replies.length; i++) {
+        final reply = _replies[i];
+        final _querySnapshot = await _firestore
             .collection('users')
             .doc(reply.uid)
             .collection('posts')
@@ -541,17 +470,33 @@ class HomePostsModel extends ChangeNotifier {
             .collection('repliesToReply')
             .orderBy('createdAt')
             .get();
-        final docs = querySnapshot.docs;
-        final _repliesToReply = docs.map((doc) => ReplyToReply(doc)).toList();
-        this._allRepliesToReply[reply.id] = _repliesToReply;
+        final _docs = _querySnapshot.docs;
+        final _repliesToReplies =
+            _docs.map((doc) => ReplyToReply(doc)).toList();
+        reply.repliesToReply = _repliesToReplies;
       }
     }
   }
 
-  Future<void> _getMyRepliesToReplies() async {
-    if (_myRawReplies.isNotEmpty) {
-      for (final reply in _myRawReplies) {
-        final querySnapshot = await _firestore
+  Future<void> _getMyReplies() async {
+    // if (_myPosts.isNotEmpty) {
+    for (int i = 0; i < _myPosts.length; i++) {
+      final post = _myPosts[i];
+      final querySnapshot = await _firestore
+          .collection('users')
+          .doc(post.uid)
+          .collection('posts')
+          .doc(post.id)
+          .collection('replies')
+          .orderBy('createdAt')
+          .get();
+      final docs = querySnapshot.docs;
+      final _replies = docs.map((doc) => Reply(doc)).toList();
+      post.replies = _replies;
+
+      for (int i = 0; i < _replies.length; i++) {
+        final reply = _replies[i];
+        final _querySnapshot = await _firestore
             .collection('users')
             .doc(reply.uid)
             .collection('posts')
@@ -561,17 +506,32 @@ class HomePostsModel extends ChangeNotifier {
             .collection('repliesToReply')
             .orderBy('createdAt')
             .get();
-        final docs = querySnapshot.docs;
-        final _repliesToReply = docs.map((doc) => ReplyToReply(doc)).toList();
-        this._myRepliesToReply[reply.id] = _repliesToReply;
+        final _docs = _querySnapshot.docs;
+        final _repliesToReplies =
+            _docs.map((doc) => ReplyToReply(doc)).toList();
+        reply.repliesToReply = _repliesToReplies;
       }
     }
   }
 
-  Future<void> _getBookmarkedRepliesToReplies() async {
-    if (_bookmarkedRawReplies.isNotEmpty) {
-      for (final reply in _bookmarkedRawReplies) {
-        final querySnapshot = await _firestore
+  Future<void> _getBookmarkedReplies() async {
+    for (int i = 0; i < _bookmarkedPosts.length; i++) {
+      final post = _bookmarkedPosts[i];
+      final querySnapshot = await _firestore
+          .collection('users')
+          .doc(post.uid)
+          .collection('posts')
+          .doc(post.id)
+          .collection('replies')
+          .orderBy('createdAt')
+          .get();
+      final docs = querySnapshot.docs;
+      final _replies = docs.map((doc) => Reply(doc)).toList();
+      post.replies = _replies;
+
+      for (int i = 0; i < _replies.length; i++) {
+        final reply = _replies[i];
+        final _querySnapshot = await _firestore
             .collection('users')
             .doc(reply.uid)
             .collection('posts')
@@ -581,9 +541,10 @@ class HomePostsModel extends ChangeNotifier {
             .collection('repliesToReply')
             .orderBy('createdAt')
             .get();
-        final docs = querySnapshot.docs;
-        final _repliesToReply = docs.map((doc) => ReplyToReply(doc)).toList();
-        this._bookmarkedRepliesToReply[reply.id] = _repliesToReply;
+        final _docs = _querySnapshot.docs;
+        final _repliesToReplies =
+            _docs.map((doc) => ReplyToReply(doc)).toList();
+        reply.repliesToReply = _repliesToReplies;
       }
     }
   }

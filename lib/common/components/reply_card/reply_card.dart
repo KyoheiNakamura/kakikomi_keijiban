@@ -17,20 +17,13 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
   ReplyCard({
     required this.reply,
     required this.post,
-    required this.passedModel,
-    this.tabName,
   });
 
   final Reply reply;
   final Post post;
-  final passedModel;
-  final String? tabName;
 
   @override
   Widget build(BuildContext context) {
-    reply.repliesToReply = tabName != null
-        ? passedModel.getRepliesToReply(tabName)[reply.id]
-        : passedModel.repliesToReply[reply.id];
     final bool isMe = context.read<AppModel>().loggedInUser != null
         ? context.read<AppModel>().loggedInUser!.uid == reply.uid
         : false;
@@ -116,7 +109,8 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
 
                 /// 返信一覧
                 Column(
-                  children: reply.repliesToReply != null
+                  children: reply.repliesToReply != null &&
+                          reply.repliesToReply!.isNotEmpty
                       ? reply.repliesToReply!.map((replyToReply) {
                           return Column(
                             children: [
@@ -192,11 +186,13 @@ class PopupMenuOnReplyCard extends StatelessWidget {
                     onPressed: () async {
                       model.startLoading();
                       await model.deleteReplyAndRepliesToReply(reply);
-                      // ↓２つはcontext.read<PostCardModel>().getAllRepliesToPost(post);呼べば十分だなあ。。
                       await context
                           .read<PostCardModel>()
-                          .getRepliesToPost(post);
-                      await model.getRepliesToReply(reply);
+                          .getAllRepliesToPost(post);
+                      // await context
+                      //     .read<PostCardModel>()
+                      //     .getRepliesToPost(post);
+                      // await model.getRepliesToReply(reply);
 
                       model.stopLoading();
                       Navigator.of(context).pop();
@@ -231,8 +227,9 @@ class PopupMenuOnReplyCard extends StatelessWidget {
                 return UpdateReplyPage(reply);
               }),
             );
-            await context.read<PostCardModel>().getRepliesToPost(post);
-            await model.getRepliesToReply(reply);
+            await context.read<PostCardModel>().getAllRepliesToPost(post);
+            // await context.read<PostCardModel>().getRepliesToPost(post);
+            // await model.getRepliesToReply(reply);
           } else if (result == PopupMenuItemsOnCard.delete) {
             await _showCardDeleteConfirmDialog();
           }

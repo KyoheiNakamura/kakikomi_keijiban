@@ -7,7 +7,6 @@ import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/common/mixin/format_poster_data_mixin.dart';
-import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply/add_reply_page.dart';
 import 'package:kakikomi_keijiban/presentation/search_result_posts/search_result_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/update_post/update_post_page.dart';
@@ -28,9 +27,6 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
 
   @override
   Widget build(BuildContext context) {
-    post.replies = tabName != null
-        ? passedModel.getReplies(tabName)[post.id]
-        : passedModel.replies[post.id];
     final bool isMe = context.read<AppModel>().loggedInUser != null
         ? context.read<AppModel>().loggedInUser!.uid == post.uid
         : false;
@@ -167,14 +163,13 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                         children: [
                           /// 返信一覧
                           Column(
-                            children: post.replies != null
+                            children: post.replies != null &&
+                                    post.replies!.isNotEmpty
                                 // children: post.isReplyShown && replies != null
                                 ? post.replies!.map((reply) {
                                     return ReplyCard(
-                                      post: post,
                                       reply: reply,
-                                      passedModel: passedModel,
-                                      tabName: tabName,
+                                      post: post,
                                     );
                                   }).toList()
                                 : [],

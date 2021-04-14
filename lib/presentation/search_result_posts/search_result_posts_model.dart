@@ -14,13 +14,6 @@ class SearchResultPostsModel extends ChangeNotifier {
   List<Post> _searchedPosts = [];
   List<Post> get posts => _searchedPosts;
 
-  Map<String, List<Reply>> _repliesToSearchedPosts = {};
-  Map<String, List<Reply>> get replies => _repliesToSearchedPosts;
-
-  List<Reply> _rawReplies = [];
-  Map<String, List<ReplyToReply>> _repliesToReply = {};
-  Map<String, List<ReplyToReply>> get repliesToReply => _repliesToReply;
-
   QueryDocumentSnapshot? lastVisibleOfTheBatch;
   int loadLimit = 10;
   // bool isPostsExisting = false;
@@ -38,16 +31,16 @@ class SearchResultPostsModel extends ChangeNotifier {
         .collection('posts')
         .doc(oldPost.id)
         .get();
-    Post newPost = Post(doc);
+    final newPost = Post(doc);
     // 更新前のpostをpostsから削除
-    _searchedPosts.removeAt(indexOfPost);
+    this._searchedPosts.removeAt(indexOfPost);
     // 更新後のpostをpostsに追加
-    _searchedPosts.insert(indexOfPost, newPost);
+    this._searchedPosts.insert(indexOfPost, newPost);
     notifyListeners();
   }
 
   void removeThePostOfPostsAfterDeleted(Post post) {
-    _searchedPosts.remove(post);
+    this._searchedPosts.remove(post);
     notifyListeners();
   }
 
@@ -61,8 +54,10 @@ class SearchResultPostsModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getPostsWithRepliesChosenField(
-      {required String postField, required String value}) async {
+  Future<void> getPostsWithRepliesChosenField({
+    required String postField,
+    required String value,
+  }) async {
     startLoading();
 
     final Query queryBatch;
@@ -83,26 +78,24 @@ class SearchResultPostsModel extends ChangeNotifier {
     }
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
-    _searchedPosts.clear();
-    this._rawReplies.clear();
+    this._searchedPosts.clear();
     if (docs.length == 0) {
       // isPostsExisting = false;
-      canLoadMore = false;
-      _searchedPosts = [];
+      this.canLoadMore = false;
+      this._searchedPosts = [];
     } else if (docs.length < loadLimit) {
       // isPostsExisting = true;
-      canLoadMore = false;
-      lastVisibleOfTheBatch = docs[docs.length - 1];
-      _searchedPosts = docs.map((doc) => Post(doc)).toList();
+      this.canLoadMore = false;
+      this.lastVisibleOfTheBatch = docs[docs.length - 1];
+      this._searchedPosts = docs.map((doc) => Post(doc)).toList();
     } else {
       // isPostsExisting = true;
-      canLoadMore = true;
-      lastVisibleOfTheBatch = docs[docs.length - 1];
-      _searchedPosts = docs.map((doc) => Post(doc)).toList();
+      this.canLoadMore = true;
+      this.lastVisibleOfTheBatch = docs[docs.length - 1];
+      this._searchedPosts = docs.map((doc) => Post(doc)).toList();
     }
     await _addBookmarkToPosts();
-    await _getRepliesToPosts();
-    await _getRepliesToReplies();
+    await _getReplies();
 
     stopLoading();
     notifyListeners();
@@ -134,50 +127,64 @@ class SearchResultPostsModel extends ChangeNotifier {
     final docs = querySnapshot.docs;
     if (docs.length == 0) {
       // isPostsExisting = false;
-      canLoadMore = false;
-      _searchedPosts = [];
+      this.canLoadMore = false;
+      this._searchedPosts = [];
     } else if (docs.length < loadLimit) {
       // isPostsExisting = true;
-      canLoadMore = false;
-      lastVisibleOfTheBatch = docs[docs.length - 1];
-      _searchedPosts = docs.map((doc) => Post(doc)).toList();
+      this.canLoadMore = false;
+      this.lastVisibleOfTheBatch = docs[docs.length - 1];
+      this._searchedPosts = docs.map((doc) => Post(doc)).toList();
     } else {
       // isPostsExisting = true;
-      canLoadMore = true;
-      lastVisibleOfTheBatch = docs[docs.length - 1];
-      _searchedPosts = docs.map((doc) => Post(doc)).toList();
+      this.canLoadMore = true;
+      this.lastVisibleOfTheBatch = docs[docs.length - 1];
+      this._searchedPosts = docs.map((doc) => Post(doc)).toList();
     }
     await _addBookmarkToPosts();
-    await _getRepliesToPosts();
-    await _getRepliesToReplies();
+    await _getReplies();
 
     stopLoading();
     notifyListeners();
   }
 
-  Future<void> _getRepliesToPosts() async {
-    if (_searchedPosts.isNotEmpty) {
-      for (final post in _searchedPosts) {
-        final querySnapshot = await _firestore
-            .collection('users')
-            .doc(post.uid)
-            .collection('posts')
-            .doc(post.id)
-            .collection('replies')
-            .orderBy('createdAt')
-            .get();
-        final docs = querySnapshot.docs;
-        final replies = docs.map((doc) => Reply(doc)).toList();
-        this._rawReplies += replies;
-        _repliesToSearchedPosts[post.id] = replies;
+  Future<void> _addBookmarkToPosts() async {
+    final bookmarkedPostsSnapshot = await _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('bookmarkedPosts')
+        // .orderBy('createdAt', descending: true)
+        .get();
+
+    final List<String> bookmarkedPostsIds = bookmarkedPostsSnapshot.docs
+        .map((bookmarkedPost) => bookmarkedPost.id)
+        .toList();
+    for (int i = 0; i < posts.length; i++) {
+      for (int n = 0; n < bookmarkedPostsIds.length; n++) {
+        if (this._searchedPosts[i].id == bookmarkedPostsIds[n]) {
+          this._searchedPosts[i].isBookmarked = true;
+        }
       }
     }
   }
 
-  Future<void> _getRepliesToReplies() async {
-    if (_rawReplies.isNotEmpty) {
-      for (final reply in _rawReplies) {
-        final querySnapshot = await _firestore
+  Future<void> _getReplies() async {
+    for (int i = 0; i < _searchedPosts.length; i++) {
+      final post = _searchedPosts[i];
+      final querySnapshot = await _firestore
+          .collection('users')
+          .doc(post.uid)
+          .collection('posts')
+          .doc(post.id)
+          .collection('replies')
+          .orderBy('createdAt')
+          .get();
+      final docs = querySnapshot.docs;
+      final _replies = docs.map((doc) => Reply(doc)).toList();
+      post.replies = _replies;
+
+      for (int i = 0; i < _replies.length; i++) {
+        final reply = _replies[i];
+        final _querySnapshot = await _firestore
             .collection('users')
             .doc(reply.uid)
             .collection('posts')
@@ -187,35 +194,10 @@ class SearchResultPostsModel extends ChangeNotifier {
             .collection('repliesToReply')
             .orderBy('createdAt')
             .get();
-        final docs = querySnapshot.docs;
-        final repliesToReply = docs.map((doc) => ReplyToReply(doc)).toList();
-        _repliesToReply[reply.id] = repliesToReply;
-      }
-    }
-  }
-
-  Future<void> _addBookmarkToPosts() async {
-    final bookmarkedPostsSnapshot = await _firestore
-        .collection('users')
-        .doc(uid)
-        .collection('bookmarkedPosts')
-        .orderBy('createdAt', descending: true)
-        .get();
-    final postSnapshots = await Future.wait(bookmarkedPostsSnapshot.docs
-        .map((bookmarkedPost) => _firestore
-            .collectionGroup('posts')
-            .where('id', isEqualTo: bookmarkedPost['postId'])
-            // .orderBy('createdAt', descending: true)
-            .get())
-        .toList());
-    final bookmarkedPostDocs =
-        postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
-
-    for (int i = 0; i < _searchedPosts.length; i++) {
-      for (QueryDocumentSnapshot bookmarkedPostDoc in bookmarkedPostDocs) {
-        if (_searchedPosts[i].id == bookmarkedPostDoc.id) {
-          _searchedPosts[i].isBookmarked = true;
-        }
+        final _docs = _querySnapshot.docs;
+        final _repliesToReplies =
+            _docs.map((doc) => ReplyToReply(doc)).toList();
+        reply.repliesToReply = _repliesToReplies;
       }
     }
   }
