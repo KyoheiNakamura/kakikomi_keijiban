@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
-// import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card_model.dart';
 import 'package:kakikomi_keijiban/common/components/reply_card/reply_card_model.dart';
 import 'package:kakikomi_keijiban/common/components/reply_to_reply_card/reply_to_reply_card.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
-import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/common/mixin/format_poster_data_mixin.dart';
@@ -25,7 +23,7 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
   @override
   Widget build(BuildContext context) {
     final bool isMe = context.read<AppModel>().loggedInUser != null
-        ? context.read<AppModel>().loggedInUser!.uid == reply.uid
+        ? context.read<AppModel>().loggedInUser!.uid == reply.userId
         : false;
     return Consumer<ReplyCardModel>(builder: (context, model, child) {
       return Stack(

@@ -1,11 +1,9 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
-// import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/reply_card/reply_card_model.dart';
 import 'package:kakikomi_keijiban/common/components/reply_to_reply_card/reply_to_reply_card_model.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
-import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 import 'package:kakikomi_keijiban/common/mixin/format_poster_data_mixin.dart';
@@ -24,7 +22,7 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
   @override
   Widget build(BuildContext context) {
     final bool isMe = context.read<AppModel>().loggedInUser != null
-        ? context.read<AppModel>().loggedInUser!.uid == replyToReply.uid
+        ? context.read<AppModel>().loggedInUser!.uid == replyToReply.userId
         : false;
     return Consumer<ReplyToReplyCardModel>(builder: (context, model, child) {
       return Stack(
@@ -57,9 +55,11 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                         ),
                       ),
                       Flexible(
-                        child: Text(
-                          getFormattedPosterData(replyToReply),
-                          style: TextStyle(color: kLightGrey),
+                        child: Center(
+                          child: Text(
+                            getFormattedPosterData(replyToReply),
+                            style: TextStyle(color: kLightGrey),
+                          ),
                         ),
                       ),
                     ],

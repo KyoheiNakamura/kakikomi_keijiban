@@ -69,14 +69,15 @@ class AddReplyToReplyModel extends ChangeNotifier {
 
     WriteBatch _batch = _firestore.batch();
 
-    List<String> _replyDataList = _convertNoSelectedValueToEmpty();
-    final userRef = _firestore.collection('users').doc(repliedReply.uid);
+    final userRef = _firestore.collection('users').doc(repliedReply.userId);
     final postRef = userRef.collection('posts').doc(repliedReply.postId);
     final replyRef = postRef.collection('replies').doc(repliedReply.id);
     final replyToReplyRef = replyRef.collection('repliesToReply').doc();
+    List<String> _replyDataList = _convertNoSelectedValueToEmpty();
 
     _batch.set(replyToReplyRef, {
       'id': replyToReplyRef.id,
+      'userId': repliedReply.userId,
       'postId': repliedReply.postId,
       'replyId': repliedReply.id,
       'replierId': _auth.currentUser!.uid,
@@ -104,6 +105,34 @@ class AddReplyToReplyModel extends ChangeNotifier {
       print(e.toString());
       throw ('エラーが発生しました');
     }
+
+    stopLoading();
+  }
+
+  Future<void> addDraftedReplyToReply(Reply repliedReply) async {
+    startLoading();
+
+    final userRef = _firestore.collection('users').doc(repliedReply.userId);
+    final draftedReplyToReplyRef =
+        userRef.collection('draftedRepliesToReply').doc();
+    List<String> _replyDataList = _convertNoSelectedValueToEmpty();
+
+    await draftedReplyToReplyRef.set({
+      'id': draftedReplyToReplyRef.id,
+      'userId': repliedReply.userId,
+      'postId': repliedReply.postId,
+      'replyId': repliedReply.id,
+      'replierId': _auth.currentUser!.uid,
+      'body': _replyDataList[0],
+      'nickname': _replyDataList[1],
+      'position': _replyDataList[2],
+      'gender': _replyDataList[3],
+      'age': _replyDataList[4],
+      'area': _replyDataList[5],
+      'isDraft': isDraft,
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
 
     stopLoading();
   }

@@ -15,7 +15,7 @@ class PostCardModel extends ChangeNotifier {
   Future<void> getRepliesToPost(Post post) async {
     final querySnapshot = await _firestore
         .collection('users')
-        .doc(post.uid)
+        .doc(post.userId)
         .collection('posts')
         .doc(post.id)
         .collection('replies')
@@ -31,7 +31,7 @@ class PostCardModel extends ChangeNotifier {
   Future<void> getAllRepliesToPost(Post post) async {
     final querySnapshot = await _firestore
         .collection('users')
-        .doc(post.uid)
+        .doc(post.userId)
         .collection('posts')
         .doc(post.id)
         .collection('replies')
@@ -46,7 +46,7 @@ class PostCardModel extends ChangeNotifier {
       final reply = replies[i];
       final _querySnapshot = await _firestore
           .collection('users')
-          .doc(reply.uid)
+          .doc(reply.userId)
           .collection('posts')
           .doc(reply.postId)
           .collection('replies')

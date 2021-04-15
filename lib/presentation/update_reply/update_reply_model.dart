@@ -64,7 +64,7 @@ class UpdateReplyModel extends ChangeNotifier {
 
   Future<void> updateReply(Reply existingReply) async {
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
-    final userRef = _firestore.collection('users').doc(existingReply.uid);
+    final userRef = _firestore.collection('users').doc(existingReply.userId);
     final postRef = userRef.collection('posts').doc(existingReply.postId);
     final replyRef = postRef.collection('replies').doc(existingReply.id);
 
@@ -82,7 +82,7 @@ class UpdateReplyModel extends ChangeNotifier {
 
   Future<void> updateReplyToReply(Reply repliedReply) async {
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
-    final userRef = _firestore.collection('users').doc(repliedReply.uid);
+    final userRef = _firestore.collection('users').doc(repliedReply.userId);
     final postRef = userRef.collection('posts').doc(repliedReply.postId);
     final replyRef = postRef.collection('replies').doc(repliedReply.id);
     final replyToReplyRef =

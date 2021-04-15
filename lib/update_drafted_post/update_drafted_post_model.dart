@@ -2,15 +2,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/domain/post.dart';
 
-class AddPostModel extends ChangeNotifier {
+class UpdatePostModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final currentUser = FirebaseAuth.instance.currentUser;
   final uid = FirebaseAuth.instance.currentUser!.uid;
   bool isLoading = false;
   bool isCategoriesValid = true;
-  // postドメインに持たせる
-  bool isDraft = false;
 
   String titleValue = '';
   String bodyValue = '';
@@ -22,19 +21,15 @@ class AddPostModel extends ChangeNotifier {
   String genderDropdownValue = kPleaseSelect;
   String ageDropdownValue = kPleaseSelect;
   String areaDropdownValue = kPleaseSelect;
+  bool isDraft = false;
 
-  Future<void> addPost() async {
-    startLoading();
-
-    WriteBatch _batch = _firestore.batch();
-
+  Future<void> updatePost(Post post) async {
     final userRef = _firestore.collection('users').doc(uid);
-    final postRef = userRef.collection('posts').doc();
+    final postRef = userRef.collection('posts').doc(post.id);
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
+    print(_postDataList);
 
-    _batch.set(postRef, {
-      'id': postRef.id,
-      'userId': uid,
+    await postRef.update({
       'title': _postDataList[0],
       'body': _postDataList[1],
       'nickname': _postDataList[2],
@@ -43,58 +38,10 @@ class AddPostModel extends ChangeNotifier {
       'gender': _postDataList[5],
       'age': _postDataList[6],
       'area': _postDataList[7],
-      'categories': selectedCategories,
-      'replyCount': 0,
-      // Todo 下書き機能を実装しよう
       'isDraft': isDraft,
-      'createdAt': FieldValue.serverTimestamp(),
+      'categories': selectedCategories,
       'updatedAt': FieldValue.serverTimestamp(),
     });
-
-    final userDoc = await userRef.get();
-
-    _batch.update(userRef, {
-      'postCount': userDoc['postCount'] + 1,
-    });
-
-    try {
-      await _batch.commit();
-    } catch (e) {
-      print('addPostのバッチ処理中のエラーです');
-      print(e.toString());
-      throw ('エラーが発生しました');
-    }
-
-    stopLoading();
-  }
-
-  Future<void> addDraftedPost() async {
-    startLoading();
-
-    final userRef = _firestore.collection('users').doc(uid);
-    final draftedPostRef = userRef.collection('draftedPosts').doc();
-    List<String> _postDataList = _convertNoSelectedValueToEmpty();
-
-    draftedPostRef.set({
-      'id': draftedPostRef.id,
-      'userId': uid,
-      'title': _postDataList[0],
-      'body': _postDataList[1],
-      'nickname': _postDataList[2],
-      'emotion': _postDataList[3],
-      'position': _postDataList[4],
-      'gender': _postDataList[5],
-      'age': _postDataList[6],
-      'area': _postDataList[7],
-      'categories': selectedCategories,
-      'replyCount': 0,
-      // Todo 下書き機能を実装しよう
-      'isDraft': isDraft,
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
-
-    stopLoading();
   }
 
   List<String> _convertNoSelectedValueToEmpty() {

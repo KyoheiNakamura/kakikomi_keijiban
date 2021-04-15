@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_page.dart';
+import 'package:kakikomi_keijiban/presentation/drafts/drafts_page.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/my_replies/my_replies_page.dart';
@@ -102,6 +103,31 @@ class AccountDrawer extends StatelessWidget {
                   //       );
                   await model.getPostsWithReplies(kAllPostsTab);
                   // Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.drafts),
+                title: Text('下書き'),
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DraftsPage(),
+                    ),
+                  );
+                  // isLoggedInUserNotAnonymous
+                  //     ? await Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) => MyRepliesPage()),
+                  //       )
+                  //     : await Navigator.push(
+                  //         context,
+                  //         MaterialPageRoute(
+                  //             builder: (context) =>
+                  //                 SelectRegistrationMethodPage()),
+                  //       );
+                  // // Navigator.pop(context);
                 },
               ),
               Divider(thickness: 1.0),

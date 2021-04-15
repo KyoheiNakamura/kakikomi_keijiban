@@ -7,6 +7,7 @@ import 'package:kakikomi_keijiban/domain/post.dart';
 class AddReplyModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
+  final uid = FirebaseAuth.instance.currentUser!.uid;
   bool isLoading = false;
   bool isDraft = false;
 
@@ -70,12 +71,13 @@ class AddReplyModel extends ChangeNotifier {
     WriteBatch _batch = _firestore.batch();
 
     List<String> _replyDataList = _convertNoSelectedValueToEmpty();
-    final userRef = _firestore.collection('users').doc(repliedPost.uid);
+    final userRef = _firestore.collection('users').doc(repliedPost.userId);
     final postRef = userRef.collection('posts').doc(repliedPost.id);
     final replyRef = postRef.collection('replies').doc();
 
     _batch.set(replyRef, {
       'id': replyRef.id,
+      'userId': repliedPost.userId,
       'postId': repliedPost.id,
       'replierId': _auth.currentUser!.uid,
       'body': _replyDataList[0],
@@ -100,6 +102,32 @@ class AddReplyModel extends ChangeNotifier {
       print(e.toString());
       throw ('エラーが発生しました');
     }
+
+    stopLoading();
+  }
+
+  Future<void> addDraftedReply(Post repliedPost) async {
+    startLoading();
+
+    final userRef = _firestore.collection('users').doc(repliedPost.userId);
+    final draftedReplyRef = userRef.collection('draftedReplies').doc();
+    List<String> _replyDataList = _convertNoSelectedValueToEmpty();
+
+    await draftedReplyRef.set({
+      'id': draftedReplyRef.id,
+      'userId': repliedPost.userId,
+      'postId': repliedPost.id,
+      'replierId': _auth.currentUser!.uid,
+      'body': _replyDataList[0],
+      'nickname': _replyDataList[1],
+      'position': _replyDataList[2],
+      'gender': _replyDataList[3],
+      'age': _replyDataList[4],
+      'area': _replyDataList[5],
+      'isDraft': isDraft,
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
 
     stopLoading();
   }

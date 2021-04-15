@@ -5,8 +5,8 @@ import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 class Reply {
   Reply(DocumentSnapshot doc) {
     this.id = doc.id;
+    this.userId = doc['userId'];
     this.postId = doc['postId'];
-    this.uid = doc.reference.parent.parent!.parent.parent!.id;
     this.replierId = doc['replierId'];
     this.body = doc['body'];
     this.nickname = doc['nickname'];
@@ -25,8 +25,8 @@ class Reply {
   }
 
   String id = '';
+  String userId = '';
   String postId = '';
-  String uid = '';
   String replierId = '';
   String body = '';
   String nickname = '';

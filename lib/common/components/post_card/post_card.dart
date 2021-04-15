@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
-// import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card_model.dart';
 import 'package:kakikomi_keijiban/common/components/reply_card/reply_card.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
-import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/common/mixin/format_poster_data_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply/add_reply_page.dart';
+import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
 import 'package:kakikomi_keijiban/presentation/search_result_posts/search_result_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/update_post/update_post_page.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +27,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
   @override
   Widget build(BuildContext context) {
     final bool isMe = context.read<AppModel>().loggedInUser != null
-        ? context.read<AppModel>().loggedInUser!.uid == post.uid
+        ? context.read<AppModel>().loggedInUser!.uid == post.userId
         : false;
     return Consumer<PostCardModel>(builder: (context, model, child) {
       return Padding(
@@ -78,8 +77,9 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                   await Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) =>
-                                            SearchResultPostsPage(category)),
+                                      builder: (context) =>
+                                          SearchResultPostsPage(category),
+                                    ),
                                   );
                                 },
                               );
@@ -119,34 +119,31 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           /// 返信ボタン
-                          OutlinedButton(
-                            onPressed: () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AddReplyPage(post),
-                                ),
-                              );
-                              await model.getAllRepliesToPost(post);
-                              // ↑で解決！！
-                              // await model.getRepliesToPost(post);
-                              // // ↓を呼びたい。。。
-                              // // await context
-                              // //     .read<Reply>()
-                              // //     .getRepliesToReply(reply);
-                            },
-                            child: Text(
-                              '返信する',
-                              style:
-                                  TextStyle(color: kDarkPink, fontSize: 15.0),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16.0),
-                              ),
-                              side: BorderSide(color: kPink),
-                            ),
-                          ),
+                          passedModel is! DraftsModel
+                              ? OutlinedButton(
+                                  onPressed: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            AddReplyPage(post),
+                                      ),
+                                    );
+                                    await model.getAllRepliesToPost(post);
+                                  },
+                                  child: Text(
+                                    '返信する',
+                                    style: TextStyle(
+                                        color: kDarkPink, fontSize: 15.0),
+                                  ),
+                                  style: OutlinedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16.0),
+                                    ),
+                                    side: BorderSide(color: kPink),
+                                  ),
+                                )
+                              : SizedBox(),
 
                           /// 更新日時
                           Text(
@@ -242,6 +239,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                   oldPost: post,
                                   indexOfPost: indexOfPost,
                                 );
+                          // Todo refreshThePostOfPostsAfterUpdatedメソッドで返信たちも全部取得するようにする
                         }),
                   )
                 : Container(),

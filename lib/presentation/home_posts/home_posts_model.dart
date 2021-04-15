@@ -127,11 +127,39 @@ class HomePostsModel extends ChangeNotifier {
         .collection('posts')
         .doc(oldPost.id)
         .get();
-    Post newPost = Post(doc);
+    Post post = Post(doc);
+    final querySnapshot = await _firestore
+        .collection('users')
+        .doc(post.userId)
+        .collection('posts')
+        .doc(post.id)
+        .collection('replies')
+        .orderBy('createdAt')
+        .get();
+    final docs = querySnapshot.docs;
+    final _replies = docs.map((doc) => Reply(doc)).toList();
+    post.replies = _replies;
+
+    for (int i = 0; i < _replies.length; i++) {
+      final reply = _replies[i];
+      final _querySnapshot = await _firestore
+          .collection('users')
+          .doc(reply.userId)
+          .collection('posts')
+          .doc(reply.postId)
+          .collection('replies')
+          .doc(reply.id)
+          .collection('repliesToReply')
+          .orderBy('createdAt')
+          .get();
+      final _docs = _querySnapshot.docs;
+      final _repliesToReplies = _docs.map((doc) => ReplyToReply(doc)).toList();
+      reply.repliesToReply = _repliesToReplies;
+    }
     // 更新前のpostをpostsから削除
     this._allPosts.removeAt(indexOfPost);
     // 更新後のpostをpostsに追加
-    this._allPosts.insert(indexOfPost, newPost);
+    this._allPosts.insert(indexOfPost, post);
     notifyListeners();
   }
 
@@ -149,11 +177,39 @@ class HomePostsModel extends ChangeNotifier {
         .collection('posts')
         .doc(oldPost.id)
         .get();
-    Post newPost = Post(doc);
+    Post post = Post(doc);
+    final querySnapshot = await _firestore
+        .collection('users')
+        .doc(post.userId)
+        .collection('posts')
+        .doc(post.id)
+        .collection('replies')
+        .orderBy('createdAt')
+        .get();
+    final docs = querySnapshot.docs;
+    final _replies = docs.map((doc) => Reply(doc)).toList();
+    post.replies = _replies;
+
+    for (int i = 0; i < _replies.length; i++) {
+      final reply = _replies[i];
+      final _querySnapshot = await _firestore
+          .collection('users')
+          .doc(reply.userId)
+          .collection('posts')
+          .doc(reply.postId)
+          .collection('replies')
+          .doc(reply.id)
+          .collection('repliesToReply')
+          .orderBy('createdAt')
+          .get();
+      final _docs = _querySnapshot.docs;
+      final _repliesToReplies = _docs.map((doc) => ReplyToReply(doc)).toList();
+      reply.repliesToReply = _repliesToReplies;
+    }
     // 更新前のpostをpostsから削除
     this._myPosts.removeAt(indexOfPost);
     // 更新後のpostをpostsに追加
-    this._myPosts.insert(indexOfPost, newPost);
+    this._myPosts.insert(indexOfPost, post);
     notifyListeners();
   }
 
@@ -171,11 +227,39 @@ class HomePostsModel extends ChangeNotifier {
         .collection('posts')
         .doc(oldPost.id)
         .get();
-    final newPost = Post(doc);
+    final post = Post(doc);
+    final querySnapshot = await _firestore
+        .collection('users')
+        .doc(post.userId)
+        .collection('posts')
+        .doc(post.id)
+        .collection('replies')
+        .orderBy('createdAt')
+        .get();
+    final docs = querySnapshot.docs;
+    final _replies = docs.map((doc) => Reply(doc)).toList();
+    post.replies = _replies;
+
+    for (int i = 0; i < _replies.length; i++) {
+      final reply = _replies[i];
+      final _querySnapshot = await _firestore
+          .collection('users')
+          .doc(reply.userId)
+          .collection('posts')
+          .doc(reply.postId)
+          .collection('replies')
+          .doc(reply.id)
+          .collection('repliesToReply')
+          .orderBy('createdAt')
+          .get();
+      final _docs = _querySnapshot.docs;
+      final _repliesToReplies = _docs.map((doc) => ReplyToReply(doc)).toList();
+      reply.repliesToReply = _repliesToReplies;
+    }
     // 更新前のpostをpostsから削除
     this._bookmarkedPosts.removeAt(indexOfPost);
     // 更新後のpostをpostsに追加
-    this._bookmarkedPosts.insert(indexOfPost, newPost);
+    this._bookmarkedPosts.insert(indexOfPost, post);
     notifyListeners();
   }
 
@@ -451,7 +535,7 @@ class HomePostsModel extends ChangeNotifier {
       final post = _allPosts[i];
       final querySnapshot = await _firestore
           .collection('users')
-          .doc(post.uid)
+          .doc(post.userId)
           .collection('posts')
           .doc(post.id)
           .collection('replies')
@@ -465,7 +549,7 @@ class HomePostsModel extends ChangeNotifier {
         final reply = _replies[i];
         final _querySnapshot = await _firestore
             .collection('users')
-            .doc(reply.uid)
+            .doc(reply.userId)
             .collection('posts')
             .doc(reply.postId)
             .collection('replies')
@@ -487,7 +571,7 @@ class HomePostsModel extends ChangeNotifier {
       final post = _myPosts[i];
       final querySnapshot = await _firestore
           .collection('users')
-          .doc(post.uid)
+          .doc(post.userId)
           .collection('posts')
           .doc(post.id)
           .collection('replies')
@@ -501,7 +585,7 @@ class HomePostsModel extends ChangeNotifier {
         final reply = _replies[i];
         final _querySnapshot = await _firestore
             .collection('users')
-            .doc(reply.uid)
+            .doc(reply.userId)
             .collection('posts')
             .doc(reply.postId)
             .collection('replies')
@@ -522,7 +606,7 @@ class HomePostsModel extends ChangeNotifier {
       final post = _bookmarkedPosts[i];
       final querySnapshot = await _firestore
           .collection('users')
-          .doc(post.uid)
+          .doc(post.userId)
           .collection('posts')
           .doc(post.id)
           .collection('replies')
@@ -536,7 +620,7 @@ class HomePostsModel extends ChangeNotifier {
         final reply = _replies[i];
         final _querySnapshot = await _firestore
             .collection('users')
-            .doc(reply.uid)
+            .doc(reply.userId)
             .collection('posts')
             .doc(reply.postId)
             .collection('replies')

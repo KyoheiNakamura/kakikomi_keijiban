@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/components/account_drawer.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card.dart';
@@ -20,6 +21,7 @@ class HomePostsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<AppModel>().listenAuthStateChanges();
     return ChangeNotifierProvider<HomePostsModel>(
       create: (context) => HomePostsModel()..init(),
       child: DefaultTabController(
@@ -74,7 +76,14 @@ class HomePostsPage extends StatelessWidget {
                                   forceElevated: innerBoxIsScrolled,
                                   bottom: TabBar(
                                     tabs: _tabs
-                                        .map((String name) => Tab(text: name))
+                                        .map((String name) => Tab(
+                                              child: Text(
+                                                name,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ))
                                         .toList(),
                                   ),
                                 ),

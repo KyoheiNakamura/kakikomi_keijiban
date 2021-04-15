@@ -5,6 +5,7 @@ import 'package:kakikomi_keijiban/domain/reply.dart';
 class Post {
   Post(DocumentSnapshot doc) {
     this.id = doc.id;
+    this.userId = doc['userId'];
     this.title = doc['title'];
     this.body = doc['body'];
     this.nickname = doc['nickname'];
@@ -16,7 +17,6 @@ class Post {
     final List<dynamic> _categories = doc['categories'];
     // List<dynamic>をList<String>に変換してる
     this.categories = List<String>.from(_categories);
-    this.uid = doc.reference.parent.parent!.id;
     this.replyCount = doc['replyCount'];
     this.isBookmarked = false;
     this.isReplyShown = false;
@@ -30,6 +30,7 @@ class Post {
   }
 
   String id = '';
+  String userId = '';
   String title = '';
   String body = '';
   String nickname = '';
@@ -39,7 +40,6 @@ class Post {
   String age = '';
   String area = '';
   List<String> categories = [];
-  String uid = '';
   int replyCount = 0;
   bool isBookmarked = false;
   bool isReplyShown = false;
