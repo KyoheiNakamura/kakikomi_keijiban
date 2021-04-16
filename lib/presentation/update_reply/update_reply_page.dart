@@ -2,19 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/common/mixin/keyboard_actions_config_done_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/user_profile.dart';
+import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
 import 'package:kakikomi_keijiban/presentation/update_reply/update_reply_model.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
 
 class UpdateReplyPage extends StatelessWidget
     with ShowConfirmDialogMixin, KeyboardActionsConfigDoneMixin {
-  UpdateReplyPage(this.existingReply);
+  UpdateReplyPage({required this.existingReply, required this.passedModel});
 
   final Reply existingReply;
+  final passedModel;
   final _formKey = GlobalKey<FormState>();
   final FocusNode _focusNodeContent = FocusNode();
 
@@ -210,34 +213,116 @@ class UpdateReplyPage extends StatelessWidget
                             ),
 
                             /// 投稿送信ボタン
-                            OutlinedButton(
-                              onPressed: () async {
-                                if (_formKey.currentState!.validate()) {
-                                  model.startLoading();
-                                  await model.updateReply(existingReply);
-                                  model.stopLoading();
-                                  Navigator.pop(context);
-                                  // Navigator.of(context).popUntil(
-                                  //   ModalRoute.withName('/'),
-                                  // );
-                                }
-                              },
-                              child: Text(
-                                '更新する',
-                                style: TextStyle(
-                                  color: kDarkPink,
-                                  fontSize: 16,
-                                  // fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              style: OutlinedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(vertical: 12.0),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                side: BorderSide(color: kDarkPink),
-                              ),
-                            )
+                            passedModel is! DraftsModel
+                                ? OutlinedButton(
+                                    onPressed: () async {
+                                      if (_formKey.currentState!.validate()) {
+                                        model.startLoading();
+                                        await model.updateReply(existingReply);
+                                        model.stopLoading();
+                                        Navigator.pop(context);
+                                        // Navigator.of(context).popUntil(
+                                        //   ModalRoute.withName('/'),
+                                        // );
+                                      }
+                                    },
+                                    child: Text(
+                                      '更新する',
+                                      style: TextStyle(
+                                        color: kDarkPink,
+                                        fontSize: 16,
+                                        // fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    style: OutlinedButton.styleFrom(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 12.0),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      side: BorderSide(color: kDarkPink),
+                                    ),
+                                  )
+                                :
+
+                                /// 投稿送信ボタン
+                                Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      OutlinedButton(
+                                        onPressed: () async {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            await model.addReplyToPostFromDraft(
+                                                existingReply);
+                                            Navigator.pop(
+                                              context,
+                                              ResultForDraftButton
+                                                  .addPostFromDraft,
+                                            );
+                                            // Navigator.of(context).popUntil(
+                                            //   ModalRoute.withName('/'),
+                                            // );
+                                          }
+                                        },
+                                        child: Text(
+                                          '投稿する',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            // fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        style: OutlinedButton.styleFrom(
+                                          backgroundColor: kDarkPink,
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 12.0),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(16.0),
+                                          ),
+                                          side: BorderSide(color: kDarkPink),
+                                        ),
+                                      ),
+                                      SizedBox(height: 16.0),
+
+                                      /// 下書き保存ボタン
+                                      OutlinedButton(
+                                        onPressed: () async {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            await model.updateDraftReply(
+                                                existingReply);
+                                            Navigator.pop(
+                                              context,
+                                              ResultForDraftButton.updateDraft,
+                                            );
+                                            // Navigator.of(context).popUntil(
+                                            //   ModalRoute.withName('/'),
+                                            // );
+                                          }
+                                        },
+                                        child: Text(
+                                          '下書きに保存する',
+                                          style: TextStyle(
+                                            color: kDarkPink,
+                                            fontSize: 16,
+                                            // fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        style: OutlinedButton.styleFrom(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 12.0),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(16.0),
+                                          ),
+                                          side: BorderSide(color: kDarkPink),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                           ],
                         ),
                       ),

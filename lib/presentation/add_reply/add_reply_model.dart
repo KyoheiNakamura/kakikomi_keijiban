@@ -9,7 +9,6 @@ class AddReplyModel extends ChangeNotifier {
   final _auth = FirebaseAuth.instance;
   final uid = FirebaseAuth.instance.currentUser!.uid;
   bool isLoading = false;
-  bool isDraft = false;
 
   void startLoading() {
     isLoading = true;
@@ -86,7 +85,6 @@ class AddReplyModel extends ChangeNotifier {
       'gender': _replyDataList[3],
       'age': _replyDataList[4],
       'area': _replyDataList[5],
-      'isDraft': isDraft,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
@@ -100,7 +98,7 @@ class AddReplyModel extends ChangeNotifier {
     } catch (e) {
       print('addReplyのバッチ処理中のエラーです');
       print(e.toString());
-      throw ('エラーが発生しました');
+      throw Exception('エラーが発生しました');
     }
 
     stopLoading();
@@ -124,7 +122,6 @@ class AddReplyModel extends ChangeNotifier {
       'gender': _replyDataList[3],
       'age': _replyDataList[4],
       'area': _replyDataList[5],
-      'isDraft': isDraft,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });

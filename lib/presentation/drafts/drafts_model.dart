@@ -24,10 +24,12 @@ class DraftsModel extends ChangeNotifier {
   }
 
   Future<void> getDrafts() async {
+    _drafts.clear();
     await _getDraftPosts();
     await _getDraftReplies();
     await _getDraftedRepliesToReply();
     this._drafts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    notifyListeners();
   }
 
   Future<void> _getDraftPosts() async {
@@ -37,7 +39,11 @@ class DraftsModel extends ChangeNotifier {
         .collection('draftedPosts')
         .get();
     final docs = querySnapshot.docs;
-    List<Post> draftedPosts = docs.map((doc) => Post(doc)).toList();
+    List<Post> draftedPosts = docs.map((doc) {
+      final post = Post(doc);
+      post.isDraft = true;
+      return post;
+    }).toList();
     this._drafts += draftedPosts;
   }
 
@@ -48,7 +54,11 @@ class DraftsModel extends ChangeNotifier {
         .collection('draftedReplies')
         .get();
     final docs = querySnapshot.docs;
-    final List<Reply> draftedReplies = docs.map((doc) => Reply(doc)).toList();
+    final List<Reply> draftedReplies = docs.map((doc) {
+      final reply = Reply(doc);
+      reply.isDraft = true;
+      return reply;
+    }).toList();
 
     for (int i = 0; i < draftedReplies.length; i++) {
       final reply = draftedReplies[i];
@@ -73,8 +83,11 @@ class DraftsModel extends ChangeNotifier {
         .collection('draftedRepliesToReply')
         .get();
     final docs = querySnapshot.docs;
-    final List<ReplyToReply> draftedRepliesToReply =
-        docs.map((doc) => ReplyToReply(doc)).toList();
+    final List<ReplyToReply> draftedRepliesToReply = docs.map((doc) {
+      final replyToReply = ReplyToReply(doc);
+      replyToReply.isDraft = true;
+      return replyToReply;
+    }).toList();
 
     final futures = draftedRepliesToReply.map((replyToReply) async {
       final userId = replyToReply.userId;
@@ -102,7 +115,7 @@ class DraftsModel extends ChangeNotifier {
       final List<ReplyToReply> repliesToReply =
           docs.map((doc) => ReplyToReply(doc)).toList();
       repliesToReply.add(replyToReply);
-      repliesToReply.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      repliesToReply.sort((a, b) => a.createdAt.compareTo(b.createdAt));
       reply.repliesToReply.addAll(repliesToReply);
       return reply;
     }).toList();
@@ -125,55 +138,83 @@ class DraftsModel extends ChangeNotifier {
     }
   }
 
-  Future<void> refreshThePostOfPostsAfterUpdated({
-    required Post oldPost,
-    required int indexOfPost,
-  }) async {
-    // 更新後のpostを取得
-    final doc = await _firestore
-        .collection('users')
-        .doc(uid)
-        .collection('draftedPosts')
-        .doc(oldPost.id)
-        .get();
-    final post = Post(doc);
-    final querySnapshot = await _firestore
-        .collection('users')
-        .doc(post.userId)
-        .collection('posts')
-        .doc(post.id)
-        .collection('replies')
-        .orderBy('createdAt')
-        .get();
-    final docs = querySnapshot.docs;
-    final _replies = docs.map((doc) => Reply(doc)).toList();
-    post.replies = _replies;
+  // // Todo ここをいじればいい感じに再描画されるはず。
+  // // てか全取得しなおしても良きかも。下書きなんてそんな数書かないだろ。Twitterじゃあるめぇし。
+  // Future<void> refreshThePostOfPostsAfterUpdated({
+  //   required Post oldPost,
+  //   required int indexOfPost,
+  // }) async {
+  //   await _getDrafts();
+  //   // // 更新後のpostを取得
+  //   // final doc = await _firestore
+  //   //     .collection('users')
+  //   //     .doc(uid)
+  //   //     .collection('draftedPosts')
+  //   //     .doc(oldPost.id)
+  //   //     .get();
+  //   // final post = Post(doc);
+  //   // post.isDraft = true;
+  //   // final querySnapshot = await _firestore
+  //   //     .collection('users')
+  //   //     .doc(post.userId)
+  //   //     .collection('posts')
+  //   //     .doc(post.id)
+  //   //     .collection('replies')
+  //   //     .orderBy('createdAt')
+  //   //     .get();
+  //   // final docs = querySnapshot.docs;
+  //   // final _replies = docs.map((doc) => Reply(doc)).toList();
+  //   // post.replies = _replies;
+  //   //
+  //   // for (int i = 0; i < _replies.length; i++) {
+  //   //   final reply = _replies[i];
+  //   //   final _querySnapshot = await _firestore
+  //   //       .collection('users')
+  //   //       .doc(reply.userId)
+  //   //       .collection('posts')
+  //   //       .doc(reply.postId)
+  //   //       .collection('replies')
+  //   //       .doc(reply.id)
+  //   //       .collection('repliesToReply')
+  //   //       .orderBy('createdAt')
+  //   //       .get();
+  //   //   final _docs = _querySnapshot.docs;
+  //   //   final _repliesToReplies = _docs.map((doc) => ReplyToReply(doc)).toList();
+  //   //   reply.repliesToReply = _repliesToReplies;
+  //   // }
+  //   // // 更新前のpostをpostsから削除
+  //   // this._drafts.removeAt(indexOfPost);
+  //   // // 更新後のpostをpostsに追加
+  //   // this._drafts.insert(indexOfPost, post);
+  //   // notifyListeners();
+  // }
 
-    for (int i = 0; i < _replies.length; i++) {
-      final reply = _replies[i];
-      final _querySnapshot = await _firestore
+  // postはthis._drafts.remove(post);するために必ず渡す
+  Future<void> removeDraft(
+      {required Post post, Reply? reply, ReplyToReply? replyToReply}) async {
+    this._drafts.remove(post);
+    if (post.isDraft == true) {
+      final draftedPostRef = _firestore
+          .collection('users')
+          .doc(post.userId)
+          .collection('draftedPosts')
+          .doc(post.id);
+      await draftedPostRef.delete();
+    } else if (reply != null && reply.isDraft == true) {
+      final draftedReplyRef = _firestore
           .collection('users')
           .doc(reply.userId)
-          .collection('posts')
-          .doc(reply.postId)
-          .collection('replies')
-          .doc(reply.id)
-          .collection('repliesToReply')
-          .orderBy('createdAt')
-          .get();
-      final _docs = _querySnapshot.docs;
-      final _repliesToReplies = _docs.map((doc) => ReplyToReply(doc)).toList();
-      reply.repliesToReply = _repliesToReplies;
+          .collection('draftedReplies')
+          .doc(reply.id);
+      await draftedReplyRef.delete();
+    } else if (replyToReply != null && replyToReply.isDraft == true) {
+      final draftedReplyToReplyRef = _firestore
+          .collection('users')
+          .doc(replyToReply.userId)
+          .collection('draftedRepliesToReply')
+          .doc(replyToReply.id);
+      await draftedReplyToReplyRef.delete();
     }
-    // 更新前のpostをpostsから削除
-    this._drafts.removeAt(indexOfPost);
-    // 更新後のpostをpostsに追加
-    this._drafts.insert(indexOfPost, post);
-    notifyListeners();
-  }
-
-  void removeThePostOfPostsAfterDeleted(Post post) {
-    this._drafts.remove(post);
     notifyListeners();
   }
 

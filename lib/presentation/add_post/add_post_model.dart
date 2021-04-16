@@ -9,8 +9,6 @@ class AddPostModel extends ChangeNotifier {
   final uid = FirebaseAuth.instance.currentUser!.uid;
   bool isLoading = false;
   bool isCategoriesValid = true;
-  // postドメインに持たせる
-  bool isDraft = false;
 
   String titleValue = '';
   String bodyValue = '';
@@ -45,8 +43,6 @@ class AddPostModel extends ChangeNotifier {
       'area': _postDataList[7],
       'categories': selectedCategories,
       'replyCount': 0,
-      // Todo 下書き機能を実装しよう
-      'isDraft': isDraft,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
@@ -62,7 +58,7 @@ class AddPostModel extends ChangeNotifier {
     } catch (e) {
       print('addPostのバッチ処理中のエラーです');
       print(e.toString());
-      throw ('エラーが発生しました');
+      throw Exception('エラーが発生しました');
     }
 
     stopLoading();
@@ -88,8 +84,6 @@ class AddPostModel extends ChangeNotifier {
       'area': _postDataList[7],
       'categories': selectedCategories,
       'replyCount': 0,
-      // Todo 下書き機能を実装しよう
-      'isDraft': isDraft,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });

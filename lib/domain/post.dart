@@ -20,12 +20,13 @@ class Post {
     this.replyCount = doc['replyCount'];
     this.isBookmarked = false;
     this.isReplyShown = false;
-    // this.isDraft = doc['isDraft'];
+    this.isDraft = false;
     this.replies = [];
-    this._createdAt = doc['createdAt'].toDate();
+    final Timestamp createdTime = doc['createdAt'];
+    this._createdAt = createdTime.toDate();
     if (doc['updatedAt'] != null) {
-      final updatedDate = doc['updatedAt'].toDate();
-      this._updatedAt = updatedDate;
+      final Timestamp updatedTime = doc['updatedAt'];
+      this._updatedAt = updatedTime.toDate();
     }
   }
 

@@ -14,7 +14,7 @@ class ReplyToReply {
     this.gender = doc['gender'] != '' ? doc['gender'] : '';
     this.age = doc['age'] != '' ? doc['age'] : '';
     this.area = doc['area'] != '' ? doc['area'] : '';
-
+    this.isDraft = false;
     final createdDate = doc['createdAt'].toDate();
     this._createdAt = createdDate;
     if (doc['updatedAt'] != null) {
@@ -34,6 +34,7 @@ class ReplyToReply {
   String gender = '';
   String age = '';
   String area = '';
+  bool isDraft = false;
   DateTime? _createdAt;
   DateTime? _updatedAt;
 

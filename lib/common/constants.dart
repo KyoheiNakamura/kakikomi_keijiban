@@ -64,6 +64,7 @@ const List<String> kCategoryList = [
   '強迫性障害',
   '統合失調症',
   '依存症',
+  '過集中',
   'パーソナリティ障害',
   'PTSD',
   // 'PTSD(心的外傷後ストレス障害)',

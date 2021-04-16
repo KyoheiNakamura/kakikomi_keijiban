@@ -4,9 +4,12 @@ import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/components/reply_card/reply_card_model.dart';
 import 'package:kakikomi_keijiban/common/components/reply_to_reply_card/reply_to_reply_card_model.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/enum.dart';
+import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 import 'package:kakikomi_keijiban/common/mixin/format_poster_data_mixin.dart';
+import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
 import 'package:kakikomi_keijiban/presentation/update_reply_to_reply/update_reply_to_reply_page.dart';
 import 'package:provider/provider.dart';
 
@@ -14,10 +17,14 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
   ReplyToReplyCard({
     required this.replyToReply,
     required this.reply,
+    required this.post,
+    required this.passedModel,
   });
 
   final ReplyToReply replyToReply;
   final Reply reply;
+  final Post post;
+  final passedModel;
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +89,9 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
               ),
             ),
           ),
-          isMe == true
+
+          /// EditIconButton
+          isMe == true && passedModel is! DraftsModel
               ? Positioned.directional(
                   textDirection: TextDirection.ltr,
                   top: -6.0,
@@ -92,23 +101,73 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                   //   reply: reply,
                   // ),
                   child: IconButton(
-                      icon: Icon(
-                        Icons.edit_outlined,
-                        color: kLightGrey,
-                      ),
-                      onPressed: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return UpdateReplyToReplyPage(replyToReply);
-                          }),
-                        );
-                        await context
-                            .read<ReplyCardModel>()
-                            .getRepliesToReply(reply);
-                      }),
+                    icon: Icon(
+                      Icons.edit_outlined,
+                      color: kLightGrey,
+                    ),
+                    onPressed: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return UpdateReplyToReplyPage(
+                              existingReplyToReply: replyToReply,
+                              passedModel: passedModel,
+                            );
+                          },
+                        ),
+                      );
+                      await context
+                          .read<ReplyCardModel>()
+                          .getRepliesToReply(reply);
+                    },
+                  ),
                 )
-              : Container(),
+              : SizedBox(),
+
+          /// EditIconButton
+          isMe == true &&
+                  passedModel is DraftsModel &&
+                  replyToReply.isDraft == true
+              ? Positioned.directional(
+                  textDirection: TextDirection.ltr,
+                  top: -6.0,
+                  end: -4.0,
+                  // child: PopupMenuOnReplyToReplyCard(
+                  //   replyToReply: replyToReply,
+                  //   reply: reply,
+                  // ),
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.edit_outlined,
+                      color: kLightGrey,
+                    ),
+                    onPressed: () async {
+                      final resultForDraftButton = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return UpdateReplyToReplyPage(
+                              existingReplyToReply: replyToReply,
+                              passedModel: passedModel,
+                            );
+                          },
+                        ),
+                      );
+                      if (resultForDraftButton ==
+                          ResultForDraftButton.updateDraft) {
+                        await passedModel.getDrafts();
+                      } else if (resultForDraftButton ==
+                          ResultForDraftButton.addPostFromDraft) {
+                        await passedModel.removeDraft(
+                          post: post,
+                          replyToReply: replyToReply,
+                        );
+                      }
+                    },
+                  ),
+                )
+              : SizedBox(),
         ],
       );
     });

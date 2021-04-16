@@ -3,6 +3,7 @@ import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card_model.dart';
 import 'package:kakikomi_keijiban/common/components/reply_card/reply_card.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/common/mixin/format_poster_data_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply/add_reply_page.dart';
@@ -164,6 +165,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                     return ReplyCard(
                                       reply: reply,
                                       post: post,
+                                      passedModel: passedModel,
                                     );
                                   }).toList()
                                 : [],
@@ -205,8 +207,8 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
               ),
             ),
 
-            /// PopupMenu
-            isMe == true
+            /// EditIconButton
+            isMe == true && passedModel is! DraftsModel
                 ? Positioned.directional(
                     textDirection: TextDirection.ltr,
                     top: 30.0,
@@ -218,31 +220,73 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                     //   tabName: tabName,
                     // ),
                     child: IconButton(
-                        icon: Icon(
-                          Icons.edit_outlined,
-                          color: kLightGrey,
-                        ),
-                        onPressed: () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) {
-                              return UpdatePostPage(post);
-                            }),
-                          );
-                          tabName != null
-                              ? passedModel.refreshThePostOfPostsAfterUpdated(
-                                  tabName: tabName,
-                                  oldPost: post,
-                                  indexOfPost: indexOfPost,
-                                )
-                              : passedModel.refreshThePostOfPostsAfterUpdated(
-                                  oldPost: post,
-                                  indexOfPost: indexOfPost,
-                                );
-                          // Todo refreshThePostOfPostsAfterUpdatedメソッドで返信たちも全部取得するようにする
-                        }),
+                      icon: Icon(
+                        Icons.edit_outlined,
+                        color: kLightGrey,
+                      ),
+                      onPressed: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return UpdatePostPage(
+                              existingPost: post,
+                              passedModel: passedModel,
+                            );
+                          }),
+                        );
+                        tabName != null
+                            ? passedModel.refreshThePostOfPostsAfterUpdated(
+                                tabName: tabName,
+                                oldPost: post,
+                                indexOfPost: indexOfPost,
+                              )
+                            : passedModel.refreshThePostOfPostsAfterUpdated(
+                                oldPost: post,
+                                indexOfPost: indexOfPost,
+                              );
+                      },
+                    ),
                   )
-                : Container(),
+                : SizedBox(),
+
+            /// EditIconButton
+            isMe == true && passedModel is DraftsModel && post.isDraft == true
+                ? Positioned.directional(
+                    textDirection: TextDirection.ltr,
+                    top: 30.0,
+                    end: 10.0,
+                    // child: PopupMenuOnPostCard(
+                    //   post: post,
+                    //   indexOfPost: indexOfPost,
+                    //   passedModel: passedModel,
+                    //   tabName: tabName,
+                    // ),
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.edit_outlined,
+                        color: kLightGrey,
+                      ),
+                      onPressed: () async {
+                        final resultForDraftButton = await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) {
+                            return UpdatePostPage(
+                              existingPost: post,
+                              passedModel: passedModel,
+                            );
+                          }),
+                        );
+                        if (resultForDraftButton ==
+                            ResultForDraftButton.updateDraft) {
+                          await passedModel.getDrafts();
+                        } else if (resultForDraftButton ==
+                            ResultForDraftButton.addPostFromDraft) {
+                          await passedModel.removeDraft(post: post);
+                        }
+                      },
+                    ),
+                  )
+                : SizedBox(),
 
             /// EmotionImageButton
             Positioned(
@@ -266,38 +310,40 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
             ),
 
             /// ブックマークを切り替えるスターアイコン
-            Positioned.directional(
-              textDirection: TextDirection.ltr,
-              top: 55.0,
-              end: 10.0,
-              child: post.isBookmarked
-                  ? IconButton(
-                      icon: Icon(
-                        Icons.star,
-                        color: Colors.yellow,
-                      ),
-                      onPressed: () async {
-                        model.turnOffStar(post);
-                        // Todo 後で修正する
-                        await model.deleteBookmarkedPost(post);
-                      },
-                    )
-                  : IconButton(
-                      icon: Icon(
-                        Icons.star_border_outlined,
-                        color: kLightGrey,
-                      ),
-                      onPressed: () async {
-                        model.turnOnStar(post);
-                        // Todo 後で修正する
-                        await model.addBookmarkedPost(post);
-                        if (tabName != null) {
-                          await passedModel
-                              .getPostsWithReplies(kBookmarkedPostsTab);
-                        }
-                      },
-                    ),
-            ),
+            passedModel is! DraftsModel
+                ? Positioned.directional(
+                    textDirection: TextDirection.ltr,
+                    top: 55.0,
+                    end: 10.0,
+                    child: post.isBookmarked
+                        ? IconButton(
+                            icon: Icon(
+                              Icons.star,
+                              color: Colors.yellow,
+                            ),
+                            onPressed: () async {
+                              model.turnOffStar(post);
+                              // Todo 後で修正する
+                              await model.deleteBookmarkedPost(post);
+                            },
+                          )
+                        : IconButton(
+                            icon: Icon(
+                              Icons.star_border_outlined,
+                              color: kLightGrey,
+                            ),
+                            onPressed: () async {
+                              model.turnOnStar(post);
+                              // Todo 後で修正する
+                              await model.addBookmarkedPost(post);
+                              if (tabName != null) {
+                                await passedModel
+                                    .getPostsWithReplies(kBookmarkedPostsTab);
+                              }
+                            },
+                          ),
+                  )
+                : SizedBox(),
           ],
         ),
       );

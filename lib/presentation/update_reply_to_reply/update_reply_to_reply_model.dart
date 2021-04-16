@@ -1,13 +1,125 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
-import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class UpdateReplyToReplyModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   bool isLoading = false;
-  bool isDraft = false;
+
+  String bodyValue = '';
+  String nicknameValue = '';
+  String positionDropdownValue = kPleaseSelect;
+  String genderDropdownValue = kPleaseSelect;
+  String ageDropdownValue = kPleaseSelect;
+  String areaDropdownValue = kPleaseSelect;
+
+  Future<void> updateReplyToReply(ReplyToReply replyToReply) async {
+    List<String> _postDataList = _convertNoSelectedValueToEmpty();
+    final userRef = _firestore.collection('users').doc(replyToReply.userId);
+    final postRef = userRef.collection('posts').doc(replyToReply.postId);
+    final replyRef = postRef.collection('replies').doc(replyToReply.replyId);
+    final replyToReplyRef =
+        replyRef.collection('repliesToReply').doc(replyToReply.id);
+
+    await replyToReplyRef.update({
+      'body': _postDataList[0],
+      'nickname': _postDataList[1],
+      'position': _postDataList[2],
+      'gender': _postDataList[3],
+      'age': _postDataList[4],
+      'area': _postDataList[5],
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
+
+  Future<void> addReplyToReplyFromDraft(
+      ReplyToReply draftedReplyToReply) async {
+    startLoading();
+
+    WriteBatch _batch = _firestore.batch();
+
+    List<String> _replyDataList = _convertNoSelectedValueToEmpty();
+    final userRef =
+        _firestore.collection('users').doc(draftedReplyToReply.userId);
+    final postRef = userRef.collection('posts').doc(draftedReplyToReply.postId);
+    final replyRef =
+        postRef.collection('replies').doc(draftedReplyToReply.replyId);
+    final replyToReplyRef = replyRef.collection('repliesToReply').doc();
+
+    _batch.set(replyToReplyRef, {
+      'id': replyToReplyRef.id,
+      'userId': draftedReplyToReply.userId,
+      'postId': draftedReplyToReply.postId,
+      'replyId': draftedReplyToReply.id,
+      'replierId': draftedReplyToReply.replierId,
+      'body': _replyDataList[0],
+      'nickname': _replyDataList[1],
+      'position': _replyDataList[2],
+      'gender': _replyDataList[3],
+      'age': _replyDataList[4],
+      'area': _replyDataList[5],
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+
+    final postDoc = await postRef.get();
+
+    _batch.update(postRef, {
+      'replyCount': postDoc['replyCount'] + 1,
+    });
+
+    try {
+      await _batch.commit();
+    } catch (e) {
+      print('addReplyToReplyFromDraftのバッチ処理中のエラーです');
+      print(e.toString());
+      throw Exception('エラーが発生しました');
+    }
+
+    stopLoading();
+  }
+
+  Future<void> updateDraftReplyToReply(ReplyToReply draftedReplyToReply) async {
+    startLoading();
+
+    final userRef =
+        _firestore.collection('users').doc(draftedReplyToReply.userId);
+    final draftedReplyToReplyRef =
+        userRef.collection('draftedRepliesToReply').doc(draftedReplyToReply.id);
+    List<String> _replyDataList = _convertNoSelectedValueToEmpty();
+
+    await draftedReplyToReplyRef.update({
+      'body': _replyDataList[0],
+      'nickname': _replyDataList[1],
+      'position': _replyDataList[2],
+      'gender': _replyDataList[3],
+      'age': _replyDataList[4],
+      'area': _replyDataList[5],
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+
+    stopLoading();
+  }
+
+  List<String> _convertNoSelectedValueToEmpty() {
+    List<String> postDataList = [
+      bodyValue,
+      nicknameValue,
+      positionDropdownValue,
+      genderDropdownValue,
+      ageDropdownValue,
+      areaDropdownValue,
+    ];
+    postDataList = postDataList.map((postData) {
+      if (postData == kPleaseSelect || postData == kDoNotSelect) {
+        return '';
+      } else {
+        return postData;
+      }
+    }).toList();
+    return postDataList;
+  }
 
   void startLoading() {
     isLoading = true;
@@ -35,69 +147,5 @@ class UpdateReplyToReplyModel extends ChangeNotifier {
       return '10字以内でご記入ください';
     }
     return null;
-  }
-
-  String bodyValue = '';
-  String nicknameValue = '';
-  String positionDropdownValue = kPleaseSelect;
-  String genderDropdownValue = kPleaseSelect;
-  String ageDropdownValue = kPleaseSelect;
-  String areaDropdownValue = kPleaseSelect;
-
-  List<String> _convertNoSelectedValueToEmpty() {
-    List<String> postDataList = [
-      bodyValue,
-      nicknameValue,
-      positionDropdownValue,
-      genderDropdownValue,
-      ageDropdownValue,
-      areaDropdownValue,
-    ];
-    postDataList = postDataList.map((postData) {
-      if (postData == kPleaseSelect || postData == kDoNotSelect) {
-        return '';
-      } else {
-        return postData;
-      }
-    }).toList();
-    return postDataList;
-  }
-
-  Future<void> updateReply(Reply existingReply) async {
-    List<String> _postDataList = _convertNoSelectedValueToEmpty();
-    final userRef = _firestore.collection('users').doc(existingReply.userId);
-    final postRef = userRef.collection('posts').doc(existingReply.postId);
-    final replyRef = postRef.collection('replies').doc(existingReply.id);
-
-    await replyRef.update({
-      'body': _postDataList[0],
-      'nickname': _postDataList[1],
-      'position': _postDataList[2],
-      'gender': _postDataList[3],
-      'age': _postDataList[4],
-      'area': _postDataList[5],
-      'isDraft': isDraft,
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
-  }
-
-  Future<void> updateReplyToReply(ReplyToReply replyToReply) async {
-    List<String> _postDataList = _convertNoSelectedValueToEmpty();
-    final userRef = _firestore.collection('users').doc(replyToReply.userId);
-    final postRef = userRef.collection('posts').doc(replyToReply.postId);
-    final replyRef = postRef.collection('replies').doc(replyToReply.replyId);
-    final replyToReplyRef =
-        replyRef.collection('repliesToReply').doc(replyToReply.id);
-
-    await replyToReplyRef.update({
-      'body': _postDataList[0],
-      'nickname': _postDataList[1],
-      'position': _postDataList[2],
-      'gender': _postDataList[3],
-      'age': _postDataList[4],
-      'area': _postDataList[5],
-      'isDraft': isDraft,
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
   }
 }
