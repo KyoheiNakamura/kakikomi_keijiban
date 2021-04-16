@@ -1,0 +1,113 @@
+# ユーザー情報
+users:
+  userId: auth.uid
+  age: string
+  area: string
+  gender: string
+  nickname: string
+  position: string
+  postCount: int
+  createdAt: timestamp
+  updatedAt: timestamp
+
+  # 各ユーザーの投稿データ
+  posts:
+    id: auto
+    userId: auth.uid
+    age: string
+    area: string
+    body: string
+    categories: list
+    emotion: string
+    gender: string
+    nickname: string
+    position: string
+    replyCount: int
+    title: string
+    createdAt: timestamp
+    updatedAt: timestamp
+
+    # 各投稿への返信データ
+    replies:
+      id: auto
+      userId: auth.uid
+      postId: post.id
+      replierId: auth.uid
+      age: string
+      area: string
+      body: string
+      gender: string
+      nickname: string
+      position: string
+      createdAt: timestamp
+      updatedAt: timestamp
+
+      # 各返信への返信データ
+      repliesToReply:
+        id: auto
+        userId: auth.uid
+        postId: post.id
+        replyId: reply.id
+        replierId: auth.uid
+        age: string
+        area: string
+        body: string
+        gender: string
+        nickname: string
+        position: string
+        createdAt: timestamp
+        updatedAt: timestamp
+
+  # 各ユーザーのブックマークした投稿
+  bookmarkedPosts:
+    id: post.id
+    postId: post.id
+    userId: auth.id
+
+  # 各ユーザーの下書きした投稿
+  draftedPosts:
+  　id: auto
+    userId: auth.uid
+    age: string
+    area: string
+    body: string
+    categories: list
+    emotion: string
+    gender: string
+    nickname: string
+    position: string
+    replyCount: int
+    title: string
+    createdAt: timestamp
+    updatedAt: timestamp
+
+  # 各ユーザーの下書きした投稿への返信
+  draftedReplies:
+    id: auto
+    userId: post.userId
+    postId: post.id
+    replierId: auth.uid
+    age: string
+    area: string
+    body: string
+    gender: string
+    nickname: string
+    position: string
+    createdAt: timestamp
+    updatedAt: timestamp
+
+  # 各ユーザーの下書きした返信への返信
+  draftedRepliesToReply:
+    id: auto
+    userId: reply.userId
+    postId: reply.postId
+    replyId: reply.id
+    replierId: auth.uid
+    age: string
+    area: string
+    body: string
+    gender: string
+    nickname: string
+    position: string
+    createdAt: timestamp
+    updatedAt: timestamp

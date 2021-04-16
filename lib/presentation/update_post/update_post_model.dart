@@ -21,7 +21,6 @@ class UpdatePostModel extends ChangeNotifier {
   String genderDropdownValue = kPleaseSelect;
   String ageDropdownValue = kPleaseSelect;
   String areaDropdownValue = kPleaseSelect;
-  bool isDraft = false;
 
   Future<void> updatePost(Post post) async {
     final userRef = _firestore.collection('users').doc(uid);
@@ -38,10 +37,82 @@ class UpdatePostModel extends ChangeNotifier {
       'gender': _postDataList[5],
       'age': _postDataList[6],
       'area': _postDataList[7],
-      'isDraft': isDraft,
       'categories': selectedCategories,
       'updatedAt': FieldValue.serverTimestamp(),
     });
+  }
+
+  Future<void> addPostFromDraft(Post draftedPost) async {
+    startLoading();
+
+    WriteBatch _batch = _firestore.batch();
+
+    final userRef = _firestore.collection('users').doc(uid);
+    final postRef = userRef.collection('posts').doc();
+    List<String> _postDataList = _convertNoSelectedValueToEmpty();
+
+    _batch.set(postRef, {
+      'id': postRef.id,
+      'userId': uid,
+      'title': _postDataList[0],
+      'body': _postDataList[1],
+      'nickname': _postDataList[2],
+      'emotion': _postDataList[3],
+      'position': _postDataList[4],
+      'gender': _postDataList[5],
+      'age': _postDataList[6],
+      'area': _postDataList[7],
+      'categories': selectedCategories,
+      'replyCount': 0,
+      'createdAt': FieldValue.serverTimestamp(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+
+    final userDoc = await userRef.get();
+
+    _batch.update(userRef, {
+      'postCount': userDoc['postCount'] + 1,
+    });
+
+    final draftedPostRef =
+        userRef.collection('draftedPosts').doc(draftedPost.id);
+
+    _batch.delete(draftedPostRef);
+
+    try {
+      await _batch.commit();
+    } catch (e) {
+      print('addPostFromDraftのバッチ処理中のエラーです');
+      print(e.toString());
+      throw Exception('エラーが発生しました');
+    }
+
+    stopLoading();
+  }
+
+  Future<void> updateDraftPost(Post draftedPost) async {
+    startLoading();
+
+    final userRef = _firestore.collection('users').doc(uid);
+    final draftedPostRef =
+        userRef.collection('draftedPosts').doc(draftedPost.id);
+    List<String> _postDataList = _convertNoSelectedValueToEmpty();
+
+    await draftedPostRef.update({
+      'title': _postDataList[0],
+      'body': _postDataList[1],
+      'nickname': _postDataList[2],
+      'emotion': _postDataList[3],
+      'position': _postDataList[4],
+      'gender': _postDataList[5],
+      'age': _postDataList[6],
+      'area': _postDataList[7],
+      'categories': selectedCategories,
+      'replyCount': 0,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+
+    stopLoading();
   }
 
   List<String> _convertNoSelectedValueToEmpty() {

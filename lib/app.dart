@@ -13,7 +13,7 @@ class App extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<AppModel>(
-          create: (context) => AppModel()..listenAuthStateChanges(),
+          create: (context) => AppModel(),
         ),
         ChangeNotifierProvider<PostCardModel>(
           create: (context) => PostCardModel(),

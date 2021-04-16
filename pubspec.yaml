@@ -38,6 +38,6 @@ flutter:
 
 flutter_native_splash:
   image: "lib/assets/images/anpanman.png"
-  color: "FCF0F5"
+  color: "f3d4d8"
 
 

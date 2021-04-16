@@ -5,8 +5,8 @@ import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 class Reply {
   Reply(DocumentSnapshot doc) {
     this.id = doc.id;
+    this.userId = doc['userId'];
     this.postId = doc['postId'];
-    this.uid = doc.reference.parent.parent!.parent.parent!.id;
     this.replierId = doc['replierId'];
     this.body = doc['body'];
     this.nickname = doc['nickname'];
@@ -14,7 +14,7 @@ class Reply {
     this.gender = doc['gender'] != '' ? doc['gender'] : '';
     this.age = doc['age'] != '' ? doc['age'] : '';
     this.area = doc['area'] != '' ? doc['area'] : '';
-
+    this.isDraft = false;
     this.repliesToReply = [];
     final createdDate = doc['createdAt'].toDate();
     this._createdAt = createdDate;
@@ -25,8 +25,8 @@ class Reply {
   }
 
   String id = '';
+  String userId = '';
   String postId = '';
-  String uid = '';
   String replierId = '';
   String body = '';
   String nickname = '';
@@ -34,6 +34,7 @@ class Reply {
   String gender = '';
   String age = '';
   String area = '';
+  bool isDraft = false;
   List<ReplyToReply> repliesToReply = [];
   DateTime? _createdAt;
   DateTime? _updatedAt;

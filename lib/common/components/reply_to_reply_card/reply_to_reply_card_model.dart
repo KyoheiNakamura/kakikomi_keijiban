@@ -13,7 +13,7 @@ class ReplyToReplyCardModel extends ChangeNotifier {
   Future<void> getRepliesToReply(Reply reply) async {
     final querySnapshot = await _firestore
         .collection('users')
-        .doc(reply.uid)
+        .doc(reply.userId)
         .collection('posts')
         .doc(reply.postId)
         .collection('replies')

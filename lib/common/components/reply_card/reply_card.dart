@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
-// import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card_model.dart';
 import 'package:kakikomi_keijiban/common/components/reply_card/reply_card_model.dart';
 import 'package:kakikomi_keijiban/common/components/reply_to_reply_card/reply_to_reply_card.dart';
@@ -10,6 +9,7 @@ import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/common/mixin/format_poster_data_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply_to_reply/add_reply_to_reply_page.dart';
+import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
 import 'package:kakikomi_keijiban/presentation/update_reply/update_reply_page.dart';
 import 'package:provider/provider.dart';
 
@@ -17,15 +17,17 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
   ReplyCard({
     required this.reply,
     required this.post,
+    required this.passedModel,
   });
 
   final Reply reply;
   final Post post;
+  final passedModel;
 
   @override
   Widget build(BuildContext context) {
     final bool isMe = context.read<AppModel>().loggedInUser != null
-        ? context.read<AppModel>().loggedInUser!.uid == reply.uid
+        ? context.read<AppModel>().loggedInUser!.uid == reply.userId
         : false;
     return Consumer<ReplyCardModel>(builder: (context, model, child) {
       return Stack(
@@ -64,29 +66,31 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           /// 返信ボタン
-                          OutlinedButton(
-                            onPressed: () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      AddReplyToReplyPage(reply),
-                                ),
-                              );
-                              await model.getRepliesToReply(reply);
-                            },
-                            child: Text(
-                              '返信する',
-                              style:
-                                  TextStyle(color: kDarkPink, fontSize: 15.0),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16.0),
-                              ),
-                              side: BorderSide(color: kPink),
-                            ),
-                          ),
+                          passedModel is! DraftsModel
+                              ? OutlinedButton(
+                                  onPressed: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            AddReplyToReplyPage(reply),
+                                      ),
+                                    );
+                                    await model.getRepliesToReply(reply);
+                                  },
+                                  child: Text(
+                                    '返信する',
+                                    style: TextStyle(
+                                        color: kDarkPink, fontSize: 15.0),
+                                  ),
+                                  style: OutlinedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16.0),
+                                    ),
+                                    side: BorderSide(color: kPink),
+                                  ),
+                                )
+                              : SizedBox(),
 
                           /// 更新日時
                           Text(
@@ -115,6 +119,8 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                               ReplyToReplyCard(
                                 replyToReply: replyToReply,
                                 reply: reply,
+                                post: post,
+                                passedModel: passedModel,
                               ),
                               reply.repliesToReply.isNotEmpty &&
                                       reply.repliesToReply.last == replyToReply
@@ -128,30 +134,75 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
               ],
             ),
           ),
-          isMe == true
+
+          /// EditIconButton
+          isMe == true && passedModel is! DraftsModel
               ? Positioned.directional(
                   textDirection: TextDirection.ltr,
                   top: 10.0,
                   end: -8.0,
                   // child: PopupMenuOnReplyCard(reply: reply, post: post),
                   child: IconButton(
-                      icon: Icon(
-                        Icons.edit_outlined,
-                        color: kLightGrey,
-                      ),
-                      onPressed: () async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) {
-                            return UpdateReplyPage(reply);
-                          }),
-                        );
-                        await context
-                            .read<PostCardModel>()
-                            .getAllRepliesToPost(post);
-                      }),
+                    icon: Icon(
+                      Icons.edit_outlined,
+                      color: kLightGrey,
+                    ),
+                    onPressed: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) {
+                          return UpdateReplyPage(
+                            existingReply: reply,
+                            passedModel: passedModel,
+                          );
+                        }),
+                      );
+                      await context
+                          .read<PostCardModel>()
+                          .getAllRepliesToPost(post);
+                    },
+                  ),
                 )
-              : Container(),
+              : SizedBox(),
+
+          /// EditIconButton
+          isMe == true && passedModel is DraftsModel && reply.isDraft == true
+              ? Positioned.directional(
+                  textDirection: TextDirection.ltr,
+                  top: 10.0,
+                  end: -8.0,
+                  // child: PopupMenuOnReplyCard(reply: reply, post: post),
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.edit_outlined,
+                      color: kLightGrey,
+                    ),
+                    onPressed: () async {
+                      final resultForDraftButton = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return UpdateReplyPage(
+                              existingReply: reply,
+                              passedModel: passedModel,
+                            );
+                          },
+                        ),
+                      );
+                      if (resultForDraftButton ==
+                          ResultForDraftButton.updateDraft) {
+                        await passedModel.getDrafts();
+                      } else if (resultForDraftButton ==
+                          ResultForDraftButton.addPostFromDraft) {
+                        await passedModel.removeDraft(
+                          post: post,
+                          reply: reply,
+                        );
+                      }
+                    },
+                  ),
+                )
+              : SizedBox(),
         ],
       );
     });

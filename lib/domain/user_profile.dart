@@ -1,21 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:kakikomi_keijiban/common/constants.dart';
 
 class UserProfile {
   UserProfile(DocumentSnapshot doc) {
     this.id = doc.id;
     this.nickname = doc['nickname'];
-    this.position = doc['position'];
-    this.gender = doc['gender'];
-    this.age = doc['age'];
-    this.area = doc['area'];
+    this.position =
+        doc['position'].isNotEmpty ? doc['position'] : kPleaseSelect;
+    this.gender = doc['gender'].isNotEmpty ? doc['gender'] : kPleaseSelect;
+    this.age = doc['age'].isNotEmpty ? doc['age'] : kPleaseSelect;
+    this.area = doc['area'].isNotEmpty ? doc['area'] : kPleaseSelect;
     this.postCount = doc['postCount'];
-    final createdDate = doc['createdAt'].toDate();
-    this._createdAt = createdDate;
-    if (doc['updatedAt'] != null) {
-      final updatedDate = doc['updatedAt'].toDate();
-      this._updatedAt = updatedDate;
-    }
+    // final createdDate = doc['createdAt'].toDate();
+    // this._createdAt = createdDate;
+    // if (doc['updatedAt'] != null) {
+    //   final updatedDate = doc['updatedAt'].toDate();
+    //   this._updatedAt = updatedDate;
+    // }
   }
 
   String id = '';
