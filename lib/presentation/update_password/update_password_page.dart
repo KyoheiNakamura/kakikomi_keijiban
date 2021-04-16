@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/enum.dart';
-import 'package:kakikomi_keijiban/common/mixin/show_auth_error_dialog_mixin.dart';
+import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/update_password/update_password_model.dart';
 import 'package:provider/provider.dart';
 
-class UpdatePasswordPage extends StatelessWidget with ShowAuthErrorDialogMixin {
+class UpdatePasswordPage extends StatelessWidget with ShowExceptionDialogMixin {
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -100,7 +100,7 @@ class UpdatePasswordPage extends StatelessWidget with ShowAuthErrorDialogMixin {
                               var signInResult = await model.updatePassword();
                               if (signInResult ==
                                   AuthException.requiresRecentLogin) {
-                                await showAuthErrorDialog(context,
+                                await showExceptionDialog(context,
                                     '最後にログインしてから時間が経っています。\nお手数ですが一度ログアウトしたのち、再度ログインしてからもう一度お試しください。');
                               } else {
                                 Navigator.of(context).popUntil(

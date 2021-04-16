@@ -323,7 +323,6 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                             ),
                             onPressed: () async {
                               model.turnOffStar(post);
-                              // Todo 後で修正する
                               await model.deleteBookmarkedPost(post);
                             },
                           )
@@ -334,7 +333,6 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                             ),
                             onPressed: () async {
                               model.turnOnStar(post);
-                              // Todo 後で修正する
                               await model.addBookmarkedPost(post);
                               if (tabName != null) {
                                 await passedModel

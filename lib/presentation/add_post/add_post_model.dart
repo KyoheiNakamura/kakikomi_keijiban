@@ -55,13 +55,13 @@ class AddPostModel extends ChangeNotifier {
 
     try {
       await _batch.commit();
-    } catch (e) {
+    } on Exception catch (e) {
       print('addPostのバッチ処理中のエラーです');
       print(e.toString());
-      throw Exception('エラーが発生しました');
+      throw ('エラーが発生しました');
+    } finally {
+      stopLoading();
     }
-
-    stopLoading();
   }
 
   Future<void> addDraftedPost() async {
@@ -71,7 +71,7 @@ class AddPostModel extends ChangeNotifier {
     final draftedPostRef = userRef.collection('draftedPosts').doc();
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
 
-    draftedPostRef.set({
+    await draftedPostRef.set({
       'id': draftedPostRef.id,
       'userId': uid,
       'title': _postDataList[0],

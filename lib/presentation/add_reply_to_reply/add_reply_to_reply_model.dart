@@ -9,59 +9,12 @@ class AddReplyToReplyModel extends ChangeNotifier {
   final _auth = FirebaseAuth.instance;
   bool isLoading = false;
 
-  void startLoading() {
-    isLoading = true;
-    notifyListeners();
-  }
-
-  void stopLoading() {
-    isLoading = false;
-    notifyListeners();
-  }
-
-  String? validateContentCallback(String? value) {
-    if (value == null || value.isEmpty) {
-      return '返信の内容を入力してください';
-    } else if (value.length > 1500) {
-      return '1500字以内でご記入ください';
-    }
-    return null;
-  }
-
-  String? validateNicknameCallback(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'ニックネームを入力してください';
-    } else if (value.length > 10) {
-      return '10字以内でご記入ください';
-    }
-    return null;
-  }
-
   String bodyValue = '';
   String nicknameValue = '';
   String positionDropdownValue = kPleaseSelect;
   String genderDropdownValue = kPleaseSelect;
   String ageDropdownValue = kPleaseSelect;
   String areaDropdownValue = kPleaseSelect;
-
-  List<String> _convertNoSelectedValueToEmpty() {
-    List<String> replyDataList = [
-      bodyValue,
-      nicknameValue,
-      positionDropdownValue,
-      genderDropdownValue,
-      ageDropdownValue,
-      areaDropdownValue,
-    ];
-    replyDataList = replyDataList.map((replyData) {
-      if (replyData == kPleaseSelect || replyData == kDoNotSelect) {
-        return '';
-      } else {
-        return replyData;
-      }
-    }).toList();
-    return replyDataList;
-  }
 
   Future<void> addReplyToReply(Reply repliedReply) async {
     startLoading();
@@ -98,13 +51,13 @@ class AddReplyToReplyModel extends ChangeNotifier {
 
     try {
       await _batch.commit();
-    } catch (e) {
+    } on Exception catch (e) {
       print('addReplyToReplyのバッチ処理中のエラーです');
       print(e.toString());
-      throw Exception('エラーが発生しました');
+      throw ('エラーが発生しました');
+    } finally {
+      stopLoading();
     }
-
-    stopLoading();
   }
 
   Future<void> addDraftedReplyToReply(Reply repliedReply) async {
@@ -132,5 +85,52 @@ class AddReplyToReplyModel extends ChangeNotifier {
     });
 
     stopLoading();
+  }
+
+  List<String> _convertNoSelectedValueToEmpty() {
+    List<String> replyDataList = [
+      bodyValue,
+      nicknameValue,
+      positionDropdownValue,
+      genderDropdownValue,
+      ageDropdownValue,
+      areaDropdownValue,
+    ];
+    replyDataList = replyDataList.map((replyData) {
+      if (replyData == kPleaseSelect || replyData == kDoNotSelect) {
+        return '';
+      } else {
+        return replyData;
+      }
+    }).toList();
+    return replyDataList;
+  }
+
+  void startLoading() {
+    isLoading = true;
+    notifyListeners();
+  }
+
+  void stopLoading() {
+    isLoading = false;
+    notifyListeners();
+  }
+
+  String? validateContentCallback(String? value) {
+    if (value == null || value.isEmpty) {
+      return '返信の内容を入力してください';
+    } else if (value.length > 1500) {
+      return '1500字以内でご記入ください';
+    }
+    return null;
+  }
+
+  String? validateNicknameCallback(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'ニックネームを入力してください';
+    } else if (value.length > 10) {
+      return '10字以内でご記入ください';
+    }
+    return null;
   }
 }

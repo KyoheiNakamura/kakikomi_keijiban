@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/enum.dart';
-import 'package:kakikomi_keijiban/common/mixin/show_auth_error_dialog_mixin.dart';
+import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_model.dart';
 import 'package:provider/provider.dart';
 
-class SignInPage extends StatelessWidget with ShowAuthErrorDialogMixin {
+class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -91,19 +91,19 @@ class SignInPage extends StatelessWidget with ShowAuthErrorDialogMixin {
                               var signInResult = await model.signIn();
                               if (signInResult ==
                                   AuthException.emailAlreadyInUse) {
-                                await showAuthErrorDialog(
+                                await showExceptionDialog(
                                     context, 'このメールアドレスは\nすでに使用されています。');
                               } else if (signInResult ==
                                   AuthException.userNotFound) {
-                                await showAuthErrorDialog(
+                                await showExceptionDialog(
                                     context, 'このメールアドレスは\n登録されていません。');
                               } else if (signInResult ==
                                   AuthException.invalidEmail) {
-                                await showAuthErrorDialog(
+                                await showExceptionDialog(
                                     context, 'このメールアドレスは形式が正しくありません。');
                               } else if (signInResult ==
                                   AuthException.wrongPassword) {
-                                await showAuthErrorDialog(
+                                await showExceptionDialog(
                                     context, 'パスワードが正しくありません。');
                               } else {
                                 Navigator.of(context).popUntil(

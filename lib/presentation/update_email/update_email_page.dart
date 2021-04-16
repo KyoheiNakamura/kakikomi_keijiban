@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/enum.dart';
-import 'package:kakikomi_keijiban/common/mixin/show_auth_error_dialog_mixin.dart';
+import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/update_email/update_email_model.dart';
 import 'package:provider/provider.dart';
 
-class UpdateEmailPage extends StatelessWidget with ShowAuthErrorDialogMixin {
+class UpdateEmailPage extends StatelessWidget with ShowExceptionDialogMixin {
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -104,18 +104,18 @@ class UpdateEmailPage extends StatelessWidget with ShowAuthErrorDialogMixin {
                               var updateEmailResult = await model.updateEmail();
                               if (updateEmailResult ==
                                   AuthException.emailAlreadyInUse) {
-                                await showAuthErrorDialog(
+                                await showExceptionDialog(
                                     context, 'このメールアドレスは\nすでに使用されています。');
                               } else if (updateEmailResult ==
                                   AuthException.invalidEmail) {
-                                await showAuthErrorDialog(
+                                await showExceptionDialog(
                                     context, 'このメールアドレスは\n形式が正しくありません。');
                               } else if (updateEmailResult ==
                                   AuthException.requiresRecentLogin) {
-                                await showAuthErrorDialog(context,
+                                await showExceptionDialog(context,
                                     '最後にログインしてから時間が経っています。\nお手数ですが一度ログアウトしたのち、再度ログインしてからもう一度お試しください。');
                               } else if (updateEmailResult is String) {
-                                await showAuthErrorDialog(
+                                await showExceptionDialog(
                                     context, updateEmailResult);
                               } else {
                                 Navigator.of(context).popUntil(

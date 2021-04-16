@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/enum.dart';
-import 'package:kakikomi_keijiban/common/mixin/show_auth_error_dialog_mixin.dart';
+import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/sign_up/sign_up_model.dart';
 import 'package:provider/provider.dart';
 
-class SignUpPage extends StatelessWidget with ShowAuthErrorDialogMixin {
+class SignUpPage extends StatelessWidget with ShowExceptionDialogMixin {
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -114,11 +114,11 @@ class SignUpPage extends StatelessWidget with ShowAuthErrorDialogMixin {
                                   .signUpAndSignInWithEmailAndUpgradeAnonymous();
                               if (signInResult ==
                                   AuthException.emailAlreadyInUse) {
-                                await showAuthErrorDialog(
+                                await showExceptionDialog(
                                     context, 'このメールアドレスは\nすでに使用されています。');
                               } else if (signInResult ==
                                   AuthException.invalidEmail) {
-                                await showAuthErrorDialog(
+                                await showExceptionDialog(
                                     context, 'このメールアドレスは\n形式が正しくありません。');
                               } else {
                                 Navigator.of(context).popUntil(
