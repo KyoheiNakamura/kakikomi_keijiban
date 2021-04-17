@@ -7,8 +7,8 @@ import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class PostCardModel extends ChangeNotifier {
-  final _firestore = FirebaseFirestore.instance;
-  final uid = FirebaseAuth.instance.currentUser?.uid;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   bool isLoading = false;
   final List<Reply> repliesToPost = [];
 
@@ -109,14 +109,16 @@ class PostCardModel extends ChangeNotifier {
   }
 
   Future<void> addBookmarkedPost(Post post) async {
-    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
+    final userRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(_auth.currentUser?.uid);
     final bookmarkedPostRef =
         userRef.collection('bookmarkedPosts').doc(post.id);
     await bookmarkedPostRef.set({
       /// bookmarkedPosts自身のIDにはpostIdと同じIDをsetしている
       'id': post.id,
       'postId': post.id,
-      'userId': uid,
+      'userId': post.userId,
       'createdAt': FieldValue.serverTimestamp(),
 
       // Todo やっぱりbookmarkしたpostの中身を全部持たせよう
@@ -139,7 +141,9 @@ class PostCardModel extends ChangeNotifier {
   }
 
   Future<void> deleteBookmarkedPost(Post post) async {
-    final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
+    final userRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(_auth.currentUser?.uid);
     final bookmarkedPosts = userRef.collection('bookmarkedPosts').doc(post.id);
     await bookmarkedPosts.delete();
     notifyListeners();

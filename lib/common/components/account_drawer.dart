@@ -16,16 +16,15 @@ class AccountDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<HomePostsModel>(builder: (context, model, child) {
-      final bool isLoggedInUserNotAnonymous =
-          context.read<AppModel>().loggedInUser != null &&
-              context.read<AppModel>().loggedInUser!.isAnonymous == false;
+      final user = AppModel.user;
+      final isCurrentUserAnonymous = user?.isCurrentUserAnonymous();
       return SizedBox(
         width: MediaQuery.of(context).size.width * 0.8,
         child: Drawer(
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              ChangingDrawerHeader(isLoggedInUserNotAnonymous),
+              ChangingDrawerHeader(isCurrentUserAnonymous),
               Divider(thickness: 1.0),
               ListTile(
                 leading: Icon(Icons.description),
@@ -35,19 +34,6 @@ class AccountDrawer extends StatelessWidget {
                     context,
                     MaterialPageRoute(builder: (context) => MyPostsPage()),
                   );
-                  // isLoggedInUserNotAnonymous
-                  //     ? await Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //             builder: (context) => MyPostsPage()),
-                  //       )
-                  //     : await Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //             builder: (context) =>
-                  //                 SelectRegistrationMethodPage()),
-                  //       );
-                  // // Navigator.pop(context);
                 },
               ),
               ListTile(
@@ -64,19 +50,6 @@ class AccountDrawer extends StatelessWidget {
                       builder: (context) => MyRepliesPage(),
                     ),
                   );
-                  // isLoggedInUserNotAnonymous
-                  //     ? await Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //             builder: (context) => MyRepliesPage()),
-                  //       )
-                  //     : await Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //             builder: (context) =>
-                  //                 SelectRegistrationMethodPage()),
-                  //       );
-                  // // Navigator.pop(context);
                 },
               ),
               ListTile(
@@ -89,18 +62,6 @@ class AccountDrawer extends StatelessWidget {
                       builder: (context) => BookmarkedPostsPage(),
                     ),
                   );
-                  // isLoggedInUserNotAnonymous
-                  //     ? await Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //             builder: (context) => BookmarkedPostsPage()),
-                  //       )
-                  //     : await Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //             builder: (context) =>
-                  //                 SelectRegistrationMethodPage()),
-                  //       );
                   await model.getPostsWithReplies(kAllPostsTab);
                   // Navigator.pop(context);
                 },
@@ -115,19 +76,6 @@ class AccountDrawer extends StatelessWidget {
                       builder: (context) => DraftsPage(),
                     ),
                   );
-                  // isLoggedInUserNotAnonymous
-                  //     ? await Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //             builder: (context) => MyRepliesPage()),
-                  //       )
-                  //     : await Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //             builder: (context) =>
-                  //                 SelectRegistrationMethodPage()),
-                  //       );
-                  // // Navigator.pop(context);
                 },
               ),
               Divider(thickness: 1.0),
@@ -135,14 +83,12 @@ class AccountDrawer extends StatelessWidget {
                 leading: Icon(Icons.settings),
                 title: Text('設定'),
                 onTap: () async {
-                  isLoggedInUserNotAnonymous
+                  isCurrentUserAnonymous != null &&
+                          isCurrentUserAnonymous == false
                       ? await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                // UpdateProfilePage(model.userProfile!),
-                                SettingsPage(
-                                    context.read<AppModel>().userProfile!),
+                            builder: (context) => SettingsPage(),
                           ),
                         )
                       : await Navigator.push(
@@ -164,31 +110,33 @@ class AccountDrawer extends StatelessWidget {
 }
 
 class ChangingDrawerHeader extends StatelessWidget {
-  ChangingDrawerHeader(this.isLoggedInUserNotAnonymous);
-  final bool isLoggedInUserNotAnonymous;
+  ChangingDrawerHeader(this.isCurrentUserAnonymous);
+  final bool? isCurrentUserAnonymous;
 
   @override
   Widget build(BuildContext context) {
     return Consumer<HomePostsModel>(builder: (context, model, child) {
       return Padding(
         padding: const EdgeInsets.all(16.0),
-        child: isLoggedInUserNotAnonymous
+        child: isCurrentUserAnonymous != null && isCurrentUserAnonymous == false
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    context.read<AppModel>().userProfile!.nickname,
+                    AppModel.user!.nickname,
                     style: TextStyle(fontSize: 24),
                   ),
                   Text(
-                    context.read<AppModel>().loggedInUser!.email!,
+                    // context.read<AppModel>().loggedInUser!.email!,
+                    'アノニマスじゃないよ',
                     style: TextStyle(fontSize: 20.0),
                   ),
                   SizedBox(height: 24.0),
                   TextButton(
                     onPressed: () async {
-                      await context.read<AppModel>().signOut();
+                      await model.signOut();
                       Navigator.pop(context);
+                      await model.init();
                     },
                     child: Text('ログアウト'),
                   )
@@ -233,9 +181,10 @@ class ChangingDrawerHeader extends StatelessWidget {
                       await Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                SelectRegistrationMethodPage()),
+                          builder: (context) => SelectRegistrationMethodPage(),
+                        ),
                       );
+                      model.init();
                       // model.getCurrentUser();
                       // Navigator.pop(context);
                     },
@@ -252,6 +201,8 @@ class ChangingDrawerHeader extends StatelessWidget {
                         context,
                         MaterialPageRoute(builder: (context) => SignInPage()),
                       );
+                      Navigator.pop(context);
+                      model.init();
                       // model.getCurrentUser();
                       // Navigator.pop(context);
                     },

@@ -7,8 +7,8 @@ import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class BookmarkedPostsModel extends ChangeNotifier {
-  final _firestore = FirebaseFirestore.instance;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   List<Post> _bookmarkedPosts = [];
   List<Post> get posts => _bookmarkedPosts;
@@ -30,7 +30,7 @@ class BookmarkedPostsModel extends ChangeNotifier {
     // 更新後のpostを取得
     final doc = await _firestore
         .collection('users')
-        .doc(uid)
+        .doc(oldPost.userId)
         .collection('posts')
         .doc(oldPost.id)
         .get();
@@ -106,7 +106,7 @@ class BookmarkedPostsModel extends ChangeNotifier {
 
     Query queryBatch = _firestore
         .collection('users')
-        .doc(uid)
+        .doc(_auth.currentUser?.uid)
         .collection('bookmarkedPosts')
         .orderBy('createdAt', descending: true)
         .limit(loadLimit);
@@ -142,7 +142,7 @@ class BookmarkedPostsModel extends ChangeNotifier {
 
     Query queryBatch = _firestore
         .collection('users')
-        .doc(uid)
+        .doc(_auth.currentUser?.uid)
         .collection('bookmarkedPosts')
         .orderBy('createdAt', descending: true)
         .startAfterDocument(lastVisibleOfTheBatch!)

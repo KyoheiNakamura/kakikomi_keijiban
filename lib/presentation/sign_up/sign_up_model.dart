@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -22,10 +23,16 @@ class SignUpModel extends ChangeNotifier {
         password: enteredPassword,
       );
       await _auth.currentUser!.linkWithCredential(credential);
+
+      await _auth.currentUser!.reload();
+
       // Auth.UserのcurrentUserにdisplayNameをセットした。
       await _auth.currentUser!.updateProfile(
         displayName: enteredNickname,
       );
+
+      await AppModel.reloadUser();
+
       // anonymousのuserDocRefのデータを、email認証で登録したユーザーのデータでsetを使って置き換えている。
       final userDocRef =
           _firestore.collection('users').doc(_auth.currentUser!.uid);
@@ -37,7 +44,7 @@ class SignUpModel extends ChangeNotifier {
         'gender': '',
         'age': '',
         'area': '',
-        'postCount': 0,
+        'postCount': AppModel.user!.postCount,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       });

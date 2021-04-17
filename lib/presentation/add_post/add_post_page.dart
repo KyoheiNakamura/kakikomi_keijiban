@@ -5,7 +5,7 @@ import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/mixin/keyboard_actions_config_done_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
-import 'package:kakikomi_keijiban/domain/user_profile.dart';
+import 'package:kakikomi_keijiban/domain/user.dart';
 import 'package:kakikomi_keijiban/presentation/add_post/add_post_model.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
@@ -22,8 +22,6 @@ class AddPostPage extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    final UserProfile? userProfile = context.read<AppModel>().userProfile;
-    final bool isUserProfileExisting = userProfile != null;
     return WillPopScope(
       onWillPop: () {
         showConfirmDialog(context);
@@ -43,6 +41,8 @@ class AddPostPage extends StatelessWidget
           ),
           body: Consumer<AddPostModel>(
             builder: (context, model, child) {
+              final User? user = AppModel.user;
+              final bool isUserExisting = user != null;
               return LoadingSpinner(
                 inAsyncCall: model.isLoading,
                 child: KeyboardActions(
@@ -93,8 +93,8 @@ class AddPostPage extends StatelessWidget
                             Padding(
                               padding: const EdgeInsets.only(bottom: 32.0),
                               child: TextFormField(
-                                initialValue: isUserProfileExisting
-                                    ? model.nicknameValue = userProfile.nickname
+                                initialValue: isUserExisting
+                                    ? model.nicknameValue = user.nickname
                                     : model.nicknameValue = '匿名',
                                 validator: model.validateNicknameCallback,
                                 onChanged: (newValue) {
@@ -218,9 +218,9 @@ class AddPostPage extends StatelessWidget
                               padding: const EdgeInsets.only(bottom: 32.0),
                               child: DropdownButtonFormField(
                                 // validator: model.validatePositionCallback,
-                                value: isUserProfileExisting
+                                value: isUserExisting
                                     ? model.positionDropdownValue =
-                                        userProfile.position
+                                        user.position
                                     : model.positionDropdownValue,
                                 icon: Icon(Icons.arrow_downward),
                                 iconSize: 24,
@@ -245,9 +245,8 @@ class AddPostPage extends StatelessWidget
                             Padding(
                               padding: const EdgeInsets.only(bottom: 32.0),
                               child: DropdownButtonFormField(
-                                value: isUserProfileExisting
-                                    ? model.genderDropdownValue =
-                                        userProfile.gender
+                                value: isUserExisting
+                                    ? model.genderDropdownValue = user.gender
                                     : model.genderDropdownValue,
                                 icon: Icon(Icons.arrow_downward),
                                 iconSize: 24,
@@ -271,8 +270,8 @@ class AddPostPage extends StatelessWidget
                             Padding(
                               padding: const EdgeInsets.only(bottom: 32.0),
                               child: DropdownButtonFormField(
-                                value: isUserProfileExisting
-                                    ? model.ageDropdownValue = userProfile.age
+                                value: isUserExisting
+                                    ? model.ageDropdownValue = user.age
                                     : model.ageDropdownValue,
                                 icon: Icon(Icons.arrow_downward),
                                 iconSize: 24,
@@ -296,8 +295,8 @@ class AddPostPage extends StatelessWidget
                             Padding(
                               padding: const EdgeInsets.only(bottom: 48.0),
                               child: DropdownButtonFormField(
-                                value: isUserProfileExisting
-                                    ? model.areaDropdownValue = userProfile.area
+                                value: isUserExisting
+                                    ? model.areaDropdownValue = user.area
                                     : model.areaDropdownValue,
                                 icon: Icon(Icons.arrow_downward),
                                 iconSize: 24,

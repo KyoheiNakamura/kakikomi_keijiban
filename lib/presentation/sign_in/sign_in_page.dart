@@ -70,9 +70,10 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                             if (_formKey.currentState!.validate()) {
                               try {
                                 await model.signIn();
-                                Navigator.of(context).popUntil(
-                                  ModalRoute.withName('/'),
-                                );
+                                // Navigator.of(context).popUntil(
+                                //   ModalRoute.withName('/'),
+                                // );
+                                Navigator.pop(context);
                               } catch (e) {
                                 await showExceptionDialog(
                                   context,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/components/account_drawer.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card.dart';
@@ -21,7 +20,6 @@ class HomePostsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<AppModel>().listenAuthStateChanges();
     return ChangeNotifierProvider<HomePostsModel>(
       create: (context) => HomePostsModel()..init(),
       child: DefaultTabController(
@@ -203,6 +201,7 @@ class TabBarViewChild extends StatelessWidget {
                         (context, index) {
                           // RangeError (index): Invalid value: Valid value range is empty: 1
                           // Todo postsが空じゃない時にpostに入れる
+                          // print(posts);
                           final post = posts[index];
                           return Column(
                             children: [

@@ -10,11 +10,9 @@ import 'package:provider/provider.dart';
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    AppModel.listenAuthStateChanges();
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<AppModel>(
-          create: (context) => AppModel(),
-        ),
         ChangeNotifierProvider<PostCardModel>(
           create: (context) => PostCardModel(),
         ),
