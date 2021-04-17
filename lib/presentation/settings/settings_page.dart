@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
-import 'package:kakikomi_keijiban/domain/user_profile.dart';
 import 'package:kakikomi_keijiban/presentation/settings/settings_model.dart';
 import 'package:kakikomi_keijiban/presentation/update_email/update_email_page.dart';
 import 'package:kakikomi_keijiban/presentation/update_password/update_password_page.dart';
@@ -8,10 +7,6 @@ import 'package:kakikomi_keijiban/presentation/update_profile/update_profile_pag
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
-  SettingsPage(this.userProfile);
-
-  final UserProfile userProfile;
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<SettingsModel>(
@@ -62,7 +57,7 @@ class SettingsPage extends StatelessWidget {
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UpdateProfilePage(userProfile)),
+                          builder: (context) => UpdateProfilePage()),
                     );
                     // Navigator.pop(context);
                   },

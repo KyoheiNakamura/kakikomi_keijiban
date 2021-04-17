@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class ReplyCardModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
-  final uid = FirebaseAuth.instance.currentUser?.uid;
   bool isLoading = false;
 
   Future<void> getRepliesToReply(Reply reply) async {

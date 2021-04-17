@@ -25,6 +25,7 @@ class UpdateEmailModel extends ChangeNotifier {
 
     try {
       await currentUser.updateEmail(enteredEmail);
+      await currentUser.reload();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-email') {
         print('このメールアドレスは形式が正しくありません。');

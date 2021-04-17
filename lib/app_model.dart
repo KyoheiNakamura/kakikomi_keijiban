@@ -2,27 +2,24 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/domain/user_profile.dart';
+import 'package:kakikomi_keijiban/domain/user.dart';
 
-class AppModel extends ChangeNotifier {
-  final _firestore = FirebaseFirestore.instance;
-  final _auth = FirebaseAuth.instance;
-  final uid = FirebaseAuth.instance.currentUser?.uid;
-  Auth.User? loggedInUser;
-  UserProfile? userProfile;
+class AppModel {
+  static User? user;
 
-  Future<void> listenAuthStateChanges() async {
-    _auth.userChanges().listen((Auth.User? user) async {
-      if (user == null) {
-        this.loggedInUser = (await _auth.signInAnonymously()).user;
+  static Future<void> listenAuthStateChanges() async {
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    final Auth.FirebaseAuth _auth = Auth.FirebaseAuth.instance;
+
+    _auth.authStateChanges().listen((Auth.User? firebaseUser) async {
+      if (firebaseUser == null) {
+        await _auth.signInAnonymously();
       } else {
         final userDoc =
-            await _firestore.collection('users').doc(user.uid).get();
+            await _firestore.collection('users').doc(firebaseUser.uid).get();
         if (!userDoc.exists) {
           await userDoc.reference.set({
-            'userId': user.uid,
+            'userId': firebaseUser.uid,
             'nickname': '匿名',
             'position': '',
             'gender': '',
@@ -33,30 +30,27 @@ class AppModel extends ChangeNotifier {
             'updatedAt': FieldValue.serverTimestamp(),
           });
           final newUserDoc =
-              await _firestore.collection('users').doc(user.uid).get();
-          userProfile = UserProfile(newUserDoc);
+              await _firestore.collection('users').doc(firebaseUser.uid).get();
+          user = User(newUserDoc);
         } else {
-          userProfile = UserProfile(userDoc);
+          user = User(userDoc);
         }
-        this.loggedInUser = user;
       }
-      notifyListeners();
     });
   }
 
-  Future<void> getUserProfile() async {
-    if (loggedInUser!.isAnonymous == false) {
-      final userDoc =
-          await _firestore.collection('users').doc(loggedInUser!.uid).get();
-      userProfile = UserProfile(userDoc);
-      print('final Dance!!!');
+  static Future<void> reloadUser() async {
+    try {
+      final currentUser = Auth.FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUser.uid)
+            .get();
+        user = User(userDoc);
+      }
+    } on Exception catch (e) {
+      print(e.toString());
     }
-    notifyListeners();
-  }
-
-  Future<void> signOut() async {
-    await _auth.signOut();
-    loggedInUser = null;
-    notifyListeners();
   }
 }

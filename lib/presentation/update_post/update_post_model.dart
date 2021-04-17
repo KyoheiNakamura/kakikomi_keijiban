@@ -7,7 +7,6 @@ import 'package:kakikomi_keijiban/domain/post.dart';
 class UpdatePostModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final currentUser = FirebaseAuth.instance.currentUser;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
   bool isLoading = false;
   bool isCategoriesValid = true;
 
@@ -25,7 +24,7 @@ class UpdatePostModel extends ChangeNotifier {
   Future<void> updatePost(Post post) async {
     startLoading();
 
-    final userRef = _firestore.collection('users').doc(uid);
+    final userRef = _firestore.collection('users').doc(post.userId);
     final postRef = userRef.collection('posts').doc(post.id);
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
     print(_postDataList);
@@ -57,13 +56,13 @@ class UpdatePostModel extends ChangeNotifier {
 
     WriteBatch _batch = _firestore.batch();
 
-    final userRef = _firestore.collection('users').doc(uid);
+    final userRef = _firestore.collection('users').doc(draftedPost.userId);
     final postRef = userRef.collection('posts').doc();
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
 
     _batch.set(postRef, {
       'id': postRef.id,
-      'userId': uid,
+      'userId': draftedPost.userId,
       'title': _postDataList[0],
       'body': _postDataList[1],
       'nickname': _postDataList[2],
@@ -103,7 +102,7 @@ class UpdatePostModel extends ChangeNotifier {
   Future<void> updateDraftPost(Post draftedPost) async {
     startLoading();
 
-    final userRef = _firestore.collection('users').doc(uid);
+    final userRef = _firestore.collection('users').doc(draftedPost.userId);
     final draftedPostRef =
         userRef.collection('draftedPosts').doc(draftedPost.id);
     List<String> _postDataList = _convertNoSelectedValueToEmpty();

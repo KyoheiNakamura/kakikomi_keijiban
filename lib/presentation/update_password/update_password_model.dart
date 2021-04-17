@@ -33,6 +33,7 @@ class UpdatePasswordModel extends ChangeNotifier {
 
     try {
       await currentUser.updatePassword(enteredNewPassword);
+      await currentUser.reload();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'requires-recent-login') {
         print('お手数ですが一度ログアウトしたのち、再度ログインしてからもう一度お試しください。');

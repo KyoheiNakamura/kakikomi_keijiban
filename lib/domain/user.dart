@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 
-class UserProfile {
-  UserProfile(DocumentSnapshot doc) {
+class User {
+  User(DocumentSnapshot doc) {
     this.id = doc.id;
     this.nickname = doc['nickname'];
     this.position =
@@ -36,5 +37,10 @@ class UserProfile {
   String _formatDate(date) {
     final formatter = DateFormat('yyyy/MM/dd HH:mm');
     return date != null ? formatter.format(date) : '';
+  }
+
+  bool? isCurrentUserAnonymous() {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    return currentUser?.isAnonymous;
   }
 }

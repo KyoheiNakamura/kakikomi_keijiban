@@ -6,7 +6,7 @@ import 'package:kakikomi_keijiban/common/mixin/keyboard_actions_config_done_mixi
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
-import 'package:kakikomi_keijiban/domain/user_profile.dart';
+import 'package:kakikomi_keijiban/domain/user.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply_to_reply/add_reply_to_reply_model.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
@@ -24,8 +24,6 @@ class AddReplyToReplyPage extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    final UserProfile? userProfile = context.read<AppModel>().userProfile;
-    final bool isUserProfileExisting = userProfile != null;
     return WillPopScope(
       onWillPop: () {
         showConfirmDialog(context);
@@ -45,6 +43,8 @@ class AddReplyToReplyPage extends StatelessWidget
           ),
           body: Consumer<AddReplyToReplyModel>(
             builder: (context, model, child) {
+              final User? user = AppModel.user;
+              final bool isUserExisting = user != null;
               return LoadingSpinner(
                 inAsyncCall: model.isLoading,
                 child: KeyboardActions(
@@ -76,8 +76,8 @@ class AddReplyToReplyPage extends StatelessWidget
 
                             /// nickname
                             TextFormField(
-                              initialValue: isUserProfileExisting
-                                  ? model.nicknameValue = userProfile.nickname
+                              initialValue: isUserExisting
+                                  ? model.nicknameValue = user.nickname
                                   : model.nicknameValue = '匿名',
                               validator: model.validateNicknameCallback,
                               onChanged: (newValue) {
@@ -90,9 +90,8 @@ class AddReplyToReplyPage extends StatelessWidget
                             /// position
                             DropdownButtonFormField(
                               focusColor: Colors.pink[50],
-                              value: isUserProfileExisting
-                                  ? model.positionDropdownValue =
-                                      userProfile.position
+                              value: isUserExisting
+                                  ? model.positionDropdownValue = user.position
                                   : model.positionDropdownValue,
                               icon: Icon(
                                 Icons.arrow_downward,
@@ -119,9 +118,8 @@ class AddReplyToReplyPage extends StatelessWidget
                             DropdownButtonFormField(
                               // focusNode: _genderFocusNode,
                               focusColor: Colors.pink[50],
-                              value: isUserProfileExisting
-                                  ? model.genderDropdownValue =
-                                      userProfile.gender
+                              value: isUserExisting
+                                  ? model.genderDropdownValue = user.gender
                                   : model.genderDropdownValue,
                               icon: Icon(
                                 Icons.arrow_downward,
@@ -148,8 +146,8 @@ class AddReplyToReplyPage extends StatelessWidget
                             DropdownButtonFormField(
                               // focusNode: _ageFocusNode,
                               focusColor: Colors.pink[50],
-                              value: isUserProfileExisting
-                                  ? model.ageDropdownValue = userProfile.age
+                              value: isUserExisting
+                                  ? model.ageDropdownValue = user.age
                                   : model.ageDropdownValue,
                               icon: Icon(
                                 Icons.arrow_downward,
@@ -175,8 +173,8 @@ class AddReplyToReplyPage extends StatelessWidget
                             DropdownButtonFormField(
                               // focusNode: _areaFocusNode,
                               focusColor: Colors.pink[50],
-                              value: isUserProfileExisting
-                                  ? model.areaDropdownValue = userProfile.area
+                              value: isUserExisting
+                                  ? model.areaDropdownValue = user.area
                                   : model.areaDropdownValue,
                               icon: Icon(
                                 Icons.arrow_downward,

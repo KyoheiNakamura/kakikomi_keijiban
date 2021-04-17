@@ -5,8 +5,7 @@ import 'package:kakikomi_keijiban/common/constants.dart';
 
 class UpdateProfileModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
-  final currentUser = FirebaseAuth.instance.currentUser;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
+  final currentUser = FirebaseAuth.instance.currentUser!;
   bool isLoading = false;
 
   String nicknameValue = '';
@@ -18,16 +17,18 @@ class UpdateProfileModel extends ChangeNotifier {
   Future<void> updateUserProfile() async {
     startLoading();
 
-    final userRef = _firestore.collection('users').doc(uid);
+    final userRef = _firestore.collection('users').doc(currentUser.uid);
     List<String> _userProfileList = _convertNoSelectedValueToEmpty();
 
     try {
-      await currentUser!.updateProfile(
+      await currentUser.updateProfile(
         displayName: _userProfileList[0],
       );
 
+      await currentUser.reload();
+
       await userRef.update({
-        'userId': uid,
+        'userId': currentUser.uid,
         'nickname': _userProfileList[0],
         'position': _userProfileList[1],
         'gender': _userProfileList[2],
@@ -60,6 +61,15 @@ class UpdateProfileModel extends ChangeNotifier {
       }
     }).toList();
     return userProfileList;
+  }
+
+  String? validateNicknameCallback(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'ニックネームを入力してください';
+    } else if (value.length > 10) {
+      return '10字以内でご記入ください';
+    }
+    return null;
   }
 
   void startLoading() {

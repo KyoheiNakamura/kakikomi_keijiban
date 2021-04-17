@@ -8,8 +8,8 @@ import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class DraftsModel extends ChangeNotifier {
-  final _firestore = FirebaseFirestore.instance;
-  final uid = FirebaseAuth.instance.currentUser?.uid;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   List<Post> _drafts = [];
   List<Post> get posts => _drafts;
@@ -35,7 +35,7 @@ class DraftsModel extends ChangeNotifier {
   Future<void> _getDraftPosts() async {
     final querySnapshot = await _firestore
         .collection('users')
-        .doc(uid)
+        .doc(_auth.currentUser?.uid)
         .collection('draftedPosts')
         .get();
     final docs = querySnapshot.docs;
@@ -50,7 +50,7 @@ class DraftsModel extends ChangeNotifier {
   Future<void> _getDraftReplies() async {
     final querySnapshot = await _firestore
         .collection('users')
-        .doc(uid)
+        .doc(_auth.currentUser?.uid)
         .collection('draftedReplies')
         .get();
     final docs = querySnapshot.docs;
@@ -79,7 +79,7 @@ class DraftsModel extends ChangeNotifier {
   Future<void> _getDraftedRepliesToReply() async {
     final querySnapshot = await _firestore
         .collection('users')
-        .doc(uid)
+        .doc(_auth.currentUser?.uid)
         .collection('draftedRepliesToReply')
         .get();
     final docs = querySnapshot.docs;

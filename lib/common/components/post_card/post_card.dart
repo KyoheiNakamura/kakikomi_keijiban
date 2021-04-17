@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card_model.dart';
 import 'package:kakikomi_keijiban/common/components/reply_card/reply_card.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
@@ -27,9 +26,6 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
 
   @override
   Widget build(BuildContext context) {
-    final bool isMe = context.read<AppModel>().loggedInUser != null
-        ? context.read<AppModel>().loggedInUser!.uid == post.userId
-        : false;
     return Consumer<PostCardModel>(builder: (context, model, child) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -208,7 +204,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
             ),
 
             /// EditIconButton
-            isMe == true && passedModel is! DraftsModel
+            post.isMe() == true && passedModel is! DraftsModel
                 ? Positioned.directional(
                     textDirection: TextDirection.ltr,
                     top: 30.0,
@@ -250,7 +246,9 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                 : SizedBox(),
 
             /// EditIconButton
-            isMe == true && passedModel is DraftsModel && post.isDraft == true
+            post.isMe() == true &&
+                    passedModel is DraftsModel &&
+                    post.isDraft == true
                 ? Positioned.directional(
                     textDirection: TextDirection.ltr,
                     top: 30.0,

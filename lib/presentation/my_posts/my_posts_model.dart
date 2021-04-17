@@ -8,8 +8,8 @@ import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class MyPostsModel extends ChangeNotifier {
-  final _firestore = FirebaseFirestore.instance;
-  final uid = FirebaseAuth.instance.currentUser?.uid;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   List<Post> _myPosts = [];
   List<Post> get posts => _myPosts;
@@ -35,7 +35,7 @@ class MyPostsModel extends ChangeNotifier {
 
     Query queryBatch = _firestore
         .collection('users')
-        .doc(uid)
+        .doc(_auth.currentUser?.uid)
         .collection('posts')
         .orderBy('updatedAt', descending: true)
         .limit(loadLimit);
@@ -69,7 +69,7 @@ class MyPostsModel extends ChangeNotifier {
 
     Query queryBatch = _firestore
         .collection('users')
-        .doc(uid)
+        .doc(_auth.currentUser?.uid)
         .collection('posts')
         .orderBy('updatedAt', descending: true)
         .startAfterDocument(lastVisibleOfTheBatch!)
@@ -101,7 +101,7 @@ class MyPostsModel extends ChangeNotifier {
   Future<void> _addBookmarkToPosts() async {
     final bookmarkedPostsSnapshot = await _firestore
         .collection('users')
-        .doc(uid)
+        .doc(_auth.currentUser?.uid)
         .collection('bookmarkedPosts')
         // .orderBy('createdAt', descending: true)
         .get();
@@ -159,7 +159,7 @@ class MyPostsModel extends ChangeNotifier {
     // 更新後のpostを取得
     final doc = await _firestore
         .collection('users')
-        .doc(uid)
+        .doc(_auth.currentUser?.uid)
         .collection('posts')
         .doc(oldPost.id)
         .get();

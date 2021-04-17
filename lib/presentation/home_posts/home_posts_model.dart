@@ -10,7 +10,7 @@ import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class HomePostsModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
-  final uid = FirebaseAuth.instance.currentUser?.uid;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   List<Post> _allPosts = [];
   List<Post> _myPosts = [];
@@ -123,7 +123,7 @@ class HomePostsModel extends ChangeNotifier {
     // 更新後のpostを取得
     final doc = await _firestore
         .collection('users')
-        .doc(uid)
+        .doc(oldPost.userId)
         .collection('posts')
         .doc(oldPost.id)
         .get();
@@ -173,7 +173,7 @@ class HomePostsModel extends ChangeNotifier {
     // 更新後のpostを取得
     final doc = await _firestore
         .collection('users')
-        .doc(uid)
+        .doc(oldPost.userId)
         .collection('posts')
         .doc(oldPost.id)
         .get();
@@ -223,7 +223,7 @@ class HomePostsModel extends ChangeNotifier {
     // 更新後のpostを取得
     final doc = await _firestore
         .collection('users')
-        .doc(uid)
+        .doc(oldPost.userId)
         .collection('posts')
         .doc(oldPost.id)
         .get();
@@ -339,7 +339,7 @@ class HomePostsModel extends ChangeNotifier {
 
     this._myPostsQuery = _firestore
         .collection('users')
-        .doc(uid)
+        .doc(_auth.currentUser?.uid)
         .collection('posts')
         .orderBy('updatedAt', descending: true)
         .limit(_loadLimit);
@@ -374,7 +374,7 @@ class HomePostsModel extends ChangeNotifier {
 
     this._myPostsQuery = _firestore
         .collection('users')
-        .doc(uid)
+        .doc(_auth.currentUser?.uid)
         .collection('posts')
         .orderBy('createdAt', descending: true)
         .startAfterDocument(this._myPostsLastVisible!)
@@ -409,7 +409,7 @@ class HomePostsModel extends ChangeNotifier {
 
     this._bookmarkedPostsQuery = _firestore
         .collection('users')
-        .doc(uid)
+        .doc(_auth.currentUser?.uid)
         .collection('bookmarkedPosts')
         .orderBy('createdAt', descending: true)
         .limit(_loadLimit);
@@ -443,7 +443,7 @@ class HomePostsModel extends ChangeNotifier {
 
     this._bookmarkedPostsQuery = _firestore
         .collection('users')
-        .doc(uid)
+        .doc(_auth.currentUser?.uid)
         .collection('bookmarkedPosts')
         .orderBy('createdAt', descending: true)
         .startAfterDocument(_bookmarkedPostsLastVisible!)
@@ -495,7 +495,7 @@ class HomePostsModel extends ChangeNotifier {
   Future<void> _addBookmarkToAllPosts() async {
     final bookmarkedPostsSnapshot = await _firestore
         .collection('users')
-        .doc(uid)
+        .doc(_auth.currentUser?.uid)
         .collection('bookmarkedPosts')
         // .orderBy('createdAt', descending: true)
         .get();
@@ -514,7 +514,7 @@ class HomePostsModel extends ChangeNotifier {
   Future<void> _addBookmarkToMyPosts() async {
     final bookmarkedPostsSnapshot = await _firestore
         .collection('users')
-        .doc(uid)
+        .doc(_auth.currentUser?.uid)
         .collection('bookmarkedPosts')
         // .orderBy('createdAt', descending: true)
         .get();
@@ -634,6 +634,11 @@ class HomePostsModel extends ChangeNotifier {
         reply.repliesToReply = _repliesToReplies;
       }
     }
+  }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
+    notifyListeners();
   }
 
   void startLoading() {

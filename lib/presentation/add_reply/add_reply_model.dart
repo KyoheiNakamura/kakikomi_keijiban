@@ -1,13 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 
 class AddReplyModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
-  final _auth = FirebaseAuth.instance;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
+  final _auth = Auth.FirebaseAuth.instance;
+
   bool isLoading = false;
 
   String bodyValue = '';

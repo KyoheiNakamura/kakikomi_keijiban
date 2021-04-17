@@ -4,14 +4,11 @@ import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
-import 'package:kakikomi_keijiban/domain/user_profile.dart';
 import 'package:kakikomi_keijiban/presentation/update_profile/update_profile_model.dart';
 import 'package:provider/provider.dart';
 
 class UpdateProfilePage extends StatelessWidget with ShowExceptionDialogMixin {
-  UpdateProfilePage(this.userProfile);
-
-  final UserProfile userProfile;
+  final user = AppModel.user!;
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -54,16 +51,8 @@ class UpdateProfilePage extends StatelessWidget with ShowExceptionDialogMixin {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: TextFormField(
-                              initialValue: model.nicknameValue =
-                                  userProfile.nickname,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'ニックネームを入力してください';
-                                } else if (value.length > 10) {
-                                  return '10字以内でご記入ください';
-                                }
-                                return null;
-                              },
+                              initialValue: model.nicknameValue = user.nickname,
+                              validator: model.validateNicknameCallback,
                               onChanged: (newValue) {
                                 model.nicknameValue = newValue;
                               },
@@ -81,9 +70,8 @@ class UpdateProfilePage extends StatelessWidget with ShowExceptionDialogMixin {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: DropdownButtonFormField(
-                              value: userProfile.position.isNotEmpty
-                                  ? model.positionDropdownValue =
-                                      userProfile.position
+                              value: user.position.isNotEmpty
+                                  ? model.positionDropdownValue = user.position
                                   : model.positionDropdownValue,
                               icon: Icon(Icons.arrow_downward),
                               iconSize: 24,
@@ -111,9 +99,8 @@ class UpdateProfilePage extends StatelessWidget with ShowExceptionDialogMixin {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: DropdownButtonFormField(
-                              value: userProfile.gender.isNotEmpty
-                                  ? model.genderDropdownValue =
-                                      userProfile.gender
+                              value: user.gender.isNotEmpty
+                                  ? model.genderDropdownValue = user.gender
                                   : model.genderDropdownValue,
                               icon: Icon(Icons.arrow_downward),
                               iconSize: 24,
@@ -137,8 +124,8 @@ class UpdateProfilePage extends StatelessWidget with ShowExceptionDialogMixin {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: DropdownButtonFormField(
-                              value: userProfile.age.isNotEmpty
-                                  ? model.ageDropdownValue = userProfile.age
+                              value: user.age.isNotEmpty
+                                  ? model.ageDropdownValue = user.age
                                   : model.ageDropdownValue,
                               icon: Icon(Icons.arrow_downward),
                               iconSize: 24,
@@ -161,8 +148,8 @@ class UpdateProfilePage extends StatelessWidget with ShowExceptionDialogMixin {
                           Padding(
                             padding: const EdgeInsets.only(bottom: 48.0),
                             child: DropdownButtonFormField(
-                              value: userProfile.area.isNotEmpty
-                                  ? model.areaDropdownValue = userProfile.area
+                              value: user.area.isNotEmpty
+                                  ? model.areaDropdownValue = user.area
                                   : model.areaDropdownValue,
                               icon: Icon(Icons.arrow_downward),
                               iconSize: 24,
@@ -188,9 +175,7 @@ class UpdateProfilePage extends StatelessWidget with ShowExceptionDialogMixin {
                               if (_formKey.currentState!.validate()) {
                                 try {
                                   await model.updateUserProfile();
-                                  await context
-                                      .read<AppModel>()
-                                      .getUserProfile();
+                                  await AppModel.reloadUser();
                                   Navigator.of(context).popUntil(
                                     ModalRoute.withName('/'),
                                   );

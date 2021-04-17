@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
 class ReplyToReply {
@@ -44,5 +45,10 @@ class ReplyToReply {
   String _formatDate(date) {
     final formatter = DateFormat('yyyy/MM/dd HH:mm');
     return date != null ? formatter.format(date) : '';
+  }
+
+  bool isMe() {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    return userId == currentUser?.uid;
   }
 }

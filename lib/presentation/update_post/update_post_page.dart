@@ -7,7 +7,7 @@ import 'package:kakikomi_keijiban/common/mixin/keyboard_actions_config_done_mixi
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
-import 'package:kakikomi_keijiban/domain/user_profile.dart';
+import 'package:kakikomi_keijiban/domain/user.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
 import 'package:kakikomi_keijiban/presentation/update_post/update_post_model.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -27,8 +27,6 @@ class UpdatePostPage extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    final UserProfile? userProfile = context.read<AppModel>().userProfile;
-    final bool isUserProfileExisting = userProfile != null;
     return WillPopScope(
       onWillPop: () {
         showConfirmDialog(context);
@@ -48,6 +46,8 @@ class UpdatePostPage extends StatelessWidget
           ),
           body: Consumer<UpdatePostModel>(
             builder: (context, model, child) {
+              final User? user = AppModel.user;
+              final bool isUserExisting = user != null;
               if (model.selectedCategories.isEmpty) {
                 model.selectedCategories.addAll(existingPost.categories);
               }
@@ -231,9 +231,9 @@ class UpdatePostPage extends StatelessWidget
                                 value: existingPost.position.isNotEmpty
                                     ? model.positionDropdownValue =
                                         existingPost.position
-                                    : isUserProfileExisting
+                                    : isUserExisting
                                         ? model.positionDropdownValue =
-                                            userProfile.position
+                                            user.position
                                         : model.positionDropdownValue,
                                 icon: Icon(Icons.arrow_downward),
                                 iconSize: 24,
@@ -260,9 +260,9 @@ class UpdatePostPage extends StatelessWidget
                                 value: existingPost.gender.isNotEmpty
                                     ? model.genderDropdownValue =
                                         existingPost.gender
-                                    : isUserProfileExisting
+                                    : isUserExisting
                                         ? model.genderDropdownValue =
-                                            userProfile.gender
+                                            user.gender
                                         : model.genderDropdownValue,
                                 icon: Icon(Icons.arrow_downward),
                                 iconSize: 24,
@@ -288,9 +288,8 @@ class UpdatePostPage extends StatelessWidget
                               child: DropdownButtonFormField(
                                 value: existingPost.age.isNotEmpty
                                     ? model.ageDropdownValue = existingPost.age
-                                    : isUserProfileExisting
-                                        ? model.ageDropdownValue =
-                                            userProfile.age
+                                    : isUserExisting
+                                        ? model.ageDropdownValue = user.age
                                         : model.ageDropdownValue,
                                 icon: Icon(Icons.arrow_downward),
                                 iconSize: 24,
@@ -317,9 +316,8 @@ class UpdatePostPage extends StatelessWidget
                                 value: existingPost.area.isNotEmpty
                                     ? model.areaDropdownValue =
                                         existingPost.area
-                                    : isUserProfileExisting
-                                        ? model.areaDropdownValue =
-                                            userProfile.area
+                                    : isUserExisting
+                                        ? model.areaDropdownValue = user.area
                                         : model.areaDropdownValue,
                                 icon: Icon(Icons.arrow_downward),
                                 iconSize: 24,

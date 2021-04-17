@@ -1,12 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/domain/user.dart';
 
 class AddPostModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
-  final currentUser = FirebaseAuth.instance.currentUser;
-  final uid = FirebaseAuth.instance.currentUser!.uid;
+  final Auth.FirebaseAuth _auth = Auth.FirebaseAuth.instance;
+
+  User? user;
+
   bool isLoading = false;
   bool isCategoriesValid = true;
 
@@ -24,6 +27,7 @@ class AddPostModel extends ChangeNotifier {
   Future<void> addPost() async {
     startLoading();
 
+    final uid = _auth.currentUser!.uid;
     WriteBatch _batch = _firestore.batch();
 
     final userRef = _firestore.collection('users').doc(uid);
@@ -67,7 +71,7 @@ class AddPostModel extends ChangeNotifier {
   Future<void> addDraftedPost() async {
     startLoading();
 
-    final userRef = _firestore.collection('users').doc(uid);
+    final userRef = _firestore.collection('users').doc(_auth.currentUser!.uid);
     final draftedPostRef = userRef.collection('draftedPosts').doc();
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
 
@@ -75,7 +79,7 @@ class AddPostModel extends ChangeNotifier {
       // throw Exception('エラーやで💖');
       await draftedPostRef.set({
         'id': draftedPostRef.id,
-        'userId': uid,
+        'userId': _auth.currentUser!.uid,
         'title': _postDataList[0],
         'body': _postDataList[1],
         'nickname': _postDataList[2],

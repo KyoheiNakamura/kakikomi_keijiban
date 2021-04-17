@@ -17,7 +17,7 @@ class SearchResultPostsModel extends ChangeNotifier {
   }
 
   final _firestore = FirebaseFirestore.instance;
-  final uid = FirebaseAuth.instance.currentUser?.uid;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   List<Post> _searchedPosts = [];
   List<Post> get posts => _searchedPosts;
@@ -130,7 +130,7 @@ class SearchResultPostsModel extends ChangeNotifier {
   Future<void> _addBookmarkToPosts() async {
     final bookmarkedPostsSnapshot = await _firestore
         .collection('users')
-        .doc(uid)
+        .doc(_auth.currentUser?.uid)
         .collection('bookmarkedPosts')
         // .orderBy('createdAt', descending: true)
         .get();
@@ -189,7 +189,7 @@ class SearchResultPostsModel extends ChangeNotifier {
     // 更新後のpostを取得
     final doc = await _firestore
         .collection('users')
-        .doc(uid)
+        .doc(_auth.currentUser?.uid)
         .collection('posts')
         .doc(oldPost.id)
         .get();
