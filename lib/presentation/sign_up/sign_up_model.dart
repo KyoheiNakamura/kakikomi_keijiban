@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/common/enum.dart';
+import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class SignUpModel extends ChangeNotifier {
@@ -9,21 +9,13 @@ class SignUpModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   bool isLoading = false;
 
-  void startLoading() {
-    isLoading = true;
-    notifyListeners();
-  }
-
-  void stopLoading() {
-    isLoading = false;
-    notifyListeners();
-  }
-
   String enteredEmail = '';
   String enteredPassword = '';
   String enteredNickname = '';
 
   Future signUpAndSignInWithEmailAndUpgradeAnonymous() async {
+    startLoading();
+
     try {
       final AuthCredential credential = EmailAuthProvider.credential(
         email: enteredEmail,
@@ -49,33 +41,29 @@ class SignUpModel extends ChangeNotifier {
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
-      // final Auth.User user = userCredential.user!;
-      // final String email = user.email!;
-      // _firestore.collection('users').add({
-      //   'id': user.uid,
-      //   'email': email,
-      //   'nickname': enteredNickname,
-      //   'createdAt': Timestamp.now(),
-      // });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
         print('このメールアドレスはすでに使用されています。');
-        return AuthException.emailAlreadyInUse;
+        throw ('このメールアドレスはすでに使用されています。');
       } else if (e.code == 'invalid-email') {
-        print('このメールアドレスは形式が正しくないです。');
-        return AuthException.invalidEmail;
+        print('このメールアドレスは形式が正しくありません。');
+        throw ('このメールアドレスは形式が正しくありません。');
         // Todo createUserWithEmailAndPassword()の他の例外処理も書こう
       } else {
-        print(e);
-        return e;
+        print(e.toString());
+        throw e.toString();
       }
-    } catch (e) {
-      print(e);
-      return e;
+    } on Exception catch (e) {
+      print(e.toString());
+      throw e.toString();
+    } finally {
+      stopLoading();
     }
   }
 
   Future signUpAndSignInWithGoogleAndUpgradeAnonymous() async {
+    startLoading();
+
     try {
       final GoogleSignInAccount googleUser = (await GoogleSignIn().signIn())!;
       final GoogleSignInAuthentication googleAuth =
@@ -96,18 +84,60 @@ class SignUpModel extends ChangeNotifier {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
         print('このメールアドレスはすでに使用されています。');
-        return AuthException.emailAlreadyInUse;
+        throw ('このメールアドレスはすでに使用されています。');
       } else if (e.code == 'invalid-email') {
-        print('このメールアドレスは形式が正しくないです。');
-        return AuthException.invalidEmail;
+        print('このメールアドレスは形式が正しくありません。');
+        throw ('このメールアドレスは形式が正しくありません。');
         // Todo createUserWithEmailAndPassword()の他の例外処理も書こう
       } else {
-        print(e);
-        return e;
+        print(e.toString());
+        throw e.toString();
       }
-    } catch (e) {
-      print(e);
-      return e;
+    } on Exception catch (e) {
+      print(e.toString());
+      throw e.toString();
+    } finally {
+      stopLoading();
+    }
+  }
+
+  void startLoading() {
+    isLoading = true;
+    notifyListeners();
+  }
+
+  void stopLoading() {
+    isLoading = false;
+    notifyListeners();
+  }
+
+  String? validateNicknameCallback(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'ニックネームを入力してください';
+    } else if (value.length > 10) {
+      return '10字以内でご記入ください';
+    } else {
+      return null;
+    }
+  }
+
+  String? validateEmailCallback(String? value) {
+    if (value == null ||
+        value.isEmpty ||
+        RegExp(kValidEmailRegularExpression).hasMatch(enteredEmail) == false) {
+      return 'メールアドレスを入力してください';
+    } else {
+      return null;
+    }
+  }
+
+  String? validatePasswordCallback(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'パスワードを入力してください';
+    } else if (value.length < 8) {
+      return '8文字以上の半角英数記号でご記入ください';
+    } else {
+      return null;
     }
   }
 

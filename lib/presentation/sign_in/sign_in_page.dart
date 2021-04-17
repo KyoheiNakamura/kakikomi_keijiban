@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
-import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_model.dart';
 import 'package:provider/provider.dart';
@@ -36,21 +35,9 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // content
+                        /// email
                         TextFormField(
-                          validator: (value) {
-                            // Todo emailのvalidationを書く（正規表現）
-                            // if (value == null ||
-                            //     value.isEmpty ||
-                            //     RegExp(r"/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)")
-                            //         .hasMatch(model.enteredEmail)) {
-                            //   return 'メールアドレスを入力してください';
-                            // }
-                            if (value == null || value.isEmpty) {
-                              return 'メールアドレスを入力してください';
-                            }
-                            return null;
-                          },
+                          validator: model.validateEmailCallback,
                           onChanged: (newValue) {
                             model.enteredEmail = newValue;
                           },
@@ -61,16 +48,10 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                           ),
                         ),
                         SizedBox(height: 32.0),
-                        // nickname
+
+                        /// password
                         TextFormField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'パスワードを入力してください';
-                            } else if (value.length < 8) {
-                              return '8文字以上の半角英数記号でご記入ください';
-                            }
-                            return null;
-                          },
+                          validator: model.validatePasswordCallback,
                           onChanged: (newValue) {
                             model.enteredPassword = newValue;
                           },
@@ -82,35 +63,22 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                           ),
                         ),
                         SizedBox(height: 48.0),
-                        // 投稿送信ボタン
+
+                        /// 投稿送信ボタン
                         OutlinedButton(
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              model.startLoading();
-
-                              var signInResult = await model.signIn();
-                              if (signInResult ==
-                                  AuthException.emailAlreadyInUse) {
-                                await showExceptionDialog(
-                                    context, 'このメールアドレスは\nすでに使用されています。');
-                              } else if (signInResult ==
-                                  AuthException.userNotFound) {
-                                await showExceptionDialog(
-                                    context, 'このメールアドレスは\n登録されていません。');
-                              } else if (signInResult ==
-                                  AuthException.invalidEmail) {
-                                await showExceptionDialog(
-                                    context, 'このメールアドレスは形式が正しくありません。');
-                              } else if (signInResult ==
-                                  AuthException.wrongPassword) {
-                                await showExceptionDialog(
-                                    context, 'パスワードが正しくありません。');
-                              } else {
+                              try {
+                                await model.signIn();
                                 Navigator.of(context).popUntil(
                                   ModalRoute.withName('/'),
                                 );
+                              } catch (e) {
+                                await showExceptionDialog(
+                                  context,
+                                  e.toString(),
+                                );
                               }
-                              model.stopLoading();
                             }
                           },
                           child: Text(

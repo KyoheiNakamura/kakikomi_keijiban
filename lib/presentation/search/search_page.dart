@@ -5,9 +5,6 @@ import 'package:kakikomi_keijiban/presentation/search_result_posts/search_result
 class SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // return ChangeNotifierProvider<SearchModel>(
-    //   create: (context) => SearchModel(),
-    //   child:
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 50,
