@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 
-mixin ShowAuthErrorDialogMixin {
-  Future<void> showAuthErrorDialog(
+mixin ShowExceptionDialogMixin {
+  Future<void> showExceptionDialog(
       BuildContext context, String errorMessage) async {
     return await showDialog<void>(
       context: context,

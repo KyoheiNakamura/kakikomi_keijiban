@@ -9,16 +9,6 @@ class UpdateProfileModel extends ChangeNotifier {
   final uid = FirebaseAuth.instance.currentUser!.uid;
   bool isLoading = false;
 
-  void startLoading() {
-    isLoading = true;
-    notifyListeners();
-  }
-
-  void stopLoading() {
-    isLoading = false;
-    notifyListeners();
-  }
-
   String nicknameValue = '';
   String positionDropdownValue = kPleaseSelect;
   String genderDropdownValue = kPleaseSelect;
@@ -31,23 +21,27 @@ class UpdateProfileModel extends ChangeNotifier {
     final userRef = _firestore.collection('users').doc(uid);
     List<String> _userProfileList = _convertNoSelectedValueToEmpty();
 
-    await currentUser!.updateProfile(
-      displayName: _userProfileList[0],
-    );
+    try {
+      await currentUser!.updateProfile(
+        displayName: _userProfileList[0],
+      );
 
-    await userRef.update({
-      'userId': uid,
-      'nickname': _userProfileList[0],
-      'position': _userProfileList[1],
-      'gender': _userProfileList[2],
-      'age': _userProfileList[3],
-      'area': _userProfileList[4],
-      // Todo あとでやる
-      'postCount': 0,
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
-
-    stopLoading();
+      await userRef.update({
+        'userId': uid,
+        'nickname': _userProfileList[0],
+        'position': _userProfileList[1],
+        'gender': _userProfileList[2],
+        'age': _userProfileList[3],
+        'area': _userProfileList[4],
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } on Exception catch (e) {
+      print('updateUserProfile処理中のエラーです');
+      print(e.toString());
+      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+    } finally {
+      stopLoading();
+    }
   }
 
   List<String> _convertNoSelectedValueToEmpty() {
@@ -66,5 +60,15 @@ class UpdateProfileModel extends ChangeNotifier {
       }
     }).toList();
     return userProfileList;
+  }
+
+  void startLoading() {
+    isLoading = true;
+    notifyListeners();
+  }
+
+  void stopLoading() {
+    isLoading = false;
+    notifyListeners();
   }
 }

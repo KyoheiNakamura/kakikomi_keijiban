@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
-import 'package:kakikomi_keijiban/common/enum.dart';
-import 'package:kakikomi_keijiban/common/mixin/show_auth_error_dialog_mixin.dart';
+import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/sign_up/sign_up_model.dart';
 import 'package:provider/provider.dart';
 
-class SignUpPage extends StatelessWidget with ShowAuthErrorDialogMixin {
+class SignUpPage extends StatelessWidget with ShowExceptionDialogMixin {
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -38,14 +37,7 @@ class SignUpPage extends StatelessWidget with ShowAuthErrorDialogMixin {
                       children: [
                         /// nickname
                         TextFormField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'ニックネームを入力してください';
-                            } else if (value.length > 10) {
-                              return '10文字以下でご記入ください';
-                            }
-                            return null;
-                          },
+                          validator: model.validateNicknameCallback,
                           onChanged: (newValue) {
                             model.enteredNickname = newValue;
                           },
@@ -57,21 +49,9 @@ class SignUpPage extends StatelessWidget with ShowAuthErrorDialogMixin {
                         ),
                         SizedBox(height: 32.0),
 
-                        /// content
+                        /// email
                         TextFormField(
-                          validator: (value) {
-                            // Todo emailのvalidationを書く（正規表現）
-                            // if (value == null ||
-                            //     value.isEmpty ||
-                            //     RegExp(r"/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)")
-                            //         .hasMatch(model.enteredEmail)) {
-                            //   return 'メールアドレスを入力してください';
-                            // }
-                            if (value == null || value.isEmpty) {
-                              return 'メールアドレスを入力してください';
-                            }
-                            return null;
-                          },
+                          validator: model.validateEmailCallback,
                           onChanged: (newValue) {
                             model.enteredEmail = newValue;
                           },
@@ -85,14 +65,7 @@ class SignUpPage extends StatelessWidget with ShowAuthErrorDialogMixin {
 
                         /// password
                         TextFormField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'パスワードを入力してください';
-                            } else if (value.length < 8) {
-                              return '8文字以上の半角英数記号でご記入ください';
-                            }
-                            return null;
-                          },
+                          validator: model.validatePasswordCallback,
                           onChanged: (newValue) {
                             model.enteredPassword = newValue;
                           },
@@ -109,23 +82,18 @@ class SignUpPage extends StatelessWidget with ShowAuthErrorDialogMixin {
                         OutlinedButton(
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              model.startLoading();
-                              var signInResult = await model
-                                  .signUpAndSignInWithEmailAndUpgradeAnonymous();
-                              if (signInResult ==
-                                  AuthException.emailAlreadyInUse) {
-                                await showAuthErrorDialog(
-                                    context, 'このメールアドレスは\nすでに使用されています。');
-                              } else if (signInResult ==
-                                  AuthException.invalidEmail) {
-                                await showAuthErrorDialog(
-                                    context, 'このメールアドレスは\n形式が正しくありません。');
-                              } else {
+                              try {
+                                await model
+                                    .signUpAndSignInWithEmailAndUpgradeAnonymous();
                                 Navigator.of(context).popUntil(
                                   ModalRoute.withName('/'),
                                 );
+                              } catch (e) {
+                                await showExceptionDialog(
+                                  context,
+                                  e.toString(),
+                                );
                               }
-                              model.stopLoading();
                             }
                           },
                           child: Text(

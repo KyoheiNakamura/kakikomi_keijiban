@@ -5,6 +5,7 @@ import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/common/mixin/keyboard_actions_config_done_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
+import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/user_profile.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
@@ -13,7 +14,10 @@ import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
 
 class UpdatePostPage extends StatelessWidget
-    with ShowConfirmDialogMixin, KeyboardActionsConfigDoneMixin {
+    with
+        ShowConfirmDialogMixin,
+        KeyboardActionsConfigDoneMixin,
+        ShowExceptionDialogMixin {
   UpdatePostPage({required this.existingPost, required this.passedModel});
 
   final Post existingPost;
@@ -341,10 +345,15 @@ class UpdatePostPage extends StatelessWidget
                                     onPressed: () async {
                                       if (model.validateSelectedCategories() &&
                                           _formKey.currentState!.validate()) {
-                                        model.startLoading();
-                                        await model.updatePost(existingPost);
-                                        model.stopLoading();
-                                        Navigator.pop(context);
+                                        try {
+                                          await model.updatePost(existingPost);
+                                          Navigator.pop(context);
+                                        } catch (e) {
+                                          await showExceptionDialog(
+                                            context,
+                                            e.toString(),
+                                          );
+                                        }
                                         // Navigator.of(context).popUntil(
                                         //   ModalRoute.withName('/'),
                                         // );
@@ -381,13 +390,21 @@ class UpdatePostPage extends StatelessWidget
                                                   .validateSelectedCategories() &&
                                               _formKey.currentState!
                                                   .validate()) {
-                                            await model
-                                                .addPostFromDraft(existingPost);
-                                            Navigator.pop(
-                                              context,
-                                              ResultForDraftButton
-                                                  .addPostFromDraft,
-                                            );
+                                            try {
+                                              await model.addPostFromDraft(
+                                                  existingPost);
+                                              Navigator.pop(
+                                                context,
+                                                ResultForDraftButton
+                                                    .addPostFromDraft,
+                                              );
+                                            } catch (e) {
+                                              await showExceptionDialog(
+                                                context,
+                                                e.toString(),
+                                              );
+                                            }
+
                                             // Navigator.of(context).popUntil(
                                             //   ModalRoute.withName('/'),
                                             // );
@@ -421,12 +438,25 @@ class UpdatePostPage extends StatelessWidget
                                                   .validateSelectedCategories() &&
                                               _formKey.currentState!
                                                   .validate()) {
-                                            await model
-                                                .updateDraftPost(existingPost);
-                                            Navigator.pop(
-                                              context,
-                                              ResultForDraftButton.updateDraft,
-                                            );
+                                            try {
+                                              await model.updateDraftPost(
+                                                  existingPost);
+                                              final snackBar = SnackBar(
+                                                content: Text('下書きに保存しました'),
+                                              );
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(snackBar);
+                                              Navigator.pop(
+                                                context,
+                                                ResultForDraftButton
+                                                    .updateDraft,
+                                              );
+                                            } catch (e) {
+                                              await showExceptionDialog(
+                                                context,
+                                                e.toString(),
+                                              );
+                                            }
                                             // Navigator.of(context).popUntil(
                                             //   ModalRoute.withName('/'),
                                             // );

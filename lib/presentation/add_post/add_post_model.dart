@@ -55,13 +55,13 @@ class AddPostModel extends ChangeNotifier {
 
     try {
       await _batch.commit();
-    } catch (e) {
+    } on Exception catch (e) {
       print('addPostのバッチ処理中のエラーです');
       print(e.toString());
-      throw Exception('エラーが発生しました');
+      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+    } finally {
+      stopLoading();
     }
-
-    stopLoading();
   }
 
   Future<void> addDraftedPost() async {
@@ -71,24 +71,31 @@ class AddPostModel extends ChangeNotifier {
     final draftedPostRef = userRef.collection('draftedPosts').doc();
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
 
-    draftedPostRef.set({
-      'id': draftedPostRef.id,
-      'userId': uid,
-      'title': _postDataList[0],
-      'body': _postDataList[1],
-      'nickname': _postDataList[2],
-      'emotion': _postDataList[3],
-      'position': _postDataList[4],
-      'gender': _postDataList[5],
-      'age': _postDataList[6],
-      'area': _postDataList[7],
-      'categories': selectedCategories,
-      'replyCount': 0,
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
-
-    stopLoading();
+    try {
+      // throw Exception('エラーやで💖');
+      await draftedPostRef.set({
+        'id': draftedPostRef.id,
+        'userId': uid,
+        'title': _postDataList[0],
+        'body': _postDataList[1],
+        'nickname': _postDataList[2],
+        'emotion': _postDataList[3],
+        'position': _postDataList[4],
+        'gender': _postDataList[5],
+        'age': _postDataList[6],
+        'area': _postDataList[7],
+        'categories': selectedCategories,
+        'replyCount': 0,
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } on Exception catch (e) {
+      print('addDraftedPost処理中のエラーです');
+      print(e.toString());
+      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+    } finally {
+      stopLoading();
+    }
   }
 
   List<String> _convertNoSelectedValueToEmpty() {

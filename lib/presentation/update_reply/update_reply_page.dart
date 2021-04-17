@@ -5,6 +5,7 @@ import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/common/mixin/keyboard_actions_config_done_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
+import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/user_profile.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
@@ -13,7 +14,10 @@ import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
 
 class UpdateReplyPage extends StatelessWidget
-    with ShowConfirmDialogMixin, KeyboardActionsConfigDoneMixin {
+    with
+        ShowConfirmDialogMixin,
+        KeyboardActionsConfigDoneMixin,
+        ShowExceptionDialogMixin {
   UpdateReplyPage({required this.existingReply, required this.passedModel});
 
   final Reply existingReply;
@@ -212,15 +216,21 @@ class UpdateReplyPage extends StatelessWidget
                               height: 48.0,
                             ),
 
-                            /// 投稿送信ボタン
+                            /// 投稿更新ボタン
                             passedModel is! DraftsModel
                                 ? OutlinedButton(
                                     onPressed: () async {
                                       if (_formKey.currentState!.validate()) {
-                                        model.startLoading();
-                                        await model.updateReply(existingReply);
-                                        model.stopLoading();
-                                        Navigator.pop(context);
+                                        try {
+                                          await model
+                                              .updateReply(existingReply);
+                                          Navigator.pop(context);
+                                        } catch (e) {
+                                          await showExceptionDialog(
+                                            context,
+                                            e.toString(),
+                                          );
+                                        }
                                         // Navigator.of(context).popUntil(
                                         //   ModalRoute.withName('/'),
                                         // );
@@ -254,13 +264,21 @@ class UpdateReplyPage extends StatelessWidget
                                         onPressed: () async {
                                           if (_formKey.currentState!
                                               .validate()) {
-                                            await model.addReplyToPostFromDraft(
-                                                existingReply);
-                                            Navigator.pop(
-                                              context,
-                                              ResultForDraftButton
-                                                  .addPostFromDraft,
-                                            );
+                                            try {
+                                              await model
+                                                  .addReplyToPostFromDraft(
+                                                      existingReply);
+                                              Navigator.pop(
+                                                context,
+                                                ResultForDraftButton
+                                                    .addPostFromDraft,
+                                              );
+                                            } catch (e) {
+                                              await showExceptionDialog(
+                                                context,
+                                                e.toString(),
+                                              );
+                                            }
                                             // Navigator.of(context).popUntil(
                                             //   ModalRoute.withName('/'),
                                             // );
@@ -292,12 +310,25 @@ class UpdateReplyPage extends StatelessWidget
                                         onPressed: () async {
                                           if (_formKey.currentState!
                                               .validate()) {
-                                            await model.updateDraftReply(
-                                                existingReply);
-                                            Navigator.pop(
-                                              context,
-                                              ResultForDraftButton.updateDraft,
-                                            );
+                                            try {
+                                              await model.updateDraftReply(
+                                                  existingReply);
+                                              final snackBar = SnackBar(
+                                                content: Text('下書きに保存しました'),
+                                              );
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(snackBar);
+                                              Navigator.pop(
+                                                context,
+                                                ResultForDraftButton
+                                                    .updateDraft,
+                                              );
+                                            } catch (e) {
+                                              await showExceptionDialog(
+                                                context,
+                                                e.toString(),
+                                              );
+                                            }
                                             // Navigator.of(context).popUntil(
                                             //   ModalRoute.withName('/'),
                                             // );

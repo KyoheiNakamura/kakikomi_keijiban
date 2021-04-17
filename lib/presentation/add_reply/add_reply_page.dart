@@ -3,6 +3,7 @@ import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/mixin/keyboard_actions_config_done_mixin.dart';
+import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/user_profile.dart';
@@ -11,7 +12,10 @@ import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
 
 class AddReplyPage extends StatelessWidget
-    with ShowConfirmDialogMixin, KeyboardActionsConfigDoneMixin {
+    with
+        ShowConfirmDialogMixin,
+        KeyboardActionsConfigDoneMixin,
+        ShowExceptionDialogMixin {
   AddReplyPage(this.repliedPost);
 
   final Post repliedPost;
@@ -199,8 +203,15 @@ class AddReplyPage extends StatelessWidget
                             OutlinedButton(
                               onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
-                                  await model.addReplyToPost(repliedPost);
-                                  Navigator.pop(context);
+                                  try {
+                                    await model.addReplyToPost(repliedPost);
+                                    Navigator.pop(context);
+                                  } catch (e) {
+                                    await showExceptionDialog(
+                                      context,
+                                      e.toString(),
+                                    );
+                                  }
                                   // Navigator.of(context).popUntil(
                                   //   ModalRoute.withName('/'),
                                   // );
@@ -230,8 +241,20 @@ class AddReplyPage extends StatelessWidget
                             OutlinedButton(
                               onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
-                                  await model.addDraftedReply(repliedPost);
-                                  Navigator.pop(context);
+                                  try {
+                                    await model.addDraftedReply(repliedPost);
+                                    final snackBar = SnackBar(
+                                      content: Text('下書きに保存しました'),
+                                    );
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
+                                    Navigator.pop(context);
+                                  } catch (e) {
+                                    await showExceptionDialog(
+                                      context,
+                                      e.toString(),
+                                    );
+                                  }
                                   // Navigator.of(context).popUntil(
                                   //   ModalRoute.withName('/'),
                                   // );

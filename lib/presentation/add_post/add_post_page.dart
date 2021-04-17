@@ -3,6 +3,7 @@ import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/mixin/keyboard_actions_config_done_mixin.dart';
+import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/domain/user_profile.dart';
 import 'package:kakikomi_keijiban/presentation/add_post/add_post_model.dart';
@@ -10,7 +11,10 @@ import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
 
 class AddPostPage extends StatelessWidget
-    with ShowConfirmDialogMixin, KeyboardActionsConfigDoneMixin {
+    with
+        ShowConfirmDialogMixin,
+        KeyboardActionsConfigDoneMixin,
+        ShowExceptionDialogMixin {
   AddPostPage();
 
   final _formKey = GlobalKey<FormState>();
@@ -318,8 +322,15 @@ class AddPostPage extends StatelessWidget
                               onPressed: () async {
                                 if (model.validateSelectedCategories() &&
                                     _formKey.currentState!.validate()) {
-                                  await model.addPost();
-                                  Navigator.pop(context);
+                                  try {
+                                    await model.addPost();
+                                    Navigator.pop(context);
+                                  } catch (e) {
+                                    await showExceptionDialog(
+                                      context,
+                                      e.toString(),
+                                    );
+                                  }
                                   // Navigator.of(context).popUntil(
                                   //   ModalRoute.withName('/'),
                                   // );
@@ -350,8 +361,21 @@ class AddPostPage extends StatelessWidget
                               onPressed: () async {
                                 if (model.validateSelectedCategories() &&
                                     _formKey.currentState!.validate()) {
-                                  await model.addDraftedPost();
-                                  Navigator.pop(context);
+                                  try {
+                                    await model.addDraftedPost();
+                                    final snackBar = SnackBar(
+                                      content: Text('下書きに保存しました'),
+                                    );
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
+                                    Navigator.pop(context);
+                                  } catch (e) {
+                                    await showExceptionDialog(
+                                      context,
+                                      e.toString(),
+                                    );
+                                  }
+
                                   // Navigator.of(context).popUntil(
                                   //   ModalRoute.withName('/'),
                                   // );

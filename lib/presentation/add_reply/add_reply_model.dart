@@ -10,59 +10,12 @@ class AddReplyModel extends ChangeNotifier {
   final uid = FirebaseAuth.instance.currentUser!.uid;
   bool isLoading = false;
 
-  void startLoading() {
-    isLoading = true;
-    notifyListeners();
-  }
-
-  void stopLoading() {
-    isLoading = false;
-    notifyListeners();
-  }
-
-  String? validateContentCallback(String? value) {
-    if (value == null || value.isEmpty) {
-      return '返信の内容を入力してください';
-    } else if (value.length > 1500) {
-      return '1500字以内でご記入ください';
-    }
-    return null;
-  }
-
-  String? validateNicknameCallback(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'ニックネームを入力してください';
-    } else if (value.length > 10) {
-      return '10字以内でご記入ください';
-    }
-    return null;
-  }
-
   String bodyValue = '';
   String nicknameValue = '';
   String positionDropdownValue = kPleaseSelect;
   String genderDropdownValue = kPleaseSelect;
   String ageDropdownValue = kPleaseSelect;
   String areaDropdownValue = kPleaseSelect;
-
-  List<String> _convertNoSelectedValueToEmpty() {
-    List<String> replyDataList = [
-      bodyValue,
-      nicknameValue,
-      positionDropdownValue,
-      genderDropdownValue,
-      ageDropdownValue,
-      areaDropdownValue,
-    ];
-    replyDataList = replyDataList.map((replyData) {
-      if (replyData == kPleaseSelect || replyData == kDoNotSelect) {
-        return '';
-      } else {
-        return replyData;
-      }
-    }).toList();
-    return replyDataList;
-  }
 
   Future<void> addReplyToPost(Post repliedPost) async {
     startLoading();
@@ -95,13 +48,13 @@ class AddReplyModel extends ChangeNotifier {
 
     try {
       await _batch.commit();
-    } catch (e) {
+    } on Exception catch (e) {
       print('addReplyのバッチ処理中のエラーです');
       print(e.toString());
-      throw Exception('エラーが発生しました');
+      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+    } finally {
+      stopLoading();
     }
-
-    stopLoading();
   }
 
   Future<void> addDraftedReply(Post repliedPost) async {
@@ -111,21 +64,74 @@ class AddReplyModel extends ChangeNotifier {
     final draftedReplyRef = userRef.collection('draftedReplies').doc();
     List<String> _replyDataList = _convertNoSelectedValueToEmpty();
 
-    await draftedReplyRef.set({
-      'id': draftedReplyRef.id,
-      'userId': repliedPost.userId,
-      'postId': repliedPost.id,
-      'replierId': _auth.currentUser!.uid,
-      'body': _replyDataList[0],
-      'nickname': _replyDataList[1],
-      'position': _replyDataList[2],
-      'gender': _replyDataList[3],
-      'age': _replyDataList[4],
-      'area': _replyDataList[5],
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
+    try {
+      await draftedReplyRef.set({
+        'id': draftedReplyRef.id,
+        'userId': repliedPost.userId,
+        'postId': repliedPost.id,
+        'replierId': _auth.currentUser!.uid,
+        'body': _replyDataList[0],
+        'nickname': _replyDataList[1],
+        'position': _replyDataList[2],
+        'gender': _replyDataList[3],
+        'age': _replyDataList[4],
+        'area': _replyDataList[5],
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } on Exception catch (e) {
+      print('addDraftedReply処理中のエラーです');
+      print(e.toString());
+      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+    } finally {
+      stopLoading();
+    }
+  }
 
-    stopLoading();
+  List<String> _convertNoSelectedValueToEmpty() {
+    List<String> replyDataList = [
+      bodyValue,
+      nicknameValue,
+      positionDropdownValue,
+      genderDropdownValue,
+      ageDropdownValue,
+      areaDropdownValue,
+    ];
+    replyDataList = replyDataList.map((replyData) {
+      if (replyData == kPleaseSelect || replyData == kDoNotSelect) {
+        return '';
+      } else {
+        return replyData;
+      }
+    }).toList();
+    return replyDataList;
+  }
+
+  void startLoading() {
+    isLoading = true;
+    notifyListeners();
+  }
+
+  void stopLoading() {
+    isLoading = false;
+    notifyListeners();
+  }
+
+  String? validateContentCallback(String? value) {
+    if (value == null || value.isEmpty) {
+      return '返信の内容を入力してください';
+    } else if (value.length > 1500) {
+      return '1500字以内でご記入ください';
+    }
+    return null;
+  }
+
+  String? validateNicknameCallback(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'ニックネームを入力してください';
+    } else if (value.length > 10) {
+      return '10字以内でご記入ください';
+    }
+    return null;
   }
 }

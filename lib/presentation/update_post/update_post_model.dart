@@ -23,23 +23,33 @@ class UpdatePostModel extends ChangeNotifier {
   String areaDropdownValue = kPleaseSelect;
 
   Future<void> updatePost(Post post) async {
+    startLoading();
+
     final userRef = _firestore.collection('users').doc(uid);
     final postRef = userRef.collection('posts').doc(post.id);
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
     print(_postDataList);
 
-    await postRef.update({
-      'title': _postDataList[0],
-      'body': _postDataList[1],
-      'nickname': _postDataList[2],
-      'emotion': _postDataList[3],
-      'position': _postDataList[4],
-      'gender': _postDataList[5],
-      'age': _postDataList[6],
-      'area': _postDataList[7],
-      'categories': selectedCategories,
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
+    try {
+      await postRef.update({
+        'title': _postDataList[0],
+        'body': _postDataList[1],
+        'nickname': _postDataList[2],
+        'emotion': _postDataList[3],
+        'position': _postDataList[4],
+        'gender': _postDataList[5],
+        'age': _postDataList[6],
+        'area': _postDataList[7],
+        'categories': selectedCategories,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } on Exception catch (e) {
+      print('updatePost処理中のエラーです');
+      print(e.toString());
+      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+    } finally {
+      stopLoading();
+    }
   }
 
   Future<void> addPostFromDraft(Post draftedPost) async {
@@ -81,13 +91,13 @@ class UpdatePostModel extends ChangeNotifier {
 
     try {
       await _batch.commit();
-    } catch (e) {
+    } on Exception catch (e) {
       print('addPostFromDraftのバッチ処理中のエラーです');
       print(e.toString());
-      throw Exception('エラーが発生しました');
+      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+    } finally {
+      stopLoading();
     }
-
-    stopLoading();
   }
 
   Future<void> updateDraftPost(Post draftedPost) async {
@@ -98,21 +108,27 @@ class UpdatePostModel extends ChangeNotifier {
         userRef.collection('draftedPosts').doc(draftedPost.id);
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
 
-    await draftedPostRef.update({
-      'title': _postDataList[0],
-      'body': _postDataList[1],
-      'nickname': _postDataList[2],
-      'emotion': _postDataList[3],
-      'position': _postDataList[4],
-      'gender': _postDataList[5],
-      'age': _postDataList[6],
-      'area': _postDataList[7],
-      'categories': selectedCategories,
-      'replyCount': 0,
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
-
-    stopLoading();
+    try {
+      await draftedPostRef.update({
+        'title': _postDataList[0],
+        'body': _postDataList[1],
+        'nickname': _postDataList[2],
+        'emotion': _postDataList[3],
+        'position': _postDataList[4],
+        'gender': _postDataList[5],
+        'age': _postDataList[6],
+        'area': _postDataList[7],
+        'categories': selectedCategories,
+        'replyCount': 0,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } on Exception catch (e) {
+      print('updateDraftPost処理中のエラーです');
+      print(e.toString());
+      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+    } finally {
+      stopLoading();
+    }
   }
 
   List<String> _convertNoSelectedValueToEmpty() {

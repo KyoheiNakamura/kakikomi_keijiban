@@ -15,20 +15,30 @@ class UpdateReplyModel extends ChangeNotifier {
   String areaDropdownValue = kPleaseSelect;
 
   Future<void> updateReply(Reply existingReply) async {
+    startLoading();
+
     List<String> _postDataList = _convertNoSelectedValueToEmpty();
     final userRef = _firestore.collection('users').doc(existingReply.userId);
     final postRef = userRef.collection('posts').doc(existingReply.postId);
     final replyRef = postRef.collection('replies').doc(existingReply.id);
 
-    await replyRef.update({
-      'body': _postDataList[0],
-      'nickname': _postDataList[1],
-      'position': _postDataList[2],
-      'gender': _postDataList[3],
-      'age': _postDataList[4],
-      'area': _postDataList[5],
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
+    try {
+      await replyRef.update({
+        'body': _postDataList[0],
+        'nickname': _postDataList[1],
+        'position': _postDataList[2],
+        'gender': _postDataList[3],
+        'age': _postDataList[4],
+        'area': _postDataList[5],
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } on Exception catch (e) {
+      print('updateReply処理中のエラーです');
+      print(e.toString());
+      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+    } finally {
+      stopLoading();
+    }
   }
 
   Future<void> addReplyToPostFromDraft(Reply draftedReply) async {
@@ -69,13 +79,13 @@ class UpdateReplyModel extends ChangeNotifier {
 
     try {
       await _batch.commit();
-    } catch (e) {
+    } on Exception catch (e) {
       print('addReplyToPostFromDraftのバッチ処理中のエラーです');
       print(e.toString());
-      throw Exception('エラーが発生しました');
+      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+    } finally {
+      stopLoading();
     }
-
-    stopLoading();
   }
 
   Future<void> updateDraftReply(Reply draftedReply) async {
@@ -86,17 +96,23 @@ class UpdateReplyModel extends ChangeNotifier {
         userRef.collection('draftedReplies').doc(draftedReply.id);
     List<String> _replyDataList = _convertNoSelectedValueToEmpty();
 
-    await draftedReplyRef.update({
-      'body': _replyDataList[0],
-      'nickname': _replyDataList[1],
-      'position': _replyDataList[2],
-      'gender': _replyDataList[3],
-      'age': _replyDataList[4],
-      'area': _replyDataList[5],
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
-
-    stopLoading();
+    try {
+      await draftedReplyRef.update({
+        'body': _replyDataList[0],
+        'nickname': _replyDataList[1],
+        'position': _replyDataList[2],
+        'gender': _replyDataList[3],
+        'age': _replyDataList[4],
+        'area': _replyDataList[5],
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } on Exception catch (e) {
+      print('updateDraftReply処理中のエラーです');
+      print(e.toString());
+      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+    } finally {
+      stopLoading();
+    }
   }
 
   List<String> _convertNoSelectedValueToEmpty() {
