@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/domain/user_profile.dart';
 import 'package:kakikomi_keijiban/presentation/update_profile/update_profile_model.dart';
 import 'package:provider/provider.dart';
 
-class UpdateProfilePage extends StatelessWidget {
+class UpdateProfilePage extends StatelessWidget with ShowExceptionDialogMixin {
   UpdateProfilePage(this.userProfile);
 
   final UserProfile userProfile;
@@ -185,12 +186,21 @@ class UpdateProfilePage extends StatelessWidget {
                           OutlinedButton(
                             onPressed: () async {
                               if (_formKey.currentState!.validate()) {
-                                await model.updateUserProfile();
+                                try {
+                                  await model.updateUserProfile();
+                                  await context
+                                      .read<AppModel>()
+                                      .getUserProfile();
+                                  Navigator.of(context).popUntil(
+                                    ModalRoute.withName('/'),
+                                  );
+                                } catch (e) {
+                                  await showExceptionDialog(
+                                    context,
+                                    e.toString(),
+                                  );
+                                }
                                 // Navigator.pop(context);
-                                await context.read<AppModel>().getUserProfile();
-                                Navigator.of(context).popUntil(
-                                  ModalRoute.withName('/'),
-                                );
                               }
                             },
                             child: Text(

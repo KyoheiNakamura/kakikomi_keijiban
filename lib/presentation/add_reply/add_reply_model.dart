@@ -51,7 +51,7 @@ class AddReplyModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('addReplyのバッチ処理中のエラーです');
       print(e.toString());
-      throw ('エラーが発生しました');
+      throw ('エラーが発生しました。\nもう一度お試し下さい。');
     } finally {
       stopLoading();
     }
@@ -64,22 +64,28 @@ class AddReplyModel extends ChangeNotifier {
     final draftedReplyRef = userRef.collection('draftedReplies').doc();
     List<String> _replyDataList = _convertNoSelectedValueToEmpty();
 
-    await draftedReplyRef.set({
-      'id': draftedReplyRef.id,
-      'userId': repliedPost.userId,
-      'postId': repliedPost.id,
-      'replierId': _auth.currentUser!.uid,
-      'body': _replyDataList[0],
-      'nickname': _replyDataList[1],
-      'position': _replyDataList[2],
-      'gender': _replyDataList[3],
-      'age': _replyDataList[4],
-      'area': _replyDataList[5],
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
-
-    stopLoading();
+    try {
+      await draftedReplyRef.set({
+        'id': draftedReplyRef.id,
+        'userId': repliedPost.userId,
+        'postId': repliedPost.id,
+        'replierId': _auth.currentUser!.uid,
+        'body': _replyDataList[0],
+        'nickname': _replyDataList[1],
+        'position': _replyDataList[2],
+        'gender': _replyDataList[3],
+        'age': _replyDataList[4],
+        'area': _replyDataList[5],
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } on Exception catch (e) {
+      print('addDraftedReply処理中のエラーです');
+      print(e.toString());
+      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+    } finally {
+      stopLoading();
+    }
   }
 
   List<String> _convertNoSelectedValueToEmpty() {

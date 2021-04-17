@@ -205,11 +205,13 @@ class AddReplyToReplyPage extends StatelessWidget
                                 if (_formKey.currentState!.validate()) {
                                   try {
                                     await model.addReplyToReply(repliedReply);
+                                    Navigator.pop(context);
                                   } catch (e) {
                                     await showExceptionDialog(
-                                        context, e.toString());
+                                      context,
+                                      e.toString(),
+                                    );
                                   }
-                                  Navigator.pop(context);
                                   // Navigator.of(context).popUntil(
                                   //   ModalRoute.withName('/'),
                                   // );
@@ -239,9 +241,21 @@ class AddReplyToReplyPage extends StatelessWidget
                             OutlinedButton(
                               onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
-                                  await model
-                                      .addDraftedReplyToReply(repliedReply);
-                                  Navigator.pop(context);
+                                  try {
+                                    await model
+                                        .addDraftedReplyToReply(repliedReply);
+                                    final snackBar = SnackBar(
+                                      content: Text('下書きに保存しました'),
+                                    );
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(snackBar);
+                                    Navigator.pop(context);
+                                  } catch (e) {
+                                    await showExceptionDialog(
+                                      context,
+                                      e.toString(),
+                                    );
+                                  }
                                   // Navigator.of(context).popUntil(
                                   //   ModalRoute.withName('/'),
                                   // );

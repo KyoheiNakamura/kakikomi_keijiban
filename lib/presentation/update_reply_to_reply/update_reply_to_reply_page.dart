@@ -5,6 +5,7 @@ import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/common/mixin/keyboard_actions_config_done_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
+import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 import 'package:kakikomi_keijiban/domain/user_profile.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
@@ -13,7 +14,10 @@ import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
 
 class UpdateReplyToReplyPage extends StatelessWidget
-    with ShowConfirmDialogMixin, KeyboardActionsConfigDoneMixin {
+    with
+        ShowConfirmDialogMixin,
+        KeyboardActionsConfigDoneMixin,
+        ShowExceptionDialogMixin {
   UpdateReplyToReplyPage(
       {required this.existingReplyToReply, required this.passedModel});
 
@@ -215,16 +219,21 @@ class UpdateReplyToReplyPage extends StatelessWidget
                               height: 48.0,
                             ),
 
-                            /// 投稿送信ボタン
+                            /// 投稿更新ボタン
                             passedModel is! DraftsModel
                                 ? OutlinedButton(
                                     onPressed: () async {
                                       if (_formKey.currentState!.validate()) {
-                                        model.startLoading();
-                                        await model.updateReplyToReply(
-                                            existingReplyToReply);
-                                        model.stopLoading();
-                                        Navigator.pop(context);
+                                        try {
+                                          await model.updateReplyToReply(
+                                              existingReplyToReply);
+                                          Navigator.pop(context);
+                                        } catch (e) {
+                                          await showExceptionDialog(
+                                            context,
+                                            e.toString(),
+                                          );
+                                        }
                                         // Navigator.of(context).popUntil(
                                         //   ModalRoute.withName('/'),
                                         // );
@@ -258,14 +267,21 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                         onPressed: () async {
                                           if (_formKey.currentState!
                                               .validate()) {
-                                            await model
-                                                .addReplyToReplyFromDraft(
-                                                    existingReplyToReply);
-                                            Navigator.pop(
-                                              context,
-                                              ResultForDraftButton
-                                                  .addPostFromDraft,
-                                            );
+                                            try {
+                                              await model
+                                                  .addReplyToReplyFromDraft(
+                                                      existingReplyToReply);
+                                              Navigator.pop(
+                                                context,
+                                                ResultForDraftButton
+                                                    .addPostFromDraft,
+                                              );
+                                            } catch (e) {
+                                              await showExceptionDialog(
+                                                context,
+                                                e.toString(),
+                                              );
+                                            }
                                             // Navigator.of(context).popUntil(
                                             //   ModalRoute.withName('/'),
                                             // );
@@ -297,12 +313,26 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                         onPressed: () async {
                                           if (_formKey.currentState!
                                               .validate()) {
-                                            await model.updateDraftReplyToReply(
-                                                existingReplyToReply);
-                                            Navigator.pop(
-                                              context,
-                                              ResultForDraftButton.updateDraft,
-                                            );
+                                            try {
+                                              await model
+                                                  .updateDraftReplyToReply(
+                                                      existingReplyToReply);
+                                              final snackBar = SnackBar(
+                                                content: Text('下書きに保存しました'),
+                                              );
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(snackBar);
+                                              Navigator.pop(
+                                                context,
+                                                ResultForDraftButton
+                                                    .updateDraft,
+                                              );
+                                            } catch (e) {
+                                              await showExceptionDialog(
+                                                context,
+                                                e.toString(),
+                                              );
+                                            }
                                             // Navigator.of(context).popUntil(
                                             //   ModalRoute.withName('/'),
                                             // );
