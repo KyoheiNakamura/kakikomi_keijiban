@@ -125,13 +125,15 @@ class SearchGenreCard extends StatelessWidget {
                     ? ActionChip(
                         label: Text(
                           value,
-                          style: TextStyle(color: kDarkPink),
+                          style: TextStyle(color: Colors.grey[800]),
+                          // style: TextStyle(color: kDarkPink),
                         ),
-                        backgroundColor: kLightPink,
+                        backgroundColor: Colors.grey[200],
                         pressElevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
-                          side: BorderSide(color: kPink),
+                          side: BorderSide(color: Colors.grey[500]!),
+                          // side: BorderSide(color: kPink),
                         ),
                         onPressed: () async {
                           await Navigator.push(

@@ -13,7 +13,7 @@ class LoadingSpinner extends StatelessWidget {
     required this.inAsyncCall,
     required this.child,
     this.opacity = 0.3,
-    this.color = Colors.black54,
+    this.color = Colors.black12,
     this.progressIndicator = const CircularProgressIndicator(),
     this.offset,
     this.dismissible = false,
@@ -36,8 +36,8 @@ class LoadingSpinner extends StatelessWidget {
       }
       final modal = [
         new Opacity(
-          child: ModalBarrier(dismissible: dismissible),
-          // child: ModalBarrier(dismissible: dismissible, color: color),
+          // child: ModalBarrier(dismissible: dismissible),
+          child: ModalBarrier(dismissible: dismissible, color: color),
           opacity: opacity,
         ),
         layOutProgressIndicator

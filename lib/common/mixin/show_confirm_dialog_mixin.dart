@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/enum.dart';
 
 mixin ShowConfirmDialogMixin {
   Future<void> showConfirmDialog(BuildContext context) async {
@@ -32,7 +33,7 @@ mixin ShowConfirmDialogMixin {
               ),
               onPressed: () async {
                 Navigator.of(context).pop();
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(valueFromAddPostPage.discard);
                 // Navigator.of(context).popUntil(
                 //   ModalRoute.withName('/'),
                 // );

@@ -5,6 +5,7 @@ import 'package:kakikomi_keijiban/common/components/account_drawer.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/presentation/add_post/add_post_page.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
@@ -22,15 +23,16 @@ class HomePostsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<HomePostsModel>(
       create: (context) => HomePostsModel()..init(),
-      child: DefaultTabController(
-        length: _tabs.length,
-        child: Scaffold(
-          drawer: SafeArea(child: AccountDrawer()),
-          body: Consumer<HomePostsModel>(builder: (context, model, child) {
-            return AnnotatedRegion<SystemUiOverlayStyle>(
-              value: SystemUiOverlayStyle.light
-                  .copyWith(statusBarColor: Theme.of(context).primaryColorDark),
-              child: SafeArea(
+      child: SafeArea(
+        child: DefaultTabController(
+          length: _tabs.length,
+          child: Scaffold(
+            drawer: SafeArea(child: AccountDrawer()),
+            body: Consumer<HomePostsModel>(builder: (context, model, child) {
+              // return AnnotatedRegion<SystemUiOverlayStyle>(
+              //   value: SystemUiOverlayStyle.light
+              //       .copyWith(statusBarColor: Theme.of(context).primaryColorDark),
+              return SafeArea(
                 child: LoadingSpinner(
                   inAsyncCall: model.isModalLoading,
                   // dismissible: true,
@@ -103,48 +105,53 @@ class HomePostsPage extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
-            );
-          }),
-          floatingActionButton:
-              Consumer<HomePostsModel>(builder: (context, model, child) {
-            return FloatingActionButton.extended(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              // elevation: 0,
-              highlightElevation: 0,
-              splashColor: kDarkPink,
-              backgroundColor: Color(0xFFFCF0F5),
-              label: Row(
-                children: [
-                  Icon(
-                    Icons.create,
-                    color: kDarkPink,
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    '投稿',
-                    style: TextStyle(
+              );
+              // );
+            }),
+            floatingActionButton:
+                Consumer<HomePostsModel>(builder: (context, model, child) {
+              return FloatingActionButton.extended(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                // elevation: 0,
+                highlightElevation: 0,
+                splashColor: kDarkPink,
+                backgroundColor: Color(0xFFFCF0F5),
+                label: Row(
+                  children: [
+                    Icon(
+                      Icons.create,
                       color: kDarkPink,
-                      fontSize: 16,
                     ),
-                  ),
-                ],
-              ),
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddPostPage(),
-                  ),
-                );
-                await model.getPostsWithReplies(kAllPostsTab);
-                await model.getPostsWithReplies(kMyPostsTab);
-              },
-            );
-          }),
-          // }),
+                    SizedBox(width: 8),
+                    Text(
+                      '投稿',
+                      style: TextStyle(
+                        color: kDarkPink,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+                onPressed: () async {
+                  final result = await Navigator.push<valueFromAddPostPage>(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddPostPage(),
+                    ),
+                  );
+                  if (result != valueFromAddPostPage.discard) {
+                    model.startModalLoading();
+                    await model.getPostsWithReplies(kAllPostsTab);
+                    await model.getPostsWithReplies(kMyPostsTab);
+                    model.stopModalLoading();
+                  }
+                },
+              );
+            }),
+            // }),
+          ),
         ),
       ),
     );
