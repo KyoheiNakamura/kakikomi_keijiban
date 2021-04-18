@@ -5,6 +5,7 @@ import 'package:kakikomi_keijiban/common/components/account_drawer.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/presentation/add_post/add_post_page.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
@@ -134,14 +135,18 @@ class HomePostsPage extends StatelessWidget {
                   ],
                 ),
                 onPressed: () async {
-                  await Navigator.push(
+                  final result = await Navigator.push<valueFromAddPostPage>(
                     context,
                     MaterialPageRoute(
                       builder: (context) => AddPostPage(),
                     ),
                   );
-                  await model.getPostsWithReplies(kAllPostsTab);
-                  await model.getPostsWithReplies(kMyPostsTab);
+                  if (result != valueFromAddPostPage.discard) {
+                    model.startModalLoading();
+                    await model.getPostsWithReplies(kAllPostsTab);
+                    await model.getPostsWithReplies(kMyPostsTab);
+                    model.stopModalLoading();
+                  }
                 },
               );
             }),

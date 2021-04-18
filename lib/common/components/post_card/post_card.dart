@@ -28,7 +28,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
   Widget build(BuildContext context) {
     return Consumer<PostCardModel>(builder: (context, model, child) {
       return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Stack(
           alignment: AlignmentDirectional.topCenter,
           children: [
