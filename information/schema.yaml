@@ -10,6 +10,12 @@ users:
   createdAt: timestamp
   updatedAt: timestamp
 
+  # Todo 各ユーザーの機密データ
+  confidential:
+    id: auth.uid
+#    email: string
+    tokens: list<string>
+
   # 各ユーザーの投稿データ
   posts:
     id: auto
@@ -17,7 +23,7 @@ users:
     age: string
     area: string
     body: string
-    categories: list
+    categories: list<string>
     emotion: string
     gender: string
     nickname: string

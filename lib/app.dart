@@ -8,9 +8,10 @@ import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_page.dart';
 import 'package:provider/provider.dart';
 
 class App extends StatelessWidget {
+  final model = AppModel();
   @override
   Widget build(BuildContext context) {
-    AppModel.listenAuthStateChanges();
+    model.init();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<PostCardModel>(

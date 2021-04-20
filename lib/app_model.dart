@@ -2,12 +2,18 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:kakikomi_keijiban/domain/user.dart';
 
 class AppModel {
   static User? user;
 
-  static Future<void> listenAuthStateChanges() async {
+  Future<void> init() async {
+    await _listenAuthStateChanges();
+    await _listenOnTokenRefresh();
+  }
+
+  Future<void> _listenAuthStateChanges() async {
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
     final Auth.FirebaseAuth _auth = Auth.FirebaseAuth.instance;
 
@@ -37,6 +43,31 @@ class AppModel {
         }
       }
     });
+  }
+
+  Future<void> _listenOnTokenRefresh() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+
+    await _saveTokenToDatabase(token);
+    FirebaseMessaging.instance.onTokenRefresh.listen(_saveTokenToDatabase);
+  }
+
+  Future<void> _saveTokenToDatabase(String? token) async {
+    String? userId = Auth.FirebaseAuth.instance.currentUser?.uid;
+
+    if (userId != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('confidential')
+          .doc(userId)
+          .set(
+        {
+          // 'email': Auth.FirebaseAuth.instance.currentUser?.email,
+          'tokens': FieldValue.arrayUnion([token]),
+        },
+      );
+    }
   }
 
   static Future<void> reloadUser() async {
