@@ -20,6 +20,10 @@ void main() async {
     // systemNavigationBarIconBrightness: Brightness.light, //navigation bar icon
   ));
   await Firebase.initializeApp();
+  // If your message is a notification one (includes a notification property),
+  // the Firebase SDKs will intercept this and display a visible notification
+  // to your users (assuming you have requested permission & the user has
+  // notifications enabled). Once displayed, the background handler will be executed (if provided).
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(App());
 }

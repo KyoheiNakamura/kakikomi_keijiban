@@ -2,11 +2,15 @@ import 'dart:async';
 import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
+import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_page.dart';
+import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_page.dart';
+import 'package:kakikomi_keijiban/presentation/my_replies/my_replies_page.dart';
 
 class HomePostsModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
@@ -667,6 +671,53 @@ class HomePostsModel extends ChangeNotifier {
   void stopModalLoading() {
     isModalLoading = false;
     notifyListeners();
+  }
+
+  Future<void> openPageSpecifiedByNotification(BuildContext context) async {
+    // Get any messages which caused the application to open from
+    // a terminated state.
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+
+    // If the message also contains a data property with a "type" of "chat",
+    // navigate to a chat screen
+    if (initialMessage?.data['page'] == 'HomePostsPage') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => HomePostsPage()),
+      );
+    } else if (initialMessage?.data['page'] == 'MyPostsPage') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MyPostsPage()),
+      );
+    } else if (initialMessage?.data['page'] == 'MyRepliesPage') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MyRepliesPage()),
+      );
+    }
+
+    // Also handle any interaction when the app is in the background via a
+    // Stream listener
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage? message) {
+      if (message?.data['page'] == 'HomePostsPage') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePostsPage()),
+        );
+      } else if (message?.data['page'] == 'MyPostsPage') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyPostsPage()),
+        );
+      } else if (message?.data['page'] == 'MyRepliesPage') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MyRepliesPage()),
+        );
+      }
+    });
   }
 
 // void getPostsRealtime() {

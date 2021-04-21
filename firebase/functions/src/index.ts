@@ -53,10 +53,14 @@ export const sendPushNotificationToTopicWhenPostIsCreated =
           const topic = "newPost";
           const title = "New Post!";
           const body = "新着の投稿があります😍";
+          const page = "HomePostsPage";
           return admin.messaging().sendToTopic(topic, {
             notification: {
               title: title,
               body: body,
+            },
+            data: {
+              page: page,
             },
           });
         } else {
@@ -91,12 +95,16 @@ export const sendPushNotificationWhenReplyIsCreated =
                 .collection("tokens")
                 .get();
             const tokens = tokensSnapshot.docs.map((doc) => doc.id);
+            const page = "MyPostsPage";
             return admin.messaging()
                 .sendAll(tokens.map((token: string) => ({
                   token: token,
                   notification: {
                     title: title,
                     body: body,
+                  },
+                  data: {
+                    page: page,
                   },
                 })));
           } else {
@@ -141,12 +149,16 @@ export const sendPushNotificationWhenReplyToReplyIsCreated =
                 .collection("tokens")
                 .get();
             const tokens = tokensSnapshot.docs.map((doc) => doc.id);
+            const page = "MyRepliesPage";
             return admin.messaging()
                 .sendAll(tokens.map((token: string) => ({
                   token: token,
                   notification: {
                     title: title,
                     body: body,
+                  },
+                  data: {
+                    page: page,
                   },
                 })));
           } else {

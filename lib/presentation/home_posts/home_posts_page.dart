@@ -21,7 +21,9 @@ class HomePostsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<HomePostsModel>(
-      create: (context) => HomePostsModel()..init(),
+      create: (context) => HomePostsModel()
+        ..openPageSpecifiedByNotification(context)
+        ..init(),
       child: SafeArea(
         child: DefaultTabController(
           length: _tabs.length,
