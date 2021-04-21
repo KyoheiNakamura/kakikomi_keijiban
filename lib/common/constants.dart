@@ -7,9 +7,14 @@ const Color kLightPink = Color(0xFFFCF0F5);
 const Color kUltraLightPink = Color(0xFFFFF7FA);
 const Color kLightGrey = Colors.black54;
 
-const kAllPostsTab = '最新の投稿';
-const kMyPostsTab = '自分の投稿';
-const kBookmarkedPostsTab = 'ブックマーク';
+const List<String> kInitialNotificationSetting = [
+  'replyToMyPost',
+  'replyToMyReply',
+];
+
+const String kAllPostsTab = '最新の投稿';
+const String kMyPostsTab = '自分の投稿';
+const String kBookmarkedPostsTab = 'ブックマーク';
 
 const String kPleaseSelect = '選択してください';
 const String kDoNotSelect = '選択しない';
@@ -17,7 +22,7 @@ const String kDoNotSelect = '選択しない';
 const Map<String, String> kEmotionIcons = {
   'うれしい': 'lib/assets/images/anpanman.png',
   'かなしい': 'lib/assets/images/anpanman.png',
-  'つらい': 'lib/assets/images/anpanman.png',
+  'いかり': 'lib/assets/images/anpanman.png',
   '相談': 'lib/assets/images/anpanman.png',
   '疑問': 'lib/assets/images/anpanman.png',
   '提案': 'lib/assets/images/anpanman.png',
@@ -26,6 +31,7 @@ const Map<String, String> kEmotionIcons = {
   '呼びかけ': 'lib/assets/images/anpanman.png',
 };
 
+// kEmotionListを変更したら、↑のkEmotionIconsにも値を追加する！！
 const List<String> kEmotionList = [
   kPleaseSelect,
   'うれしい',

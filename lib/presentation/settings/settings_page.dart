@@ -4,6 +4,7 @@ import 'package:kakikomi_keijiban/presentation/settings/settings_model.dart';
 import 'package:kakikomi_keijiban/presentation/update_email/update_email_page.dart';
 import 'package:kakikomi_keijiban/presentation/update_password/update_password_page.dart';
 import 'package:kakikomi_keijiban/presentation/update_profile/update_profile_page.dart';
+import 'package:kakikomi_keijiban/presentation/update_push_notification/update_push_notification_page.dart';
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -34,7 +35,7 @@ class SettingsPage extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.only(
-                    left: 16.0, top: 24.0, right: 16.0, bottom: 12.0),
+                    left: 16.0, top: 24.0, right: 16.0, bottom: 16.0),
                 child: OutlinedButton(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -57,7 +58,43 @@ class SettingsPage extends StatelessWidget {
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UpdateProfilePage()),
+                        builder: (context) => UpdateProfilePage(),
+                      ),
+                    );
+                    // Navigator.pop(context);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(kDarkPink),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                    left: 16.0, top: 12.0, right: 16.0, bottom: 24.0),
+                child: OutlinedButton(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Icon(Icons.email_outlined, color: Colors.white),
+                      Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Text(
+                          'プッシュ通知設定',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UpdatePushNotificationPage(),
+                      ),
                     );
                     // Navigator.pop(context);
                   },
@@ -69,7 +106,7 @@ class SettingsPage extends StatelessWidget {
               Divider(thickness: 1.0),
               Padding(
                 padding: const EdgeInsets.only(
-                    left: 16.0, top: 12.0, right: 16.0, bottom: 16.0),
+                    left: 16.0, top: 24.0, right: 16.0, bottom: 16.0),
                 child: OutlinedButton(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -92,7 +129,8 @@ class SettingsPage extends StatelessWidget {
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UpdateEmailPage()),
+                        builder: (context) => UpdateEmailPage(),
+                      ),
                     );
                     // Navigator.pop(context);
                   },
@@ -123,7 +161,8 @@ class SettingsPage extends StatelessWidget {
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => UpdatePasswordPage()),
+                        builder: (context) => UpdatePasswordPage(),
+                      ),
                     );
                     // Navigator.pop(context);
                   },

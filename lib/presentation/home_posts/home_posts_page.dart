@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:kakikomi_keijiban/common/components/account_drawer.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card.dart';
@@ -52,7 +51,7 @@ class HomePostsPage extends StatelessWidget {
                                   // elevation: 0,
                                   centerTitle: true,
                                   title: Text(
-                                    '発達障害困りごと掲示板',
+                                    '発達障害困りごと掲示板（仮）',
                                     style: kAppBarTextStyle,
                                   ),
                                   actions: [

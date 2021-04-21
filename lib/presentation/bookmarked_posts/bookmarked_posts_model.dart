@@ -183,9 +183,18 @@ class BookmarkedPostsModel extends ChangeNotifier {
             // .orderBy('createdAt', descending: true)
             .get())
         .toList());
-    final bookmarkedPostDocs =
-        postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
-    return bookmarkedPostDocs.map((doc) => Post(doc)).toList();
+    final bookmarkedPostDocs = postSnapshots.map((postSnapshot) {
+      if (postSnapshot.docs.isNotEmpty) {
+        return postSnapshot.docs[0];
+      } else {
+        return null;
+      }
+    }).toList();
+    // bookmarkedPostDocsからnullを全て削除
+    bookmarkedPostDocs.removeWhere((element) => element == null);
+    final bookmarkedPosts =
+        bookmarkedPostDocs.map((doc) => Post(doc!)).toList();
+    return bookmarkedPosts;
   }
 
   void _addBookmarkToPosts(List<Post> bookmarkedPosts) {

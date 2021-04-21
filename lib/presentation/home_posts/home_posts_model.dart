@@ -483,9 +483,17 @@ class HomePostsModel extends ChangeNotifier {
             // .orderBy('createdAt', descending: true)
             .get())
         .toList());
-    final bookmarkedPostDocs =
-        postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
-    final bookmarkedPosts = bookmarkedPostDocs.map((doc) => Post(doc)).toList();
+    final bookmarkedPostDocs = postSnapshots.map((postSnapshot) {
+      if (postSnapshot.docs.isNotEmpty) {
+        return postSnapshot.docs[0];
+      } else {
+        return null;
+      }
+    }).toList();
+    // bookmarkedPostDocsからnullを全て削除
+    bookmarkedPostDocs.removeWhere((element) => element == null);
+    final bookmarkedPosts =
+        bookmarkedPostDocs.map((doc) => Post(doc!)).toList();
     for (int i = 0; i < bookmarkedPosts.length; i++) {
       bookmarkedPosts[i].isBookmarked = true;
     }
