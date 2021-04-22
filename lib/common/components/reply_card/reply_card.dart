@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card_model.dart';
 import 'package:kakikomi_keijiban/common/components/reply_card/reply_card_model.dart';
@@ -47,9 +48,25 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                   padding: EdgeInsets.all(20.0),
                   child: Column(
                     children: [
-                      Text(
-                        getFormattedPosterData(reply),
-                        style: TextStyle(color: kLightGrey),
+                      Row(
+                        children: [
+                          Transform(
+                            alignment: Alignment.topCenter,
+                            transform: Matrix4.rotationY(math.pi),
+                            child: Icon(
+                              Icons.reply,
+                              color: kLightGrey,
+                            ),
+                          ),
+                          Flexible(
+                            child: Center(
+                              child: Text(
+                                getFormattedPosterData(reply),
+                                style: TextStyle(color: kLightGrey),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 15.0),

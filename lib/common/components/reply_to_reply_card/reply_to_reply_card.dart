@@ -53,7 +53,7 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                         alignment: Alignment.topCenter,
                         transform: Matrix4.rotationY(math.pi),
                         child: Icon(
-                          Icons.reply,
+                          Icons.reply_all,
                           color: kLightGrey,
                         ),
                       ),
