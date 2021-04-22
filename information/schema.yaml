@@ -7,8 +7,23 @@ users:
   nickname: string
   position: string
   postCount: int
+  # デバイスごとに通知の受け取り設定を変えるとかだと、
+  # Map{key: token, value: topic}が良きかも
+  topics: list<string>
+  # ↑同様、
+  # Map{key: token, value: notification}
+  notificatioins: list<string>
   createdAt: timestamp
   updatedAt: timestamp
+
+  # 各ユーザーのトークン（隠す予定）: idにはtokenをそのまま使う
+  tokens:
+    id: token
+
+  # Todo 各ユーザーの機密データ
+  confidential:
+    id: auth.uid
+#    email: string
 
   # 各ユーザーの投稿データ
   posts:
@@ -17,7 +32,7 @@ users:
     age: string
     area: string
     body: string
-    categories: list
+    categories: list<string>
     emotion: string
     gender: string
     nickname: string

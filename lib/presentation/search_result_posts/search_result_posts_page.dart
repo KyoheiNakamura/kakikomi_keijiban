@@ -14,26 +14,8 @@ class SearchResultPostsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String postField;
-    if (kCategoryList.contains(searchWord)) {
-      postField = 'categories';
-    } else if (kEmotionList.contains(searchWord)) {
-      postField = 'emotion';
-    } else if (kPositionList.contains(searchWord)) {
-      postField = 'position';
-    } else if (kGenderList.contains(searchWord)) {
-      postField = 'gender';
-    } else if (kAgeList.contains(searchWord)) {
-      postField = 'age';
-    } else if (kAreaList.contains(searchWord)) {
-      postField = 'area';
-    } else {
-      postField = '';
-    }
     return ChangeNotifierProvider<SearchResultPostsModel>(
-      create: (context) =>
-          SearchResultPostsModel(postField: postField, searchWord: searchWord)
-            ..getPostsWithRepliesChosenField(),
+      create: (context) => SearchResultPostsModel()..init(searchWord),
       child: SafeArea(
         child: Scaffold(
           appBar: AppBar(

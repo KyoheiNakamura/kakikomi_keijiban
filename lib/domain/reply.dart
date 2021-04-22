@@ -50,6 +50,6 @@ class Reply {
 
   bool isMe() {
     final currentUser = FirebaseAuth.instance.currentUser;
-    return userId == currentUser?.uid;
+    return replierId == currentUser?.uid;
   }
 }

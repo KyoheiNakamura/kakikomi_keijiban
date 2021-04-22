@@ -3,19 +3,12 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class SearchResultPostsModel extends ChangeNotifier {
-  SearchResultPostsModel({
-    required String postField,
-    required String searchWord,
-  }) {
-    this.postField = postField;
-    this.searchWord = searchWord;
-  }
-
   final _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
@@ -32,10 +25,30 @@ class SearchResultPostsModel extends ChangeNotifier {
   String postField = '';
   String searchWord = '';
 
-  Future<void> init() async {
+  Future<void> init(String searchWord) async {
     startModalLoading();
+    this.searchWord = searchWord;
+    getPostField(searchWord);
     await getPostsWithRepliesChosenField();
     stopModalLoading();
+  }
+
+  void getPostField(String searchWord) {
+    if (kCategoryList.contains(searchWord)) {
+      this.postField = 'categories';
+    } else if (kEmotionList.contains(searchWord)) {
+      this.postField = 'emotion';
+    } else if (kPositionList.contains(searchWord)) {
+      this.postField = 'position';
+    } else if (kGenderList.contains(searchWord)) {
+      this.postField = 'gender';
+    } else if (kAgeList.contains(searchWord)) {
+      this.postField = 'age';
+    } else if (kAreaList.contains(searchWord)) {
+      this.postField = 'area';
+    } else {
+      this.postField = '';
+    }
   }
 
   Future<void> getPostsWithRepliesChosenField() async {
@@ -47,13 +60,13 @@ class SearchResultPostsModel extends ChangeNotifier {
     if (postField == 'categories') {
       queryBatch = _firestore
           .collectionGroup('posts')
-          .where(postField, arrayContains: searchWord)
+          .where(this.postField, arrayContains: this.searchWord)
           .orderBy('createdAt', descending: true)
           .limit(loadLimit);
     } else {
       queryBatch = _firestore
           .collectionGroup('posts')
-          .where(postField, isEqualTo: searchWord)
+          .where(this.postField, isEqualTo: this.searchWord)
           .orderBy('createdAt', descending: true)
           .limit(loadLimit);
     }
@@ -88,17 +101,17 @@ class SearchResultPostsModel extends ChangeNotifier {
     final Query queryBatch;
     // postのfieldの値が配列(array)のとき
     // Todo positionも複数選択に変える予定なので、おいおいこっちの条件に||で追加するはず
-    if (postField == 'categories') {
+    if (this.postField == 'categories') {
       queryBatch = _firestore
           .collectionGroup('posts')
-          .where(postField, arrayContains: searchWord)
+          .where(this.postField, arrayContains: this.searchWord)
           .orderBy('createdAt', descending: true)
           .startAfterDocument(lastVisibleOfTheBatch!)
           .limit(loadLimit);
     } else {
       queryBatch = _firestore
           .collectionGroup('posts')
-          .where(postField, isEqualTo: searchWord)
+          .where(this.postField, isEqualTo: this.searchWord)
           .orderBy('createdAt', descending: true)
           .startAfterDocument(lastVisibleOfTheBatch!)
           .limit(loadLimit);

@@ -230,7 +230,6 @@ class AddPostPage extends StatelessWidget
                                     kPositionDropdownButtonFormFieldDecoration,
                                 onChanged: (String? selectedValue) {
                                   model.positionDropdownValue = selectedValue!;
-                                  print(model.positionDropdownValue);
                                 },
                                 items: kPositionList.map((String value) {
                                   return DropdownMenuItem<String>(

@@ -292,10 +292,9 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
               width: 60.0,
               height: 60.0,
               child: GestureDetector(
-                child: Image.asset(
-                  kEmotionIcons[post.emotion]!,
-                  // fit: BoxFit.cover,
-                ),
+                child: kEmotionIcons[post.emotion] != null
+                    ? Image.asset(kEmotionIcons[post.emotion]!)
+                    : FlutterLogo(),
                 onTap: () async {
                   await Navigator.push(
                     context,
