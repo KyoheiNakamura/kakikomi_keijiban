@@ -52,7 +52,8 @@ export const sendPushNotificationToTopicWhenPostIsCreated =
         if (snapshot) {
           const topic = "newPost";
           const title = "New Post!";
-          const body = "新着の投稿があります😍";
+          // const body = "新着の投稿があります😍";
+          const body = snapshot.data().title;
           const page = "HomePostsPage";
           return admin.messaging().sendToTopic(topic, {
             notification: {
@@ -88,7 +89,8 @@ export const sendPushNotificationWhenReplyIsCreated =
             userDoc.data()?.notifications.includes(notification);
           if (isNotificationAllowed) {
             const title = "New Reply To Your Post!";
-            const body = "あなたの投稿に返信があります😘";
+            // const body = "あなたの投稿に返信があります😘";
+            const body = snapshot.data().body;
             const tokensSnapshot = await admin.firestore()
                 .collection("users")
                 .doc(userId)
@@ -142,7 +144,8 @@ export const sendPushNotificationWhenReplyToReplyIsCreated =
             userDoc.data()?.notifications.includes(notification);
           if (isNotificationAllowed) {
             const title = "New Reply To Your Reply!";
-            const body = "あなたの返信に返信があります🤩";
+            // const body = "あなたの返信に返信があります🤩";
+            const body = snapshot.data().body;
             const tokensSnapshot = await admin.firestore()
                 .collection("users")
                 .doc(replierId)

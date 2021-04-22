@@ -197,7 +197,7 @@ const kTitleTextFormFieldDecoration = InputDecoration(
   border: OutlineInputBorder(),
   prefixIcon: Icon(Icons.title),
   labelText: 'タイトル',
-  hintText: '大人の発達障害とグレーゾーンについて',
+  hintText: '衝動買いをして後悔しての繰り返しです',
   helperText: '必須',
   helperStyle: TextStyle(color: kDarkPink),
   counterText: '50字以内でご記入ください',
@@ -212,8 +212,8 @@ const kContentTextFormFieldDecoration = InputDecoration(
   prefixIcon: Icon(Icons.text_fields),
   labelText: '投稿の内容',
   hintText: '''
-自分が大人の発達障害ではないかと疑っているのですが、特徴の濃淡がはっきりせずグレーゾーンに思われるため確信が持てないのと、
-親へどう話せばいいかわからず診断に踏み切れていません。''',
+自閉症スペクトラムの人は自分の所持金のことを考えないで衝動買いをしてしまうと発達障害について説明している本に書いてありました。あるお子様向けのあるキャラクターが好きなのですが、収入が障害年金しかないのにそのキャラクターのグッズに1万円くらい使ってしまいました。好きな歌手がいるのでその歌手のCDやDVDは定価で買うのが当たり前になっているし、その歌手がSNSに写真を載せた商品まで買ってしまいました。貯金通帳を見て「何でこんなに無駄遣いしたんだろう」と後悔しています。でも買い物はどうしてもやめられません。''',
+  hintMaxLines: 5,
   helperText: '必須',
   helperStyle: TextStyle(color: kDarkPink),
   counterText: '1500字以内でご記入ください',
