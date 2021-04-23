@@ -432,7 +432,6 @@ class FilterChipWidget extends StatelessWidget {
             ? model.selectedCategories.remove(chipName)
             : model.selectedCategories.add(chipName);
         model.reload();
-        print(model.selectedCategories);
       },
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),

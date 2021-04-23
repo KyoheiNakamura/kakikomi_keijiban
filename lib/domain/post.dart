@@ -19,7 +19,9 @@ class Post {
     // List<dynamic>をList<String>に変換してる
     this.categories = List<String>.from(_categories);
     this.replyCount = doc['replyCount'];
+    this.empathyCount = doc['empathyCount'];
     this.isBookmarked = false;
+    this.isEmpathized = false;
     this.isReplyShown = false;
     this.isDraft = false;
     this.replies = [];
@@ -43,7 +45,9 @@ class Post {
   String area = '';
   List<String> categories = [];
   int replyCount = 0;
+  int empathyCount = 0;
   bool isBookmarked = false;
+  bool isEmpathized = false;
   bool isReplyShown = false;
   bool isDraft = false;
   List<Reply> replies = [];

@@ -31,6 +31,7 @@ users:
     userId: auth.uid
     age: string
     area: string
+    title: string
     body: string
     categories: list<string>
     emotion: string
@@ -38,7 +39,7 @@ users:
     nickname: string
     position: string
     replyCount: int
-    title: string
+    empathyCount: int
     createdAt: timestamp
     updatedAt: timestamp
 
@@ -76,7 +77,11 @@ users:
   # 各ユーザーのブックマークした投稿
   bookmarkedPosts:
     id: post.id
-    postId: post.id
+    userId: auth.id
+
+  # 各ユーザーの共感した投稿
+  empathizedPosts:
+    id: post.id
     userId: auth.id
 
   # 各ユーザーの下書きした投稿

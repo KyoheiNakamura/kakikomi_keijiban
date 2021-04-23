@@ -112,6 +112,15 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                         ),
                         // ),
                       ),
+
+                      /// 更新日時
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          post.updatedAt,
+                          style: TextStyle(color: kLightGrey),
+                        ),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -141,12 +150,69 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                   ),
                                 )
                               : SizedBox(),
-
-                          /// 更新日時
-                          Text(
-                            post.updatedAt,
-                            style: TextStyle(color: kLightGrey),
-                          ),
+                          passedModel is! DraftsModel
+                              ? post.isEmpathized
+                                  ? TextButton.icon(
+                                      onPressed: () async {
+                                        // model.turnOffEmpathyButton(post);
+                                        // await model.deleteEmpathizedPost(post);
+                                        await model.addEmpathizedPost(post);
+                                      },
+                                      icon: Icon(
+                                        Icons.favorite,
+                                        color: Colors.pinkAccent,
+                                      ),
+                                      style: TextButton.styleFrom(
+                                        primary: kDarkPink,
+                                      ),
+                                      label: Row(
+                                        children: [
+                                          Text(
+                                            'ワカル',
+                                            style: TextStyle(
+                                              color: kDarkPink,
+                                            ),
+                                          ),
+                                          post.empathyCount != 0
+                                              ? Text(
+                                                  ' ${post.empathyCount}',
+                                                  style: TextStyle(
+                                                    color: kDarkPink,
+                                                  ),
+                                                )
+                                              : SizedBox(),
+                                        ],
+                                      ),
+                                    )
+                                  : TextButton.icon(
+                                      onPressed: () async {
+                                        model.turnOnEmpathyButton(post);
+                                        await model.addEmpathizedPost(post);
+                                      },
+                                      icon: Icon(
+                                        Icons.favorite_border_outlined,
+                                        color: kLightGrey,
+                                      ),
+                                      label: Row(
+                                        children: [
+                                          Text(
+                                            'ワカル',
+                                            style: TextStyle(
+                                              color: kDarkPink,
+                                            ),
+                                          ),
+                                          post.empathyCount != 0
+                                              ? Text(
+                                                  ' ${post.empathyCount}',
+                                                  style: TextStyle(
+                                                    color: kDarkPink,
+                                                  ),
+                                                )
+                                              : SizedBox(),
+                                        ],
+                                      ),
+                                    )
+                              : SizedBox(),
                         ],
                       ),
 

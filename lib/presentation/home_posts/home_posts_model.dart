@@ -299,6 +299,7 @@ class HomePostsModel extends ChangeNotifier {
     }
 
     await _addBookmarkToAllPosts();
+    await _addEmpathyToAllPosts();
     await _getAllReplies();
 
     stopLoading();
@@ -332,6 +333,7 @@ class HomePostsModel extends ChangeNotifier {
     }
 
     await _addBookmarkToAllPosts();
+    await _addEmpathyToAllPosts();
     await _getAllReplies();
 
     stopLoading();
@@ -367,6 +369,7 @@ class HomePostsModel extends ChangeNotifier {
     }
 
     await _addBookmarkToMyPosts();
+    await _addEmpathyToMyPosts();
     await _getMyReplies();
 
     stopLoading();
@@ -402,6 +405,7 @@ class HomePostsModel extends ChangeNotifier {
     }
 
     await _addBookmarkToMyPosts();
+    await _addEmpathyToMyPosts();
     await _getMyReplies();
 
     stopLoading();
@@ -436,6 +440,7 @@ class HomePostsModel extends ChangeNotifier {
       this._bookmarkedPosts = await _getBookmarkedPosts(docs);
     }
 
+    await _addEmpathyToBookmarkedPosts();
     await _getBookmarkedReplies();
 
     stopLoading();
@@ -470,6 +475,7 @@ class HomePostsModel extends ChangeNotifier {
       this._bookmarkedPosts += await _getBookmarkedPosts(docs);
     }
 
+    await _addEmpathyToBookmarkedPosts();
     await _getBookmarkedReplies();
 
     stopLoading();
@@ -483,7 +489,7 @@ class HomePostsModel extends ChangeNotifier {
     final postSnapshots = await Future.wait(docs
         .map((bookmarkedPost) => _firestore
             .collectionGroup('posts')
-            .where('id', isEqualTo: bookmarkedPost['postId'])
+            .where('id', isEqualTo: bookmarkedPost['id'])
             // .orderBy('createdAt', descending: true)
             .get())
         .toList());
@@ -537,6 +543,60 @@ class HomePostsModel extends ChangeNotifier {
       for (int n = 0; n < bookmarkedPostsIds.length; n++) {
         if (this._myPosts[i].id == bookmarkedPostsIds[n]) {
           this._myPosts[i].isBookmarked = true;
+        }
+      }
+    }
+  }
+
+  Future<void> _addEmpathyToAllPosts() async {
+    final empathizedPostsSnapshot = await _firestore
+        .collection('users')
+        .doc(_auth.currentUser?.uid)
+        .collection('empathizedPosts')
+        .get();
+    final List<String> empathizedPostsIds = empathizedPostsSnapshot.docs
+        .map((empathizedPost) => empathizedPost.id)
+        .toList();
+    for (int i = 0; i < this._allPosts.length; i++) {
+      for (int n = 0; n < empathizedPostsIds.length; n++) {
+        if (this._allPosts[i].id == empathizedPostsIds[n]) {
+          this._allPosts[i].isEmpathized = true;
+        }
+      }
+    }
+  }
+
+  Future<void> _addEmpathyToMyPosts() async {
+    final empathizedPostsSnapshot = await _firestore
+        .collection('users')
+        .doc(_auth.currentUser?.uid)
+        .collection('empathizedPosts')
+        .get();
+    final List<String> empathizedPostsIds = empathizedPostsSnapshot.docs
+        .map((empathizedPost) => empathizedPost.id)
+        .toList();
+    for (int i = 0; i < this._myPosts.length; i++) {
+      for (int n = 0; n < empathizedPostsIds.length; n++) {
+        if (this._myPosts[i].id == empathizedPostsIds[n]) {
+          this._myPosts[i].isEmpathized = true;
+        }
+      }
+    }
+  }
+
+  Future<void> _addEmpathyToBookmarkedPosts() async {
+    final empathizedPostsSnapshot = await _firestore
+        .collection('users')
+        .doc(_auth.currentUser?.uid)
+        .collection('empathizedPosts')
+        .get();
+    final List<String> empathizedPostsIds = empathizedPostsSnapshot.docs
+        .map((empathizedPost) => empathizedPost.id)
+        .toList();
+    for (int i = 0; i < this._bookmarkedPosts.length; i++) {
+      for (int n = 0; n < empathizedPostsIds.length; n++) {
+        if (this._bookmarkedPosts[i].id == empathizedPostsIds[n]) {
+          this._bookmarkedPosts[i].isEmpathized = true;
         }
       }
     }

@@ -13,7 +13,7 @@ class LoadingSpinner extends StatelessWidget {
     required this.inAsyncCall,
     required this.child,
     this.opacity = 0.3,
-    this.color = Colors.black12,
+    this.color = Colors.black38,
     this.progressIndicator = const CircularProgressIndicator(),
     this.offset,
     this.dismissible = false,
