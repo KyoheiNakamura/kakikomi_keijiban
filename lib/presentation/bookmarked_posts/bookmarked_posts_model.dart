@@ -179,7 +179,7 @@ class BookmarkedPostsModel extends ChangeNotifier {
     final postSnapshots = await Future.wait(docs
         .map((bookmarkedPost) => _firestore
             .collectionGroup('posts')
-            .where('id', isEqualTo: bookmarkedPost['postId'])
+            .where('id', isEqualTo: bookmarkedPost['id'])
             // .orderBy('createdAt', descending: true)
             .get())
         .toList());

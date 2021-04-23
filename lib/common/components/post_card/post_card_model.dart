@@ -59,23 +59,6 @@ class PostCardModel extends ChangeNotifier {
       reply.repliesToReply = _repliesToReplies;
     }
     notifyListeners();
-
-    // // indexed forでもよい。listが必要なわけではないので。
-    // replies.map((reply) async {
-    //   var _querySnapshot = await _firestore
-    //       .collection('users')
-    //       .doc(reply.uid)
-    //       .collection('posts')
-    //       .doc(reply.postId)
-    //       .collection('replies')
-    //       .doc(reply.id)
-    //       .collection('repliesToReply')
-    //       .orderBy('createdAt')
-    //       .get();
-    //   var _docs = _querySnapshot.docs;
-    //   var _repliesToReplies = _docs.map((doc) => ReplyToReply(doc)).toList();
-    //   reply.repliesToReply = _repliesToReplies;
-    // }).toList();
   }
 
   void startLoading() {
@@ -117,7 +100,6 @@ class PostCardModel extends ChangeNotifier {
     await bookmarkedPostRef.set({
       /// bookmarkedPosts自身のIDにはpostIdと同じIDをsetしている
       'id': post.id,
-      'postId': post.id,
       'userId': post.userId,
       'createdAt': FieldValue.serverTimestamp(),
 
@@ -144,8 +126,123 @@ class PostCardModel extends ChangeNotifier {
     final userRef = FirebaseFirestore.instance
         .collection('users')
         .doc(_auth.currentUser?.uid);
-    final bookmarkedPosts = userRef.collection('bookmarkedPosts').doc(post.id);
-    await bookmarkedPosts.delete();
+    final bookmarkedPostsRef =
+        userRef.collection('bookmarkedPosts').doc(post.id);
+    await bookmarkedPostsRef.delete();
+    notifyListeners();
+  }
+
+  void turnOnEmpathyButton(Post post) {
+    post.isEmpathized = true;
+    notifyListeners();
+  }
+
+  void turnOffEmpathyButton(Post post) {
+    post.isEmpathized = false;
+    notifyListeners();
+  }
+
+  // 10回までワカルできる
+  Future<void> addEmpathizedPost(Post post) async {
+    WriteBatch _batch = _firestore.batch();
+
+    final userRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(_auth.currentUser?.uid);
+    final empathizedPostRef =
+        userRef.collection('empathizedPosts').doc(post.id);
+    final empathizedPostSnapshot = await empathizedPostRef.get();
+    int myEmpathyCount = 0;
+    if (empathizedPostSnapshot.exists) {
+      myEmpathyCount = empathizedPostSnapshot['myEmpathyCount'];
+    }
+    print(myEmpathyCount);
+    final postRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(post.userId)
+        .collection('posts')
+        .doc(post.id);
+    final postSnapshot = await postRef.get();
+    final currentEmpathyCount = postSnapshot['empathyCount'];
+
+    if (myEmpathyCount == 0) {
+      await empathizedPostRef.set({
+        /// empathizedPosts自身のIDにはpostIdと同じIDをsetしている
+        'id': post.id,
+        'userId': post.userId,
+        'myEmpathyCount': myEmpathyCount + 1,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+      await postRef.update({
+        'empathyCount': currentEmpathyCount + 1,
+      });
+      post.empathyCount = post.empathyCount + 1;
+    } else if (myEmpathyCount != 0 && myEmpathyCount < 10) {
+      await empathizedPostRef.update({
+        'myEmpathyCount': myEmpathyCount + 1,
+      });
+      await postRef.update({
+        'empathyCount': currentEmpathyCount + 1,
+      });
+      post.empathyCount = currentEmpathyCount + 1;
+    }
+
+    notifyListeners();
+  }
+
+  // １回のみワカルできる
+  // Future<void> addEmpathizedPost(Post post) async {
+  //   WriteBatch _batch = _firestore.batch();
+  //
+  //   final userRef = FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(_auth.currentUser?.uid);
+  //   final empathizedPostsRef =
+  //       userRef.collection('empathizedPosts').doc(post.id);
+  //   await empathizedPostsRef.set({
+  //     /// empathizedPosts自身のIDにはpostIdと同じIDをsetしている
+  //     'id': post.id,
+  //     'userId': post.userId,
+  //     'myEmpathyCount': 0,
+  //     'createdAt': FieldValue.serverTimestamp(),
+  //   });
+  //
+  //   final postRef = FirebaseFirestore.instance
+  //       .collection('users')
+  //       .doc(post.userId)
+  //       .collection('posts')
+  //       .doc(post.id);
+  //   final postSnapshot = await postRef.get();
+  //   final empathyCount = postSnapshot['empathyCount'];
+  //   await postRef.update({
+  //     'empathyCount': empathyCount + 1,
+  //   });
+  //   post.empathyCount = post.empathyCount + 1
+  //   notifyListeners();
+  // }
+
+  Future<void> deleteEmpathizedPost(Post post) async {
+    WriteBatch _batch = _firestore.batch();
+
+    final userRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(_auth.currentUser?.uid);
+    final empathizedPostsRef =
+        userRef.collection('empathizedPosts').doc(post.id);
+    await empathizedPostsRef.delete();
+
+    final postRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(post.userId)
+        .collection('posts')
+        .doc(post.id);
+
+    if (post.empathyCount != 0) {
+      await postRef.update({
+        'empathyCount': post.empathyCount = post.empathyCount - 1,
+      });
+    }
+
     notifyListeners();
   }
 

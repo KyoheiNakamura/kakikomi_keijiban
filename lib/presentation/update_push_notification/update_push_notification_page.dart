@@ -22,7 +22,7 @@ class UpdatePushNotificationPage extends StatelessWidget
           elevation: 0,
           centerTitle: true,
           title: Text(
-            'プッシュ通知設定',
+            '通知設定',
             style: kAppBarTextStyle,
           ),
         ),
@@ -53,7 +53,7 @@ class UpdatePushNotificationPage extends StatelessWidget
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: ListTile(
                               title: Text(
-                                '投稿がされたとき',
+                                '新着の投稿のお知らせ',
                                 style: TextStyle(
                                   // fontWeight: FontWeight.w500,
                                   fontSize: 17,
@@ -78,7 +78,7 @@ class UpdatePushNotificationPage extends StatelessWidget
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: ListTile(
                               title: Text(
-                                '返信をされたとき',
+                                '返信のお知らせ',
                                 style: TextStyle(
                                   // fontWeight: FontWeight.w500,
                                   fontSize: 17,
@@ -103,7 +103,7 @@ class UpdatePushNotificationPage extends StatelessWidget
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: ListTile(
                               title: Text(
-                                '返信に返信をされたとき',
+                                '返信への返信のお知らせ',
                                 style: TextStyle(
                                   // fontWeight: FontWeight.w500,
                                   fontSize: 17,

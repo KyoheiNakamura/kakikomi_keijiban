@@ -12,7 +12,7 @@ const List<String> kInitialNotificationSetting = [
   'replyToMyReply',
 ];
 
-const String kAllPostsTab = '最新の投稿';
+const String kAllPostsTab = '新着の投稿';
 const String kMyPostsTab = '自分の投稿';
 const String kBookmarkedPostsTab = 'ブックマーク';
 
@@ -53,7 +53,7 @@ const List<String> kCategoryList = [
   // 'ASD(自閉症スペクトラム障害)',
   'ADHD',
   // 'ADHD(注意欠如・多動性障害)',
-  'SLD',
+  'LD',
   // 'SLD(限局性学習障害)',
   '大人の発達障害',
   '発達障害グレーゾーン',

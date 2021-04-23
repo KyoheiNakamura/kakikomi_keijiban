@@ -192,44 +192,48 @@ class TabBarViewChild extends StatelessWidget {
                 }
                 return false;
               },
-              child: CustomScrollView(
-                key: PageStorageKey<String>(tabName),
-                slivers: [
-                  SliverOverlapInjector(
-                    handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
-                        context),
-                  ),
-                  SliverPadding(
-                    padding: EdgeInsets.only(
-                      top: 30.0,
-                      bottom: 60.0,
+              child: Scrollbar(
+                thickness: 6.0,
+                radius: Radius.circular(8.0),
+                child: CustomScrollView(
+                  key: PageStorageKey<String>(tabName),
+                  slivers: [
+                    SliverOverlapInjector(
+                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                          context),
                     ),
-                    sliver: SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          // RangeError (index): Invalid value: Valid value range is empty: 1
-                          // Todo postsが空じゃない時にpostに入れる
-                          // print(posts);
-                          final post = posts[index];
-                          return Column(
-                            children: [
-                              PostCard(
-                                post: post,
-                                indexOfPost: index,
-                                passedModel: model,
-                                tabName: tabName,
-                              ),
-                              post == posts.last && model.isLoading
-                                  ? CircularProgressIndicator()
-                                  : SizedBox(),
-                            ],
-                          );
-                        },
-                        childCount: posts.length,
+                    SliverPadding(
+                      padding: EdgeInsets.only(
+                        top: 30.0,
+                        bottom: 60.0,
+                      ),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            // RangeError (index): Invalid value: Valid value range is empty: 1
+                            // Todo postsが空じゃない時にpostに入れる
+                            // print(posts);
+                            final post = posts[index];
+                            return Column(
+                              children: [
+                                PostCard(
+                                  post: post,
+                                  indexOfPost: index,
+                                  passedModel: model,
+                                  tabName: tabName,
+                                ),
+                                post == posts.last && model.isLoading
+                                    ? CircularProgressIndicator()
+                                    : SizedBox(),
+                              ],
+                            );
+                          },
+                          childCount: posts.length,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           },
