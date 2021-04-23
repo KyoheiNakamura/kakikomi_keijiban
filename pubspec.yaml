@@ -38,7 +38,7 @@ flutter:
         - asset: lib/assets/fonts/GenShinGothic/GenShinGothic-Regular.ttf
 
 flutter_native_splash:
-  image: "lib/assets/images/anpanman.png"
+  image: "lib/assets/images/anpanman_charactors_1.png"
   color: "f3d4d8"
 
 

@@ -289,8 +289,10 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
             /// EmotionImageButton
             Positioned(
               // top: 20,
-              width: 60.0,
-              height: 60.0,
+              // width: 60.0,
+              // height: 60.0,
+              width: 70.0,
+              height: 70.0,
               child: GestureDetector(
                 child: kEmotionIcons[post.emotion] != null
                     ? Image.asset(kEmotionIcons[post.emotion]!)

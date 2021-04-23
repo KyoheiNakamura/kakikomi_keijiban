@@ -20,15 +20,15 @@ const String kPleaseSelect = '選択してください';
 const String kDoNotSelect = '選択しない';
 
 const Map<String, String> kEmotionIcons = {
-  'うれしい': 'lib/assets/images/anpanman.png',
-  'かなしい': 'lib/assets/images/anpanman.png',
-  'いかり': 'lib/assets/images/anpanman.png',
-  '相談': 'lib/assets/images/anpanman.png',
-  '疑問': 'lib/assets/images/anpanman.png',
-  '提案': 'lib/assets/images/anpanman.png',
-  '悩み': 'lib/assets/images/anpanman.png',
-  'エール': 'lib/assets/images/anpanman.png',
-  '呼びかけ': 'lib/assets/images/anpanman.png',
+  'うれしい': 'lib/assets/images/anpanman_charactors_1.png',
+  'かなしい': 'lib/assets/images/anpanman_charactors_2.png',
+  'いかり': 'lib/assets/images/anpanman_charactors_3.png',
+  '相談': 'lib/assets/images/anpanman_charactors_4.png',
+  '疑問': 'lib/assets/images/anpanman_charactors_5.png',
+  '提案': 'lib/assets/images/anpanman_charactors_6.png',
+  '悩み': 'lib/assets/images/anpanman_charactors_7.png',
+  'エール': 'lib/assets/images/anpanman_charactors_8.png',
+  '呼びかけ': 'lib/assets/images/anpanman_charactors_9.png',
 };
 
 // kEmotionListを変更したら、↑のkEmotionIconsにも値を追加する！！
