@@ -58,6 +58,7 @@ class MyPostsModel extends ChangeNotifier {
       this._myPosts = docs.map((doc) => Post(doc)).toList();
     }
     await _addBookmarkToPosts();
+    await _addEmpathyToMyPosts();
     await _getReplies();
 
     stopLoading();
@@ -92,10 +93,29 @@ class MyPostsModel extends ChangeNotifier {
       this._myPosts += docs.map((doc) => Post(doc)).toList();
     }
     await _addBookmarkToPosts();
+    await _addEmpathyToMyPosts();
     await _getReplies();
 
     stopLoading();
     notifyListeners();
+  }
+
+  Future<void> _addEmpathyToMyPosts() async {
+    final empathizedPostsSnapshot = await _firestore
+        .collection('users')
+        .doc(_auth.currentUser?.uid)
+        .collection('empathizedPosts')
+        .get();
+    final List<String> empathizedPostsIds = empathizedPostsSnapshot.docs
+        .map((empathizedPost) => empathizedPost.id)
+        .toList();
+    for (int i = 0; i < this._myPosts.length; i++) {
+      for (int n = 0; n < empathizedPostsIds.length; n++) {
+        if (this._myPosts[i].id == empathizedPostsIds[n]) {
+          this._myPosts[i].isEmpathized = true;
+        }
+      }
+    }
   }
 
   Future<void> _addBookmarkToPosts() async {

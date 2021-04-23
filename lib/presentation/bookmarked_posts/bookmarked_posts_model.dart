@@ -131,6 +131,7 @@ class BookmarkedPostsModel extends ChangeNotifier {
       _addBookmarkToPosts(this._bookmarkedPosts);
     }
 
+    await _addEmpathyToBookmarkedPosts();
     await _getReplies();
 
     stopModalLoading();
@@ -167,6 +168,7 @@ class BookmarkedPostsModel extends ChangeNotifier {
       _addBookmarkToPosts(this._bookmarkedPosts);
     }
 
+    await _addEmpathyToBookmarkedPosts();
     await _getReplies();
 
     stopLoading();
@@ -200,6 +202,24 @@ class BookmarkedPostsModel extends ChangeNotifier {
   void _addBookmarkToPosts(List<Post> bookmarkedPosts) {
     for (int i = 0; i < this._bookmarkedPosts.length; i++) {
       this._bookmarkedPosts[i].isBookmarked = true;
+    }
+  }
+
+  Future<void> _addEmpathyToBookmarkedPosts() async {
+    final empathizedPostsSnapshot = await _firestore
+        .collection('users')
+        .doc(_auth.currentUser?.uid)
+        .collection('empathizedPosts')
+        .get();
+    final List<String> empathizedPostsIds = empathizedPostsSnapshot.docs
+        .map((empathizedPost) => empathizedPost.id)
+        .toList();
+    for (int i = 0; i < this._bookmarkedPosts.length; i++) {
+      for (int n = 0; n < empathizedPostsIds.length; n++) {
+        if (this._bookmarkedPosts[i].id == empathizedPostsIds[n]) {
+          this._bookmarkedPosts[i].isEmpathized = true;
+        }
+      }
     }
   }
 

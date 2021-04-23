@@ -71,6 +71,7 @@ class HomePostsModel extends ChangeNotifier {
   }
 
   Future<void> getPostsWithReplies(String tabName) async {
+    startModalLoading();
     if (tabName == kAllPostsTab) {
       await _getAllPostsWithReplies();
     } else if (tabName == kMyPostsTab) {
@@ -78,6 +79,7 @@ class HomePostsModel extends ChangeNotifier {
     } else if (tabName == kBookmarkedPostsTab) {
       await _getBookmarkedPostsWithReplies();
     }
+    stopModalLoading();
   }
 
   Future<void> loadPostsWithReplies(String tabName) async {

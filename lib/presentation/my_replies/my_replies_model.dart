@@ -51,6 +51,7 @@ class MyRepliesModel extends ChangeNotifier {
       this._postsWithMyReplies = await _getRepliedPosts(docs);
     }
     await _addBookmarkToPosts();
+    await _addEmpathyToMyReplies();
     await _getReplies();
 
     stopLoading();
@@ -84,10 +85,29 @@ class MyRepliesModel extends ChangeNotifier {
       this._postsWithMyReplies += await _getRepliedPosts(docs);
     }
     await _addBookmarkToPosts();
+    await _addEmpathyToMyReplies();
     await _getReplies();
 
     stopLoading();
     notifyListeners();
+  }
+
+  Future<void> _addEmpathyToMyReplies() async {
+    final empathizedPostsSnapshot = await _firestore
+        .collection('users')
+        .doc(_auth.currentUser?.uid)
+        .collection('empathizedPosts')
+        .get();
+    final List<String> empathizedPostsIds = empathizedPostsSnapshot.docs
+        .map((empathizedPost) => empathizedPost.id)
+        .toList();
+    for (int i = 0; i < this._postsWithMyReplies.length; i++) {
+      for (int n = 0; n < empathizedPostsIds.length; n++) {
+        if (this._postsWithMyReplies[i].id == empathizedPostsIds[n]) {
+          this._postsWithMyReplies[i].isEmpathized = true;
+        }
+      }
+    }
   }
 
   Future<List<Post>> _getRepliedPosts(List<QueryDocumentSnapshot> docs) async {
