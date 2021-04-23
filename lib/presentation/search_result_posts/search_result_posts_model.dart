@@ -88,6 +88,8 @@ class SearchResultPostsModel extends ChangeNotifier {
       this.lastVisibleOfTheBatch = docs[docs.length - 1];
       this._searchedPosts = docs.map((doc) => Post(doc)).toList();
     }
+
+    await _addEmpathyToSearchedPosts();
     await _addBookmarkToPosts();
     await _getReplies();
 
@@ -133,11 +135,31 @@ class SearchResultPostsModel extends ChangeNotifier {
       this.lastVisibleOfTheBatch = docs[docs.length - 1];
       this._searchedPosts = docs.map((doc) => Post(doc)).toList();
     }
+
+    await _addEmpathyToSearchedPosts();
     await _addBookmarkToPosts();
     await _getReplies();
 
     stopLoading();
     notifyListeners();
+  }
+
+  Future<void> _addEmpathyToSearchedPosts() async {
+    final empathizedPostsSnapshot = await _firestore
+        .collection('users')
+        .doc(_auth.currentUser?.uid)
+        .collection('empathizedPosts')
+        .get();
+    final List<String> empathizedPostsIds = empathizedPostsSnapshot.docs
+        .map((empathizedPost) => empathizedPost.id)
+        .toList();
+    for (int i = 0; i < this._searchedPosts.length; i++) {
+      for (int n = 0; n < empathizedPostsIds.length; n++) {
+        if (this._searchedPosts[i].id == empathizedPostsIds[n]) {
+          this._searchedPosts[i].isEmpathized = true;
+        }
+      }
+    }
   }
 
   Future<void> _addBookmarkToPosts() async {

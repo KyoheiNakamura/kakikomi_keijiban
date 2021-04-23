@@ -167,20 +167,20 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                       ),
                                       label: Row(
                                         children: [
+                                          post.empathyCount != 0
+                                              ? Text(
+                                                  '${post.empathyCount} ',
+                                                  style: TextStyle(
+                                                    color: kDarkPink,
+                                                  ),
+                                                )
+                                              : SizedBox(),
                                           Text(
                                             'ワカル',
                                             style: TextStyle(
                                               color: kDarkPink,
                                             ),
                                           ),
-                                          post.empathyCount != 0
-                                              ? Text(
-                                                  ' ${post.empathyCount}',
-                                                  style: TextStyle(
-                                                    color: kDarkPink,
-                                                  ),
-                                                )
-                                              : SizedBox(),
                                         ],
                                       ),
                                     )
@@ -195,20 +195,20 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                       ),
                                       label: Row(
                                         children: [
+                                          post.empathyCount != 0
+                                              ? Text(
+                                                  '${post.empathyCount} ',
+                                                  style: TextStyle(
+                                                    color: kDarkPink,
+                                                  ),
+                                                )
+                                              : SizedBox(),
                                           Text(
                                             'ワカル',
                                             style: TextStyle(
                                               color: kDarkPink,
                                             ),
                                           ),
-                                          post.empathyCount != 0
-                                              ? Text(
-                                                  ' ${post.empathyCount}',
-                                                  style: TextStyle(
-                                                    color: kDarkPink,
-                                                  ),
-                                                )
-                                              : SizedBox(),
                                         ],
                                       ),
                                     )
