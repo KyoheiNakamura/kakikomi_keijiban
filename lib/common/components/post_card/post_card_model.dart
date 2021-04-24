@@ -12,22 +12,6 @@ class PostCardModel extends ChangeNotifier {
   bool isLoading = false;
   final List<Reply> repliesToPost = [];
 
-  Future<void> getRepliesToPost(Post post) async {
-    final querySnapshot = await _firestore
-        .collection('users')
-        .doc(post.userId)
-        .collection('posts')
-        .doc(post.id)
-        .collection('replies')
-        .orderBy('createdAt')
-        .get();
-    final docs = querySnapshot.docs;
-    final replies = docs.map((doc) => Reply(doc)).toList();
-    // postドメインにrepliesを持たせているので、postCardでpost.repliesに入れてやってる
-    post.replies = replies;
-    notifyListeners();
-  }
-
   Future<void> getAllRepliesToPost(Post post) async {
     final querySnapshot = await _firestore
         .collection('users')
@@ -56,6 +40,7 @@ class PostCardModel extends ChangeNotifier {
           .get();
       final _docs = _querySnapshot.docs;
       final _repliesToReplies = _docs.map((doc) => ReplyToReply(doc)).toList();
+      // replyドメインにrepliesToReplyを持たせているので、postCardでreply.repliesToReplyに入れてやってる
       reply.repliesToReply = _repliesToReplies;
     }
     notifyListeners();
@@ -156,7 +141,6 @@ class PostCardModel extends ChangeNotifier {
     if (empathizedPostSnapshot.exists) {
       myEmpathyCount = empathizedPostSnapshot['myEmpathyCount'];
     }
-    print(myEmpathyCount);
     final postRef = FirebaseFirestore.instance
         .collection('users')
         .doc(post.userId)

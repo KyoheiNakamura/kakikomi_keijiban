@@ -78,11 +78,14 @@ users:
   bookmarkedPosts:
     id: post.id
     userId: auth.id
+    createdAt: timestamp
 
   # 各ユーザーの共感した投稿
   empathizedPosts:
     id: post.id
     userId: auth.id
+    myEmpathyCount: int
+    createdAt: timestamp
 
   # 各ユーザーの下書きした投稿
   draftedPosts:
@@ -97,6 +100,7 @@ users:
     nickname: string
     position: string
     replyCount: int
+    empathyCount: int
     title: string
     createdAt: timestamp
     updatedAt: timestamp
