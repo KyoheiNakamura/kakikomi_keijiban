@@ -10,8 +10,16 @@ service cloud.firestore {
       return request.auth.uId == userId;
     }
 
+    function existingData() {
+      return resource.data;
+    }
+
+    function incomingData() {
+      return request.resource.data;
+    }
+
     function isValidUser(user) {
-      return user.size() == 8
+      return user.size() == 11
         && 'userId' in user && user.userId is string
         && 'nickname' in user && user.nickname is string
         && 'position' in user && user.position is string
@@ -19,7 +27,10 @@ service cloud.firestore {
         && 'age' in user && user.age is string
         && 'area' in user && user.area is string
         && 'postCount' in user && user.postCount is int
+        && 'topics' in user && user.topics is list
+        && 'notifications' in user && user.notifications is list
         && 'createdAt' in user && user.createdAt is timestamp
+        && 'updatedAt' in user && user.updatedAt is timestamp
       ;
     }
 
@@ -35,16 +46,17 @@ service cloud.firestore {
         && 'title' in post && post.title is string
         && 'body' in post && post.body is string
         && 'emotion' in post && post.emotion is string
-        && 'isDraft' in post && post.isDraft is bool
         && 'categories' in post && post.categories is array
         && 'replyCount' in post && post.replyCount is int
+        && 'empathyCount' in post && post.empathyCount is int
         && 'createdAt' in post && post.createdAt is timestamp
         && 'updatedAt' in post && post.updatedAt is timestamp
       ;
     }
 
     function isValidReply(reply) {
-      return reply.size() == 11
+      return reply.size() == 12
+        && 'userId' in reply && reply.userId is string
         && 'postId' in reply && reply.postId is string
         && 'id' in reply && reply.id is string
         && 'replierId' in reply && reply.replierId is string
@@ -54,14 +66,14 @@ service cloud.firestore {
         && 'gender' in reply && reply.gender is string
         && 'age' in reply && reply.age is string
         && 'area' in reply && reply.area is string
-        && 'isDraft' in reply && reply.isDraft is bool
         && 'createdAt' in reply && reply.createdAt is timestamp
         && 'updatedAt' in reply && reply.updatedAt is timestamp
       ;
     }
 
     function isValidReplyToReply(reply) {
-      return reply.size() == 12
+      return reply.size() == 13
+        && 'userId' in reply && reply.userId is string
         && 'replyId' in reply && reply.replyId is string
         && 'postId' in reply && reply.postId is string
         && 'id' in reply && reply.id is string
@@ -72,222 +84,425 @@ service cloud.firestore {
         && 'gender' in reply && reply.gender is string
         && 'age' in reply && reply.age is string
         && 'area' in reply && reply.area is string
-        && 'isDraft' in reply && reply.isDraft is bool
         && 'createdAt' in reply && reply.createdAt is timestamp
         && 'updatedAt' in reply && reply.updatedAt is timestamp
       ;
     }
 
+    function isValidBookmarkedPost(bookmarkedPost) {
+      return bookmarkedPost.size() == 3
+        && 'id' in bookmarkedPost && bookmarkedPost.id is string
+        && 'userId' in bookmarkedPost && bookmarkedPost.userId is string
+        && 'createdAt' in bookmarkedPost && bookmarkedPost.createdAt is timestamp
+    }
 
+    function isValidEmpathizedPost(empathizedPost) {
+      return empathizedPost.size() <= 4
+        && 'id' in empathizedPost && empathizedPost.id is string
+        && 'userId' in empathizedPost && empathizedPost.userId is string
+        && 'myEmpathyCount' in empathizedPost && empathizedPost.myEmpathyCount is int
+        && 'createdAt' in empathizedPost && empathizedPost.createdAt is timestamp
+    }
 
     match /users/{userId} {
       allow get: if isAuthenticated();
       allow create: if isUserAuthenticated(userId)
       // スキーマ検証
-        && isValidUser(request.resource.data)
+        && isValidUser(incomingData())
       // バリデーション
-        && request.resource.data.userId == userId
-        && request.resource.data.nickname.size() <= 10
-        && request.resource.data.position.size() <= 10
-        && request.resource.data.gender.size() <= 10
-        && request.resource.data.age.size() <= 10
-        && request.resource.data.area.size() <= 10
-        && request.resource.data.postCount >= 0
-        && request.resource.data.postCount < 10000
-        && request.resource.data.createdAt == request.time
+        && incomingData().userId == userId
+        && incomingData().nickname.size() <= 10
+        && incomingData().position.size() <= 10
+        && incomingData().gender.size() <= 10
+        && incomingData().age.size() <= 10
+        && incomingData().area.size() <= 10
+        && incomingData().postCount >= 0
+        && incomingData().postCount < 10000
+        && incomingData().topics.size() == 0
+        && incomingData().notifications.size() >= 0
+        && incomingData().createdAt == request.time
+        && incomingData().updatedAt == request.time
       ;
-      allow update: if isAuthenticated()
+      allow update: if isUserAuthenticated(userId)
       // スキーマ検証
-        && isValidUser(request.resource.data)
+        && isValidUser(incomingData())
       // バリデーション
-        && request.resource.data.userId == userId
-        && request.resource.data.nickname.size() <= 10
-        && request.resource.data.position.size() <= 10
-        && request.resource.data.gender.size() <= 10
-        && request.resource.data.age.size() <= 10
-        && request.resource.data.area.size() <= 10
-        && request.resource.data.postCount.size() >= 0
-      //   && (request.resource.data.postCount == resource.data.postCount
-      //   ||  request.resource.data.postCount == resource.data.postCount + 1
-      //   ||  request.resource.data.postCount == resource.data.postCount - 1
+        && incomingData().userId == userId
+        && incomingData().nickname.size() <= 10
+        && incomingData().position.size() <= 10
+        && incomingData().gender.size() <= 10
+        && incomingData().age.size() <= 10
+        && incomingData().area.size() <= 10
+        && incomingData().postCount >= 0
+      //   && (incomingData().postCount == existingData().postCount
+      //   ||  incomingData().postCount == existingData().postCount + 1
+      //   ||  incomingData().postCount == existingData().postCount - 1
       // )
-        && request.resource.data.createdAt == resource.data.createdAt
+        && incomingData().topics.size() >= 0
+        && incomingData().notifications.size() >= 0
+        && incomingData().createdAt == existingData().createdAt
+        && incomingData().updatedAt == request.time
       ;
 
       // /users/{userId}/posts
       match /posts/{postId} {
         // draftの時は isUserAuthenticated(userId) にする
-        allow read: if isAuthenticated(userId); 
+        allow read: if isAuthenticated(); 
         allow create: if isUserAuthenticated(userId)
         // スキーマ検証
-          && isValidPost(request.resource.data)
+          && isValidPost(incomingData())
         // バリデーション
-          && request.resource.data.userId == userId
-          && request.resource.data.id == postId
+          && incomingData().userId == userId
+          && incomingData().id == postId
         // draftの時は >= 0 にする
-          && request.resource.data.nickname.size() > 0
-          && request.resource.data.nickname.size() <= 10
-          && request.resource.data.position.size() <= 10
-          && request.resource.data.gender.size() <= 10
-          && request.resource.data.age.size() <= 10
-          && request.resource.data.area.size() <= 10
+          && incomingData().nickname.size() > 0
+          && incomingData().nickname.size() <= 10
+          && incomingData().position.size() <= 10
+          && incomingData().gender.size() <= 10
+          && incomingData().age.size() <= 10
+          && incomingData().area.size() <= 10
         // draftの時は >= 0 にする
-          && request.resource.data.emotion.size() > 0
-          && request.resource.data.emotion.size() <= 10
+          && incomingData().emotion.size() > 0
+          && incomingData().emotion.size() <= 10
         // draftの時は >= 0 にする
-          && request.resource.data.title.size() > 0
-          && request.resource.data.title.size() <= 50
+          && incomingData().title.size() > 0
+          && incomingData().title.size() <= 50
         // draftの時は >= 0 にする
-          && request.resource.data.body.size() > 0
-          && request.resource.data.body.size() <= 1500
+          && incomingData().body.size() > 0
+          && incomingData().body.size() <= 1500
         // draftの時は >= 0 にする
-          && request.resource.data.categories.size() >= 1
-          && request.resource.data.categories.size() <= 5
-          && request.resource.data.replyCount == 0
-          && request.resource.data.createdAt == request.time
-          && request.resource.data.updatedAt == request.time
+          && incomingData().categories.size() >= 1
+          && incomingData().categories.size() <= 5
+          && incomingData().replyCount == 0
+          && incomingData().empathyCount == 0
+          && incomingData().createdAt == request.time
+          && incomingData().updatedAt == request.time
         ;
         allow update: if isUserAuthenticated(userId)
         // スキーマ検証
-          && isValidPost(request.resource.data)
+          && isValidPost(incomingData())
         // バリデーション
-          && request.resource.data.userId == resource.data.userId
-          && request.resource.data.id == resource.data.postId
+          && incomingData().userId == existingData().userId
+          && incomingData().id == existingData().id
         // draftの時は >= 0 にする
-          && request.resource.data.nickname.size() > 0
-          && request.resource.data.nickname.size() <= 10
-          && request.resource.data.position.size() <= 10
-          && request.resource.data.gender.size() <= 10
-          && request.resource.data.age.size() <= 10
-          && request.resource.data.area.size() <= 10
+          && incomingData().nickname.size() > 0
+          && incomingData().nickname.size() <= 10
+          && incomingData().position.size() <= 10
+          && incomingData().gender.size() <= 10
+          && incomingData().age.size() <= 10
+          && incomingData().area.size() <= 10
         // draftの時は >= 0 にする
-          && request.resource.data.emotion.size() > 0
-          && request.resource.data.emotion.size() <= 10
+          && incomingData().emotion.size() > 0
+          && incomingData().emotion.size() <= 10
         // draftの時は >= 0 にする
-          && request.resource.data.title.size() > 0
-          && request.resource.data.title.size() <= 50
+          && incomingData().title.size() > 0
+          && incomingData().title.size() <= 50
         // draftの時は >= 0 にする
-          && request.resource.data.body.size() > 0
-          && request.resource.data.body.size() <= 1500
+          && incomingData().body.size() > 0
+          && incomingData().body.size() <= 1500
         // draftの時は >= 0 にする
-          && request.resource.data.categories.size() >= 1
-          && request.resource.data.categories.size() <= 5
-          && request.resource.data.replyCount.size() >= 0
-        //   && (request.resource.data.replyCount == resource.data.replyCount
-        //   ||  request.resource.data.replyCount == resource.data.replyCount + 1
-        //   ||  request.resource.data.replyCount == resource.data.replyCount - 1
+          && incomingData().categories.size() >= 1
+          && incomingData().categories.size() <= 5
+          && incomingData().replyCount.size() >= 0
+          && incomingData().empathyCount.size() >= 0
+        //   && (incomingData().replyCount == existingData().replyCount
+        //   ||  incomingData().replyCount == existingData().replyCount + 1
+        //   ||  incomingData().replyCount == existingData().replyCount - 1
         // )
-          && request.resource.data.createdAt == resource.data.createdAt
-          && request.resource.data.updatedAt == request.time
+          && incomingData().createdAt == existingData().createdAt
+          && incomingData().updatedAt == request.time
         ;
         allow delete: if isUserAuthenticated(userId);
 
         // /users/{userId}/posts/{postId}/replies
         match /replies/{replyId} {
-          allow read: if isAuthenticated(userId); 
-          allow create: if isAuthenticated(userId)
+          allow read: if isAuthenticated(); 
+          allow create: if isAuthenticated()
           // スキーマ検証
-            && isValidReply(request.resource.data)
+            && isValidReply(incomingData())
           // バリデーション
-            && request.resource.data.postId == postId
-            && request.resource.data.id == id
+            && incomingData().userId == userId
+            && incomingData().postId == postId
+            && incomingData().id == replyId
           // Todo replierId文字制限かける？autoGenerateIdの文字数いくらよ？？とりあえず50にしとく
-            && request.resource.data.replierId.size() <= 50
+            && incomingData().replierId.size() <= 50
           // draftの時は >= 0 にする
-            && request.resource.data.nickname.size() > 0
-            && request.resource.data.nickname.size() <= 10
-            && request.resource.data.position.size() <= 10
-            && request.resource.data.gender.size() <= 10
-            && request.resource.data.age.size() <= 10
-            && request.resource.data.area.size() <= 10
+            && incomingData().nickname.size() > 0
+            && incomingData().nickname.size() <= 10
+            && incomingData().position.size() <= 10
+            && incomingData().gender.size() <= 10
+            && incomingData().age.size() <= 10
+            && incomingData().area.size() <= 10
           // draftの時は >= 0 にする
-            && request.resource.data.body.size() > 0
-            && request.resource.data.body.size() <= 1500
-            && request.resource.data.createdAt == request.time
-            && request.resource.data.updatedAt == request.time
+            && incomingData().body.size() > 0
+            && incomingData().body.size() <= 1500
+            && incomingData().createdAt == request.time
+            && incomingData().updatedAt == request.time
           ;
-          allow update: if isUserAuthenticated(resource.data.replierId)
+          allow update: if isUserAuthenticated(existingData().replierId)
           // スキーマ検証
-            && isValidReply(request.resource.data.replierId)
+            && isValidReply(incomingData().replierId)
           // バリデーション
-            && request.resource.data.postId == resource.data.postId
-            && request.resource.data.id == resource.data.id
+            && incomingData().userId == existingData().userId
+            && incomingData().postId == existingData().postId
+            && incomingData().id == existingData().id
           // Todo replierId文字制限かける？autoGenerateIdの文字数いくらよ？？とりあえず50にしとく
-            && request.resource.data.replierId == resource.data.replierId
+            && incomingData().replierId == existingData().replierId
           // draftの時は >= 0 にする
-            && request.resource.data.nickname.size() > 0
-            && request.resource.data.nickname.size() <= 10
-            && request.resource.data.position.size() <= 10
-            && request.resource.data.gender.size() <= 10
-            && request.resource.data.age.size() <= 10
-            && request.resource.data.area.size() <= 10
+            && incomingData().nickname.size() > 0
+            && incomingData().nickname.size() <= 10
+            && incomingData().position.size() <= 10
+            && incomingData().gender.size() <= 10
+            && incomingData().age.size() <= 10
+            && incomingData().area.size() <= 10
           // draftの時は >= 0 にする
-            && request.resource.data.body.size() > 0
-            && request.resource.data.body.size() <= 1500
-            && request.resource.data.createdAt == resource.data.createdAt
-            && request.resource.data.updatedAt == request.time
+            && incomingData().body.size() > 0
+            && incomingData().body.size() <= 1500
+            && incomingData().createdAt == existingData().createdAt
+            && incomingData().updatedAt == request.time
           ;
-          allow delete: if isUserAuthenticated(resource.data.replierId);
+          allow delete: if isUserAuthenticated(existingData().replierId);
 
           // /users/{userId}/posts/{postId}/replies/{replyId}/repliesToReply
-          match /repliesToReply/{repliesToReplyId} {
-            allow read: if isAuthenticated(userId); 
-            allow create: if isAuthenticated(userId)
+          match /repliesToReply/{replyToReplyId} {
+            allow read: if isAuthenticated(); 
+            allow create: if isAuthenticated()
             // スキーマ検証
-              && isValidReplyToReply(request.resource.data)
+              && isValidReplyToReply(incomingData())
             // バリデーション
-              && request.resource.data.postId == postId
-              && request.resource.data.replyId == replyId
-              && request.resource.data.id == id
+              && incomingData().userId == userId
+              && incomingData().postId == postId
+              && incomingData().replyId == replyId
+              && incomingData().id == replyToReplyId
             // Todo autoGenerateIdの文字数いくらよ？？とりあえず50にしとく。
-              && request.resource.data.replierId.size() <= 50
-            // draftの時は >= 0 にする
-              && request.resource.data.nickname.size() > 0
-              && request.resource.data.nickname.size() <= 10
-              && request.resource.data.position.size() <= 10
-              && request.resource.data.gender.size() <= 10
-              && request.resource.data.age.size() <= 10
-              && request.resource.data.area.size() <= 10
-            // draftの時は >= 0 にする
-              && request.resource.data.body.size() > 0
-              && request.resource.data.body.size() <= 1500
-              && request.resource.data.createdAt == request.time
-              && request.resource.data.updatedAt == request.time
+              && incomingData().replierId.size() <= 50
+
+              && incomingData().nickname.size() > 0
+              && incomingData().nickname.size() <= 10
+              && incomingData().position.size() <= 10
+              && incomingData().gender.size() <= 10
+              && incomingData().age.size() <= 10
+              && incomingData().area.size() <= 10
+              && incomingData().body.size() > 0
+              && incomingData().body.size() <= 1500
+              && incomingData().createdAt == request.time
+              && incomingData().updatedAt == request.time
             ;
-            allow update: if isUserAuthenticated(resource.data.replierId)
+            allow update: if isUserAuthenticated(existingData().replierId)
             // スキーマ検証
-              && isValidReply(request.resource.data.replierId)
+              && isValidReply(incomingData().replierId)
             // バリデーション
-              && request.resource.data.postId == resource.data.postId
-              && request.resource.data.replyId == resource.data.replyId
-              && request.resource.data.id == resource.data.id
-            // Todo autoGenerateIdの文字数いくらよ？？とりあえず50にしとく。
-              && request.resource.data.replierId == resource.data.replierId
-            // draftの時は >= 0 にする
-              && request.resource.data.nickname.size() > 0
-              && request.resource.data.nickname.size() <= 10
-              && request.resource.data.position.size() <= 10
-              && request.resource.data.gender.size() <= 10
-              && request.resource.data.age.size() <= 10
-              && request.resource.data.area.size() <= 10
-            // draftの時は >= 0 にする
-              && request.resource.data.body.size() > 0
-              && request.resource.data.body.size() <= 1500
-              && request.resource.data.createdAt == resource.data.createdAt
-              && request.resource.data.updatedAt == request.time
+              && incomingData().userId == existingData().userId
+              && incomingData().postId == existingData().postId
+              && incomingData().replyId == existingData().replyId
+              && incomingData().id == existingData().id
+              && incomingData().replierId == existingData().replierId
+              && incomingData().nickname.size() > 0
+              && incomingData().nickname.size() <= 10
+              && incomingData().position.size() <= 10
+              && incomingData().gender.size() <= 10
+              && incomingData().age.size() <= 10
+              && incomingData().area.size() <= 10
+              && incomingData().body.size() > 0
+              && incomingData().body.size() <= 1500
+              && incomingData().createdAt == existingData().createdAt
+              && incomingData().updatedAt == request.time
             ;
-            allow delete: if isUserAuthenticated(resource.data.replierId);
+            allow delete: if isUserAuthenticated(existingData().replierId);
           }
         }
       }
+
       // /users/{userId}/bookmarkedPosts
+      match /bookmarkedPosts/{bookmarkedPostId} {
+        allow read: if isUserAuthenticated(userId); 
+        allow create: if isUserAuthenticated(userId)
+        // スキーマ検証
+          && isValidBookmarkedPost(incomingData())
+        // バリデーション
+          && incomingData().userId == userId
+          && incomingData().id == bookmarkedPostId
+          && incomingData().createdAt == request.time
+        ;
+        allow delete: if isUserAuthenticated(userId);
+      }
 
-      // /users/{userId}/draftPosts
+      // /users/{userId}/empathizedPosts
+      match /empathizedPosts/{empathizedPostId} {
+        allow read: if isUserAuthenticated(userId); 
+        allow create: if isUserAuthenticated(userId)
+        // スキーマ検証
+          && isValidEmpathizedPost(incomingData())
+        // バリデーション
+          && incomingData().userId == userId
+          && incomingData().id == empathizedPostId
+          && incomingData().myEmpathyCount == 0
+          && incomingData().createdAt == request.time
+        ;
+        allow update: if isUserAuthenticated(userId)
+        // スキーマ検証
+          && isValidEmpathizedPost(incomingData())
+        // バリデーション
+          && incomingData().userId == existingData().userId
+          && incomingData().id == existingData().id
+          && incomingData().myEmpathyCount == existingData().myEmpathyCount + 1
+          && existingData().myEmpathyCount < 10
+          && incomingData().createdAt == existingData().createdAt
+        ;
+        allow delete: if isUserAuthenticated(userId);
+      }
 
-      // /users/{userId}/draftReplies
+      // /users/{userId}/draftedPosts
+      match /draftedPosts/{draftedPostId} {
+        allow read: if isUserAuthenticated(userId); 
+        allow create: if isUserAuthenticated(userId)
+        // スキーマ検証
+          && isValidPost(incomingData())
+        // バリデーション
+          && incomingData().userId == userId
+          && incomingData().id == draftedPostId
+          && incomingData().nickname.size() >= 0
+          && incomingData().nickname.size() <= 10
+          && incomingData().position.size() <= 10
+          && incomingData().gender.size() <= 10
+          && incomingData().age.size() <= 10
+          && incomingData().area.size() <= 10
+          && incomingData().emotion.size() >= 0
+          && incomingData().emotion.size() <= 10
+          && incomingData().title.size() >= 0
+          && incomingData().title.size() <= 50
+          && incomingData().body.size() >= 0
+          && incomingData().body.size() <= 1500
+          && incomingData().categories.size() >= 0
+          && incomingData().categories.size() <= 5
+          && incomingData().replyCount == 0
+          && incomingData().empathyCount == 0
+          && incomingData().createdAt == request.time
+          && incomingData().updatedAt == request.time
+        ;
+        allow update: if isUserAuthenticated(userId)
+        // スキーマ検証
+          && isValidPost(incomingData())
+        // バリデーション
+          && incomingData().userId == existingData().userId
+          && incomingData().id == existingData().id
+          && incomingData().nickname.size() >= 0
+          && incomingData().nickname.size() <= 10
+          && incomingData().position.size() <= 10
+          && incomingData().gender.size() <= 10
+          && incomingData().age.size() <= 10
+          && incomingData().area.size() <= 10
+          && incomingData().emotion.size() >= 0
+          && incomingData().emotion.size() <= 10
+          && incomingData().title.size() >= 0
+          && incomingData().title.size() <= 50
+          && incomingData().body.size() >= 0
+          && incomingData().body.size() <= 1500
+          && incomingData().categories.size() >= 0
+          && incomingData().categories.size() <= 5
+          && incomingData().replyCount == 0
+          && incomingData().empathyCount == 0
+        //   && (incomingData().replyCount == existingData().replyCount
+        //   ||  incomingData().replyCount == existingData().replyCount + 1
+        //   ||  incomingData().replyCount == existingData().replyCount - 1
+        // )
+          && incomingData().createdAt == existingData().createdAt
+          && incomingData().updatedAt == request.time
+        ;
+        allow delete: if isUserAuthenticated(userId);
+      }
 
-      // /users/{userId}/draftRepliesToReply
+      // /users/{userId}/draftedReplies
+      match /draftedReplies/{draftedReplyId} {
+        allow read: if isUserAuthenticated(userId);
+        allow create: if isUserAuthenticated(userId)
+        // スキーマ検証
+          && isValidReply(incomingData())
+        // バリデーション
+          && incomingData().userId == userId
+          && incomingData().postId == postId
+          && incomingData().id == draftedReplyId
+        // Todo replierId文字制限かける？autoGenerateIdの文字数いくらよ？？とりあえず50にしとく
+          && incomingData().replierId.size() <= 50
+          && incomingData().nickname.size() >= 0
+          && incomingData().nickname.size() <= 10
+          && incomingData().position.size() <= 10
+          && incomingData().gender.size() <= 10
+          && incomingData().age.size() <= 10
+          && incomingData().area.size() <= 10
+          && incomingData().body.size() >= 0
+          && incomingData().body.size() <= 1500
+          && incomingData().createdAt == request.time
+          && incomingData().updatedAt == request.time
+        ;
+        allow update: if isUserAuthenticated(existingData().replierId)
+        // スキーマ検証
+          && isValidReply(incomingData().replierId)
+        // バリデーション
+          && incomingData().userId == existingData().userId
+          && incomingData().postId == existingData().postId
+          && incomingData().id == existingData().id
+          && incomingData().replierId == existingData().replierId
+          && incomingData().nickname.size() >= 0
+          && incomingData().nickname.size() <= 10
+          && incomingData().position.size() <= 10
+          && incomingData().gender.size() <= 10
+          && incomingData().age.size() <= 10
+          && incomingData().area.size() <= 10
+          && incomingData().body.size() >= 0
+          && incomingData().body.size() <= 1500
+          && incomingData().createdAt == existingData().createdAt
+          && incomingData().updatedAt == request.time
+        ;
+        allow delete: if isUserAuthenticated(existingData().replierId);
+      }
 
+      // /users/{userId}/draftedRepliesToReply
+      match /draftedRepliesToReply/{draftedReplyToReplyId} {
+        allow read: if isUserAuthenticated(userId);
+        allow create: if isUserAuthenticated(userId)
+        // スキーマ検証
+          && isValidReplyToReply(incomingData())
+        // バリデーション
+          && incomingData().userId == userId
+          && incomingData().postId == postId
+          && incomingData().replyId == replyId
+          && incomingData().id == draftedReplyToReplyId
+        // Todo autoGenerateIdの文字数いくらよ？？とりあえず50にしとく。
+          && incomingData().replierId.size() <= 50
+          && incomingData().nickname.size() > 0
+          && incomingData().nickname.size() <= 10
+          && incomingData().position.size() <= 10
+          && incomingData().gender.size() <= 10
+          && incomingData().age.size() <= 10
+          && incomingData().area.size() <= 10
+          && incomingData().body.size() > 0
+          && incomingData().body.size() <= 1500
+          && incomingData().createdAt == request.time
+          && incomingData().updatedAt == request.time
+        ;
+        allow update: if isUserAuthenticated(existingData().replierId)
+        // スキーマ検証
+          && isValidReply(incomingData().replierId)
+        // バリデーション
+          && incomingData().userId == existingData().userId
+          && incomingData().postId == existingData().postId
+          && incomingData().replyId == existingData().replyId
+          && incomingData().id == existingData().id
+          && incomingData().replierId == existingData().replierId
+          && incomingData().nickname.size() > 0
+          && incomingData().nickname.size() <= 10
+          && incomingData().position.size() <= 10
+          && incomingData().gender.size() <= 10
+          && incomingData().age.size() <= 10
+          && incomingData().area.size() <= 10
+          && incomingData().body.size() > 0
+          && incomingData().body.size() <= 1500
+          && incomingData().createdAt == existingData().createdAt
+          && incomingData().updatedAt == request.time
+        ;
+        allow delete: if isUserAuthenticated(existingData().replierId);
+      }
     }
   }
 }
