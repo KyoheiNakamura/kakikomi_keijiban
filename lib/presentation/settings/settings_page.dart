@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/enum.dart';
+import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/settings/settings_model.dart';
+import 'package:kakikomi_keijiban/presentation/update_email/update_email_model.dart';
 import 'package:kakikomi_keijiban/presentation/update_email/update_email_page.dart';
 import 'package:kakikomi_keijiban/presentation/update_password/update_password_page.dart';
 import 'package:kakikomi_keijiban/presentation/update_profile/update_profile_page.dart';
 import 'package:kakikomi_keijiban/presentation/update_push_notification/update_push_notification_page.dart';
 import 'package:provider/provider.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatelessWidget with ShowConfirmDialogMixin {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<SettingsModel>(
@@ -22,39 +25,20 @@ class SettingsPage extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 50,
-            elevation: 0,
-            centerTitle: true,
             title: Text(
               '設定',
               style: kAppBarTextStyle,
             ),
           ),
-          // Todo めちゃくちゃ簡潔に書けそうなので、後で書き直そう
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 16.0, top: 24.0, right: 16.0, bottom: 16.0),
-                child: OutlinedButton(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Icon(Icons.email_outlined, color: Colors.white),
-                      Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Text(
-                          'プロフィール設定',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  onPressed: () async {
+          body: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.account_circle),
+                  title: Text('プロフィール設定'),
+                  onTap: () async {
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -63,33 +47,11 @@ class SettingsPage extends StatelessWidget {
                     );
                     // Navigator.pop(context);
                   },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(kDarkPink),
-                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 16.0, top: 12.0, right: 16.0, bottom: 24.0),
-                child: OutlinedButton(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Icon(Icons.email_outlined, color: Colors.white),
-                      Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Text(
-                          'プッシュ通知設定',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  onPressed: () async {
+                ListTile(
+                  leading: Icon(Icons.notifications),
+                  title: Text('プッシュ通知設定'),
+                  onTap: () async {
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -98,34 +60,12 @@ class SettingsPage extends StatelessWidget {
                     );
                     // Navigator.pop(context);
                   },
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(kDarkPink),
-                  ),
                 ),
-              ),
-              Divider(thickness: 1.0),
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 16.0, top: 24.0, right: 16.0, bottom: 16.0),
-                child: OutlinedButton(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Icon(Icons.login_outlined, color: kDarkPink),
-                      Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Text(
-                          'メールアドレスの変更',
-                          style: TextStyle(
-                            color: kDarkPink,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  onPressed: () async {
+                Divider(thickness: 1.0),
+                ListTile(
+                  leading: Icon(Icons.email),
+                  title: Text('メールアドレスの変更'),
+                  onTap: () async {
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -135,29 +75,10 @@ class SettingsPage extends StatelessWidget {
                     // Navigator.pop(context);
                   },
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 16.0, top: 12.0, right: 16.0, bottom: 16.0),
-                child: OutlinedButton(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Icon(Icons.login_outlined, color: kDarkPink),
-                      Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Text(
-                          'パスワードの変更',
-                          style: TextStyle(
-                            color: kDarkPink,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  onPressed: () async {
+                ListTile(
+                  leading: Icon(Icons.lock),
+                  title: Text('パスワードの変更'),
+                  onTap: () async {
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -167,9 +88,188 @@ class SettingsPage extends StatelessWidget {
                     // Navigator.pop(context);
                   },
                 ),
-              ),
-            ],
+                Divider(thickness: 1.0),
+                ListTile(
+                  leading: Icon(Icons.logout),
+                  title: Text('ログアウト'),
+                  onTap: () {
+                    showLogoutConfirmDialog(context);
+                    // Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
           ),
+          // SingleChildScrollView(
+          //   child: Column(
+          //     crossAxisAlignment: CrossAxisAlignment.stretch,
+          //     children: [
+          //       Padding(
+          //         padding: const EdgeInsets.only(
+          //             left: 16.0, top: 24.0, right: 16.0, bottom: 16.0),
+          //         child: OutlinedButton(
+          //           child: Row(
+          //             mainAxisAlignment: MainAxisAlignment.center,
+          //             children: [
+          //               // Icon(Icons.email_outlined, color: Colors.white),
+          //               Padding(
+          //                 padding: const EdgeInsets.all(12.0),
+          //                 child: Text(
+          //                   'プロフィール設定',
+          //                   style: TextStyle(
+          //                     color: Colors.white,
+          //                     fontSize: 16.0,
+          //                     fontWeight: FontWeight.bold,
+          //                   ),
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //           onPressed: () async {
+          //             await Navigator.push(
+          //               context,
+          //               MaterialPageRoute(
+          //                 builder: (context) => UpdateProfilePage(),
+          //               ),
+          //             );
+          //             // Navigator.pop(context);
+          //           },
+          //           style: ButtonStyle(
+          //             backgroundColor: MaterialStateProperty.all(kDarkPink),
+          //           ),
+          //         ),
+          //       ),
+          //       Padding(
+          //         padding: const EdgeInsets.only(
+          //             left: 16.0, top: 12.0, right: 16.0, bottom: 24.0),
+          //         child: OutlinedButton(
+          //           child: Row(
+          //             mainAxisAlignment: MainAxisAlignment.center,
+          //             children: [
+          //               // Icon(Icons.email_outlined, color: Colors.white),
+          //               Padding(
+          //                 padding: const EdgeInsets.all(12.0),
+          //                 child: Text(
+          //                   'プッシュ通知設定',
+          //                   style: TextStyle(
+          //                     color: Colors.white,
+          //                     fontSize: 16.0,
+          //                     fontWeight: FontWeight.bold,
+          //                   ),
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //           onPressed: () async {
+          //             await Navigator.push(
+          //               context,
+          //               MaterialPageRoute(
+          //                 builder: (context) => UpdatePushNotificationPage(),
+          //               ),
+          //             );
+          //             // Navigator.pop(context);
+          //           },
+          //           style: ButtonStyle(
+          //             backgroundColor: MaterialStateProperty.all(kDarkPink),
+          //           ),
+          //         ),
+          //       ),
+          //       Divider(thickness: 1.0),
+          //       Padding(
+          //         padding: const EdgeInsets.only(
+          //             left: 16.0, top: 24.0, right: 16.0, bottom: 16.0),
+          //         child: OutlinedButton(
+          //           child: Row(
+          //             mainAxisAlignment: MainAxisAlignment.center,
+          //             children: [
+          //               // Icon(Icons.login_outlined, color: kDarkPink),
+          //               Padding(
+          //                 padding: const EdgeInsets.all(12.0),
+          //                 child: Text(
+          //                   'メールアドレスの変更',
+          //                   style: TextStyle(
+          //                     color: kDarkPink,
+          //                     fontSize: 16.0,
+          //                     fontWeight: FontWeight.bold,
+          //                   ),
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //           onPressed: () async {
+          //             await Navigator.push(
+          //               context,
+          //               MaterialPageRoute(
+          //                 builder: (context) => UpdateEmailPage(),
+          //               ),
+          //             );
+          //             // Navigator.pop(context);
+          //           },
+          //         ),
+          //       ),
+          //       Padding(
+          //         padding: const EdgeInsets.only(
+          //             left: 16.0, top: 12.0, right: 16.0, bottom: 16.0),
+          //         child: OutlinedButton(
+          //           child: Row(
+          //             mainAxisAlignment: MainAxisAlignment.center,
+          //             children: [
+          //               // Icon(Icons.login_outlined, color: kDarkPink),
+          //               Padding(
+          //                 padding: const EdgeInsets.all(12.0),
+          //                 child: Text(
+          //                   'パスワードの変更',
+          //                   style: TextStyle(
+          //                     color: kDarkPink,
+          //                     fontSize: 16.0,
+          //                     fontWeight: FontWeight.bold,
+          //                   ),
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //           onPressed: () async {
+          //             await Navigator.push(
+          //               context,
+          //               MaterialPageRoute(
+          //                 builder: (context) => UpdatePasswordPage(),
+          //               ),
+          //             );
+          //             // Navigator.pop(context);
+          //           },
+          //         ),
+          //       ),
+          //       Divider(thickness: 1.0),
+          //       Padding(
+          //         padding: const EdgeInsets.only(
+          //             left: 16.0, top: 12.0, right: 16.0, bottom: 16.0),
+          //         child: OutlinedButton(
+          //           child: Row(
+          //             mainAxisAlignment: MainAxisAlignment.center,
+          //             children: [
+          //               // Icon(Icons.login_outlined, color: kDarkPink),
+          //               Padding(
+          //                 padding: const EdgeInsets.all(12.0),
+          //                 child: Text(
+          //                   'ログアウト',
+          //                   style: TextStyle(
+          //                     color: kDarkPink,
+          //                     fontSize: 16.0,
+          //                     fontWeight: FontWeight.bold,
+          //                   ),
+          //                 ),
+          //               ),
+          //             ],
+          //           ),
+          //           onPressed: () async {
+          //             showLogoutConfirmDialog(context);
+          //             // Navigator.pop(context);
+          //           },
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ),
       ),
     );

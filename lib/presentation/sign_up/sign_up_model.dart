@@ -37,17 +37,15 @@ class SignUpModel extends ChangeNotifier {
       final userDocRef =
           _firestore.collection('users').doc(_auth.currentUser!.uid);
       // setはuserDocRefのDocument idをもつDocumentにデータを保存する。
-      await userDocRef.set({
-        'userId': _auth.currentUser!.uid,
+      await userDocRef.update({
         'nickname': enteredNickname,
-        'position': '',
-        'gender': '',
-        'age': '',
-        'area': '',
         'postCount': AppModel.user!.postCount,
-        'createdAt': FieldValue.serverTimestamp(),
+        'topics': AppModel.user!.topics,
+        'notifications': AppModel.user!.notifications,
         'updatedAt': FieldValue.serverTimestamp(),
       });
+
+      await AppModel.reloadUser();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
         print('このメールアドレスはすでに使用されています。');

@@ -13,8 +13,6 @@ class SelectRegistrationMethodPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
-          elevation: 0,
-          centerTitle: true,
           title: Text(
             '会員登録またはログイン',
             style: kAppBarTextStyle,

@@ -13,6 +13,10 @@ class User {
     this.age = doc['age'].isNotEmpty ? doc['age'] : kPleaseSelect;
     this.area = doc['area'].isNotEmpty ? doc['area'] : kPleaseSelect;
     this.postCount = doc['postCount'];
+    final List<dynamic> _topics = doc['topics'];
+    this.topics = List<String>.from(_topics);
+    final List<dynamic> _notifications = doc['notifications'];
+    this.notifications = List<String>.from(_notifications);
     // final createdDate = doc['createdAt'].toDate();
     // this._createdAt = createdDate;
     // if (doc['updatedAt'] != null) {
@@ -28,6 +32,8 @@ class User {
   String age = '';
   String area = '';
   int postCount = 0;
+  List<String> topics = [];
+  List<String> notifications = [];
   DateTime? _createdAt;
   DateTime? _updatedAt;
 
@@ -42,5 +48,12 @@ class User {
   bool? isCurrentUserAnonymous() {
     final currentUser = FirebaseAuth.instance.currentUser;
     return currentUser?.isAnonymous;
+  }
+
+  String? get email => getEmail();
+
+  String? getEmail() {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    return currentUser?.email;
   }
 }

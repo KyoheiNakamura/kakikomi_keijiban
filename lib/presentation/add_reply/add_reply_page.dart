@@ -26,7 +26,7 @@ class AddReplyPage extends StatelessWidget
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
-        showConfirmDialog(context);
+        showDiscardConfirmDialog(context);
         return Future.value(true);
       },
       child: ChangeNotifierProvider<AddReplyModel>(
@@ -34,8 +34,6 @@ class AddReplyPage extends StatelessWidget
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 50,
-            elevation: 0,
-            centerTitle: true,
             title: Text(
               '返信',
               style: kAppBarTextStyle,
@@ -91,8 +89,7 @@ class AddReplyPage extends StatelessWidget
                             DropdownButtonFormField(
                               focusColor: Colors.pink[50],
                               value: isUserExisting
-                                  ? model.positionDropdownValue =
-                                      user.position
+                                  ? model.positionDropdownValue = user.position
                                   : model.positionDropdownValue,
                               icon: Icon(
                                 Icons.arrow_downward,
@@ -120,8 +117,7 @@ class AddReplyPage extends StatelessWidget
                               // focusNode: _genderFocusNode,
                               focusColor: Colors.pink[50],
                               value: isUserExisting
-                                  ? model.genderDropdownValue =
-                                      user.gender
+                                  ? model.genderDropdownValue = user.gender
                                   : model.genderDropdownValue,
                               icon: Icon(
                                 Icons.arrow_downward,

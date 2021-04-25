@@ -29,7 +29,7 @@ class UpdateReplyPage extends StatelessWidget
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
-        showConfirmDialog(context);
+        showDiscardConfirmDialog(context);
         return Future.value(true);
       },
       child: ChangeNotifierProvider<UpdateReplyModel>(
@@ -37,8 +37,6 @@ class UpdateReplyPage extends StatelessWidget
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 50,
-            elevation: 0,
-            centerTitle: true,
             title: Text(
               '編集',
               style: kAppBarTextStyle,

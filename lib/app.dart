@@ -32,6 +32,10 @@ class App extends StatelessWidget {
           primaryColorDark: kDeepDarkPink,
           accentColor: kDarkPink,
           brightness: Brightness.light,
+          appBarTheme: AppBarTheme(
+            elevation: 2,
+            centerTitle: true,
+          ),
           fontFamily: 'GenShinGothic',
           pageTransitionsTheme: PageTransitionsTheme(
             builders: <TargetPlatform, PageTransitionsBuilder>{

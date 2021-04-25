@@ -10,32 +10,30 @@ import 'package:provider/provider.dart';
 class DraftsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // return WillPopScope(
-    //   onWillPop: () {
-    //     Navigator.of(context).popUntil(
-    //       ModalRoute.withName('/'),
-    //     );
-    //     return Future.value(true);
-    //   },
-    return ChangeNotifierProvider<DraftsModel>(
-      create: (context) => DraftsModel()..init(),
-      child: SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            toolbarHeight: 50,
-            elevation: 0,
-            centerTitle: true,
-            title: Text(
-              '下書き',
-              style: kAppBarTextStyle,
+    return WillPopScope(
+      onWillPop: () {
+        Navigator.of(context).popUntil(
+          ModalRoute.withName('/'),
+        );
+        return Future.value(true);
+      },
+      child: ChangeNotifierProvider<DraftsModel>(
+        create: (context) => DraftsModel()..init(),
+        child: SafeArea(
+          child: Scaffold(
+            appBar: AppBar(
+              toolbarHeight: 50,
+              title: Text(
+                '下書き',
+                style: kAppBarTextStyle,
+              ),
             ),
-          ),
-          body: Consumer<DraftsModel>(builder: (context, model, child) {
-            final List<Post> drafts = model.posts;
-            return AnnotatedRegion<SystemUiOverlayStyle>(
-              value: SystemUiOverlayStyle.light
-                  .copyWith(statusBarColor: Theme.of(context).primaryColorDark),
-              child: SafeArea(
+            body: Consumer<DraftsModel>(builder: (context, model, child) {
+              final List<Post> drafts = model.posts;
+              // return AnnotatedRegion<SystemUiOverlayStyle>(
+              //   value: SystemUiOverlayStyle.light.copyWith(
+              //       statusBarColor: Theme.of(context).primaryColorDark),
+              return SafeArea(
                 child: LoadingSpinner(
                   inAsyncCall: model.isModalLoading,
                   child: Container(
@@ -64,12 +62,12 @@ class DraftsPage extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
-            );
-          }),
+              );
+              // );
+            }),
+          ),
         ),
       ),
     );
-    // );
   }
 }

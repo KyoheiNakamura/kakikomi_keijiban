@@ -16,8 +16,6 @@ class UpdatePasswordPage extends StatelessWidget with ShowExceptionDialogMixin {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
-          elevation: 0,
-          centerTitle: true,
           title: Text(
             'パスワードの変更',
             style: kAppBarTextStyle,

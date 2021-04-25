@@ -8,8 +8,6 @@ class SearchPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 50,
-        elevation: 0,
-        centerTitle: true,
         title: Text(
           '検索',
           style: kAppBarTextStyle,

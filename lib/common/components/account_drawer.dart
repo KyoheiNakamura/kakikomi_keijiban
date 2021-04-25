@@ -2,6 +2,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/enum.dart';
+import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_page.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
@@ -12,7 +14,7 @@ import 'package:kakikomi_keijiban/presentation/settings/settings_page.dart';
 import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_page.dart';
 import 'package:provider/provider.dart';
 
-class AccountDrawer extends StatelessWidget {
+class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
   @override
   Widget build(BuildContext context) {
     return Consumer<HomePostsModel>(builder: (context, model, child) {
@@ -32,7 +34,9 @@ class AccountDrawer extends StatelessWidget {
                 onTap: () async {
                   await Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MyPostsPage()),
+                    MaterialPageRoute(
+                      builder: (context) => MyPostsPage(),
+                    ),
                   );
                 },
               ),
@@ -53,7 +57,7 @@ class AccountDrawer extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.star_border),
+                leading: Icon(Icons.star),
                 title: Text('ブックマーク'),
                 onTap: () async {
                   await Navigator.push(
@@ -62,7 +66,7 @@ class AccountDrawer extends StatelessWidget {
                       builder: (context) => BookmarkedPostsPage(),
                     ),
                   );
-                  await model.getPostsWithReplies(kAllPostsTab);
+                  // await model.getPostsWithReplies(kAllPostsTab);
                   // Navigator.pop(context);
                 },
               ),
@@ -83,21 +87,27 @@ class AccountDrawer extends StatelessWidget {
                 leading: Icon(Icons.settings),
                 title: Text('設定'),
                 onTap: () async {
-                  isCurrentUserAnonymous != null &&
-                          isCurrentUserAnonymous == false
-                      ? await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SettingsPage(),
-                          ),
-                        )
-                      : await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                SelectRegistrationMethodPage(),
-                          ),
-                        );
+                  if (isCurrentUserAnonymous != null &&
+                      isCurrentUserAnonymous == false) {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SettingsPage(),
+                      ),
+                    );
+                    if (result == valueFromShowConfirmDialog.logout) {
+                      await model.signOut();
+                      Navigator.pop(context);
+                      await model.init();
+                    }
+                  } else {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SelectRegistrationMethodPage(),
+                      ),
+                    );
+                  }
                   // Navigator.pop(context);
                 },
               ),
@@ -116,33 +126,32 @@ class ChangingDrawerHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<HomePostsModel>(builder: (context, model, child) {
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: isCurrentUserAnonymous != null && isCurrentUserAnonymous == false
-            ? Column(
+      return isCurrentUserAnonymous != null && isCurrentUserAnonymous == false
+          ? Padding(
+              padding: EdgeInsets.only(
+                left: 16.0,
+                top: 120.0,
+                right: 16.0,
+                bottom: 16.0,
+              ),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
                     AppModel.user!.nickname,
                     style: TextStyle(fontSize: 24),
                   ),
+                  SizedBox(height: 8.0),
                   Text(
-                    // context.read<AppModel>().loggedInUser!.email!,
-                    'アノニマスじゃないよ',
-                    style: TextStyle(fontSize: 20.0),
+                    AppModel.user!.email!,
+                    style: TextStyle(color: kLightGrey),
                   ),
-                  SizedBox(height: 24.0),
-                  TextButton(
-                    onPressed: () async {
-                      await model.signOut();
-                      Navigator.pop(context);
-                      await model.init();
-                    },
-                    child: Text('ログアウト'),
-                  )
                 ],
-              )
-            : Column(
+              ),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Padding(
@@ -209,7 +218,7 @@ class ChangingDrawerHeader extends StatelessWidget {
                   )
                 ],
               ),
-      );
+            );
     });
   }
 }

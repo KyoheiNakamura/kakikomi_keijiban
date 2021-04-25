@@ -3,7 +3,7 @@ import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/enum.dart';
 
 mixin ShowConfirmDialogMixin {
-  Future<void> showConfirmDialog(BuildContext context) async {
+  Future<void> showDiscardConfirmDialog(BuildContext context) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -33,7 +33,48 @@ mixin ShowConfirmDialogMixin {
               ),
               onPressed: () async {
                 Navigator.of(context).pop();
-                Navigator.of(context).pop(valueFromAddPostPage.discard);
+                Navigator.of(context).pop(valueFromShowConfirmDialog.discard);
+                // Navigator.of(context).popUntil(
+                //   ModalRoute.withName('/'),
+                // );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showLogoutConfirmDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          content: Text('ログアウトしてもよろしいですか？'),
+          contentPadding:
+              EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'キャンセル',
+                style: TextStyle(color: kDarkPink),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text(
+                'ログアウト',
+                style: TextStyle(color: kDarkPink),
+              ),
+              onPressed: () async {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop(valueFromShowConfirmDialog.logout);
                 // Navigator.of(context).popUntil(
                 //   ModalRoute.withName('/'),
                 // );
