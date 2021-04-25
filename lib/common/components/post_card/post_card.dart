@@ -41,7 +41,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                 ),
                 child: Padding(
                   padding: EdgeInsets.only(
-                      top: 24.0, left: 20.0, right: 20.0, bottom: 32.0
+                      top: 32.0, left: 20.0, right: 20.0, bottom: 32.0
                       // top: 24.0,
                       // left: 20.0,
                       // right: 20.0,
@@ -378,7 +378,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
             passedModel is! DraftsModel
                 ? Positioned.directional(
                     textDirection: TextDirection.ltr,
-                    top: 55.0,
+                    top: 64.0,
                     end: 10.0,
                     child: post.isBookmarked
                         ? IconButton(

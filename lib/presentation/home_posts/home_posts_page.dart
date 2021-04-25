@@ -66,8 +66,8 @@ class HomePostsPage extends StatelessWidget {
                                             builder: (context) => SearchPage(),
                                           ),
                                         );
-                                        await model
-                                            .getPostsWithReplies(kAllPostsTab);
+                                        // await model
+                                        //     .getPostsWithReplies(kAllPostsTab);
                                       },
                                     ),
                                   ],
@@ -136,13 +136,15 @@ class HomePostsPage extends StatelessWidget {
                   ],
                 ),
                 onPressed: () async {
-                  final result = await Navigator.push<valueFromAddPostPage>(
+                  final result =
+                      await Navigator.push<valueFromShowConfirmDialog>(
                     context,
                     MaterialPageRoute(
                       builder: (context) => AddPostPage(),
                     ),
                   );
-                  if (result != valueFromAddPostPage.discard) {
+                  // 投稿された時
+                  if (result != valueFromShowConfirmDialog.discard) {
                     model.startModalLoading();
                     await model.getPostsWithReplies(kAllPostsTab);
                     await model.getPostsWithReplies(kMyPostsTab);
@@ -210,9 +212,6 @@ class TabBarViewChild extends StatelessWidget {
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (context, index) {
-                            // RangeError (index): Invalid value: Valid value range is empty: 1
-                            // Todo postsが空じゃない時にpostに入れる
-                            // print(posts);
                             final post = posts[index];
                             return Column(
                               children: [

@@ -15,8 +15,6 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
-          elevation: 0,
-          centerTitle: true,
           title: Text(
             'ログイン',
             style: kAppBarTextStyle,

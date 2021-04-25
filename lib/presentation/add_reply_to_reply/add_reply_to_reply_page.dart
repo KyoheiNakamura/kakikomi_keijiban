@@ -26,7 +26,7 @@ class AddReplyToReplyPage extends StatelessWidget
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
-        showConfirmDialog(context);
+        showDiscardConfirmDialog(context);
         return Future.value(true);
       },
       child: ChangeNotifierProvider<AddReplyToReplyModel>(
@@ -34,8 +34,6 @@ class AddReplyToReplyPage extends StatelessWidget
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 50,
-            elevation: 0,
-            centerTitle: true,
             title: Text(
               '返信',
               style: kAppBarTextStyle,
