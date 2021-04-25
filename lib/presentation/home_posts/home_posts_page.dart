@@ -12,21 +12,16 @@ import 'package:kakikomi_keijiban/presentation/search/search_page.dart';
 import 'package:provider/provider.dart';
 
 class HomePostsPage extends StatelessWidget {
-  final List<String> _tabs = <String>[
-    kAllPostsTab,
-    kMyPostsTab,
-    kBookmarkedPostsTab
-  ];
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<HomePostsModel>(
       create: (context) => HomePostsModel()
+        ..showOnBoardingPage(context)
         ..openPageSpecifiedByNotification(context)
         ..init(),
       child: SafeArea(
         child: DefaultTabController(
-          length: _tabs.length,
+          length: kTabs.length,
           child: Scaffold(
             drawer: SafeArea(child: AccountDrawer()),
             body: Consumer<HomePostsModel>(builder: (context, model, child) {
@@ -76,15 +71,17 @@ class HomePostsPage extends StatelessWidget {
                                   snap: true,
                                   forceElevated: innerBoxIsScrolled,
                                   bottom: TabBar(
-                                    tabs: _tabs
-                                        .map((String name) => Tab(
-                                              child: Text(
-                                                name,
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                ),
+                                    tabs: kTabs
+                                        .map(
+                                          (String name) => Tab(
+                                            child: Text(
+                                              name,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
                                               ),
-                                            ))
+                                            ),
+                                          ),
+                                        )
                                         .toList(),
                                   ),
                                 ),
@@ -94,7 +91,7 @@ class HomePostsPage extends StatelessWidget {
 
                           /// タブ名(ページ名)で表示を場合分け
                           body: TabBarView(
-                            children: _tabs.map((String name) {
+                            children: kTabs.map((String name) {
                               return TabBarViewChild(
                                 tabName: name,
                                 model: model,

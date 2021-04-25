@@ -7,6 +7,23 @@ const Color kLightPink = Color(0xFFFCF0F5);
 const Color kUltraLightPink = Color(0xFFFFF7FA);
 const Color kLightGrey = Colors.black54;
 
+const String kOnBoardingDoneKey = 'onBoardingDone';
+
+const List<Map<String, String>> kOnBoardingData = [
+  {
+    'text': '発達障害お悩み掲示板（仮）は発達障害をテーマに扱う掲示板アプリです。',
+    'image': 'lib/assets/images/anpanman_charactors.jpeg',
+  },
+  {
+    'text': '当事者の方はもちろん、ご家族、友人の方などもお気軽にご利用ください。',
+    'image': 'lib/assets/images/anpanman_charactors.jpeg',
+  },
+  {
+    'text': 'ああああああああああああああああああああああああああああああああ',
+    'image': 'lib/assets/images/anpanman_charactors.jpeg',
+  },
+];
+
 const List<String> kInitialNotificationSetting = [
   'replyToMyPost',
   'replyToMyReply',
@@ -15,6 +32,12 @@ const List<String> kInitialNotificationSetting = [
 const String kAllPostsTab = '新着の投稿';
 const String kMyPostsTab = '自分の投稿';
 const String kBookmarkedPostsTab = 'ブックマーク';
+
+const List<String> kTabs = <String>[
+  kAllPostsTab,
+  kMyPostsTab,
+  kBookmarkedPostsTab
+];
 
 const String kPleaseSelect = '選択してください';
 const String kDoNotSelect = '選択しない';
