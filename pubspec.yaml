@@ -22,6 +22,7 @@ dependencies:
   google_sign_in: ^5.0.1
   keyboard_actions: ^3.4.0
   flutter_native_splash: ^1.1.7+1
+  shared_preferences: ^2.0.5
 
 dev_dependencies:
   flutter_test:

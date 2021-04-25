@@ -11,6 +11,8 @@ import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/my_replies/my_replies_page.dart';
+import 'package:kakikomi_keijiban/presentation/on_boarding/on_boarding_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePostsModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
@@ -780,6 +782,17 @@ class HomePostsModel extends ChangeNotifier {
         );
       }
     });
+  }
+
+  void showOnBoardingPage(BuildContext context) async {
+    final preference = await SharedPreferences.getInstance();
+    // 最初の起動ならチュートリアル表示
+    if (preference.getBool(kOnBoardingDoneKey) != true) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => OnBoardingPage()),
+      );
+    }
   }
 
 // void getPostsRealtime() {
