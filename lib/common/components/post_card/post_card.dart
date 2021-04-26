@@ -371,8 +371,8 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            SearchResultPostsPage(post.emotion)),
+                      builder: (context) => SearchResultPostsPage(post.emotion),
+                    ),
                   );
                 },
               ),

@@ -19,7 +19,7 @@ class UpdateProfilePage extends StatelessWidget with ShowExceptionDialogMixin {
         appBar: AppBar(
           toolbarHeight: 50,
           title: Text(
-            'プロフィール設定',
+            'デフォルト入力設定',
             style: kAppBarTextStyle,
           ),
         ),

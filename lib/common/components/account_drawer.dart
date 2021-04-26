@@ -18,8 +18,8 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
   @override
   Widget build(BuildContext context) {
     return Consumer<HomePostsModel>(builder: (context, model, child) {
-      final user = AppModel.user;
-      final isCurrentUserAnonymous = user?.isCurrentUserAnonymous();
+      final bool? isCurrentUserAnonymous =
+          AppModel.user?.isCurrentUserAnonymous() ?? false;
       return SizedBox(
         width: MediaQuery.of(context).size.width * 0.8,
         child: Drawer(
@@ -87,27 +87,27 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                 leading: Icon(Icons.settings),
                 title: Text('設定'),
                 onTap: () async {
-                  if (isCurrentUserAnonymous != null &&
-                      isCurrentUserAnonymous == false) {
-                    final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SettingsPage(),
-                      ),
-                    );
-                    if (result == valueFromShowConfirmDialog.logout) {
-                      await model.signOut();
-                      Navigator.pop(context);
-                      await model.init();
-                    }
-                  } else {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SelectRegistrationMethodPage(),
-                      ),
-                    );
+                  // if (isCurrentUserAnonymous != null &&
+                  //     isCurrentUserAnonymous == false) {
+                  final result = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SettingsPage(),
+                    ),
+                  );
+                  if (result == valueFromShowConfirmDialog.logout) {
+                    await model.signOut();
+                    Navigator.pop(context);
+                    await model.init();
                   }
+                  // } else {
+                  //   await Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //       builder: (context) => SelectRegistrationMethodPage(),
+                  //     ),
+                  //   );
+                  // }
                   // Navigator.pop(context);
                 },
               ),
@@ -126,7 +126,7 @@ class ChangingDrawerHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer<HomePostsModel>(builder: (context, model, child) {
-      return isCurrentUserAnonymous != null && isCurrentUserAnonymous == false
+      return isCurrentUserAnonymous == false
           ? Padding(
               padding: EdgeInsets.only(
                 left: 16.0,
@@ -143,7 +143,7 @@ class ChangingDrawerHeader extends StatelessWidget {
                   ),
                   SizedBox(height: 8.0),
                   Text(
-                    AppModel.user!.email!,
+                    AppModel.user!.email ?? '',
                     style: TextStyle(color: kLightGrey),
                   ),
                 ],
