@@ -26,8 +26,8 @@ class UpdatePasswordModel extends ChangeNotifier {
       await currentUser.reload();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'requires-recent-login') {
-        print('お手数ですが一度ログアウトしたのち、再度ログインしてからもう一度お試しください。');
-        throw ('お手数ですが一度ログアウトしたのち、\n再度ログインしてからもう一度お試しください。');
+        print('一度ログアウトしたのち、もう一度お試しください。');
+        throw ('一度ログアウトしたのち、\nもう一度お試しください。');
       } else if (e.code == 'wrong-password') {
         print('パスワードが正しくありません。');
         throw ('パスワードが正しくありません。');
@@ -35,8 +35,8 @@ class UpdatePasswordModel extends ChangeNotifier {
         print('このメールアドレスは形式が正しくありません。');
         throw ('このメールアドレスは\n形式が正しくありません。');
       } else if (e.code == 'too-many-requests') {
-        print('リクエストの数が超過しました。\nしばらく時間を置いてからお試しください。');
-        throw ('リクエストの数が超過しました。\nしばらく時間を置いてからお試しください。');
+        print('リクエストの数が超過しました。\n時間を置いてから再度お試しください。');
+        throw ('リクエストの数が超過しました。\n時間を置いてから再度お試しください。');
       } else {
         print(e.toString());
         throw e.toString();
@@ -52,7 +52,7 @@ class UpdatePasswordModel extends ChangeNotifier {
   String? validatePasswordCallback(String? value) {
     if (value == null || value.isEmpty) {
       return 'パスワードを入力してください';
-    } else if (RegExp(kValidEmailRegularExpression)
+    } else if (RegExp(kValidPasswordRegularExpression)
             .hasMatch(enteredNewPassword) ==
         false) {
       return '8文字以上の半角英数記号でご記入ください';

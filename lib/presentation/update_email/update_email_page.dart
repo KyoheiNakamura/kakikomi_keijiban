@@ -36,7 +36,7 @@ class UpdateEmailPage extends StatelessWidget with ShowExceptionDialogMixin {
                         /// currentEmail
                         Text('現在のメールアドレス'),
                         SizedBox(height: 8.0),
-                        Text(
+                        SelectableText(
                           model.currentEmail,
                           style: TextStyle(fontSize: 17.0),
                         ),

@@ -123,7 +123,7 @@ class SettingsPage extends StatelessWidget with ShowConfirmDialogMixin {
                           ),
                           SizedBox(height: 32.0),
                           Text(
-                            'データの損失を防ぐために、\n新規会員登録がおすすめです。',
+                            'データの損失を防ぐために、\n会員登録をおすすめします。\n会員登録をした後も現在の\nデータは引き継がれます。 ',
                             style: TextStyle(
                               fontSize: 17.0,
                             ),
