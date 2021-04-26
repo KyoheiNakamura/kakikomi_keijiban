@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 class SignUpModel extends ChangeNotifier {
   final _auth = FirebaseAuth.instance;
@@ -143,7 +142,8 @@ class SignUpModel extends ChangeNotifier {
   String? validatePasswordCallback(String? value) {
     if (value == null || value.isEmpty) {
       return 'パスワードを入力してください';
-    } else if (value.length < 8) {
+    } else if (RegExp(kValidEmailRegularExpression).hasMatch(enteredPassword) ==
+        false) {
       return '8文字以上の半角英数記号でご記入ください';
     } else {
       return null;
