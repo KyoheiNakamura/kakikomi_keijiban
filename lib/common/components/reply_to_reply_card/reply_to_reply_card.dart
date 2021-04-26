@@ -49,6 +49,7 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                 children: [
                   Row(
                     children: [
+                      /// replyToReplyIcon
                       Transform(
                         alignment: Alignment.topCenter,
                         transform: Matrix4.rotationY(math.pi),
@@ -57,6 +58,8 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                           color: kLightGrey,
                         ),
                       ),
+
+                      /// replierData
                       Flexible(
                         child: Center(
                           child: Text(
@@ -67,13 +70,17 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                       ),
                     ],
                   ),
+
+                  /// body
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 15.0),
-                    child: Text(
+                    child: SelectableText(
                       replyToReply.body,
                       style: TextStyle(fontSize: 16.0, height: 1.8),
                     ),
                   ),
+
+                  /// 作成日時
                   Align(
                     alignment: Alignment.centerRight,
                     child: Text(

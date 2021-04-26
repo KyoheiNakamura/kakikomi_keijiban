@@ -78,10 +78,11 @@ class HomePostsModel extends ChangeNotifier {
       await _getAllPostsWithReplies();
     } else if (tabName == kMyPostsTab) {
       await _getMyPostsWithReplies();
-    } else if (tabName == kBookmarkedPostsTab) {
-      await _getBookmarkedPostsWithReplies();
     }
     stopModalLoading();
+    if (tabName == kBookmarkedPostsTab) {
+      await _getBookmarkedPostsWithReplies();
+    }
   }
 
   Future<void> loadPostsWithReplies(String tabName) async {
