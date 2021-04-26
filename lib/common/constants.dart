@@ -26,7 +26,7 @@ const List<Map<String, String>> kOnBoardingData = [
 
 const List<String> kInitialNotificationSetting = [
   'replyToMyPost',
-  'replyToMyReply',
+  // 'replyToMyReply',
 ];
 
 const String kAllPostsTab = '新着の投稿';
@@ -120,7 +120,9 @@ const List<String> kCategoryList = [
   '家族',
   '育児',
   '療育',
-  '薬',
+  '薬物療法',
+  '病院',
+  'カウンセラー',
   'ライフハック',
   'イベント',
   'パワハラ',

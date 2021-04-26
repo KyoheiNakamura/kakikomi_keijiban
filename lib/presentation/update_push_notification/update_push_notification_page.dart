@@ -87,30 +87,30 @@ class UpdatePushNotificationPage extends StatelessWidget
                         ),
                       ),
 
-                      /// ReplyToMyReply
-                      ListTile(
-                        title: Text(
-                          '返信への返信のお知らせ',
-                          style: TextStyle(
-                            // fontWeight: FontWeight.w500,
-                            fontSize: 17,
-                          ),
-                        ),
-                        leading: Transform(
-                          alignment: Alignment.topCenter,
-                          transform: Matrix4.rotationY(math.pi),
-                          child: Icon(
-                            Icons.reply_all,
-                            color: kLightGrey,
-                          ),
-                        ),
-                        trailing: Switch(
-                          value: model.isReplyToMyReplyAllowed,
-                          onChanged: model.togglePermissionForReplyToMyReply,
-                          activeTrackColor: kPink,
-                          activeColor: Colors.pinkAccent,
-                        ),
-                      ),
+                      // /// ReplyToMyReply
+                      // ListTile(
+                      //   title: Text(
+                      //     '返信への返信のお知らせ',
+                      //     style: TextStyle(
+                      //       // fontWeight: FontWeight.w500,
+                      //       fontSize: 17,
+                      //     ),
+                      //   ),
+                      //   leading: Transform(
+                      //     alignment: Alignment.topCenter,
+                      //     transform: Matrix4.rotationY(math.pi),
+                      //     child: Icon(
+                      //       Icons.reply_all,
+                      //       color: kLightGrey,
+                      //     ),
+                      //   ),
+                      //   trailing: Switch(
+                      //     value: model.isReplyToMyReplyAllowed,
+                      //     onChanged: model.togglePermissionForReplyToMyReply,
+                      //     activeTrackColor: kPink,
+                      //     activeColor: Colors.pinkAccent,
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

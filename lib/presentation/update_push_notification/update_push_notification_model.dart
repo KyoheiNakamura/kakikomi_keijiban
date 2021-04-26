@@ -11,14 +11,14 @@ class UpdatePushNotificationModel extends ChangeNotifier {
 
   bool isNewPostTopicAllowed = true;
   bool isReplyToMyPostAllowed = true;
-  bool isReplyToMyReplyAllowed = true;
+  // bool isReplyToMyReplyAllowed = true;
 
   Future<void> init() async {
     final userSnapshot =
         await _firestore.collection('users').doc(currentUser.uid).get();
     initNewPostTopic(userSnapshot);
     initReplyToMyPost(userSnapshot);
-    initReplyToMyReply(userSnapshot);
+    // initReplyToMyReply(userSnapshot);
     notifyListeners();
   }
 
@@ -40,14 +40,14 @@ class UpdatePushNotificationModel extends ChangeNotifier {
     }
   }
 
-  void initReplyToMyReply(DocumentSnapshot userSnapshot) {
-    final List<dynamic> notifications = userSnapshot['notifications'];
-    if (notifications.contains('replyToMyReply')) {
-      this.isReplyToMyReplyAllowed = true;
-    } else {
-      this.isReplyToMyReplyAllowed = false;
-    }
-  }
+  // void initReplyToMyReply(DocumentSnapshot userSnapshot) {
+  //   final List<dynamic> notifications = userSnapshot['notifications'];
+  //   if (notifications.contains('replyToMyReply')) {
+  //     this.isReplyToMyReplyAllowed = true;
+  //   } else {
+  //     this.isReplyToMyReplyAllowed = false;
+  //   }
+  // }
 
   Future<void> toggleSubscriptionForNewPostTopic(bool value) async {
     final topic = 'newPost';
@@ -91,25 +91,25 @@ class UpdatePushNotificationModel extends ChangeNotifier {
     }
   }
 
-  Future<void> togglePermissionForReplyToMyReply(bool value) async {
-    final notification = 'replyToMyReply';
-    final userRef = _firestore.collection('users').doc(currentUser.uid);
-    if (value) {
-      // allowReplyToMyReply
-      isReplyToMyReplyAllowed = true;
-      notifyListeners();
-      await userRef.update({
-        'notifications': FieldValue.arrayUnion([notification]),
-      });
-    } else {
-      // doNotAllowReplyToMyReply
-      isReplyToMyReplyAllowed = false;
-      notifyListeners();
-      await userRef.update({
-        'notifications': FieldValue.arrayRemove([notification]),
-      });
-    }
-  }
+  // Future<void> togglePermissionForReplyToMyReply(bool value) async {
+  //   final notification = 'replyToMyReply';
+  //   final userRef = _firestore.collection('users').doc(currentUser.uid);
+  //   if (value) {
+  //     // allowReplyToMyReply
+  //     isReplyToMyReplyAllowed = true;
+  //     notifyListeners();
+  //     await userRef.update({
+  //       'notifications': FieldValue.arrayUnion([notification]),
+  //     });
+  //   } else {
+  //     // doNotAllowReplyToMyReply
+  //     isReplyToMyReplyAllowed = false;
+  //     notifyListeners();
+  //     await userRef.update({
+  //       'notifications': FieldValue.arrayRemove([notification]),
+  //     });
+  //   }
+  // }
 
   void startLoading() {
     isLoading = true;
