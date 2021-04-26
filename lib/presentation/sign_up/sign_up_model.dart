@@ -142,7 +142,8 @@ class SignUpModel extends ChangeNotifier {
   String? validatePasswordCallback(String? value) {
     if (value == null || value.isEmpty) {
       return 'パスワードを入力してください';
-    } else if (RegExp(kValidEmailRegularExpression).hasMatch(enteredPassword) ==
+    } else if (RegExp(kValidPasswordRegularExpression)
+            .hasMatch(enteredPassword) ==
         false) {
       return '8文字以上の半角英数記号でご記入ください';
     } else {
