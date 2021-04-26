@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 
 class SignInModel extends ChangeNotifier {
@@ -9,7 +10,7 @@ class SignInModel extends ChangeNotifier {
   String enteredEmail = '';
   String enteredPassword = '';
 
-  Future signIn() async {
+  Future signInWithEmailAndPassword() async {
     startLoading();
 
     try {
@@ -27,6 +28,34 @@ class SignInModel extends ChangeNotifier {
       } else if (e.code == 'wrong-password') {
         print('パスワードが正しくありません。');
         throw ('パスワードが正しくありません。');
+      } else {
+        print(e.toString());
+        throw ('エラーが発生しました。\nもう一度お試し下さい。');
+      }
+    } on Exception catch (e) {
+      print(e.toString());
+      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+    } finally {
+      stopLoading();
+    }
+  }
+
+  Future signInWithGoogle() async {
+    startLoading();
+
+    try {
+      final GoogleSignInAccount googleUser = (await GoogleSignIn().signIn())!;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      await _auth.signInWithCredential(credential);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'account-exists-with-different-credential') {
+        print('このメールアドレスはすでに使用されています');
+        throw ('このメールアドレスは\nすでに使用されています。');
       } else {
         print(e.toString());
         throw ('エラーが発生しました。\nもう一度お試し下さい。');
