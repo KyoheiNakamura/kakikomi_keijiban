@@ -41,7 +41,6 @@ export const subscribeTokenToTopicWhenTokenIsCreated =
         }
       });
 
-// Todo おいおい通知開いた時にhomePostsPageに飛ぶようにしよう
 // 新規の投稿が作られたタイミングで、newPostトピックにサブスクリプションしてる
 // tokenたちに通知を送ってる
 export const sendPushNotificationToTopicWhenPostIsCreated =
@@ -51,7 +50,8 @@ export const sendPushNotificationToTopicWhenPostIsCreated =
       .onCreate(async (snapshot, context) => {
         if (snapshot) {
           const topic = "newPost";
-          const title = "New Post!";
+          // const title = "New Post!";
+          const title = "新着の投稿があります";
           // const body = "新着の投稿があります😍";
           const body = snapshot.data().title;
           const page = "HomePostsPage";
@@ -69,7 +69,6 @@ export const sendPushNotificationToTopicWhenPostIsCreated =
         }
       });
 
-// Todo おいおい通知開いた時にmyPostsPageに飛ぶようにしよう
 // deviceごとに通知を受け取るか否かを設定できるようにしよう。
 // ↑トークンの情報がいるっぽい: users/{userId}/notifications/{notificationId}の型を
 // Map{key: token, value: topic}とかにすると良き？？
@@ -88,7 +87,8 @@ export const sendPushNotificationWhenReplyIsCreated =
           const isNotificationAllowed =
             userDoc.data()?.notifications.includes(notification);
           if (isNotificationAllowed) {
-            const title = "New Reply To Your Post!";
+            // const title = "New Reply To Your Post!";
+            const title = "投稿に返信がされました";
             // const body = "あなたの投稿に返信があります😘";
             const body = snapshot.data().body;
             const tokensSnapshot = await admin.firestore()
@@ -139,11 +139,14 @@ export const sendPushNotificationWhenReplyToReplyIsCreated =
               .collection("users")
               .doc(replierId)
               .get();
-          const notification = "replyToMyReply";
+          // replyToReplyの場合でもreplyToMyPostと同じ通知設定にした。
+          // 実際返信は返信だし。
+          const notification = "replyToMyPost";
           const isNotificationAllowed =
             userDoc.data()?.notifications.includes(notification);
           if (isNotificationAllowed) {
-            const title = "New Reply To Your Reply!";
+            // const title = "New Reply To Your Reply!";
+            const title = "返信に返信がされました";
             // const body = "あなたの返信に返信があります🤩";
             const body = snapshot.data().body;
             const tokensSnapshot = await admin.firestore()
