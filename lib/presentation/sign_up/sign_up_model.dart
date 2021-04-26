@@ -33,7 +33,7 @@ class SignUpModel extends ChangeNotifier {
 
       await AppModel.reloadUser();
 
-      // anonymousのuserDocRefのデータを、email認証で登録したユーザーのデータでsetを使って置き換えている。
+      // anonymousのuserDocRefのデータを、email認証で登録したユーザーのデータでupdateを使って更新している。
       final userDocRef =
           _firestore.collection('users').doc(_auth.currentUser!.uid);
       // setはuserDocRefのDocument idをもつDocumentにデータを保存する。
@@ -44,7 +44,6 @@ class SignUpModel extends ChangeNotifier {
         'notifications': AppModel.user!.notifications,
         'updatedAt': FieldValue.serverTimestamp(),
       });
-
       await AppModel.reloadUser();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
@@ -66,45 +65,50 @@ class SignUpModel extends ChangeNotifier {
     }
   }
 
-  Future signUpAndSignInWithGoogleAndUpgradeAnonymous() async {
-    startLoading();
-
-    try {
-      final GoogleSignInAccount googleUser = (await GoogleSignIn().signIn())!;
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final OAuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      await _auth.currentUser!.linkWithCredential(credential);
-      // final Auth.User user = userCredential.user!;
-      // final String email = user.email!;
-      // _firestore.collection('users').add({
-      //   'id': user.uid,
-      //   'email': email,
-      //   'nickname': enteredNickname,
-      //   'createdAt': Timestamp.now(),
-      // });
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'email-already-in-use') {
-        print('このメールアドレスはすでに使用されています。');
-        throw ('このメールアドレスはすでに使用されています。');
-      } else if (e.code == 'invalid-email') {
-        print('このメールアドレスは形式が正しくありません。');
-        throw ('このメールアドレスは形式が正しくありません。');
-        // Todo createUserWithEmailAndPassword()の他の例外処理も書こう
-      } else {
-        print(e.toString());
-        throw e.toString();
-      }
-    } on Exception catch (e) {
-      print(e.toString());
-      throw e.toString();
-    } finally {
-      stopLoading();
-    }
-  }
+  // Future signUpAndSignInWithGoogleAndUpgradeAnonymous() async {
+  //   startLoading();
+  //
+  //   try {
+  //     final GoogleSignInAccount googleUser = (await GoogleSignIn().signIn())!;
+  //     final GoogleSignInAuthentication googleAuth =
+  //         await googleUser.authentication;
+  //     final OAuthCredential credential = GoogleAuthProvider.credential(
+  //       accessToken: googleAuth.accessToken,
+  //       idToken: googleAuth.idToken,
+  //     );
+  //     await _auth.currentUser!.linkWithCredential(credential);
+  //     await _auth.currentUser!.reload();
+  //     // anonymousのuserDocRefのデータを、google認証で登録したユーザーのデータでupdateを使って更新している。
+  //     final userDocRef =
+  //         _firestore.collection('users').doc(_auth.currentUser!.uid);
+  //     // setはuserDocRefのDocument idをもつDocumentにデータを保存する。
+  //     await userDocRef.update({
+  //       'nickname': _auth.currentUser!.displayName,
+  //       'postCount': AppModel.user!.postCount,
+  //       'topics': AppModel.user!.topics,
+  //       'notifications': AppModel.user!.notifications,
+  //       'updatedAt': FieldValue.serverTimestamp(),
+  //     });
+  //     await AppModel.reloadUser();
+  //   } on FirebaseAuthException catch (e) {
+  //     if (e.code == 'email-already-in-use') {
+  //       print('このメールアドレスはすでに使用されています。');
+  //       throw ('このメールアドレスはすでに使用されています。');
+  //     } else if (e.code == 'invalid-email') {
+  //       print('このメールアドレスは形式が正しくありません。');
+  //       throw ('このメールアドレスは形式が正しくありません。');
+  //       // Todo createUserWithEmailAndPassword()の他の例外処理も書こう
+  //     } else {
+  //       print(e.toString());
+  //       throw e.toString();
+  //     }
+  //   } on Exception catch (e) {
+  //     print(e.toString());
+  //     throw e.toString();
+  //   } finally {
+  //     stopLoading();
+  //   }
+  // }
 
   void startLoading() {
     isLoading = true;

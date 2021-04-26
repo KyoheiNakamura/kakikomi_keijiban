@@ -7,6 +7,7 @@ import 'package:kakikomi_keijiban/domain/reply.dart';
 class AddReplyToReplyModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
+
   bool isLoading = false;
 
   String bodyValue = '';

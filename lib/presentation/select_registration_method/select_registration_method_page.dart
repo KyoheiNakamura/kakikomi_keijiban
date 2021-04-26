@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/select_registration_method/select_registration_method_model.dart';
 import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_page.dart';
 import 'package:kakikomi_keijiban/presentation/sign_up/sign_up_page.dart';
 import 'package:provider/provider.dart';
 
-class SelectRegistrationMethodPage extends StatelessWidget {
+class SelectRegistrationMethodPage extends StatelessWidget
+    with ShowExceptionDialogMixin {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<SelectRegistrationMethodModel>(
@@ -93,10 +95,10 @@ class SelectRegistrationMethodPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'SNSアカウントからログイン',
-                      style: TextStyle(fontSize: 16.0),
-                    ),
+                    // Text(
+                    //   'SNSアカウントから登録',
+                    //   style: TextStyle(fontSize: 16.0),
+                    // ),
                     SizedBox(height: 16.0),
                     OutlinedButton(
                       child: Row(
@@ -106,7 +108,7 @@ class SelectRegistrationMethodPage extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: Text(
-                              'Googleでログイン',
+                              'Googleで登録',
                               style: TextStyle(
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.bold,
@@ -116,11 +118,18 @@ class SelectRegistrationMethodPage extends StatelessWidget {
                         ],
                       ),
                       onPressed: () async {
-                        await model
-                            .signUpAndSignInWithGoogleAndUpgradeAnonymous();
-                        Navigator.of(context).popUntil(
-                          ModalRoute.withName('/'),
-                        );
+                        try {
+                          await model
+                              .signUpAndSignInWithGoogleAndUpgradeAnonymous();
+                          Navigator.of(context).popUntil(
+                            ModalRoute.withName('/'),
+                          );
+                        } catch (e) {
+                          await showExceptionDialog(
+                            context,
+                            e.toString(),
+                          );
+                        }
                       },
                     ),
                   ],

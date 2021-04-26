@@ -1,14 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart' as Auth;
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
-import 'package:kakikomi_keijiban/domain/user.dart';
 
 class AddPostModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
-  final Auth.FirebaseAuth _auth = Auth.FirebaseAuth.instance;
-
-  User? user;
+  final _auth = FirebaseAuth.instance;
 
   bool isLoading = false;
   bool isCategoriesValid = true;
@@ -172,6 +169,8 @@ class AddPostModel extends ChangeNotifier {
       notifyListeners();
       return false;
     } else {
+      isCategoriesValid = true;
+      notifyListeners();
       return true;
     }
   }

@@ -106,6 +106,7 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                       borderRadius: BorderRadius.circular(16.0),
                                     ),
                                     side: BorderSide(color: kPink),
+                                    primary: kDarkPink,
                                   ),
                                 )
                               : SizedBox(),

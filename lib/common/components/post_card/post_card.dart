@@ -147,6 +147,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                       borderRadius: BorderRadius.circular(16.0),
                                     ),
                                     side: BorderSide(color: kPink),
+                                    primary: kDarkPink,
                                   ),
                                 )
                               : SizedBox(),
@@ -192,6 +193,9 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                       icon: Icon(
                                         Icons.favorite_border_outlined,
                                         color: kLightGrey,
+                                      ),
+                                      style: TextButton.styleFrom(
+                                        primary: kDarkPink,
                                       ),
                                       label: Row(
                                         children: [

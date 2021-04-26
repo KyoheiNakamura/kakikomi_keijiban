@@ -1,12 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:kakikomi_keijiban/common/enum.dart';
+import 'package:kakikomi_keijiban/app_model.dart';
 
 class SelectRegistrationMethodModel extends ChangeNotifier {
   final _auth = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
+  bool isLoading = false;
 
   Future signUpAndSignInWithGoogleAndUpgradeAnonymous() async {
+    startLoading();
+
     try {
       final GoogleSignInAccount googleUser = (await GoogleSignIn().signIn())!;
       final GoogleSignInAuthentication googleAuth =
@@ -16,29 +21,41 @@ class SelectRegistrationMethodModel extends ChangeNotifier {
         idToken: googleAuth.idToken,
       );
       await _auth.currentUser!.linkWithCredential(credential);
-      // final Auth.User user = userCredential.user!;
-      // final String email = user.email!;
-      // _firestore.collection('users').add({
-      //   'id': user.uid,
-      //   'email': email,
-      //   'nickname': enteredNickname,
-      //   'createdAt': Timestamp.now(),
-      // });
+      await _auth.currentUser!.reload();
+      // anonymousのuserDocRefのデータを、google認証で登録したユーザーのデータでupdateを使って更新している。
+      final userDocRef =
+          _firestore.collection('users').doc(_auth.currentUser!.uid);
+      // setはuserDocRefのDocument idをもつDocumentにデータを保存する。
+      await userDocRef.update({
+        'postCount': AppModel.user!.postCount,
+        'topics': AppModel.user!.topics,
+        'notifications': AppModel.user!.notifications,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+      await AppModel.reloadUser();
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'email-already-in-use') {
-        print('このメールアドレスはすでに使用されています。');
-        return AuthException.emailAlreadyInUse;
-      } else if (e.code == 'invalid-email') {
-        print('このメールアドレスは形式が正しくないです。');
-        return AuthException.invalidEmail;
-        // Todo createUserWithEmailAndPassword()の他の例外処理も書こう
+      if (e.code == 'credential-already-in-use') {
+        print('このGoogleアカウントはすでに使用されています。');
+        throw ('このGoogleアカウントは\nすでに使用されています。');
       } else {
-        print(e);
-        return e;
+        print(e.toString());
+        throw e.toString();
       }
-    } catch (e) {
-      print(e);
-      return e;
+    } on Exception catch (e) {
+      print(e.toString());
+      throw e.toString();
+    } finally {
+      stopLoading();
     }
+  }
+
+  void startLoading() {
+    isLoading = true;
+    notifyListeners();
+  }
+
+  void stopLoading() {
+    isLoading = false;
+    notifyListeners();
   }
 }
