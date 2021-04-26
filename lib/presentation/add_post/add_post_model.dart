@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/text_process.dart';
 
 class AddPostModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
@@ -103,8 +104,8 @@ class AddPostModel extends ChangeNotifier {
 
   List<String> _convertNoSelectedValueToEmpty() {
     List<String> postDataList = [
-      titleValue,
-      bodyValue,
+      titleValue = removeUnnecessaryBlankLines(titleValue),
+      bodyValue = removeUnnecessaryBlankLines(bodyValue),
       nicknameValue,
       emotionDropdownValue,
       positionDropdownValue,

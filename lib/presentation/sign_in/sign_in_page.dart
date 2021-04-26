@@ -43,7 +43,7 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                             TextFormField(
                               validator: model.validateEmailCallback,
                               onChanged: (newValue) {
-                                model.enteredEmail = newValue;
+                                model.enteredEmail = newValue.trim();
                               },
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(),
@@ -57,7 +57,7 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                             TextFormField(
                               validator: model.validatePasswordCallback,
                               onChanged: (newValue) {
-                                model.enteredPassword = newValue;
+                                model.enteredPassword = newValue.trim();
                               },
                               obscureText: true,
                               decoration: InputDecoration(

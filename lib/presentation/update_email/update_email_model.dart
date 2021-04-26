@@ -5,9 +5,11 @@ import 'package:kakikomi_keijiban/common/constants.dart';
 class UpdateEmailModel extends ChangeNotifier {
   final User currentUser = FirebaseAuth.instance.currentUser!;
   final String currentEmail = FirebaseAuth.instance.currentUser!.email!;
+
+  bool isLoading = false;
+
   String enteredEmail = '';
   String enteredPassword = '';
-  bool isLoading = false;
 
   Future<dynamic> updateEmail() async {
     startLoading();
@@ -18,16 +20,13 @@ class UpdateEmailModel extends ChangeNotifier {
         password: enteredPassword,
       );
       await currentUser.reauthenticateWithCredential(emailAuthCredential);
-    } on FirebaseAuthException catch (e) {
-      print('エラーコード：${e.code}\nエラー：$e');
-      throw e.toString();
-    }
-
-    try {
       await currentUser.updateEmail(enteredEmail);
       await currentUser.reload();
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'invalid-email') {
+      if (e.code == 'wrong-password') {
+        print('パスワードが正しくありません。');
+        throw ('パスワードが正しくありません。');
+      } else if (e.code == 'invalid-email') {
         print('このメールアドレスは形式が正しくありません。');
         throw ('このメールアドレスは\n形式が正しくありません。');
       } else if (e.code == 'email-already-in-use') {
@@ -36,6 +35,9 @@ class UpdateEmailModel extends ChangeNotifier {
       } else if (e.code == 'requires-recent-login') {
         print('お手数ですが一度ログアウトしたのち、再度ログインしてからもう一度お試しください。');
         throw ('お手数ですが一度ログアウトしたのち、\n再度ログインしてからもう一度お試しください。');
+      } else if (e.code == 'too-many-requests') {
+        print('リクエストの数が超過しました。\nしばらく時間を置いてからお試しください。');
+        throw ('リクエストの数が超過しました。\nしばらく時間を置いてからお試しください。');
       } else {
         print(e.toString());
         throw e.toString();
@@ -46,16 +48,6 @@ class UpdateEmailModel extends ChangeNotifier {
     } finally {
       stopLoading();
     }
-  }
-
-  void startLoading() {
-    isLoading = true;
-    notifyListeners();
-  }
-
-  void stopLoading() {
-    isLoading = false;
-    notifyListeners();
   }
 
   String? validateEmailCallback(String? value) {
@@ -71,10 +63,21 @@ class UpdateEmailModel extends ChangeNotifier {
   String? validatePasswordCallback(String? value) {
     if (value == null || value.isEmpty) {
       return 'パスワードを入力してください';
-    } else if (value.length < 8) {
+    } else if (RegExp(kValidEmailRegularExpression).hasMatch(enteredPassword) ==
+        false) {
       return '8文字以上の半角英数記号でご記入ください';
     } else {
       return null;
     }
+  }
+
+  void startLoading() {
+    isLoading = true;
+    notifyListeners();
+  }
+
+  void stopLoading() {
+    isLoading = false;
+    notifyListeners();
   }
 }

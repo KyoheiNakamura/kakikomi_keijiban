@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
-import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/update_password/update_password_model.dart';
 import 'package:provider/provider.dart';
@@ -45,15 +44,7 @@ class UpdatePasswordPage extends StatelessWidget with ShowExceptionDialogMixin {
 
                         /// currentPassword
                         TextFormField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'パスワードを入力してください';
-                            } else if (value.length < 8) {
-                              // Todo 半角英数記号の正規表現を書く
-                              return '8文字以上の半角英数記号でご記入ください';
-                            }
-                            return null;
-                          },
+                          // validator: model.validatePasswordCallback,
                           onChanged: (newValue) {
                             model.enteredCurrentPassword = newValue;
                           },
@@ -69,15 +60,7 @@ class UpdatePasswordPage extends StatelessWidget with ShowExceptionDialogMixin {
 
                         /// newPassword
                         TextFormField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'パスワードを入力してください';
-                            } else if (value.length < 8) {
-                              // Todo 半角英数記号の正規表現を書く
-                              return '8文字以上の半角英数記号でご記入ください';
-                            }
-                            return null;
-                          },
+                          validator: model.validatePasswordCallback,
                           onChanged: (newValue) {
                             model.enteredNewPassword = newValue;
                           },
@@ -94,13 +77,8 @@ class UpdatePasswordPage extends StatelessWidget with ShowExceptionDialogMixin {
                         OutlinedButton(
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              model.startLoading();
-                              var signInResult = await model.updatePassword();
-                              if (signInResult ==
-                                  AuthException.requiresRecentLogin) {
-                                await showExceptionDialog(context,
-                                    '最後にログインしてから時間が経っています。\nお手数ですが一度ログアウトしたのち、再度ログインしてからもう一度お試しください。');
-                              } else {
+                              try {
+                                await model.updatePassword();
                                 Navigator.of(context).popUntil(
                                   ModalRoute.withName('/'),
                                 );
@@ -109,8 +87,12 @@ class UpdatePasswordPage extends StatelessWidget with ShowExceptionDialogMixin {
                                     content: Text('パスワードが変更されました。'),
                                   ),
                                 );
+                              } catch (e) {
+                                await showExceptionDialog(
+                                  context,
+                                  e.toString(),
+                                );
                               }
-                              model.stopLoading();
                             }
                           },
                           child: Text(

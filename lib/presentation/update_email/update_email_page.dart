@@ -46,7 +46,7 @@ class UpdateEmailPage extends StatelessWidget with ShowExceptionDialogMixin {
                         TextFormField(
                           validator: model.validateEmailCallback,
                           onChanged: (newValue) {
-                            model.enteredEmail = newValue;
+                            model.enteredEmail = newValue.trim();
                           },
                           autofocus: true,
                           decoration: InputDecoration(
@@ -61,7 +61,7 @@ class UpdateEmailPage extends StatelessWidget with ShowExceptionDialogMixin {
                         TextFormField(
                           validator: model.validatePasswordCallback,
                           onChanged: (newValue) {
-                            model.enteredPassword = newValue;
+                            model.enteredPassword = newValue.trim();
                           },
                           obscureText: true,
                           decoration: InputDecoration(

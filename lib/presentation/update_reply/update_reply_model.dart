@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/text_process.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 
 class UpdateReplyModel extends ChangeNotifier {
@@ -117,7 +118,7 @@ class UpdateReplyModel extends ChangeNotifier {
 
   List<String> _convertNoSelectedValueToEmpty() {
     List<String> postDataList = [
-      bodyValue,
+      bodyValue = removeUnnecessaryBlankLines(bodyValue),
       nicknameValue,
       positionDropdownValue,
       genderDropdownValue,

@@ -316,3 +316,5 @@ const kDropdownButtonFormFieldTextStyle = TextStyle(
 const kValidEmailRegularExpression =
     // r"/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/";
     r"[^\s]+@[^\s]+";
+
+const kValidPasswordRegularExpression = r"^([a-zA-Z0-9!-/:-@¥[-`{-~]{8,})$";
