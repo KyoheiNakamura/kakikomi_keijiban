@@ -71,6 +71,7 @@ class UpdateReplyModel extends ChangeNotifier {
 
     _batch.update(postRef, {
       'replyCount': postDoc['replyCount'] + 1,
+      'isReplyExisting': true,
     });
 
     final draftedReplyRef =
@@ -89,7 +90,7 @@ class UpdateReplyModel extends ChangeNotifier {
     }
   }
 
-  Future<void> updateDraftReply(Reply draftedReply) async {
+  Future<void> updateDraftedReply(Reply draftedReply) async {
     startLoading();
 
     final userRef = _firestore.collection('users').doc(draftedReply.userId);

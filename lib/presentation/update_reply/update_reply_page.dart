@@ -307,7 +307,7 @@ class UpdateReplyPage extends StatelessWidget
                                           if (_formKey.currentState!
                                               .validate()) {
                                             try {
-                                              await model.updateDraftReply(
+                                              await model.updateDraftedReply(
                                                   existingReply);
                                               final snackBar = SnackBar(
                                                 content: Text('下書きに保存しました'),
