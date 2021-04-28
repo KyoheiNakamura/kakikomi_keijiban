@@ -17,11 +17,9 @@ class ReplyToReply {
     this.area = doc['area'] != '' ? doc['area'] : '';
     this.isDraft = false;
     final createdDate = doc['createdAt'].toDate();
-    this._createdAt = createdDate;
-    if (doc['updatedAt'] != null) {
-      final updatedDate = doc['updatedAt'].toDate();
-      this._updatedAt = updatedDate;
-    }
+    this.createdDate = createdDate;
+    final updatedDate = doc['updatedAt'].toDate();
+    this.updatedDate = updatedDate;
   }
 
   String id = '';
@@ -36,11 +34,11 @@ class ReplyToReply {
   String age = '';
   String area = '';
   bool isDraft = false;
-  DateTime? _createdAt;
-  DateTime? _updatedAt;
+  DateTime createdDate = DateTime.now();
+  DateTime updatedDate = DateTime.now();
 
-  String get createdAt => _formatDate(_createdAt);
-  String get updatedAt => _formatDate(_updatedAt);
+  String get createdAt => _formatDate(createdDate);
+  String get updatedAt => _formatDate(updatedDate);
 
   String _formatDate(date) {
     final formatter = DateFormat('yyyy/MM/dd HH:mm');
