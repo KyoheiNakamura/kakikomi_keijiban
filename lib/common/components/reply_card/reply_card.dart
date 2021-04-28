@@ -75,8 +75,18 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                       /// body
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 15.0),
-                        child: SelectableText(
-                          reply.body,
+                        child: SelectableText.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(text: reply.body),
+                              reply.createdDate != reply.updatedDate
+                                  ? TextSpan(
+                                      text: '（編集済み）',
+                                      style: TextStyle(color: kLightGrey),
+                                    )
+                                  : TextSpan(),
+                            ],
+                          ),
                           style: TextStyle(fontSize: 16.0, height: 1.8),
                         ),
                       ),

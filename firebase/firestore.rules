@@ -46,7 +46,7 @@ service cloud.firestore {
         && 'title' in post && post.title is string
         && 'body' in post && post.body is string
         && 'emotion' in post && post.emotion is string
-        && 'categories' in post && post.categories is array
+        && 'categories' in post && post.categories is list
         && 'replyCount' in post && post.replyCount is int
         && 'empathyCount' in post && post.empathyCount is int
         && 'isReplyExisting' in post && post.isReplyExisting is bool

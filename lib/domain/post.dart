@@ -27,11 +27,9 @@ class Post {
     this.isDraft = false;
     this.replies = [];
     final Timestamp createdTime = doc['createdAt'];
-    this._createdAt = createdTime.toDate();
-    if (doc['updatedAt'] != null) {
-      final Timestamp updatedTime = doc['updatedAt'];
-      this._updatedAt = updatedTime.toDate();
-    }
+    this.createdDate = createdTime.toDate();
+    final Timestamp updatedTime = doc['updatedAt'];
+    this.updatedDate = updatedTime.toDate();
   }
 
   String id = '';
@@ -53,11 +51,11 @@ class Post {
   bool isReplyShown = false;
   bool isDraft = false;
   List<Reply> replies = [];
-  DateTime? _createdAt;
-  DateTime? _updatedAt;
+  DateTime createdDate = DateTime.now();
+  DateTime updatedDate = DateTime.now();
 
-  String get createdAt => _formatDate(_createdAt);
-  String get updatedAt => _formatDate(_updatedAt);
+  String get createdAt => _formatDate(createdDate);
+  String get updatedAt => _formatDate(updatedDate);
 
   String _formatDate(date) {
     final formatter = DateFormat('yyyy/MM/dd HH:mm');

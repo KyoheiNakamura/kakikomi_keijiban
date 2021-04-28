@@ -104,13 +104,20 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                       /// body
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 15.0),
-                        // child: SizedBox(
-                        //   width: double.infinity,
-                        child: SelectableText(
-                          post.body,
+                        child: SelectableText.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(text: post.body),
+                              post.createdDate != post.updatedDate
+                                  ? TextSpan(
+                                      text: '（編集済み）',
+                                      style: TextStyle(color: kLightGrey),
+                                    )
+                                  : TextSpan(),
+                            ],
+                          ),
                           style: TextStyle(fontSize: 16.0, height: 1.8),
                         ),
-                        // ),
                       ),
 
                       /// 作成日時
