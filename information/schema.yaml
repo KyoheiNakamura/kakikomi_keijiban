@@ -40,6 +40,7 @@ users:
     position: string
     replyCount: int
     empathyCount: int
+    isReplyExisting: bool
     createdAt: timestamp
     updatedAt: timestamp
 
@@ -93,6 +94,7 @@ users:
     userId: auth.uid
     age: string
     area: string
+    title: string
     body: string
     categories: list
     emotion: string
@@ -101,7 +103,7 @@ users:
     position: string
     replyCount: int
     empathyCount: int
-    title: string
+    isReplyExisting: bool
     createdAt: timestamp
     updatedAt: timestamp
 

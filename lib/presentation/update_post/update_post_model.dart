@@ -75,6 +75,7 @@ class UpdatePostModel extends ChangeNotifier {
       'categories': selectedCategories,
       'replyCount': 0,
       'empathyCount': 0,
+      'isReplyExisting': false,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });

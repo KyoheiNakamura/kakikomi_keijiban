@@ -159,9 +159,18 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                         // await model.deleteEmpathizedPost(post);
                                         await model.addEmpathizedPost(post);
                                       },
-                                      icon: Icon(
-                                        Icons.favorite,
-                                        color: Colors.pinkAccent,
+                                      icon: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.favorite,
+                                            color: Colors.pinkAccent,
+                                          ),
+                                          Image.asset(
+                                            'lib/assets/images/anpanman_emoji.gif',
+                                            width: 25,
+                                            height: 25,
+                                          ),
+                                        ],
                                       ),
                                       style: TextButton.styleFrom(
                                         primary: kDarkPink,
@@ -190,9 +199,18 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                         model.turnOnEmpathyButton(post);
                                         await model.addEmpathizedPost(post);
                                       },
-                                      icon: Icon(
-                                        Icons.favorite_border_outlined,
-                                        color: kLightGrey,
+                                      icon: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.favorite_border_outlined,
+                                            color: kLightGrey,
+                                          ),
+                                          Image.asset(
+                                            'lib/assets/images/anpanman_emoji.gif',
+                                            width: 25,
+                                            height: 25,
+                                          ),
+                                        ],
                                       ),
                                       style: TextButton.styleFrom(
                                         primary: kDarkPink,

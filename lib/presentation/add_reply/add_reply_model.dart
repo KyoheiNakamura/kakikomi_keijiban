@@ -45,6 +45,7 @@ class AddReplyModel extends ChangeNotifier {
 
     _batch.update(postRef, {
       'replyCount': repliedPost.replyCount + 1,
+      'isReplyExisting': true,
     });
 
     try {

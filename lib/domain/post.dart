@@ -20,6 +20,7 @@ class Post {
     this.categories = List<String>.from(_categories);
     this.replyCount = doc['replyCount'];
     this.empathyCount = doc['empathyCount'];
+    this.isReplyExisting = doc['isReplyExisting'];
     this.isBookmarked = false;
     this.isEmpathized = false;
     this.isReplyShown = false;
@@ -46,6 +47,7 @@ class Post {
   List<String> categories = [];
   int replyCount = 0;
   int empathyCount = 0;
+  bool isReplyExisting = false;
   bool isBookmarked = false;
   bool isEmpathized = false;
   bool isReplyShown = false;

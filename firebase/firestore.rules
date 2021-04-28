@@ -35,7 +35,7 @@ service cloud.firestore {
     }
 
     function isValidPost(post) {
-      return post.size() == 15
+      return post.size() == 16
         && 'userId' in post && post.userId is string
         && 'id' in post && post.id is string
         && 'nickname' in post && post.nickname is string
@@ -49,6 +49,7 @@ service cloud.firestore {
         && 'categories' in post && post.categories is array
         && 'replyCount' in post && post.replyCount is int
         && 'empathyCount' in post && post.empathyCount is int
+        && 'isReplyExisting' in post && post.isReplyExisting is bool
         && 'createdAt' in post && post.createdAt is timestamp
         && 'updatedAt' in post && post.updatedAt is timestamp
       ;
@@ -175,6 +176,7 @@ service cloud.firestore {
           && incomingData().categories.size() <= 5
           && incomingData().replyCount == 0
           && incomingData().empathyCount == 0
+          && incomingData().isReplyExisting == false
           && incomingData().createdAt == request.time
           && incomingData().updatedAt == request.time
         ;
