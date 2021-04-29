@@ -27,19 +27,17 @@ class UpdatePostModel extends ChangeNotifier {
 
     final userRef = _firestore.collection('users').doc(post.userId);
     final postRef = userRef.collection('posts').doc(post.id);
-    List<String> _postDataList = _convertNoSelectedValueToEmpty();
-    print(_postDataList);
 
     try {
       await postRef.update({
-        'title': _postDataList[0],
-        'body': _postDataList[1],
-        'nickname': _postDataList[2],
-        'emotion': _postDataList[3],
-        'position': _postDataList[4],
-        'gender': _postDataList[5],
-        'age': _postDataList[6],
-        'area': _postDataList[7],
+        'title': removeUnnecessaryBlankLines(titleValue),
+        'body': removeUnnecessaryBlankLines(bodyValue),
+        'nickname': removeUnnecessaryBlankLines(nicknameValue),
+        'emotion': convertNoSelectedValueToEmpty(emotionDropdownValue),
+        'position': convertNoSelectedValueToEmpty(positionDropdownValue),
+        'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
+        'age': convertNoSelectedValueToEmpty(ageDropdownValue),
+        'area': convertNoSelectedValueToEmpty(areaDropdownValue),
         'categories': selectedCategories,
         'updatedAt': FieldValue.serverTimestamp(),
       });
@@ -59,19 +57,18 @@ class UpdatePostModel extends ChangeNotifier {
 
     final userRef = _firestore.collection('users').doc(draftedPost.userId);
     final postRef = userRef.collection('posts').doc();
-    List<String> _postDataList = _convertNoSelectedValueToEmpty();
 
     _batch.set(postRef, {
       'id': postRef.id,
       'userId': draftedPost.userId,
-      'title': _postDataList[0],
-      'body': _postDataList[1],
-      'nickname': _postDataList[2],
-      'emotion': _postDataList[3],
-      'position': _postDataList[4],
-      'gender': _postDataList[5],
-      'age': _postDataList[6],
-      'area': _postDataList[7],
+      'title': removeUnnecessaryBlankLines(titleValue),
+      'body': removeUnnecessaryBlankLines(bodyValue),
+      'nickname': removeUnnecessaryBlankLines(nicknameValue),
+      'emotion': convertNoSelectedValueToEmpty(emotionDropdownValue),
+      'position': convertNoSelectedValueToEmpty(positionDropdownValue),
+      'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
+      'age': convertNoSelectedValueToEmpty(ageDropdownValue),
+      'area': convertNoSelectedValueToEmpty(areaDropdownValue),
       'categories': selectedCategories,
       'replyCount': 0,
       'empathyCount': 0,
@@ -108,18 +105,17 @@ class UpdatePostModel extends ChangeNotifier {
     final userRef = _firestore.collection('users').doc(draftedPost.userId);
     final draftedPostRef =
         userRef.collection('draftedPosts').doc(draftedPost.id);
-    List<String> _postDataList = _convertNoSelectedValueToEmpty();
 
     try {
       await draftedPostRef.update({
-        'title': _postDataList[0],
-        'body': _postDataList[1],
-        'nickname': _postDataList[2],
-        'emotion': _postDataList[3],
-        'position': _postDataList[4],
-        'gender': _postDataList[5],
-        'age': _postDataList[6],
-        'area': _postDataList[7],
+        'title': removeUnnecessaryBlankLines(titleValue),
+        'body': removeUnnecessaryBlankLines(bodyValue),
+        'nickname': removeUnnecessaryBlankLines(nicknameValue),
+        'emotion': convertNoSelectedValueToEmpty(emotionDropdownValue),
+        'position': convertNoSelectedValueToEmpty(positionDropdownValue),
+        'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
+        'age': convertNoSelectedValueToEmpty(ageDropdownValue),
+        'area': convertNoSelectedValueToEmpty(areaDropdownValue),
         'categories': selectedCategories,
         'replyCount': 0,
         'updatedAt': FieldValue.serverTimestamp(),
@@ -133,25 +129,12 @@ class UpdatePostModel extends ChangeNotifier {
     }
   }
 
-  List<String> _convertNoSelectedValueToEmpty() {
-    List<String> postDataList = [
-      titleValue = removeUnnecessaryBlankLines(titleValue),
-      bodyValue = removeUnnecessaryBlankLines(bodyValue),
-      nicknameValue,
-      emotionDropdownValue,
-      positionDropdownValue,
-      genderDropdownValue,
-      ageDropdownValue,
-      areaDropdownValue,
-    ];
-    postDataList = postDataList.map((postData) {
-      if (postData == kPleaseSelect || postData == kDoNotSelect) {
-        return '';
-      } else {
-        return postData;
-      }
-    }).toList();
-    return postDataList;
+  String convertNoSelectedValueToEmpty(String selectedValue) {
+    if (selectedValue == kPleaseSelect || selectedValue == kDoNotSelect) {
+      return '';
+    } else {
+      return selectedValue;
+    }
   }
 
   String? validateTitleCallback(String? value) {
