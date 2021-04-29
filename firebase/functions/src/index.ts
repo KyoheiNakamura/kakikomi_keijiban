@@ -1,6 +1,5 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-// import * as messaging from "./messaging";
 
 admin.initializeApp();
 
@@ -174,6 +173,77 @@ export const sendPushNotificationWhenReplyToReplyIsCreated =
           return null;
         }
       });
+
+export const sendMailWhenContactIsSubmitted = functions
+    .region("asia-northeast1")
+    .https.onCall(async (data, context) => {
+      const {email, category, content} = data;
+      if (!email) {
+        throw new functions.https.HttpsError(
+            "invalid-argument",
+            "email is required"
+        );
+      }
+
+      type FormPayload = {
+        email: string;
+        category: string;
+        content: string;
+      };
+
+      const adminMailBody = (params: FormPayload) => {
+        return `以下内容でお問い合わせフォームよりお問い合わせを受けつけました。
+
+メールアドレス:
+   ${params.email}
+
+お問い合わせのカテゴリー:
+   ${params.category}
+
+内容:
+   ${params.content}
+`;
+      };
+
+      const thanksMailBody = (params: FormPayload) => {
+        return `お問い合わせありがとうございます。
+以下内容でお問い合わせを受け付けました。
+
+メールアドレス:
+   ${params.email}
+
+お問い合わせのカテゴリー:
+   ${params.category}
+
+内容:
+   ${params.content}
+
+後ほど担当者よりご連絡を差し上げます。
+よろしくお願いいたします。
+`;
+      };
+
+      const adminMailData = {
+        to: functions.config().mail.admin_address,
+        message: {
+          subject: "kakikomi-keijibanへのお問い合わせ",
+          text: adminMailBody({email, category, content}),
+        },
+        userId: context.auth?.uid,
+      };
+
+      const thanksMailData = {
+        to: email,
+        message: {
+          subject: "kakikomi-keijibanへのお問い合わせありがとうございます",
+          text: thanksMailBody({email, category, content}),
+        },
+        userId: context.auth?.uid,
+      };
+
+      await admin.firestore().collection("mail").add(adminMailData);
+      return admin.firestore().collection("mail").add(thanksMailData);
+    });
 
 // export const subscribeTokenToTopic =
 //   async (token: string | string[], topic: string) => {

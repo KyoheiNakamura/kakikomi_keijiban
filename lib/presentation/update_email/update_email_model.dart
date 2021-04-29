@@ -40,11 +40,11 @@ class UpdateEmailModel extends ChangeNotifier {
         throw ('リクエストの数が超過しました。\n時間を置いてから再度お試しください。');
       } else {
         print(e.toString());
-        throw e.toString();
+        throw ('エラーが発生しました。\nもう一度お試し下さい。');
       }
     } on Exception catch (e) {
       print(e.toString());
-      throw e.toString();
+      throw ('エラーが発生しました。\nもう一度お試し下さい。');
     } finally {
       stopLoading();
     }

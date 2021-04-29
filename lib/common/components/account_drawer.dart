@@ -5,6 +5,7 @@ import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_page.dart';
+import 'package:kakikomi_keijiban/presentation/contact/contact_page.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_page.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_page.dart';
@@ -98,7 +99,7 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                   if (result == valueFromShowConfirmDialog.logout) {
                     await model.signOut();
                     Navigator.pop(context);
-                    await model.init();
+                    await model.reloadTabs();
                   }
                   // } else {
                   //   await Navigator.push(
@@ -109,6 +110,19 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                   //   );
                   // }
                   // Navigator.pop(context);
+                },
+              ),
+              Divider(thickness: 1.0),
+              ListTile(
+                leading: Icon(Icons.alternate_email),
+                title: Text('お問い合わせ'),
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ContactPage(),
+                    ),
+                  );
                 },
               ),
             ],
@@ -193,7 +207,7 @@ class ChangingDrawerHeader extends StatelessWidget {
                           builder: (context) => SelectRegistrationMethodPage(),
                         ),
                       );
-                      model.init();
+                      model.reloadTabs();
                       // model.getCurrentUser();
                       // Navigator.pop(context);
                     },
@@ -211,7 +225,7 @@ class ChangingDrawerHeader extends StatelessWidget {
                         MaterialPageRoute(builder: (context) => SignInPage()),
                       );
                       Navigator.pop(context);
-                      model.init();
+                      model.reloadTabs();
                       // model.getCurrentUser();
                       // Navigator.pop(context);
                     },

@@ -54,11 +54,11 @@ class SignUpModel extends ChangeNotifier {
         // Todo createUserWithEmailAndPassword()の他の例外処理も書こう
       } else {
         print(e.toString());
-        throw e.toString();
+        throw ('エラーが発生しました。\nもう一度お試し下さい。');
       }
     } on Exception catch (e) {
       print(e.toString());
-      throw e.toString();
+      throw ('エラーが発生しました。\nもう一度お試し下さい。');
     } finally {
       stopLoading();
     }

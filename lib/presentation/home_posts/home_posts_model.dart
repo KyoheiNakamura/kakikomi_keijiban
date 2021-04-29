@@ -40,7 +40,18 @@ class HomePostsModel extends ChangeNotifier {
   bool isLoading = false;
   bool isModalLoading = false;
 
-  Future<void> init() async {
+  Future<void> init(BuildContext context) async {
+    // 下二行await不要論
+    await _showOnBoardingPage(context);
+    await _openSpecifiedPageByNotification(context);
+    startModalLoading();
+    await _getAllPostsWithReplies();
+    stopModalLoading();
+    await _getMyPostsWithReplies();
+    await _getBookmarkedPostsWithReplies();
+  }
+
+  Future<void> reloadTabs() async {
     startModalLoading();
     await _getAllPostsWithReplies();
     stopModalLoading();
@@ -713,32 +724,7 @@ class HomePostsModel extends ChangeNotifier {
     }
   }
 
-  Future<void> signOut() async {
-    await _auth.signOut();
-    notifyListeners();
-  }
-
-  void startLoading() {
-    isLoading = true;
-    notifyListeners();
-  }
-
-  void stopLoading() {
-    isLoading = false;
-    notifyListeners();
-  }
-
-  void startModalLoading() {
-    isModalLoading = true;
-    notifyListeners();
-  }
-
-  void stopModalLoading() {
-    isModalLoading = false;
-    notifyListeners();
-  }
-
-  Future<void> openPageSpecifiedByNotification(BuildContext context) async {
+  Future<void> _openSpecifiedPageByNotification(BuildContext context) async {
     // Get any messages which caused the application to open from
     // a terminated state.
     RemoteMessage? initialMessage =
@@ -785,7 +771,7 @@ class HomePostsModel extends ChangeNotifier {
     });
   }
 
-  void showOnBoardingPage(BuildContext context) async {
+  Future<void> _showOnBoardingPage(BuildContext context) async {
     final preference = await SharedPreferences.getInstance();
     // 最初の起動ならチュートリアル表示
     if (preference.getBool(kOnBoardingDoneKey) != true) {
@@ -794,6 +780,31 @@ class HomePostsModel extends ChangeNotifier {
         MaterialPageRoute(builder: (context) => OnBoardingPage()),
       );
     }
+  }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
+    notifyListeners();
+  }
+
+  void startLoading() {
+    isLoading = true;
+    notifyListeners();
+  }
+
+  void stopLoading() {
+    isLoading = false;
+    notifyListeners();
+  }
+
+  void startModalLoading() {
+    isModalLoading = true;
+    notifyListeners();
+  }
+
+  void stopModalLoading() {
+    isModalLoading = false;
+    notifyListeners();
   }
 
 // void getPostsRealtime() {

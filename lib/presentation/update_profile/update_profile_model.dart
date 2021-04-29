@@ -6,6 +6,7 @@ import 'package:kakikomi_keijiban/common/constants.dart';
 class UpdateProfileModel extends ChangeNotifier {
   final _firestore = FirebaseFirestore.instance;
   final currentUser = FirebaseAuth.instance.currentUser!;
+
   bool isLoading = false;
 
   String nicknameValue = '';
