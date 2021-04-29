@@ -18,19 +18,18 @@ class UpdateReplyModel extends ChangeNotifier {
   Future<void> updateReply(Reply existingReply) async {
     startLoading();
 
-    List<String> _postDataList = _convertNoSelectedValueToEmpty();
     final userRef = _firestore.collection('users').doc(existingReply.userId);
     final postRef = userRef.collection('posts').doc(existingReply.postId);
     final replyRef = postRef.collection('replies').doc(existingReply.id);
 
     try {
       await replyRef.update({
-        'body': _postDataList[0],
-        'nickname': _postDataList[1],
-        'position': _postDataList[2],
-        'gender': _postDataList[3],
-        'age': _postDataList[4],
-        'area': _postDataList[5],
+        'body': removeUnnecessaryBlankLines(bodyValue),
+        'nickname': removeUnnecessaryBlankLines(nicknameValue),
+        'position': convertNoSelectedValueToEmpty(positionDropdownValue),
+        'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
+        'age': convertNoSelectedValueToEmpty(ageDropdownValue),
+        'area': convertNoSelectedValueToEmpty(areaDropdownValue),
         'updatedAt': FieldValue.serverTimestamp(),
       });
     } on Exception catch (e) {
@@ -47,7 +46,6 @@ class UpdateReplyModel extends ChangeNotifier {
 
     WriteBatch _batch = _firestore.batch();
 
-    List<String> _replyDataList = _convertNoSelectedValueToEmpty();
     final userRef = _firestore.collection('users').doc(draftedReply.userId);
     final postRef = userRef.collection('posts').doc(draftedReply.postId);
     final replyRef = postRef.collection('replies').doc();
@@ -57,12 +55,12 @@ class UpdateReplyModel extends ChangeNotifier {
       'userId': draftedReply.userId,
       'postId': draftedReply.postId,
       'replierId': draftedReply.replierId,
-      'body': _replyDataList[0],
-      'nickname': _replyDataList[1],
-      'position': _replyDataList[2],
-      'gender': _replyDataList[3],
-      'age': _replyDataList[4],
-      'area': _replyDataList[5],
+      'body': removeUnnecessaryBlankLines(bodyValue),
+      'nickname': removeUnnecessaryBlankLines(nicknameValue),
+      'position': convertNoSelectedValueToEmpty(positionDropdownValue),
+      'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
+      'age': convertNoSelectedValueToEmpty(ageDropdownValue),
+      'area': convertNoSelectedValueToEmpty(areaDropdownValue),
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
@@ -96,16 +94,15 @@ class UpdateReplyModel extends ChangeNotifier {
     final userRef = _firestore.collection('users').doc(draftedReply.userId);
     final draftedReplyRef =
         userRef.collection('draftedReplies').doc(draftedReply.id);
-    List<String> _replyDataList = _convertNoSelectedValueToEmpty();
 
     try {
       await draftedReplyRef.update({
-        'body': _replyDataList[0],
-        'nickname': _replyDataList[1],
-        'position': _replyDataList[2],
-        'gender': _replyDataList[3],
-        'age': _replyDataList[4],
-        'area': _replyDataList[5],
+        'body': removeUnnecessaryBlankLines(bodyValue),
+        'nickname': removeUnnecessaryBlankLines(nicknameValue),
+        'position': convertNoSelectedValueToEmpty(positionDropdownValue),
+        'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
+        'age': convertNoSelectedValueToEmpty(ageDropdownValue),
+        'area': convertNoSelectedValueToEmpty(areaDropdownValue),
         'updatedAt': FieldValue.serverTimestamp(),
       });
     } on Exception catch (e) {
@@ -117,23 +114,12 @@ class UpdateReplyModel extends ChangeNotifier {
     }
   }
 
-  List<String> _convertNoSelectedValueToEmpty() {
-    List<String> postDataList = [
-      bodyValue = removeUnnecessaryBlankLines(bodyValue),
-      nicknameValue,
-      positionDropdownValue,
-      genderDropdownValue,
-      ageDropdownValue,
-      areaDropdownValue,
-    ];
-    postDataList = postDataList.map((postData) {
-      if (postData == kPleaseSelect || postData == kDoNotSelect) {
-        return '';
-      } else {
-        return postData;
-      }
-    }).toList();
-    return postDataList;
+  String convertNoSelectedValueToEmpty(String selectedValue) {
+    if (selectedValue == kPleaseSelect || selectedValue == kDoNotSelect) {
+      return '';
+    } else {
+      return selectedValue;
+    }
   }
 
   void startLoading() {

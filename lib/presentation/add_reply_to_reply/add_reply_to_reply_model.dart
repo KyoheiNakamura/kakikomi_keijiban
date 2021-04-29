@@ -27,7 +27,6 @@ class AddReplyToReplyModel extends ChangeNotifier {
     final postRef = userRef.collection('posts').doc(repliedReply.postId);
     final replyRef = postRef.collection('replies').doc(repliedReply.id);
     final replyToReplyRef = replyRef.collection('repliesToReply').doc();
-    List<String> _replyDataList = _convertNoSelectedValueToEmpty();
 
     _batch.set(replyToReplyRef, {
       'id': replyToReplyRef.id,
@@ -35,12 +34,12 @@ class AddReplyToReplyModel extends ChangeNotifier {
       'postId': repliedReply.postId,
       'replyId': repliedReply.id,
       'replierId': _auth.currentUser!.uid,
-      'body': _replyDataList[0],
-      'nickname': _replyDataList[1],
-      'position': _replyDataList[2],
-      'gender': _replyDataList[3],
-      'age': _replyDataList[4],
-      'area': _replyDataList[5],
+      'body': removeUnnecessaryBlankLines(bodyValue),
+      'nickname': removeUnnecessaryBlankLines(nicknameValue),
+      'position': convertNoSelectedValueToEmpty(positionDropdownValue),
+      'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
+      'age': convertNoSelectedValueToEmpty(ageDropdownValue),
+      'area': convertNoSelectedValueToEmpty(areaDropdownValue),
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
@@ -68,7 +67,6 @@ class AddReplyToReplyModel extends ChangeNotifier {
     final userRef = _firestore.collection('users').doc(repliedReply.userId);
     final draftedReplyToReplyRef =
         userRef.collection('draftedRepliesToReply').doc();
-    List<String> _replyDataList = _convertNoSelectedValueToEmpty();
 
     try {
       await draftedReplyToReplyRef.set({
@@ -77,12 +75,12 @@ class AddReplyToReplyModel extends ChangeNotifier {
         'postId': repliedReply.postId,
         'replyId': repliedReply.id,
         'replierId': _auth.currentUser!.uid,
-        'body': _replyDataList[0],
-        'nickname': _replyDataList[1],
-        'position': _replyDataList[2],
-        'gender': _replyDataList[3],
-        'age': _replyDataList[4],
-        'area': _replyDataList[5],
+        'body': removeUnnecessaryBlankLines(bodyValue),
+        'nickname': removeUnnecessaryBlankLines(nicknameValue),
+        'position': convertNoSelectedValueToEmpty(positionDropdownValue),
+        'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
+        'age': convertNoSelectedValueToEmpty(ageDropdownValue),
+        'area': convertNoSelectedValueToEmpty(areaDropdownValue),
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       });
@@ -95,23 +93,12 @@ class AddReplyToReplyModel extends ChangeNotifier {
     }
   }
 
-  List<String> _convertNoSelectedValueToEmpty() {
-    List<String> replyDataList = [
-      bodyValue = removeUnnecessaryBlankLines(bodyValue),
-      nicknameValue,
-      positionDropdownValue,
-      genderDropdownValue,
-      ageDropdownValue,
-      areaDropdownValue,
-    ];
-    replyDataList = replyDataList.map((replyData) {
-      if (replyData == kPleaseSelect || replyData == kDoNotSelect) {
-        return '';
-      } else {
-        return replyData;
-      }
-    }).toList();
-    return replyDataList;
+  String convertNoSelectedValueToEmpty(String selectedValue) {
+    if (selectedValue == kPleaseSelect || selectedValue == kDoNotSelect) {
+      return '';
+    } else {
+      return selectedValue;
+    }
   }
 
   void startLoading() {
