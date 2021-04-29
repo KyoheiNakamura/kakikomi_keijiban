@@ -98,15 +98,25 @@ service cloud.firestore {
     }
 
     function isValidEmpathizedPost(empathizedPost) {
-      return empathizedPost.size() <= 4
+      return empathizedPost.size() == 4
         && 'id' in empathizedPost && empathizedPost.id is string
         && 'userId' in empathizedPost && empathizedPost.userId is string
         && 'myEmpathyCount' in empathizedPost && empathizedPost.myEmpathyCount is int
         && 'createdAt' in empathizedPost && empathizedPost.createdAt is timestamp
     }
 
+    function isValidContact(contact) {
+      return contact.size() == 6
+        && 'id' in contact && contact.id is string
+        && 'userId' in contact && contact.userId is string
+        && 'email' in contact && contact.email is string
+        && 'category' in contact && contact.category is string
+        && 'content' in contact && contact.content is string
+        && 'createdAt' in contact && contact.createdAt is timestamp
+    }
+
     match /users/{userId} {
-      allow get: if isAuthenticated();
+      allow get: if isUserAuthenticated();
       allow create: if isUserAuthenticated(userId)
       // スキーマ検証
         && isValidUser(incomingData())
@@ -505,6 +515,20 @@ service cloud.firestore {
         ;
         allow delete: if isUserAuthenticated(existingData().replierId);
       }
+    }
+
+    // /contacts/{contactId}/
+    match /contacts/{contactId} {
+      allow create: if isAuthenticated()
+      // スキーマ検証
+        && isValidContact(incomingData())
+      // バリデーション
+        && incomingData().id == contactId
+        && incomingData().category.size() <= 20
+        && incomingData().content.size() > 0
+        && incomingData().content.size() <= 500
+        && incomingData().createdAt == request.time
+      ;
     }
   }
 }

@@ -21,8 +21,8 @@ users:
     id: token
 
   # Todo 各ユーザーの機密データ
-  confidential:
-    id: auth.uid
+#  confidential:
+#    id: auth.uid
 #    email: string
 
   # 各ユーザーの投稿データ
@@ -137,3 +137,13 @@ users:
     position: string
     createdAt: timestamp
     updatedAt: timestamp
+
+# お問い合わせ内容
+contacts:
+  id: auto
+  userId: auth.uid
+  email: string
+  category: string
+  content: string
+  createdAt: timestamp
+

@@ -219,6 +219,13 @@ const List<String> kAreaList = [
   kDoNotSelect,
 ];
 
+const List<String> kContactList = [
+  kPleaseSelect,
+  '不具合の報告',
+  '追加・改善して欲しい機能がある',
+  'その他',
+];
+
 const kTitleTextFormFieldDecoration = InputDecoration(
   border: OutlineInputBorder(),
   prefixIcon: Icon(Icons.title),
@@ -302,6 +309,37 @@ const kAreaDropdownButtonFormFieldDecoration = InputDecoration(
   border: OutlineInputBorder(),
   labelText: 'お住まいの地域',
   prefixIcon: Icon(Icons.place_outlined),
+);
+
+const kContactDropdownButtonFormFieldDecoration = InputDecoration(
+  border: OutlineInputBorder(),
+  prefixIcon: Icon(Icons.category_outlined),
+  labelText: 'お問い合わせのカテゴリー',
+  helperText: '必須',
+  helperStyle: TextStyle(color: kDarkPink),
+);
+
+const kContactEmailTextFormFieldDecoration = InputDecoration(
+  border: OutlineInputBorder(),
+  prefixIcon: Icon(Icons.email),
+  labelText: 'メールアドレス',
+  helperText: '必須',
+  helperStyle: TextStyle(color: kDarkPink),
+);
+
+const kContactContentTextFormFieldDecoration = InputDecoration(
+  border: OutlineInputBorder(),
+  prefixIcon: Icon(Icons.text_fields),
+  labelText: 'お問い合わせの内容',
+  hintText: '〇〇ができる機能を追加して欲しいです。\n\n具体的には、〇〇のときに〇〇なので、〇〇ができると良いと思います。',
+  hintMaxLines: 5,
+  helperText: '必須',
+  helperStyle: TextStyle(color: kDarkPink),
+  counterText: '500字以内でご記入ください',
+  counterStyle: TextStyle(color: kLightGrey),
+  // counterText: isPostExisting
+  //     ? '${existingPost!.textBody.length} 字'
+  //     : '${model.contentValue.length} 字',
 );
 
 const kAppBarTextStyle = TextStyle(
