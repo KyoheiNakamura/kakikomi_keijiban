@@ -7,7 +7,7 @@ service cloud.firestore {
     }
 
     function isUserAuthenticated(userId) {
-      return request.auth.uId == userId;
+      return request.auth.uid == userId;
     }
 
     function existingData() {
@@ -115,8 +115,15 @@ service cloud.firestore {
         && 'createdAt' in contact && contact.createdAt is timestamp
     }
 
+    // Authenticated users can query the posts collection group
+    // Applies to collection queries, collection group queries, and
+    // single document retrievals
+    match /{path=**}/posts/{post} {
+      allow read: if isAuthenticated();
+    }
+
     match /users/{userId} {
-      allow get: if isUserAuthenticated();
+      allow read: if Authenticated();
       allow create: if isUserAuthenticated(userId)
       // スキーマ検証
         && isValidUser(incomingData())
@@ -325,6 +332,10 @@ service cloud.firestore {
         }
       }
 
+      match /{path=**}/bookmarkedPosts/{bookmarkedPostId} {
+        allow read: if isAuthenticated();
+      }
+
       // /users/{userId}/bookmarkedPosts
       match /bookmarkedPosts/{bookmarkedPostId} {
         allow read: if isUserAuthenticated(userId); 
@@ -339,6 +350,10 @@ service cloud.firestore {
         allow delete: if isUserAuthenticated(userId);
       }
 
+      match /{path=**}/empathizedPosts/{empathizedPostId} {
+        allow read: if isAuthenticated();
+      }
+      
       // /users/{userId}/empathizedPosts
       match /empathizedPosts/{empathizedPostId} {
         allow read: if isUserAuthenticated(userId); 
@@ -447,7 +462,7 @@ service cloud.firestore {
           && incomingData().createdAt == request.time
           && incomingData().updatedAt == request.time
         ;
-        allow update: if isUserAuthenticated(existingData().replierId)
+        allow update: if isUserAuthenticated(userId)
         // スキーマ検証
           && isValidReply(incomingData().replierId)
         // バリデーション
@@ -466,7 +481,7 @@ service cloud.firestore {
           && incomingData().createdAt == existingData().createdAt
           && incomingData().updatedAt == request.time
         ;
-        allow delete: if isUserAuthenticated(existingData().replierId);
+        allow delete: if isUserAuthenticated(userId);
       }
 
       // /users/{userId}/draftedRepliesToReply
@@ -493,7 +508,7 @@ service cloud.firestore {
           && incomingData().createdAt == request.time
           && incomingData().updatedAt == request.time
         ;
-        allow update: if isUserAuthenticated(existingData().replierId)
+        allow update: if isUserAuthenticated(userId)
         // スキーマ検証
           && isValidReply(incomingData().replierId)
         // バリデーション
@@ -513,8 +528,19 @@ service cloud.firestore {
           && incomingData().createdAt == existingData().createdAt
           && incomingData().updatedAt == request.time
         ;
-        allow delete: if isUserAuthenticated(existingData().replierId);
+        allow delete: if isUserAuthenticated(userId);
       }
+
+      // /users/{userId}/tokens
+      match /tokens/{tokenId} {
+        allow read: if isAuthenticated();
+        allow create: if isUserAuthenticated(userId);
+      }
+    }
+
+    // /mail/{mailId}/
+    match /mail/{mailId} {
+      allow create: if isAuthenticated();
     }
 
     // /contacts/{contactId}/

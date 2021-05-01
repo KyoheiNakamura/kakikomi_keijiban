@@ -123,21 +123,25 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                             // ),
                             SizedBox(height: 16.0),
                             OutlinedButton(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  // Icon(Icons.login_outlined, color: kDarkPink),
-                                  Padding(
-                                    padding: const EdgeInsets.all(12.0),
-                                    child: Text(
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      'lib/assets/images/google_logo.png',
+                                      scale: 15,
+                                    ),
+                                    SizedBox(width: 8.0),
+                                    Text(
                                       'Googleでログイン',
                                       style: TextStyle(
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                               onPressed: () async {
                                 try {
