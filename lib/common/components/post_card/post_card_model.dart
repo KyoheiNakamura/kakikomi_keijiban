@@ -185,6 +185,9 @@ class PostCardModel extends ChangeNotifier {
 
   // １回のみワカルできる
   Future<void> addEmpathizedPost(Post post) async {
+    post.empathyCount = post.empathyCount + 1;
+    notifyListeners();
+
     final userRef = FirebaseFirestore.instance
         .collection('users')
         .doc(_auth.currentUser?.uid);
@@ -210,12 +213,12 @@ class PostCardModel extends ChangeNotifier {
     await postRef.update({
       'empathyCount': currentEmpathyCount + 1,
     });
-    post.empathyCount = post.empathyCount + 1;
-
-    notifyListeners();
   }
 
   Future<void> deleteEmpathizedPost(Post post) async {
+    post.empathyCount = post.empathyCount - 1;
+    notifyListeners();
+
     final userRef = FirebaseFirestore.instance
         .collection('users')
         .doc(_auth.currentUser?.uid);
@@ -236,10 +239,7 @@ class PostCardModel extends ChangeNotifier {
       await postRef.update({
         'empathyCount': currentEmpathyCount - 1,
       });
-      post.empathyCount = post.empathyCount - 1;
     }
-
-    notifyListeners();
   }
 
   // Future<void> _deleteBookmarkedPostsForAllUsers(Post post) async {
