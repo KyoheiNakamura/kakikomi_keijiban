@@ -111,7 +111,10 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                               post.createdDate != post.updatedDate
                                   ? TextSpan(
                                       text: '（編集済み）',
-                                      style: TextStyle(color: kLightGrey),
+                                      style: TextStyle(
+                                        color: kLightGrey,
+                                        fontSize: 15.0,
+                                      ),
                                     )
                                   : TextSpan(),
                             ],
@@ -162,9 +165,9 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                               ? post.isEmpathized
                                   ? TextButton.icon(
                                       onPressed: () async {
-                                        // model.turnOffEmpathyButton(post);
-                                        // await model.deleteEmpathizedPost(post);
-                                        await model.addEmpathizedPost(post);
+                                        // 下二行はワカル１回のみできるとき用
+                                        model.turnOffEmpathyButton(post);
+                                        await model.deleteEmpathizedPost(post);
                                       },
                                       icon: Row(
                                         children: [

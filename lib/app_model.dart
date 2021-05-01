@@ -59,14 +59,22 @@ class AppModel {
     String? userId = Auth.FirebaseAuth.instance.currentUser?.uid;
 
     if (userId != null) {
-      await FirebaseFirestore.instance
+      final fetchedToken = await FirebaseFirestore.instance
           .collection('users')
           .doc(userId)
           .collection('tokens')
           .doc(token)
-          .set({
-        'id': token,
-      });
+          .get();
+      if (!fetchedToken.exists) {
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .collection('tokens')
+            .doc(token)
+            .set({
+          'id': token,
+        });
+      }
     }
   }
 

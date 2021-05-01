@@ -37,6 +37,9 @@ class SelectRegistrationMethodModel extends ChangeNotifier {
       if (e.code == 'credential-already-in-use') {
         print('このGoogleアカウントはすでに使用されています。');
         throw ('このGoogleアカウントは\nすでに使用されています。');
+      } else if (e.code == 'email-already-in-use') {
+        print('このメールアドレスはすでに使用されています。');
+        throw ('このメールアドレスは\nすでに使用されています');
       } else {
         print(e.toString());
         throw e.toString();

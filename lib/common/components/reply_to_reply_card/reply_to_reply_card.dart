@@ -81,7 +81,10 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                           replyToReply.createdDate != replyToReply.updatedDate
                               ? TextSpan(
                                   text: '（編集済み）',
-                                  style: TextStyle(color: kLightGrey),
+                                  style: TextStyle(
+                                    color: kLightGrey,
+                                    fontSize: 15.0,
+                                  ),
                                 )
                               : TextSpan(),
                         ],
