@@ -29,9 +29,9 @@ class UpdateReplyToReplyPage extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () {
+      onWillPop: () async {
         showDiscardConfirmDialog(context);
-        return Future.value(true);
+        return true;
       },
       child: ChangeNotifierProvider<UpdateReplyToReplyModel>(
         create: (context) => UpdateReplyToReplyModel(),

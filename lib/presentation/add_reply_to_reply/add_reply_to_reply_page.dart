@@ -25,9 +25,9 @@ class AddReplyToReplyPage extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () {
+      onWillPop: () async {
         showDiscardConfirmDialog(context);
-        return Future.value(true);
+        return true;
       },
       child: ChangeNotifierProvider<AddReplyToReplyModel>(
         create: (context) => AddReplyToReplyModel(),
@@ -38,6 +38,39 @@ class AddReplyToReplyPage extends StatelessWidget
               '返信',
               style: kAppBarTextStyle,
             ),
+            actions: [
+              Padding(
+                padding: EdgeInsets.only(right: 8.0),
+                child: Consumer<AddReplyToReplyModel>(
+                    builder: (context, model, child) {
+                  return TextButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        try {
+                          await model.addDraftedReplyToReply(repliedReply);
+                          final snackBar = SnackBar(
+                            content: Text('下書きに保存しました'),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          Navigator.pop(context);
+                        } catch (e) {
+                          await showExceptionDialog(
+                            context,
+                            e.toString(),
+                          );
+                        }
+                      } else {
+                        await showRequiredInputConfirmDialog(context);
+                      }
+                    },
+                    child: Text(
+                      '下書き保存',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                }),
+              )
+            ],
           ),
           body: Consumer<AddReplyToReplyModel>(
             builder: (context, model, child) {

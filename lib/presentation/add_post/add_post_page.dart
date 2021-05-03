@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
@@ -23,9 +25,9 @@ class AddPostPage extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () {
+      onWillPop: () async {
         showDiscardConfirmDialog(context);
-        return Future.value(true);
+        return true;
       },
       child: ChangeNotifierProvider<AddPostModel>(
         create: (context) => AddPostModel(),
@@ -36,6 +38,42 @@ class AddPostPage extends StatelessWidget
               '新規投稿',
               style: kAppBarTextStyle,
             ),
+            actions: [
+              Padding(
+                padding: EdgeInsets.only(right: 8.0),
+                child: Consumer<AddPostModel>(builder: (context, model, child) {
+                  return TextButton(
+                    onPressed: () async {
+                      if (model.validateSelectedCategories() &&
+                          _formKey.currentState!.validate()) {
+                        try {
+                          await model.addDraftedPost();
+                          final snackBar = SnackBar(
+                            content: Text('下書きに保存しました'),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          Navigator.pop(context);
+                        } catch (e) {
+                          await showExceptionDialog(
+                            context,
+                            e.toString(),
+                          );
+                        }
+                      } else {
+                        await showRequiredInputConfirmDialog(context);
+                      }
+                    },
+                    style: TextButton.styleFrom(
+                      primary: kDarkPink,
+                    ),
+                    child: Text(
+                      '下書き保存',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                }),
+              )
+            ],
           ),
           body: Consumer<AddPostModel>(
             builder: (context, model, child) {

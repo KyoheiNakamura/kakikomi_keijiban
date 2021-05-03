@@ -25,9 +25,9 @@ class AddReplyPage extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () {
+      onWillPop: () async {
         showDiscardConfirmDialog(context);
-        return Future.value(true);
+        return true;
       },
       child: ChangeNotifierProvider<AddReplyModel>(
         create: (context) => AddReplyModel(),
@@ -38,6 +38,39 @@ class AddReplyPage extends StatelessWidget
               '返信',
               style: kAppBarTextStyle,
             ),
+            actions: [
+              Padding(
+                padding: EdgeInsets.only(right: 8.0),
+                child:
+                    Consumer<AddReplyModel>(builder: (context, model, child) {
+                  return TextButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        try {
+                          await model.addDraftedReply(repliedPost);
+                          final snackBar = SnackBar(
+                            content: Text('下書きに保存しました'),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                          Navigator.pop(context);
+                        } catch (e) {
+                          await showExceptionDialog(
+                            context,
+                            e.toString(),
+                          );
+                        }
+                      } else {
+                        await showRequiredInputConfirmDialog(context);
+                      }
+                    },
+                    child: Text(
+                      '下書き保存',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                }),
+              )
+            ],
           ),
           body: Consumer<AddReplyModel>(
             builder: (context, model, child) {
@@ -253,9 +286,6 @@ class AddReplyPage extends StatelessWidget
                                       e.toString(),
                                     );
                                   }
-                                  // Navigator.of(context).popUntil(
-                                  //   ModalRoute.withName('/'),
-                                  // );
                                 } else {
                                   await showRequiredInputConfirmDialog(context);
                                 }

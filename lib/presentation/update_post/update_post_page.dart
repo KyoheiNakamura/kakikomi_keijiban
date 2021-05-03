@@ -28,9 +28,9 @@ class UpdatePostPage extends StatelessWidget
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () {
+      onWillPop: () async {
         showDiscardConfirmDialog(context);
-        return Future.value(true);
+        return true;
       },
       child: ChangeNotifierProvider<UpdatePostModel>(
         create: (context) => UpdatePostModel(),
