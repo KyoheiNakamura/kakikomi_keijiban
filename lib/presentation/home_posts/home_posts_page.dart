@@ -22,86 +22,80 @@ class HomePostsPage extends StatelessWidget {
           child: Scaffold(
             drawer: SafeArea(child: AccountDrawer()),
             body: Consumer<HomePostsModel>(builder: (context, model, child) {
-              // return AnnotatedRegion<SystemUiOverlayStyle>(
-              //   value: SystemUiOverlayStyle.light
-              //       .copyWith(statusBarColor: Theme.of(context).primaryColorDark),
-              return SafeArea(
-                child: LoadingSpinner(
-                  inAsyncCall: model.isModalLoading,
-                  // dismissible: true,
-                  child: Container(
-                    color: kLightPink,
-                    child: Stack(
-                      children: [
-                        NestedScrollView(
-                          headerSliverBuilder:
-                              (BuildContext context, bool innerBoxIsScrolled) {
-                            return <Widget>[
-                              SliverOverlapAbsorber(
-                                handle: NestedScrollView
-                                    .sliverOverlapAbsorberHandleFor(context),
-                                sliver: SliverAppBar(
-                                  toolbarHeight: 50,
-                                  // elevation: 0,
-                                  centerTitle: true,
-                                  title: Text(
-                                    '発達障害困りごと掲示板（仮）',
-                                    style: kAppBarTextStyle,
+              return LoadingSpinner(
+                inAsyncCall: model.isModalLoading,
+                // dismissible: true,
+                child: Container(
+                  color: kLightPink,
+                  child: Stack(
+                    children: [
+                      NestedScrollView(
+                        headerSliverBuilder:
+                            (BuildContext context, bool innerBoxIsScrolled) {
+                          return <Widget>[
+                            SliverOverlapAbsorber(
+                              handle: NestedScrollView
+                                  .sliverOverlapAbsorberHandleFor(context),
+                              sliver: SliverAppBar(
+                                toolbarHeight: 50,
+                                // elevation: 0,
+                                centerTitle: true,
+                                title: Text(
+                                  '発達障害困りごと掲示板（仮）',
+                                  style: kAppBarTextStyle,
+                                ),
+                                actions: [
+                                  IconButton(
+                                    icon: Icon(Icons.search, size: 24),
+                                    onPressed: () async {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => SearchPage(),
+                                        ),
+                                      );
+                                      // await model
+                                      //     .getPostsWithReplies(kAllPostsTab);
+                                    },
                                   ),
-                                  actions: [
-                                    IconButton(
-                                      icon: Icon(Icons.search, size: 24),
-                                      onPressed: () async {
-                                        await Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => SearchPage(),
-                                          ),
-                                        );
-                                        // await model
-                                        //     .getPostsWithReplies(kAllPostsTab);
-                                      },
-                                    ),
-                                  ],
-                                  floating: true,
-                                  pinned: true,
-                                  snap: true,
-                                  forceElevated: innerBoxIsScrolled,
-                                  bottom: TabBar(
-                                    tabs: kTabs
-                                        .map(
-                                          (String name) => Tab(
-                                            child: Text(
-                                              name,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                ],
+                                floating: true,
+                                pinned: true,
+                                snap: true,
+                                forceElevated: innerBoxIsScrolled,
+                                bottom: TabBar(
+                                  tabs: kTabs
+                                      .map(
+                                        (String name) => Tab(
+                                          child: Text(
+                                            name,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                        )
-                                        .toList(),
-                                  ),
+                                        ),
+                                      )
+                                      .toList(),
                                 ),
                               ),
-                            ];
-                          },
+                            ),
+                          ];
+                        },
 
-                          /// タブ名(ページ名)で表示を場合分け
-                          body: TabBarView(
-                            children: kTabs.map((String name) {
-                              return TabBarViewChild(
-                                tabName: name,
-                                model: model,
-                              );
-                            }).toList(),
-                          ),
+                        /// タブ名(ページ名)で表示を場合分け
+                        body: TabBarView(
+                          children: kTabs.map((String name) {
+                            return TabBarViewChild(
+                              tabName: name,
+                              model: model,
+                            );
+                          }).toList(),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               );
-              // );
             }),
             floatingActionButton:
                 Consumer<HomePostsModel>(builder: (context, model, child) {

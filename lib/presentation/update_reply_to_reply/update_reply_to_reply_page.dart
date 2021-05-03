@@ -233,6 +233,9 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                         // Navigator.of(context).popUntil(
                                         //   ModalRoute.withName('/'),
                                         // );
+                                      } else {
+                                        await showRequiredInputConfirmDialog(
+                                            context);
                                       }
                                     },
                                     child: Text(
@@ -281,6 +284,9 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                             // Navigator.of(context).popUntil(
                                             //   ModalRoute.withName('/'),
                                             // );
+                                          } else {
+                                            await showRequiredInputConfirmDialog(
+                                                context);
                                           }
                                         },
                                         child: Text(
@@ -332,6 +338,9 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                             // Navigator.of(context).popUntil(
                                             //   ModalRoute.withName('/'),
                                             // );
+                                          } else {
+                                            await showRequiredInputConfirmDialog(
+                                                context);
                                           }
                                         },
                                         child: Text(

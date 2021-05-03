@@ -85,4 +85,32 @@ mixin ShowConfirmDialogMixin {
       },
     );
   }
+
+  Future<void> showRequiredInputConfirmDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          content: Text('必須項目を入力してください。'),
+          contentPadding:
+              EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'OK',
+                style: TextStyle(color: kDarkPink),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }

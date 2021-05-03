@@ -5,7 +5,6 @@ import 'package:kakikomi_keijiban/common/components/reply_card/reply_card_model.
 import 'package:kakikomi_keijiban/common/components/reply_to_reply_card/reply_to_reply_card_model.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_page.dart';
-import 'package:kakikomi_keijiban/presentation/on_boarding/on_boarding_page.dart';
 import 'package:provider/provider.dart';
 
 class App extends StatelessWidget {

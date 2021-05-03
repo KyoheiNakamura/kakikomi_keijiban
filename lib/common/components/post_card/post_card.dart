@@ -89,7 +89,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                       Padding(
                         padding:
                             EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
-                        child: SelectableText(
+                        child: Text(
                           post.title,
                           style: TextStyle(fontSize: 17.0),
                         ),
@@ -104,8 +104,8 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                       /// body
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 15.0),
-                        child: SelectableText.rich(
-                          TextSpan(
+                        child: RichText(
+                          text: TextSpan(
                             children: [
                               TextSpan(text: post.body),
                               post.createdDate != post.updatedDate
@@ -118,8 +118,12 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                     )
                                   : TextSpan(),
                             ],
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              height: 1.8,
+                              color: Colors.black,
+                            ),
                           ),
-                          style: TextStyle(fontSize: 16.0, height: 1.8),
                         ),
                       ),
 

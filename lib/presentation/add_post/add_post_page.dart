@@ -330,6 +330,8 @@ class AddPostPage extends StatelessWidget
                                   // Navigator.of(context).popUntil(
                                   //   ModalRoute.withName('/'),
                                   // );
+                                } else {
+                                  await showRequiredInputConfirmDialog(context);
                                 }
                               },
                               child: Text(
@@ -371,10 +373,11 @@ class AddPostPage extends StatelessWidget
                                       e.toString(),
                                     );
                                   }
-
                                   // Navigator.of(context).popUntil(
                                   //   ModalRoute.withName('/'),
                                   // );
+                                } else {
+                                  await showRequiredInputConfirmDialog(context);
                                 }
                               },
                               child: Text(

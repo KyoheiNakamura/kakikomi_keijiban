@@ -211,6 +211,8 @@ class AddReplyPage extends StatelessWidget
                                   // Navigator.of(context).popUntil(
                                   //   ModalRoute.withName('/'),
                                   // );
+                                } else {
+                                  await showRequiredInputConfirmDialog(context);
                                 }
                               },
                               child: Text(
@@ -254,6 +256,8 @@ class AddReplyPage extends StatelessWidget
                                   // Navigator.of(context).popUntil(
                                   //   ModalRoute.withName('/'),
                                   // );
+                                } else {
+                                  await showRequiredInputConfirmDialog(context);
                                 }
                               },
                               child: Text(

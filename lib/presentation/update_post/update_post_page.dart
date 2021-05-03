@@ -353,6 +353,9 @@ class UpdatePostPage extends StatelessWidget
                                         // Navigator.of(context).popUntil(
                                         //   ModalRoute.withName('/'),
                                         // );
+                                      } else {
+                                        await showRequiredInputConfirmDialog(
+                                            context);
                                       }
                                     },
                                     child: Text(
@@ -404,6 +407,9 @@ class UpdatePostPage extends StatelessWidget
                                             // Navigator.of(context).popUntil(
                                             //   ModalRoute.withName('/'),
                                             // );
+                                          } else {
+                                            await showRequiredInputConfirmDialog(
+                                                context);
                                           }
                                         },
                                         child: Text(
@@ -456,6 +462,9 @@ class UpdatePostPage extends StatelessWidget
                                             // Navigator.of(context).popUntil(
                                             //   ModalRoute.withName('/'),
                                             // );
+                                          } else {
+                                            await showRequiredInputConfirmDialog(
+                                                context);
                                           }
                                         },
                                         child: Text(
