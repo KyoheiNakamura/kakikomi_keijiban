@@ -56,7 +56,7 @@ class OnBoardingPage extends StatelessWidget {
                               width: double.infinity,
                               child: OutlinedButton(
                                 onPressed: () async {
-                                  await model.doneOnBoardingPage(context);
+                                  await model.beDoneOnBoardingPage(context);
                                 },
                                 child: Text(
                                   'はじめる',
