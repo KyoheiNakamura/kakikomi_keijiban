@@ -40,6 +40,7 @@ class AddReplyToReplyModel extends ChangeNotifier {
       'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
       'age': convertNoSelectedValueToEmpty(ageDropdownValue),
       'area': convertNoSelectedValueToEmpty(areaDropdownValue),
+      'empathyCount': 0,
       'createdAt': FieldValue.serverTimestamp(),
       'updatedAt': FieldValue.serverTimestamp(),
     });
@@ -81,6 +82,7 @@ class AddReplyToReplyModel extends ChangeNotifier {
         'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
         'age': convertNoSelectedValueToEmpty(ageDropdownValue),
         'area': convertNoSelectedValueToEmpty(areaDropdownValue),
+        'empathyCount': 0,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
       });

@@ -15,7 +15,9 @@ class Reply {
     this.gender = doc['gender'] != '' ? doc['gender'] : '';
     this.age = doc['age'] != '' ? doc['age'] : '';
     this.area = doc['area'] != '' ? doc['area'] : '';
+    this.empathyCount = doc['empathyCount'];
     this.isDraft = false;
+    this.isEmpathized = false;
     this.repliesToReply = [];
     final createdDate = doc['createdAt'].toDate();
     this.createdDate = createdDate;
@@ -33,7 +35,9 @@ class Reply {
   String gender = '';
   String age = '';
   String area = '';
+  int empathyCount = 0;
   bool isDraft = false;
+  bool isEmpathized = false;
   List<ReplyToReply> repliesToReply = [];
   DateTime createdDate = DateTime.now();
   DateTime updatedDate = DateTime.now();

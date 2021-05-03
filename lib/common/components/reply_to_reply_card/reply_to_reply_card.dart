@@ -105,6 +105,99 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                       style: TextStyle(color: kLightGrey),
                     ),
                   ),
+
+                  /// ワカルボタン
+                  passedModel is! DraftsModel
+                      ? replyToReply.isEmpathized
+                          ? Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton.icon(
+                                onPressed: () async {
+                                  // 下二行はワカル１回のみできるとき用
+                                  model.turnOffEmpathyButton(replyToReply);
+                                  await model
+                                      .deleteEmpathizedPost(replyToReply);
+                                },
+                                icon: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.favorite,
+                                      color: Colors.pinkAccent,
+                                    ),
+                                    Image.asset(
+                                      'lib/assets/images/anpanman_emoji.gif',
+                                      width: 25,
+                                      height: 25,
+                                    ),
+                                  ],
+                                ),
+                                style: TextButton.styleFrom(
+                                  primary: kDarkPink,
+                                ),
+                                label: Row(
+                                  children: [
+                                    replyToReply.empathyCount != 0
+                                        ? Text(
+                                            '${replyToReply.empathyCount} ',
+                                            style: TextStyle(
+                                              color: kDarkPink,
+                                            ),
+                                          )
+                                        : SizedBox(),
+                                    Text(
+                                      'ワカル',
+                                      style: TextStyle(
+                                        color: kDarkPink,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton.icon(
+                                onPressed: () async {
+                                  model.turnOnEmpathyButton(replyToReply);
+                                  await model.addEmpathizedPost(replyToReply);
+                                },
+                                icon: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.favorite_border_outlined,
+                                      color: kLightGrey,
+                                    ),
+                                    Image.asset(
+                                      'lib/assets/images/anpanman_emoji.gif',
+                                      width: 25,
+                                      height: 25,
+                                    ),
+                                  ],
+                                ),
+                                style: TextButton.styleFrom(
+                                  primary: kDarkPink,
+                                ),
+                                label: Row(
+                                  children: [
+                                    replyToReply.empathyCount != 0
+                                        ? Text(
+                                            '${replyToReply.empathyCount} ',
+                                            style: TextStyle(
+                                              color: kDarkPink,
+                                            ),
+                                          )
+                                        : SizedBox(),
+                                    Text(
+                                      'ワカル',
+                                      style: TextStyle(
+                                        color: kDarkPink,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                      : SizedBox(),
                 ],
               ),
             ),

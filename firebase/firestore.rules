@@ -56,7 +56,7 @@ service cloud.firestore {
     }
 
     function isValidReply(reply) {
-      return reply.size() == 12
+      return reply.size() == 13
         && 'userId' in reply && reply.userId is string
         && 'postId' in reply && reply.postId is string
         && 'id' in reply && reply.id is string
@@ -67,13 +67,14 @@ service cloud.firestore {
         && 'gender' in reply && reply.gender is string
         && 'age' in reply && reply.age is string
         && 'area' in reply && reply.area is string
+        && 'empathyCount' in reply && reply.empathyCount is int
         && 'createdAt' in reply && reply.createdAt is timestamp
         && 'updatedAt' in reply && reply.updatedAt is timestamp
       ;
     }
 
     function isValidReplyToReply(reply) {
-      return reply.size() == 13
+      return reply.size() == 14
         && 'userId' in reply && reply.userId is string
         && 'replyId' in reply && reply.replyId is string
         && 'postId' in reply && reply.postId is string
@@ -85,6 +86,7 @@ service cloud.firestore {
         && 'gender' in reply && reply.gender is string
         && 'age' in reply && reply.age is string
         && 'area' in reply && reply.area is string
+        && 'empathyCount' in reply && reply.empathyCount is int
         && 'createdAt' in reply && reply.createdAt is timestamp
         && 'updatedAt' in reply && reply.updatedAt is timestamp
       ;
@@ -255,6 +257,7 @@ service cloud.firestore {
           // draftの時は >= 0 にする
             && incomingData().body.size() > 0
             && incomingData().body.size() <= 1500
+            && incomingData().empathyCount == 0
             && incomingData().createdAt == request.time
             && incomingData().updatedAt == request.time
           ;
@@ -277,6 +280,7 @@ service cloud.firestore {
           // draftの時は >= 0 にする
             && incomingData().body.size() > 0
             && incomingData().body.size() <= 1500
+            && incomingData().empathyCount.size() >= 0
             && incomingData().createdAt == existingData().createdAt
             && incomingData().updatedAt == request.time
           ;
@@ -304,6 +308,7 @@ service cloud.firestore {
               && incomingData().area.size() <= 10
               && incomingData().body.size() > 0
               && incomingData().body.size() <= 1500
+              && incomingData().empathyCount == 0
               && incomingData().createdAt == request.time
               && incomingData().updatedAt == request.time
             ;
@@ -324,6 +329,7 @@ service cloud.firestore {
               && incomingData().area.size() <= 10
               && incomingData().body.size() > 0
               && incomingData().body.size() <= 1500
+              && incomingData().empathyCount.size() >= 0
               && incomingData().createdAt == existingData().createdAt
               && incomingData().updatedAt == request.time
             ;

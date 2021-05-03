@@ -10,7 +10,6 @@ class PostCardModel extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool isLoading = false;
-  final List<Reply> repliesToPost = [];
 
   Future<void> getAllRepliesToPost(Post post) async {
     final querySnapshot = await _firestore
@@ -127,62 +126,6 @@ class PostCardModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // 10回までワカルできる
-  // Future<void> addEmpathizedPost(Post post) async {
-  //   WriteBatch _batch = _firestore.batch();
-  //
-  //   final userRef = FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(_auth.currentUser?.uid);
-  //   final empathizedPostRef =
-  //       userRef.collection('empathizedPosts').doc(post.id);
-  //   final empathizedPostSnapshot = await empathizedPostRef.get();
-  //   int myEmpathyCount = 0;
-  //   if (empathizedPostSnapshot.exists) {
-  //     myEmpathyCount = empathizedPostSnapshot['myEmpathyCount'];
-  //   }
-  //   final postRef = FirebaseFirestore.instance
-  //       .collection('users')
-  //       .doc(post.userId)
-  //       .collection('posts')
-  //       .doc(post.id);
-  //   final postSnapshot = await postRef.get();
-  //   final currentEmpathyCount = postSnapshot['empathyCount'];
-  //
-  //   if (myEmpathyCount == 0) {
-  //     _batch.set(empathizedPostRef, {
-  //       /// empathizedPosts自身のIDにはpostIdと同じIDをsetしている
-  //       'id': post.id,
-  //       'userId': post.userId,
-  //       'myEmpathyCount': myEmpathyCount + 1,
-  //       'createdAt': FieldValue.serverTimestamp(),
-  //     });
-  //     _batch.update(postRef, {
-  //       'empathyCount': currentEmpathyCount + 1,
-  //     });
-  //     post.empathyCount = post.empathyCount + 1;
-  //   } else if (myEmpathyCount != 0 && myEmpathyCount < 10) {
-  //     _batch.update(empathizedPostRef, {
-  //       'myEmpathyCount': myEmpathyCount + 1,
-  //     });
-  //     _batch.update(postRef, {
-  //       'empathyCount': currentEmpathyCount + 1,
-  //     });
-  //     post.empathyCount = currentEmpathyCount + 1;
-  //   }
-  //
-  //   // try {
-  //   await _batch.commit();
-  //   // } on Exception catch (e) {
-  //   //   print('addEmpathizedPostのバッチ処理中のエラーです');
-  //   //   print(e.toString());
-  //   //   throw ('addEmpathizedPostのバッチ処理中のエラーです\nスルーでok');
-  //   // } finally {
-  //   // }
-  //
-  //   notifyListeners();
-  // }
-
   // １回のみワカルできる
   Future<void> addEmpathizedPost(Post post) async {
     post.empathyCount = post.empathyCount + 1;
@@ -241,6 +184,62 @@ class PostCardModel extends ChangeNotifier {
       });
     }
   }
+
+// 10回までワカルできる: Future.delayとか使えば綺麗に作れるかも
+// Future<void> addEmpathizedPost(Post post) async {
+//   WriteBatch _batch = _firestore.batch();
+//
+//   final userRef = FirebaseFirestore.instance
+//       .collection('users')
+//       .doc(_auth.currentUser?.uid);
+//   final empathizedPostRef =
+//       userRef.collection('empathizedPosts').doc(post.id);
+//   final empathizedPostSnapshot = await empathizedPostRef.get();
+//   int myEmpathyCount = 0;
+//   if (empathizedPostSnapshot.exists) {
+//     myEmpathyCount = empathizedPostSnapshot['myEmpathyCount'];
+//   }
+//   final postRef = FirebaseFirestore.instance
+//       .collection('users')
+//       .doc(post.userId)
+//       .collection('posts')
+//       .doc(post.id);
+//   final postSnapshot = await postRef.get();
+//   final currentEmpathyCount = postSnapshot['empathyCount'];
+//
+//   if (myEmpathyCount == 0) {
+//     _batch.set(empathizedPostRef, {
+//       /// empathizedPosts自身のIDにはpostIdと同じIDをsetしている
+//       'id': post.id,
+//       'userId': post.userId,
+//       'myEmpathyCount': myEmpathyCount + 1,
+//       'createdAt': FieldValue.serverTimestamp(),
+//     });
+//     _batch.update(postRef, {
+//       'empathyCount': currentEmpathyCount + 1,
+//     });
+//     post.empathyCount = post.empathyCount + 1;
+//   } else if (myEmpathyCount != 0 && myEmpathyCount < 10) {
+//     _batch.update(empathizedPostRef, {
+//       'myEmpathyCount': myEmpathyCount + 1,
+//     });
+//     _batch.update(postRef, {
+//       'empathyCount': currentEmpathyCount + 1,
+//     });
+//     post.empathyCount = currentEmpathyCount + 1;
+//   }
+//
+//   // try {
+//   await _batch.commit();
+//   // } on Exception catch (e) {
+//   //   print('addEmpathizedPostのバッチ処理中のエラーです');
+//   //   print(e.toString());
+//   //   throw ('addEmpathizedPostのバッチ処理中のエラーです\nスルーでok');
+//   // } finally {
+//   // }
+//
+//   notifyListeners();
+// }
 
   // Future<void> _deleteBookmarkedPostsForAllUsers(Post post) async {
   //   List<Future> futures = [];
