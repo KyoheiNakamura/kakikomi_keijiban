@@ -63,7 +63,7 @@ class ReplyToReplyCardModel extends ChangeNotifier {
         .doc(replyToReply.postId)
         .collection('replies')
         .doc(replyToReply.replyId)
-        .collection('replyToReplies')
+        .collection('repliesToReply')
         .doc(replyToReply.id);
 
     final replyToReplySnapshot = await replyToReplyRef.get();
@@ -92,7 +92,7 @@ class ReplyToReplyCardModel extends ChangeNotifier {
         .doc(replyToReply.postId)
         .collection('replies')
         .doc(replyToReply.replyId)
-        .collection('replyToReplies')
+        .collection('repliesToReply')
         .doc(replyToReply.id);
 
     final replyToReplySnapshot = await replyToReplyRef.get();
