@@ -74,8 +74,8 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                   /// body
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 15.0),
-                    child: SelectableText.rich(
-                      TextSpan(
+                    child: RichText(
+                      text: TextSpan(
                         children: [
                           TextSpan(text: replyToReply.body),
                           replyToReply.createdDate != replyToReply.updatedDate
@@ -88,8 +88,12 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                 )
                               : TextSpan(),
                         ],
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          height: 1.8,
+                          color: Colors.black,
+                        ),
                       ),
-                      style: TextStyle(fontSize: 16.0, height: 1.8),
                     ),
                   ),
 

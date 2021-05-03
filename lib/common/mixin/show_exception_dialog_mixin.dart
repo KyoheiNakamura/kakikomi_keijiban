@@ -12,7 +12,6 @@ mixin ShowExceptionDialogMixin {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15.0),
           ),
-          // title: Text('認証エラー'),
           content: Text(errorMessage),
           contentPadding:
               EdgeInsets.only(left: 24.0, top: 24.0, right: 24.0, bottom: 0),
