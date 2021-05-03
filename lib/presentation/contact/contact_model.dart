@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +32,7 @@ class ContactModel extends ChangeNotifier {
     }
   }
 
-  // onCreate()でメールを送る
+  // onCreate()でメールを送る場合
   // Future<void> submitContactForm() async {
   //   startLoading();
   //

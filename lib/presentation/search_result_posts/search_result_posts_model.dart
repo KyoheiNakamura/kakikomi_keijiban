@@ -1,16 +1,14 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/mixin/provide_common_posts_method_mixin.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
-import 'package:kakikomi_keijiban/domain/reply.dart';
-import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
-class SearchResultPostsModel extends ChangeNotifier {
+class SearchResultPostsModel extends ChangeNotifier
+    with ProvideCommonPostsMethodMixin {
   final _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   List<Post> _searchedPosts = [];
   List<Post> get posts => _searchedPosts;
@@ -89,9 +87,9 @@ class SearchResultPostsModel extends ChangeNotifier {
       this._searchedPosts = docs.map((doc) => Post(doc)).toList();
     }
 
-    await _addEmpathyToSearchedPosts();
-    await _addBookmarkToPosts();
-    await _getReplies();
+    await addBookmark(this._searchedPosts);
+    await addEmpathy(this._searchedPosts);
+    await getReplies(this._searchedPosts);
 
     stopModalLoading();
     notifyListeners();
@@ -136,158 +134,24 @@ class SearchResultPostsModel extends ChangeNotifier {
       this._searchedPosts = docs.map((doc) => Post(doc)).toList();
     }
 
-    await _addEmpathyToSearchedPosts();
-    await _addBookmarkToPosts();
-    await _getReplies();
+    await addBookmark(this._searchedPosts);
+    await addEmpathy(this._searchedPosts);
+    await getReplies(this._searchedPosts);
 
     stopLoading();
     notifyListeners();
-  }
-
-  Future<void> _addEmpathyToSearchedPosts() async {
-    final empathizedPostsSnapshot = await _firestore
-        .collection('users')
-        .doc(_auth.currentUser?.uid)
-        .collection('empathizedPosts')
-        .get();
-    final List<String> empathizedPostsIds = empathizedPostsSnapshot.docs
-        .map((empathizedPost) => empathizedPost.id)
-        .toList();
-    for (int i = 0; i < this._searchedPosts.length; i++) {
-      for (int n = 0; n < empathizedPostsIds.length; n++) {
-        if (this._searchedPosts[i].id == empathizedPostsIds[n]) {
-          this._searchedPosts[i].isEmpathized = true;
-        }
-      }
-    }
-  }
-
-  Future<void> _addBookmarkToPosts() async {
-    final bookmarkedPostsSnapshot = await _firestore
-        .collection('users')
-        .doc(_auth.currentUser?.uid)
-        .collection('bookmarkedPosts')
-        // .orderBy('createdAt', descending: true)
-        .get();
-
-    final List<String> bookmarkedPostsIds = bookmarkedPostsSnapshot.docs
-        .map((bookmarkedPost) => bookmarkedPost.id)
-        .toList();
-    for (int i = 0; i < posts.length; i++) {
-      for (int n = 0; n < bookmarkedPostsIds.length; n++) {
-        if (this._searchedPosts[i].id == bookmarkedPostsIds[n]) {
-          this._searchedPosts[i].isBookmarked = true;
-        }
-      }
-    }
-  }
-
-  Future<List<String>> _getEmpathizedPostsIds() async {
-    final empathizedPostsSnapshot = await _firestore
-        .collection('users')
-        .doc(_auth.currentUser?.uid)
-        .collection('empathizedPosts')
-        .get();
-    final List<String> empathizedPostsIds = empathizedPostsSnapshot.docs
-        .map((empathizedPost) => empathizedPost.id)
-        .toList();
-    return empathizedPostsIds;
-  }
-
-  Future<void> _getReplies() async {
-    final List<String> empathizedPostsIds = await _getEmpathizedPostsIds();
-    for (int i = 0; i < _searchedPosts.length; i++) {
-      final post = _searchedPosts[i];
-      final querySnapshot = await _firestore
-          .collection('users')
-          .doc(post.userId)
-          .collection('posts')
-          .doc(post.id)
-          .collection('replies')
-          .orderBy('createdAt')
-          .get();
-      final docs = querySnapshot.docs;
-      final _replies = docs.map((doc) => Reply(doc)).toList();
-      for (int i = 0; i < _replies.length; i++) {
-        for (int n = 0; n < empathizedPostsIds.length; n++) {
-          if (_replies[i].id == empathizedPostsIds[n]) {
-            _replies[i].isEmpathized = true;
-          }
-        }
-      }
-      post.replies = _replies;
-
-      for (int i = 0; i < _replies.length; i++) {
-        final reply = _replies[i];
-        final _querySnapshot = await _firestore
-            .collection('users')
-            .doc(reply.userId)
-            .collection('posts')
-            .doc(reply.postId)
-            .collection('replies')
-            .doc(reply.id)
-            .collection('repliesToReply')
-            .orderBy('createdAt')
-            .get();
-        final _docs = _querySnapshot.docs;
-        final _repliesToReplies =
-            _docs.map((doc) => ReplyToReply(doc)).toList();
-        for (int i = 0; i < _repliesToReplies.length; i++) {
-          for (int n = 0; n < empathizedPostsIds.length; n++) {
-            if (_repliesToReplies[i].id == empathizedPostsIds[n]) {
-              _repliesToReplies[i].isEmpathized = true;
-            }
-          }
-        }
-        reply.repliesToReply = _repliesToReplies;
-      }
-    }
   }
 
   Future<void> refreshThePostOfPostsAfterUpdated({
     required Post oldPost,
     required int indexOfPost,
   }) async {
-    // 更新後のpostを取得
-    final doc = await _firestore
-        .collection('users')
-        .doc(_auth.currentUser?.uid)
-        .collection('posts')
-        .doc(oldPost.id)
-        .get();
-    final post = Post(doc);
-    final querySnapshot = await _firestore
-        .collection('users')
-        .doc(post.userId)
-        .collection('posts')
-        .doc(post.id)
-        .collection('replies')
-        .orderBy('createdAt')
-        .get();
-    final docs = querySnapshot.docs;
-    final _replies = docs.map((doc) => Reply(doc)).toList();
-    post.replies = _replies;
+    await refreshThePostAfterUpdated(
+      posts: this._searchedPosts,
+      oldPost: oldPost,
+      indexOfPost: indexOfPost,
+    );
 
-    for (int i = 0; i < _replies.length; i++) {
-      final reply = _replies[i];
-      final _querySnapshot = await _firestore
-          .collection('users')
-          .doc(reply.userId)
-          .collection('posts')
-          .doc(reply.postId)
-          .collection('replies')
-          .doc(reply.id)
-          .collection('repliesToReply')
-          .orderBy('createdAt')
-          .get();
-      final _docs = _querySnapshot.docs;
-      final _repliesToReplies = _docs.map((doc) => ReplyToReply(doc)).toList();
-      reply.repliesToReply = _repliesToReplies;
-    }
-    // 更新前のpostをpostsから削除
-    this._searchedPosts.removeAt(indexOfPost);
-    // 更新後のpostをpostsに追加
-    this._searchedPosts.insert(indexOfPost, post);
     notifyListeners();
   }
 
