@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class ReplyCardModel extends ChangeNotifier {
-  final _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   bool isLoading = false;
 
   Future<void> getRepliesToReply(Reply reply) async {
@@ -23,6 +25,80 @@ class ReplyCardModel extends ChangeNotifier {
     final repliesToReply = docs.map((doc) => ReplyToReply(doc)).toList();
     reply.repliesToReply = repliesToReply;
     notifyListeners();
+  }
+
+  void turnOnEmpathyButton(Reply reply) {
+    reply.isEmpathized = true;
+    notifyListeners();
+  }
+
+  void turnOffEmpathyButton(Reply reply) {
+    reply.isEmpathized = false;
+    notifyListeners();
+  }
+
+  // １回のみワカルできる
+  Future<void> addEmpathizedPost(Reply reply) async {
+    reply.empathyCount = reply.empathyCount + 1;
+    notifyListeners();
+
+    final userRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(_auth.currentUser?.uid);
+    final empathizedPostsRef =
+        userRef.collection('empathizedPosts').doc(reply.id);
+    await empathizedPostsRef.set({
+      /// empathizedPosts自身のIDにはreplyIdと同じIDをsetしている
+      'id': reply.id,
+      'userId': reply.userId,
+      'myEmpathyCount': 1,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+
+    final replyRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(reply.userId)
+        .collection('posts')
+        .doc(reply.postId)
+        .collection('replies')
+        .doc(reply.id);
+
+    final replySnapshot = await replyRef.get();
+    print(replySnapshot.data());
+    final currentEmpathyCount = replySnapshot['empathyCount'];
+
+    await replyRef.update({
+      'empathyCount': currentEmpathyCount + 1,
+    });
+  }
+
+  Future<void> deleteEmpathizedPost(Reply reply) async {
+    reply.empathyCount = reply.empathyCount - 1;
+    notifyListeners();
+
+    final userRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(_auth.currentUser?.uid);
+    final empathizedPostsRef =
+        userRef.collection('empathizedPosts').doc(reply.id);
+    await empathizedPostsRef.delete();
+
+    final replyRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(reply.userId)
+        .collection('posts')
+        .doc(reply.postId)
+        .collection('replies')
+        .doc(reply.id);
+
+    final replySnapshot = await replyRef.get();
+    final currentEmpathyCount = replySnapshot['empathyCount'];
+
+    if (currentEmpathyCount > 0) {
+      await replyRef.update({
+        'empathyCount': currentEmpathyCount - 1,
+      });
+    }
   }
 
   void startLoading() {

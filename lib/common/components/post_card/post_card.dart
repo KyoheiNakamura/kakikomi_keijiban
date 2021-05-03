@@ -165,6 +165,8 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                   ),
                                 )
                               : SizedBox(),
+
+                          /// ワカルボタン
                           passedModel is! DraftsModel
                               ? post.isEmpathized
                                   ? TextButton.icon(

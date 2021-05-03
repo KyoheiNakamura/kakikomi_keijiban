@@ -97,6 +97,15 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                           ),
                         ),
                       ),
+
+                      /// 作成日時
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          reply.createdAt,
+                          style: TextStyle(color: kLightGrey),
+                        ),
+                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -128,20 +137,93 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                 )
                               : SizedBox(),
 
-                          /// 作成日時
-                          Text(
-                            reply.createdAt,
-                            style: TextStyle(color: kLightGrey),
-                          ),
+                          /// ワカルボタン
+                          passedModel is! DraftsModel
+                              ? reply.isEmpathized
+                                  ? TextButton.icon(
+                                      onPressed: () async {
+                                        // 下二行はワカル１回のみできるとき用
+                                        model.turnOffEmpathyButton(reply);
+                                        await model.deleteEmpathizedPost(reply);
+                                      },
+                                      icon: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.favorite,
+                                            color: Colors.pinkAccent,
+                                          ),
+                                          Image.asset(
+                                            'lib/assets/images/anpanman_emoji.gif',
+                                            width: 25,
+                                            height: 25,
+                                          ),
+                                        ],
+                                      ),
+                                      style: TextButton.styleFrom(
+                                        primary: kDarkPink,
+                                      ),
+                                      label: Row(
+                                        children: [
+                                          reply.empathyCount != 0
+                                              ? Text(
+                                                  '${reply.empathyCount} ',
+                                                  style: TextStyle(
+                                                    color: kDarkPink,
+                                                  ),
+                                                )
+                                              : SizedBox(),
+                                          Text(
+                                            'ワカル',
+                                            style: TextStyle(
+                                              color: kDarkPink,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : TextButton.icon(
+                                      onPressed: () async {
+                                        model.turnOnEmpathyButton(reply);
+                                        await model.addEmpathizedPost(reply);
+                                      },
+                                      icon: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.favorite_border_outlined,
+                                            color: kLightGrey,
+                                          ),
+                                          Image.asset(
+                                            'lib/assets/images/anpanman_emoji.gif',
+                                            width: 25,
+                                            height: 25,
+                                          ),
+                                        ],
+                                      ),
+                                      style: TextButton.styleFrom(
+                                        primary: kDarkPink,
+                                      ),
+                                      label: Row(
+                                        children: [
+                                          reply.empathyCount != 0
+                                              ? Text(
+                                                  '${reply.empathyCount} ',
+                                                  style: TextStyle(
+                                                    color: kDarkPink,
+                                                  ),
+                                                )
+                                              : SizedBox(),
+                                          Text(
+                                            'ワカル',
+                                            style: TextStyle(
+                                              color: kDarkPink,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                              : SizedBox(),
                         ],
                       ),
-                      // Align(
-                      //   alignment: Alignment.centerRight,
-                      //   child: Text(
-                      //     reply.createdAt,
-                      //     style: TextStyle(color: kLightGrey),
-                      //   ),
-                      // ),
                     ],
                   ),
                 ),

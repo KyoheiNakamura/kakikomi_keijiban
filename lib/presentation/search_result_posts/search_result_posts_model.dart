@@ -182,7 +182,20 @@ class SearchResultPostsModel extends ChangeNotifier {
     }
   }
 
+  Future<List<String>> _getEmpathizedPostsIds() async {
+    final empathizedPostsSnapshot = await _firestore
+        .collection('users')
+        .doc(_auth.currentUser?.uid)
+        .collection('empathizedPosts')
+        .get();
+    final List<String> empathizedPostsIds = empathizedPostsSnapshot.docs
+        .map((empathizedPost) => empathizedPost.id)
+        .toList();
+    return empathizedPostsIds;
+  }
+
   Future<void> _getReplies() async {
+    final List<String> empathizedPostsIds = await _getEmpathizedPostsIds();
     for (int i = 0; i < _searchedPosts.length; i++) {
       final post = _searchedPosts[i];
       final querySnapshot = await _firestore
@@ -195,6 +208,13 @@ class SearchResultPostsModel extends ChangeNotifier {
           .get();
       final docs = querySnapshot.docs;
       final _replies = docs.map((doc) => Reply(doc)).toList();
+      for (int i = 0; i < _replies.length; i++) {
+        for (int n = 0; n < empathizedPostsIds.length; n++) {
+          if (_replies[i].id == empathizedPostsIds[n]) {
+            _replies[i].isEmpathized = true;
+          }
+        }
+      }
       post.replies = _replies;
 
       for (int i = 0; i < _replies.length; i++) {
@@ -212,6 +232,13 @@ class SearchResultPostsModel extends ChangeNotifier {
         final _docs = _querySnapshot.docs;
         final _repliesToReplies =
             _docs.map((doc) => ReplyToReply(doc)).toList();
+        for (int i = 0; i < _repliesToReplies.length; i++) {
+          for (int n = 0; n < empathizedPostsIds.length; n++) {
+            if (_repliesToReplies[i].id == empathizedPostsIds[n]) {
+              _repliesToReplies[i].isEmpathized = true;
+            }
+          }
+        }
         reply.repliesToReply = _repliesToReplies;
       }
     }
