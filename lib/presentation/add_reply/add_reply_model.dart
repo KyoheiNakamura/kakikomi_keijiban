@@ -59,13 +59,14 @@ class AddReplyModel extends ChangeNotifier {
   Future<void> addDraftedReply(Post repliedPost) async {
     startLoading();
 
-    final userRef = firestore.collection('users').doc(repliedPost.userId);
+    final uid = auth.currentUser!.uid;
+    final userRef = firestore.collection('users').doc(uid);
     final draftedReplyRef = userRef.collection('draftedReplies').doc();
 
     try {
       await draftedReplyRef.set({
         'id': draftedReplyRef.id,
-        'userId': repliedPost.userId,
+        'userId': uid,
         'postId': repliedPost.id,
         'replierId': auth.currentUser!.uid,
         'body': removeUnnecessaryBlankLines(bodyValue),

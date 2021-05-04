@@ -62,14 +62,15 @@ class AddReplyToReplyModel extends ChangeNotifier {
   Future<void> addDraftedReplyToReply(Reply repliedReply) async {
     startLoading();
 
-    final userRef = firestore.collection('users').doc(repliedReply.userId);
+    final uid = auth.currentUser!.uid;
+    final userRef = firestore.collection('users').doc(uid);
     final draftedReplyToReplyRef =
         userRef.collection('draftedRepliesToReply').doc();
 
     try {
       await draftedReplyToReplyRef.set({
         'id': draftedReplyToReplyRef.id,
-        'userId': repliedReply.userId,
+        'userId': uid,
         'postId': repliedReply.postId,
         'replyId': repliedReply.id,
         'replierId': auth.currentUser!.uid,
