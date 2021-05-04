@@ -1,12 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 
 class SignUpModel extends ChangeNotifier {
-  final _auth = FirebaseAuth.instance;
-  final _firestore = FirebaseFirestore.instance;
   bool isLoading = false;
 
   String enteredEmail = '';
@@ -21,12 +19,12 @@ class SignUpModel extends ChangeNotifier {
         email: enteredEmail,
         password: enteredPassword,
       );
-      await _auth.currentUser!.linkWithCredential(credential);
+      await auth.currentUser!.linkWithCredential(credential);
 
-      await _auth.currentUser!.reload();
+      await auth.currentUser!.reload();
 
       // Auth.UserのcurrentUserにdisplayNameをセットした。
-      await _auth.currentUser!.updateProfile(
+      await auth.currentUser!.updateProfile(
         displayName: enteredNickname,
       );
 
@@ -34,14 +32,14 @@ class SignUpModel extends ChangeNotifier {
 
       // anonymousのuserDocRefのデータを、email認証で登録したユーザーのデータでupdateを使って更新している。
       final userDocRef =
-          _firestore.collection('users').doc(_auth.currentUser!.uid);
+          firestore.collection('users').doc(auth.currentUser!.uid);
       // setはuserDocRefのDocument idをもつDocumentにデータを保存する。
       await userDocRef.update({
         'nickname': enteredNickname,
         'postCount': AppModel.user!.postCount,
         'topics': AppModel.user!.topics,
         'notifications': AppModel.user!.notifications,
-        'updatedAt': FieldValue.serverTimestamp(),
+        'updatedAt': serverTimestamp(),
       });
       await AppModel.reloadUser();
     } on FirebaseAuthException catch (e) {
@@ -75,18 +73,18 @@ class SignUpModel extends ChangeNotifier {
   //       accessToken: googleAuth.accessToken,
   //       idToken: googleAuth.idToken,
   //     );
-  //     await _auth.currentUser!.linkWithCredential(credential);
-  //     await _auth.currentUser!.reload();
+  //     await auth.currentUser!.linkWithCredential(credential);
+  //     await auth.currentUser!.reload();
   //     // anonymousのuserDocRefのデータを、google認証で登録したユーザーのデータでupdateを使って更新している。
   //     final userDocRef =
-  //         _firestore.collection('users').doc(_auth.currentUser!.uid);
+  //         firestore.collection('users').doc(auth.currentUser!.uid);
   //     // setはuserDocRefのDocument idをもつDocumentにデータを保存する。
   //     await userDocRef.update({
-  //       'nickname': _auth.currentUser!.displayName,
+  //       'nickname': auth.currentUser!.displayName,
   //       'postCount': AppModel.user!.postCount,
   //       'topics': AppModel.user!.topics,
   //       'notifications': AppModel.user!.notifications,
-  //       'updatedAt': FieldValue.serverTimestamp(),
+  //       'updatedAt': serverTimestamp(),
   //     });
   //     await AppModel.reloadUser();
   //   } on FirebaseAuthException catch (e) {
@@ -156,17 +154,17 @@ class SignUpModel extends ChangeNotifier {
 // Future signUpAndLogIn() async {
 //   try {
 //     final UserCredential userCredential =
-//         await _auth.createUserWithEmailAndPassword(
+//         await auth.createUserWithEmailAndPassword(
 //       email: enteredEmail,
 //       password: enteredPassword,
 //     );
 //     final Auth.User user = userCredential.user!;
 //     final String email = user.email!;
-//     _firestore.collection('users').add({
+//     firestore.collection('users').add({
 //       'id': user.uid,
 //       'email': email,
 //       'nickname': enteredNickname,
-//       'createdAt': FieldValue.serverTimestamp(),
+//       'createdAt': serverTimestamp(),
 //     });
 //   } on FirebaseAuthException catch (e) {
 //     if (e.code == 'email-already-in-use') {
@@ -190,6 +188,6 @@ class SignUpModel extends ChangeNotifier {
   //     email: enteredEmail,
   //     password: enteredPassword,
   //   );
-  //   await _auth.currentUser!.linkWithCredential(emailAuthCredential);
+  //   await auth.currentUser!.linkWithCredential(emailAuthCredential);
   // }
 }

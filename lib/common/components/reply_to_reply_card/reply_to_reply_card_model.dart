@@ -1,17 +1,14 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class ReplyToReplyCardModel extends ChangeNotifier {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   bool isLoading = false;
 
   Future<void> getRepliesToReply(Reply reply) async {
-    final querySnapshot = await _firestore
+    final querySnapshot = await firestore
         .collection('users')
         .doc(reply.userId)
         .collection('posts')
@@ -43,9 +40,7 @@ class ReplyToReplyCardModel extends ChangeNotifier {
     replyToReply.empathyCount = replyToReply.empathyCount + 1;
     notifyListeners();
 
-    final userRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(_auth.currentUser?.uid);
+    final userRef = firestore.collection('users').doc(auth.currentUser?.uid);
     final empathizedPostsRef =
         userRef.collection('empathizedPosts').doc(replyToReply.id);
     await empathizedPostsRef.set({
@@ -53,10 +48,10 @@ class ReplyToReplyCardModel extends ChangeNotifier {
       'id': replyToReply.id,
       'userId': replyToReply.userId,
       'myEmpathyCount': 1,
-      'createdAt': FieldValue.serverTimestamp(),
+      'createdAt': serverTimestamp(),
     });
 
-    final replyToReplyRef = FirebaseFirestore.instance
+    final replyToReplyRef = firestore
         .collection('users')
         .doc(replyToReply.userId)
         .collection('posts')
@@ -78,14 +73,12 @@ class ReplyToReplyCardModel extends ChangeNotifier {
     replyToReply.empathyCount = replyToReply.empathyCount - 1;
     notifyListeners();
 
-    final userRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(_auth.currentUser?.uid);
+    final userRef = firestore.collection('users').doc(auth.currentUser?.uid);
     final empathizedPostsRef =
         userRef.collection('empathizedPosts').doc(replyToReply.id);
     await empathizedPostsRef.delete();
 
-    final replyToReplyRef = FirebaseFirestore.instance
+    final replyToReplyRef = firestore
         .collection('users')
         .doc(replyToReply.userId)
         .collection('posts')
@@ -117,7 +110,7 @@ class ReplyToReplyCardModel extends ChangeNotifier {
 
   // Future<void> deleteReplyToReply(ReplyToReply replyToReply) async {
   //   final userRef =
-  //       FirebaseFirestore.instance.collection('users').doc(replyToReply.userId);
+  //       firestore.collection('users').doc(replyToReply.userId);
   //   final postRef = userRef.collection('posts').doc(replyToReply.postId);
   //   final replyRef = postRef.collection('replies').doc(replyToReply.replyId);
   //   final replyToRepliesRef =
@@ -132,7 +125,7 @@ class ReplyToReplyCardModel extends ChangeNotifier {
   // }
   //
   // Future<void> deleteReplyAndRepliesToReply(Reply existingReply) async {
-  //   final userRef = FirebaseFirestore.instance
+  //   final userRef = firestore
   //       .collection('users')
   //       .doc(existingReply.userId);
   //   final postRef = userRef.collection('posts').doc(existingReply.postId);

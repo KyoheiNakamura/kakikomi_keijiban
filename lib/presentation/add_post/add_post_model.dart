@@ -1,13 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/text_process.dart';
 
 class AddPostModel extends ChangeNotifier {
-  final _firestore = FirebaseFirestore.instance;
-  final _auth = FirebaseAuth.instance;
-
   bool isLoading = false;
   bool isCategoriesValid = true;
 
@@ -25,10 +22,10 @@ class AddPostModel extends ChangeNotifier {
   Future<void> addPost() async {
     startLoading();
 
-    final uid = _auth.currentUser!.uid;
-    WriteBatch _batch = _firestore.batch();
+    final uid = auth.currentUser!.uid;
+    WriteBatch _batch = firestore.batch();
 
-    final userRef = _firestore.collection('users').doc(uid);
+    final userRef = firestore.collection('users').doc(uid);
     final postRef = userRef.collection('posts').doc();
 
     _batch.set(postRef, {
@@ -46,8 +43,8 @@ class AddPostModel extends ChangeNotifier {
       'replyCount': 0,
       'empathyCount': 0,
       'isReplyExisting': false,
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
+      'createdAt': serverTimestamp(),
+      'updatedAt': serverTimestamp(),
     });
 
     final userDoc = await userRef.get();
@@ -70,13 +67,13 @@ class AddPostModel extends ChangeNotifier {
   Future<void> addDraftedPost() async {
     startLoading();
 
-    final userRef = _firestore.collection('users').doc(_auth.currentUser!.uid);
+    final userRef = firestore.collection('users').doc(auth.currentUser!.uid);
     final draftedPostRef = userRef.collection('draftedPosts').doc();
 
     try {
       await draftedPostRef.set({
         'id': draftedPostRef.id,
-        'userId': _auth.currentUser!.uid,
+        'userId': auth.currentUser!.uid,
         'title': removeUnnecessaryBlankLines(titleValue),
         'body': removeUnnecessaryBlankLines(bodyValue),
         'nickname': removeUnnecessaryBlankLines(nicknameValue),
@@ -89,8 +86,8 @@ class AddPostModel extends ChangeNotifier {
         'replyCount': 0,
         'empathyCount': 0,
         'isReplyExisting': false,
-        'createdAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
+        'createdAt': serverTimestamp(),
+        'updatedAt': serverTimestamp(),
       });
     } on Exception catch (e) {
       print('addDraftedPost処理中のエラーです');

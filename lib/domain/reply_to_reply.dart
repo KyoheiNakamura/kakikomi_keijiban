@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 
 class ReplyToReply {
   ReplyToReply(DocumentSnapshot doc) {
@@ -50,7 +50,7 @@ class ReplyToReply {
   }
 
   bool isMe() {
-    final currentUser = FirebaseAuth.instance.currentUser;
+    final currentUser = auth.currentUser;
     return replierId == currentUser?.uid;
   }
 }

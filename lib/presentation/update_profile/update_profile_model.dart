@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 
 class UpdateProfileModel extends ChangeNotifier {
-  final _firestore = FirebaseFirestore.instance;
-  final currentUser = FirebaseAuth.instance.currentUser!;
+  final currentUser = auth.currentUser!;
 
   bool isLoading = false;
 
@@ -18,7 +17,7 @@ class UpdateProfileModel extends ChangeNotifier {
   Future<void> updateUserProfile() async {
     startLoading();
 
-    final userRef = _firestore.collection('users').doc(currentUser.uid);
+    final userRef = firestore.collection('users').doc(currentUser.uid);
     List<String> _userProfileList = _convertNoSelectedValueToEmpty();
 
     try {

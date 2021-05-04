@@ -1,22 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 mixin ProvideCommonPostsMethodMixin {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  Future<void> addBookmark(List<dynamic> list) async {
-    final bookmarkedPostsSnapshot = await _firestore
+  Future<List<String>> getBookmarkedPostsIds() async {
+    final bookmarkedPostsSnapshot = await firestore
         .collection('users')
-        .doc(_auth.currentUser?.uid)
+        .doc(auth.currentUser?.uid)
         .collection('bookmarkedPosts')
         .get();
     final List<String> bookmarkedPostsIds = bookmarkedPostsSnapshot.docs
         .map((bookmarkedPost) => bookmarkedPost.id)
         .toList();
+    return bookmarkedPostsIds;
+  }
+
+  Future<void> addBookmark(
+      List<dynamic> list, List<String> bookmarkedPostsIds) async {
     for (int i = 0; i < list.length; i++) {
       for (int n = 0; n < bookmarkedPostsIds.length; n++) {
         if (list[i].id == bookmarkedPostsIds[n]) {
@@ -26,15 +28,20 @@ mixin ProvideCommonPostsMethodMixin {
     }
   }
 
-  Future<void> addEmpathy(List<dynamic> list) async {
-    final empathizedPostsSnapshot = await _firestore
+  Future<List<String>> getEmpathizedPostsIds() async {
+    final empathizedPostsSnapshot = await firestore
         .collection('users')
-        .doc(_auth.currentUser?.uid)
+        .doc(auth.currentUser?.uid)
         .collection('empathizedPosts')
         .get();
     final List<String> empathizedPostsIds = empathizedPostsSnapshot.docs
         .map((empathizedPost) => empathizedPost.id)
         .toList();
+    return empathizedPostsIds;
+  }
+
+  Future<void> addEmpathy(
+      List<dynamic> list, List<String> empathizedPostsIds) async {
     for (int i = 0; i < list.length; i++) {
       for (int n = 0; n < empathizedPostsIds.length; n++) {
         if (list[i].id == empathizedPostsIds[n]) {
@@ -44,10 +51,11 @@ mixin ProvideCommonPostsMethodMixin {
     }
   }
 
-  Future<void> getReplies(List<Post> _posts) async {
+  Future<void> getReplies(
+      List<Post> _posts, List<String> empathizedPostsId) async {
     for (int i = 0; i < _posts.length; i++) {
       final post = _posts[i];
-      final querySnapshot = await _firestore
+      final querySnapshot = await firestore
           .collection('users')
           .doc(post.userId)
           .collection('posts')
@@ -57,17 +65,18 @@ mixin ProvideCommonPostsMethodMixin {
           .get();
       final docs = querySnapshot.docs;
       final _replies = docs.map((doc) => Reply(doc)).toList();
-      await addEmpathy(_replies);
+      await addEmpathy(_replies, empathizedPostsId);
       post.replies = _replies;
 
-      await getRepliesToReply(_replies);
+      await _getRepliesToReply(_replies, empathizedPostsId);
     }
   }
 
-  Future<void> getRepliesToReply(List<Reply> _replies) async {
+  Future<void> _getRepliesToReply(
+      List<Reply> _replies, List<String> empathizedPostsId) async {
     for (int i = 0; i < _replies.length; i++) {
       final reply = _replies[i];
-      final _querySnapshot = await _firestore
+      final _querySnapshot = await firestore
           .collection('users')
           .doc(reply.userId)
           .collection('posts')
@@ -79,7 +88,7 @@ mixin ProvideCommonPostsMethodMixin {
           .get();
       final _docs = _querySnapshot.docs;
       final _repliesToReplies = _docs.map((doc) => ReplyToReply(doc)).toList();
-      await addEmpathy(_repliesToReplies);
+      await addEmpathy(_repliesToReplies, empathizedPostsId);
       reply.repliesToReply = _repliesToReplies;
     }
   }
@@ -88,7 +97,7 @@ mixin ProvideCommonPostsMethodMixin {
   Future<List<Post>> getBookmarkedPosts(
       List<QueryDocumentSnapshot> docs) async {
     final postSnapshots = await Future.wait(docs
-        .map((bookmarkedPost) => _firestore
+        .map((bookmarkedPost) => firestore
             .collectionGroup('posts')
             .where('id', isEqualTo: bookmarkedPost['id'])
             // .orderBy('createdAt', descending: true)
@@ -121,17 +130,19 @@ mixin ProvideCommonPostsMethodMixin {
     required Post oldPost,
     required int indexOfPost,
   }) async {
+    final empathizedPostsIds = await getEmpathizedPostsIds();
+    final bookmarkedPostsIds = await getBookmarkedPostsIds();
     // 更新後のpostを取得
-    final doc = await _firestore
+    final doc = await firestore
         .collection('users')
         .doc(oldPost.userId)
         .collection('posts')
         .doc(oldPost.id)
         .get();
     Post post = Post(doc);
-    await addEmpathy([post]);
-    await addBookmark([post]);
-    final querySnapshot = await _firestore
+    await addEmpathy([post], empathizedPostsIds);
+    await addBookmark([post], bookmarkedPostsIds);
+    final querySnapshot = await firestore
         .collection('users')
         .doc(post.userId)
         .collection('posts')
@@ -141,12 +152,12 @@ mixin ProvideCommonPostsMethodMixin {
         .get();
     final docs = querySnapshot.docs;
     final _replies = docs.map((doc) => Reply(doc)).toList();
-    await addEmpathy(_replies);
+    await addEmpathy(_replies, empathizedPostsIds);
     post.replies = _replies;
 
     for (int i = 0; i < _replies.length; i++) {
       final reply = _replies[i];
-      final _querySnapshot = await _firestore
+      final _querySnapshot = await firestore
           .collection('users')
           .doc(reply.userId)
           .collection('posts')
@@ -158,7 +169,7 @@ mixin ProvideCommonPostsMethodMixin {
           .get();
       final _docs = _querySnapshot.docs;
       final _repliesToReplies = _docs.map((doc) => ReplyToReply(doc)).toList();
-      await addEmpathy(_repliesToReplies);
+      await addEmpathy(_repliesToReplies, empathizedPostsIds);
       reply.repliesToReply = _repliesToReplies;
     }
     // 更新前のpostをpostsから削除

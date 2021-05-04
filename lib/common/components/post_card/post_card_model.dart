@@ -1,18 +1,15 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class PostCardModel extends ChangeNotifier {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   bool isLoading = false;
 
   Future<void> getAllRepliesToPost(Post post) async {
-    final querySnapshot = await _firestore
+    final querySnapshot = await firestore
         .collection('users')
         .doc(post.userId)
         .collection('posts')
@@ -27,7 +24,7 @@ class PostCardModel extends ChangeNotifier {
 
     for (int i = 0; i < replies.length; i++) {
       final reply = replies[i];
-      final _querySnapshot = await _firestore
+      final _querySnapshot = await firestore
           .collection('users')
           .doc(reply.userId)
           .collection('posts')
@@ -76,16 +73,14 @@ class PostCardModel extends ChangeNotifier {
   }
 
   Future<void> addBookmarkedPost(Post post) async {
-    final userRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(_auth.currentUser?.uid);
+    final userRef = firestore.collection('users').doc(auth.currentUser?.uid);
     final bookmarkedPostRef =
         userRef.collection('bookmarkedPosts').doc(post.id);
     await bookmarkedPostRef.set({
       /// bookmarkedPosts自身のIDにはpostIdと同じIDをsetしている
       'id': post.id,
       'userId': post.userId,
-      'createdAt': FieldValue.serverTimestamp(),
+      'createdAt': serverTimestamp(),
 
       // Todo やっぱりbookmarkしたpostの中身を全部持たせよう
       /// 参照元のデータが更新されたことをCloud FunctionsのFirestoreトリガーで検出し、
@@ -107,9 +102,7 @@ class PostCardModel extends ChangeNotifier {
   }
 
   Future<void> deleteBookmarkedPost(Post post) async {
-    final userRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(_auth.currentUser?.uid);
+    final userRef = firestore.collection('users').doc(auth.currentUser?.uid);
     final bookmarkedPostsRef =
         userRef.collection('bookmarkedPosts').doc(post.id);
     await bookmarkedPostsRef.delete();
@@ -131,9 +124,7 @@ class PostCardModel extends ChangeNotifier {
     post.empathyCount = post.empathyCount + 1;
     notifyListeners();
 
-    final userRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(_auth.currentUser?.uid);
+    final userRef = firestore.collection('users').doc(auth.currentUser?.uid);
     final empathizedPostsRef =
         userRef.collection('empathizedPosts').doc(post.id);
     await empathizedPostsRef.set({
@@ -141,10 +132,10 @@ class PostCardModel extends ChangeNotifier {
       'id': post.id,
       'userId': post.userId,
       'myEmpathyCount': 1,
-      'createdAt': FieldValue.serverTimestamp(),
+      'createdAt': serverTimestamp(),
     });
 
-    final postRef = FirebaseFirestore.instance
+    final postRef = firestore
         .collection('users')
         .doc(post.userId)
         .collection('posts')
@@ -162,14 +153,12 @@ class PostCardModel extends ChangeNotifier {
     post.empathyCount = post.empathyCount - 1;
     notifyListeners();
 
-    final userRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(_auth.currentUser?.uid);
+    final userRef = firestore.collection('users').doc(auth.currentUser?.uid);
     final empathizedPostsRef =
         userRef.collection('empathizedPosts').doc(post.id);
     await empathizedPostsRef.delete();
 
-    final postRef = FirebaseFirestore.instance
+    final postRef = firestore
         .collection('users')
         .doc(post.userId)
         .collection('posts')
@@ -187,11 +176,11 @@ class PostCardModel extends ChangeNotifier {
 
 // 10回までワカルできる: Future.delayとか使えば綺麗に作れるかも
 // Future<void> addEmpathizedPost(Post post) async {
-//   WriteBatch _batch = _firestore.batch();
+//   WriteBatch _batch = firestore.batch();
 //
-//   final userRef = FirebaseFirestore.instance
+//   final userRef = firestore
 //       .collection('users')
-//       .doc(_auth.currentUser?.uid);
+//       .doc(auth.currentUser?.uid);
 //   final empathizedPostRef =
 //       userRef.collection('empathizedPosts').doc(post.id);
 //   final empathizedPostSnapshot = await empathizedPostRef.get();
@@ -199,7 +188,7 @@ class PostCardModel extends ChangeNotifier {
 //   if (empathizedPostSnapshot.exists) {
 //     myEmpathyCount = empathizedPostSnapshot['myEmpathyCount'];
 //   }
-//   final postRef = FirebaseFirestore.instance
+//   final postRef = firestore
 //       .collection('users')
 //       .doc(post.userId)
 //       .collection('posts')
@@ -213,7 +202,7 @@ class PostCardModel extends ChangeNotifier {
 //       'id': post.id,
 //       'userId': post.userId,
 //       'myEmpathyCount': myEmpathyCount + 1,
-//       'createdAt': FieldValue.serverTimestamp(),
+//       'createdAt': serverTimestamp(),
 //     });
 //     _batch.update(postRef, {
 //       'empathyCount': currentEmpathyCount + 1,
@@ -243,7 +232,7 @@ class PostCardModel extends ChangeNotifier {
 
   // Future<void> _deleteBookmarkedPostsForAllUsers(Post post) async {
   //   List<Future> futures = [];
-  //   final querySnapshot = await _firestore
+  //   final querySnapshot = await firestore
   //       .collectionGroup('bookmarkedPosts')
   //       .where('postId', isEqualTo: post.id)
   //       .get();
@@ -256,7 +245,7 @@ class PostCardModel extends ChangeNotifier {
   // }
   //
   // Future<void> deletePostAndReplies(Post post) async {
-  //   final userRef = FirebaseFirestore.instance.collection('users').doc(uid);
+  //   final userRef = firestore.collection('users').doc(uid);
   //   final postRef = userRef.collection('posts').doc(post.id);
   //   await postRef.delete();
   //   await _deleteBookmarkedPostsForAllUsers(post);

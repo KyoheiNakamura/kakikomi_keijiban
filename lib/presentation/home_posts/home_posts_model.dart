@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/mixin/provide_common_posts_method_mixin.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_page.dart';
@@ -14,9 +14,6 @@ import 'package:kakikomi_keijiban/presentation/on_boarding/on_boarding_page.dart
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
   List<Post> _allPosts = [];
   List<Post> _myPosts = [];
   List<Post> _bookmarkedPosts = [];
@@ -153,7 +150,7 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _getAllPostsWithReplies() async {
     startLoading();
 
-    this._allPostsQuery = FirebaseFirestore.instance
+    this._allPostsQuery = firestore
         .collectionGroup('posts')
         .orderBy('createdAt', descending: true)
         .limit(_loadLimit);
@@ -176,9 +173,12 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       this._allPosts = docs.map((doc) => Post(doc)).toList();
     }
 
-    await addBookmark(this._allPosts);
-    await addEmpathy(this._allPosts);
-    await getReplies(this._allPosts);
+    final bookmarkedPostsIds = await getBookmarkedPostsIds();
+    final empathizedPostsIds = await getEmpathizedPostsIds();
+
+    await addBookmark(this._allPosts, bookmarkedPostsIds);
+    await addEmpathy(this._allPosts, empathizedPostsIds);
+    await getReplies(this._allPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -187,7 +187,7 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _loadAllPostsWithReplies() async {
     startLoading();
 
-    this._allPostsQuery = FirebaseFirestore.instance
+    this._allPostsQuery = firestore
         .collectionGroup('posts')
         .orderBy('createdAt', descending: true)
         .startAfterDocument(_allPostsLastVisible!)
@@ -210,9 +210,12 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       this._allPosts += docs.map((doc) => Post(doc)).toList();
     }
 
-    await addBookmark(this._allPosts);
-    await addEmpathy(this._allPosts);
-    await getReplies(this._allPosts);
+    final bookmarkedPostsIds = await getBookmarkedPostsIds();
+    final empathizedPostsIds = await getEmpathizedPostsIds();
+
+    await addBookmark(this._allPosts, bookmarkedPostsIds);
+    await addEmpathy(this._allPosts, empathizedPostsIds);
+    await getReplies(this._allPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -221,9 +224,9 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _getMyPostsWithReplies() async {
     startLoading();
 
-    this._myPostsQuery = _firestore
+    this._myPostsQuery = firestore
         .collection('users')
-        .doc(_auth.currentUser?.uid)
+        .doc(auth.currentUser?.uid)
         .collection('posts')
         .orderBy('updatedAt', descending: true)
         .limit(_loadLimit);
@@ -246,9 +249,12 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       this._myPosts = docs.map((doc) => Post(doc)).toList();
     }
 
-    await addBookmark(this._myPosts);
-    await addEmpathy(this._myPosts);
-    await getReplies(this._myPosts);
+    final bookmarkedPostsIds = await getBookmarkedPostsIds();
+    final empathizedPostsIds = await getEmpathizedPostsIds();
+
+    await addBookmark(this._myPosts, bookmarkedPostsIds);
+    await addEmpathy(this._myPosts, empathizedPostsIds);
+    await getReplies(this._myPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -257,9 +263,9 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _loadMyPostsWithReplies() async {
     startLoading();
 
-    this._myPostsQuery = _firestore
+    this._myPostsQuery = firestore
         .collection('users')
-        .doc(_auth.currentUser?.uid)
+        .doc(auth.currentUser?.uid)
         .collection('posts')
         .orderBy('createdAt', descending: true)
         .startAfterDocument(this._myPostsLastVisible!)
@@ -282,9 +288,12 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       this._myPosts += docs.map((doc) => Post(doc)).toList();
     }
 
-    await addBookmark(this._myPosts);
-    await addEmpathy(this._myPosts);
-    await getReplies(this._myPosts);
+    final bookmarkedPostsIds = await getBookmarkedPostsIds();
+    final empathizedPostsIds = await getEmpathizedPostsIds();
+
+    await addBookmark(this._myPosts, bookmarkedPostsIds);
+    await addEmpathy(this._myPosts, empathizedPostsIds);
+    await getReplies(this._myPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -293,9 +302,9 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _getBookmarkedPostsWithReplies() async {
     startLoading();
 
-    this._bookmarkedPostsQuery = _firestore
+    this._bookmarkedPostsQuery = firestore
         .collection('users')
-        .doc(_auth.currentUser?.uid)
+        .doc(auth.currentUser?.uid)
         .collection('bookmarkedPosts')
         .orderBy('createdAt', descending: true)
         .limit(_loadLimit);
@@ -318,8 +327,10 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       this._bookmarkedPosts = await getBookmarkedPosts(docs);
     }
 
-    await addEmpathy(this._bookmarkedPosts);
-    await getReplies(this._bookmarkedPosts);
+    final empathizedPostsIds = await getEmpathizedPostsIds();
+
+    await addEmpathy(this._bookmarkedPosts, empathizedPostsIds);
+    await getReplies(this._bookmarkedPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -328,9 +339,9 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _loadBookmarkedPostsWithReplies() async {
     startLoading();
 
-    this._bookmarkedPostsQuery = _firestore
+    this._bookmarkedPostsQuery = firestore
         .collection('users')
-        .doc(_auth.currentUser?.uid)
+        .doc(auth.currentUser?.uid)
         .collection('bookmarkedPosts')
         .orderBy('createdAt', descending: true)
         .startAfterDocument(_bookmarkedPostsLastVisible!)
@@ -353,8 +364,10 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       this._bookmarkedPosts += await getBookmarkedPosts(docs);
     }
 
-    await addEmpathy(this._bookmarkedPosts);
-    await getReplies(this._bookmarkedPosts);
+    final empathizedPostsIds = await getEmpathizedPostsIds();
+
+    await addEmpathy(this._bookmarkedPosts, empathizedPostsIds);
+    await getReplies(this._bookmarkedPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -419,7 +432,7 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   }
 
   Future<void> signOut() async {
-    await _auth.signOut();
+    await auth.signOut();
     notifyListeners();
   }
 
@@ -444,7 +457,7 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   }
 
 // void getPostsRealtime() {
-  //   final snapshots = _firestore.collection('posts').snapshots();
+  //   final snapshots = firestore.collection('posts').snapshots();
   //   snapshots.listen((snapshot) {
   //     final docs = snapshot.docs;
   //     final _posts = docs.map((doc) => Post(doc)).toList();

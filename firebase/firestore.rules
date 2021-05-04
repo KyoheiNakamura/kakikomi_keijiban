@@ -124,6 +124,7 @@ service cloud.firestore {
       allow read: if isAuthenticated();
     }
 
+    // /users
     match /users/{userId} {
       allow read: if Authenticated();
       allow create: if isUserAuthenticated(userId)

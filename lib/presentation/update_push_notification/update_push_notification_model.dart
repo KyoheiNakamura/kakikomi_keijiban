@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 
 class UpdatePushNotificationModel extends ChangeNotifier {
-  final _firestore = FirebaseFirestore.instance;
   final currentUser = FirebaseAuth.instance.currentUser!;
   final _messaging = FirebaseMessaging.instance;
   bool isLoading = false;
@@ -15,7 +15,7 @@ class UpdatePushNotificationModel extends ChangeNotifier {
 
   Future<void> init() async {
     final userSnapshot =
-        await _firestore.collection('users').doc(currentUser.uid).get();
+        await firestore.collection('users').doc(currentUser.uid).get();
     initNewPostTopic(userSnapshot);
     initReplyToMyPost(userSnapshot);
     // initReplyToMyReply(userSnapshot);
@@ -51,7 +51,7 @@ class UpdatePushNotificationModel extends ChangeNotifier {
 
   Future<void> toggleSubscriptionForNewPostTopic(bool value) async {
     final topic = 'newPost';
-    final userRef = _firestore.collection('users').doc(currentUser.uid);
+    final userRef = firestore.collection('users').doc(currentUser.uid);
     if (value) {
       // subscribeToNewPost
       isNewPostTopicAllowed = true;
@@ -73,7 +73,7 @@ class UpdatePushNotificationModel extends ChangeNotifier {
 
   Future<void> togglePermissionForReplyToMyPost(bool value) async {
     final notification = 'replyToMyPost';
-    final userRef = _firestore.collection('users').doc(currentUser.uid);
+    final userRef = firestore.collection('users').doc(currentUser.uid);
     if (value) {
       // allowReplyToMyPost
       isReplyToMyPostAllowed = true;
@@ -93,7 +93,7 @@ class UpdatePushNotificationModel extends ChangeNotifier {
 
   // Future<void> togglePermissionForReplyToMyReply(bool value) async {
   //   final notification = 'replyToMyReply';
-  //   final userRef = _firestore.collection('users').doc(currentUser.uid);
+  //   final userRef = firestore.collection('users').doc(currentUser.uid);
   //   if (value) {
   //     // allowReplyToMyReply
   //     isReplyToMyReplyAllowed = true;

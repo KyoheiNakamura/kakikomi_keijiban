@@ -2,9 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 
 class SignInModel extends ChangeNotifier {
-  final _auth = FirebaseAuth.instance;
   bool isLoading = false;
 
   String enteredEmail = '';
@@ -14,7 +14,7 @@ class SignInModel extends ChangeNotifier {
     startLoading();
 
     try {
-      await _auth.signInWithEmailAndPassword(
+      await auth.signInWithEmailAndPassword(
         email: enteredEmail,
         password: enteredPassword,
       );
@@ -51,7 +51,7 @@ class SignInModel extends ChangeNotifier {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      await _auth.signInWithCredential(credential);
+      await auth.signInWithCredential(credential);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'account-exists-with-different-credential') {
         print('このメールアドレスはすでに使用されています');

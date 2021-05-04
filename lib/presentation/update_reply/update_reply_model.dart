@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/text_process.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 
 class UpdateReplyModel extends ChangeNotifier {
-  final _firestore = FirebaseFirestore.instance;
   bool isLoading = false;
 
   String bodyValue = '';
@@ -18,7 +18,7 @@ class UpdateReplyModel extends ChangeNotifier {
   Future<void> updateReply(Reply existingReply) async {
     startLoading();
 
-    final userRef = _firestore.collection('users').doc(existingReply.userId);
+    final userRef = firestore.collection('users').doc(existingReply.userId);
     final postRef = userRef.collection('posts').doc(existingReply.postId);
     final replyRef = postRef.collection('replies').doc(existingReply.id);
 
@@ -30,7 +30,7 @@ class UpdateReplyModel extends ChangeNotifier {
         'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
         'age': convertNoSelectedValueToEmpty(ageDropdownValue),
         'area': convertNoSelectedValueToEmpty(areaDropdownValue),
-        'updatedAt': FieldValue.serverTimestamp(),
+        'updatedAt': serverTimestamp(),
       });
     } on Exception catch (e) {
       print('updateReply処理中のエラーです');
@@ -44,9 +44,9 @@ class UpdateReplyModel extends ChangeNotifier {
   Future<void> addReplyToPostFromDraft(Reply draftedReply) async {
     startLoading();
 
-    WriteBatch _batch = _firestore.batch();
+    WriteBatch _batch = firestore.batch();
 
-    final userRef = _firestore.collection('users').doc(draftedReply.userId);
+    final userRef = firestore.collection('users').doc(draftedReply.userId);
     final postRef = userRef.collection('posts').doc(draftedReply.postId);
     final replyRef = postRef.collection('replies').doc();
 
@@ -62,8 +62,8 @@ class UpdateReplyModel extends ChangeNotifier {
       'age': convertNoSelectedValueToEmpty(ageDropdownValue),
       'area': convertNoSelectedValueToEmpty(areaDropdownValue),
       'empathyCount': 0,
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
+      'createdAt': serverTimestamp(),
+      'updatedAt': serverTimestamp(),
     });
 
     final postDoc = await postRef.get();
@@ -92,7 +92,7 @@ class UpdateReplyModel extends ChangeNotifier {
   Future<void> updateDraftedReply(Reply draftedReply) async {
     startLoading();
 
-    final userRef = _firestore.collection('users').doc(draftedReply.userId);
+    final userRef = firestore.collection('users').doc(draftedReply.userId);
     final draftedReplyRef =
         userRef.collection('draftedReplies').doc(draftedReply.id);
 
@@ -104,7 +104,7 @@ class UpdateReplyModel extends ChangeNotifier {
         'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
         'age': convertNoSelectedValueToEmpty(ageDropdownValue),
         'area': convertNoSelectedValueToEmpty(areaDropdownValue),
-        'updatedAt': FieldValue.serverTimestamp(),
+        'updatedAt': serverTimestamp(),
       });
     } on Exception catch (e) {
       print('updateDraftReply処理中のエラーです');

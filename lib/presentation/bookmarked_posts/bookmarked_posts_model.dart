@@ -1,15 +1,12 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/mixin/provide_common_posts_method_mixin.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 
 class BookmarkedPostsModel extends ChangeNotifier
     with ProvideCommonPostsMethodMixin {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
   List<Post> _bookmarkedPosts = [];
   List<Post> get posts => _bookmarkedPosts;
 
@@ -32,9 +29,9 @@ class BookmarkedPostsModel extends ChangeNotifier
   Future<void> _getBookmarkedPostsWithReplies() async {
     startModalLoading();
 
-    Query queryBatch = _firestore
+    Query queryBatch = firestore
         .collection('users')
-        .doc(_auth.currentUser?.uid)
+        .doc(auth.currentUser?.uid)
         .collection('bookmarkedPosts')
         .orderBy('createdAt', descending: true)
         .limit(loadLimit);
@@ -57,8 +54,10 @@ class BookmarkedPostsModel extends ChangeNotifier
       this._bookmarkedPosts = await getBookmarkedPosts(docs);
     }
 
-    await addEmpathy(this._bookmarkedPosts);
-    await getReplies(this._bookmarkedPosts);
+    final empathizedPostsIds = await getEmpathizedPostsIds();
+
+    await addEmpathy(this._bookmarkedPosts, empathizedPostsIds);
+    await getReplies(this._bookmarkedPosts, empathizedPostsIds);
 
     stopModalLoading();
     notifyListeners();
@@ -67,9 +66,9 @@ class BookmarkedPostsModel extends ChangeNotifier
   Future<void> _loadBookmarkedPostsWithReplies() async {
     startLoading();
 
-    Query queryBatch = _firestore
+    Query queryBatch = firestore
         .collection('users')
-        .doc(_auth.currentUser?.uid)
+        .doc(auth.currentUser?.uid)
         .collection('bookmarkedPosts')
         .orderBy('createdAt', descending: true)
         .startAfterDocument(lastVisibleOfTheBatch!)
@@ -92,8 +91,10 @@ class BookmarkedPostsModel extends ChangeNotifier
       this._bookmarkedPosts += await getBookmarkedPosts(docs);
     }
 
-    await addEmpathy(this._bookmarkedPosts);
-    await getReplies(this._bookmarkedPosts);
+    final empathizedPostsIds = await getEmpathizedPostsIds();
+
+    await addEmpathy(this._bookmarkedPosts, empathizedPostsIds);
+    await getReplies(this._bookmarkedPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();

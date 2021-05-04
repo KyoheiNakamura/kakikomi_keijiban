@@ -1,15 +1,12 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/mixin/provide_common_posts_method_mixin.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 
 class MyPostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
   List<Post> _myPosts = [];
   List<Post> get posts => _myPosts;
 
@@ -32,9 +29,9 @@ class MyPostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _getMyPostsWithReplies() async {
     startLoading();
 
-    Query queryBatch = _firestore
+    Query queryBatch = firestore
         .collection('users')
-        .doc(_auth.currentUser?.uid)
+        .doc(auth.currentUser?.uid)
         .collection('posts')
         .orderBy('updatedAt', descending: true)
         .limit(loadLimit);
@@ -57,9 +54,12 @@ class MyPostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       this._myPosts = docs.map((doc) => Post(doc)).toList();
     }
 
-    await addBookmark(this._myPosts);
-    await addEmpathy(this._myPosts);
-    await getReplies(this._myPosts);
+    final bookmarkedPostsIds = await getBookmarkedPostsIds();
+    final empathizedPostsIds = await getEmpathizedPostsIds();
+
+    await addBookmark(this._myPosts, bookmarkedPostsIds);
+    await addEmpathy(this._myPosts, empathizedPostsIds);
+    await getReplies(this._myPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -68,9 +68,9 @@ class MyPostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _loadMyPostsWithReplies() async {
     startLoading();
 
-    Query queryBatch = _firestore
+    Query queryBatch = firestore
         .collection('users')
-        .doc(_auth.currentUser?.uid)
+        .doc(auth.currentUser?.uid)
         .collection('posts')
         .orderBy('updatedAt', descending: true)
         .startAfterDocument(lastVisibleOfTheBatch!)
@@ -93,9 +93,12 @@ class MyPostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       this._myPosts += docs.map((doc) => Post(doc)).toList();
     }
 
-    await addBookmark(this._myPosts);
-    await addEmpathy(this._myPosts);
-    await getReplies(this._myPosts);
+    final bookmarkedPostsIds = await getBookmarkedPostsIds();
+    final empathizedPostsIds = await getEmpathizedPostsIds();
+
+    await addBookmark(this._myPosts, bookmarkedPostsIds);
+    await addEmpathy(this._myPosts, empathizedPostsIds);
+    await getReplies(this._myPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
