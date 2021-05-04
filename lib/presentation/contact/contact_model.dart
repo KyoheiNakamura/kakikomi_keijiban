@@ -1,10 +1,10 @@
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 
 class ContactModel extends ChangeNotifier {
-  String? email = FirebaseAuth.instance.currentUser!.email;
+  String? email = auth.currentUser!.email;
   String contactDropdownValue = kPleaseSelect;
   String contentValue = '';
 

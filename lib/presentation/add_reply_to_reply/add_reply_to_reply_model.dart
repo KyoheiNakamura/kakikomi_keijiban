@@ -1,14 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/text_process.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 
 class AddReplyToReplyModel extends ChangeNotifier {
-  final _firestore = FirebaseFirestore.instance;
-  final _auth = FirebaseAuth.instance;
-
   bool isLoading = false;
 
   String bodyValue = '';
@@ -21,9 +18,9 @@ class AddReplyToReplyModel extends ChangeNotifier {
   Future<void> addReplyToReply(Reply repliedReply) async {
     startLoading();
 
-    WriteBatch _batch = _firestore.batch();
+    WriteBatch _batch = firestore.batch();
 
-    final userRef = _firestore.collection('users').doc(repliedReply.userId);
+    final userRef = firestore.collection('users').doc(repliedReply.userId);
     final postRef = userRef.collection('posts').doc(repliedReply.postId);
     final replyRef = postRef.collection('replies').doc(repliedReply.id);
     final replyToReplyRef = replyRef.collection('repliesToReply').doc();
@@ -33,7 +30,7 @@ class AddReplyToReplyModel extends ChangeNotifier {
       'userId': repliedReply.userId,
       'postId': repliedReply.postId,
       'replyId': repliedReply.id,
-      'replierId': _auth.currentUser!.uid,
+      'replierId': auth.currentUser!.uid,
       'body': removeUnnecessaryBlankLines(bodyValue),
       'nickname': removeUnnecessaryBlankLines(nicknameValue),
       'position': convertNoSelectedValueToEmpty(positionDropdownValue),
@@ -41,8 +38,8 @@ class AddReplyToReplyModel extends ChangeNotifier {
       'age': convertNoSelectedValueToEmpty(ageDropdownValue),
       'area': convertNoSelectedValueToEmpty(areaDropdownValue),
       'empathyCount': 0,
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
+      'createdAt': serverTimestamp(),
+      'updatedAt': serverTimestamp(),
     });
 
     final postDoc = await postRef.get();
@@ -65,7 +62,7 @@ class AddReplyToReplyModel extends ChangeNotifier {
   Future<void> addDraftedReplyToReply(Reply repliedReply) async {
     startLoading();
 
-    final userRef = _firestore.collection('users').doc(repliedReply.userId);
+    final userRef = firestore.collection('users').doc(repliedReply.userId);
     final draftedReplyToReplyRef =
         userRef.collection('draftedRepliesToReply').doc();
 
@@ -75,7 +72,7 @@ class AddReplyToReplyModel extends ChangeNotifier {
         'userId': repliedReply.userId,
         'postId': repliedReply.postId,
         'replyId': repliedReply.id,
-        'replierId': _auth.currentUser!.uid,
+        'replierId': auth.currentUser!.uid,
         'body': removeUnnecessaryBlankLines(bodyValue),
         'nickname': removeUnnecessaryBlankLines(nicknameValue),
         'position': convertNoSelectedValueToEmpty(positionDropdownValue),
@@ -83,8 +80,8 @@ class AddReplyToReplyModel extends ChangeNotifier {
         'age': convertNoSelectedValueToEmpty(ageDropdownValue),
         'area': convertNoSelectedValueToEmpty(areaDropdownValue),
         'empathyCount': 0,
-        'createdAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
+        'createdAt': serverTimestamp(),
+        'updatedAt': serverTimestamp(),
       });
     } on Exception catch (e) {
       print('addDraftedReplyToReply処理中のエラーです');

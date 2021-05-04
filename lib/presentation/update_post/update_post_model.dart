@@ -1,13 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/text_process.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 
 class UpdatePostModel extends ChangeNotifier {
-  final _firestore = FirebaseFirestore.instance;
-  final currentUser = FirebaseAuth.instance.currentUser;
+  final currentUser = auth.currentUser;
   bool isLoading = false;
   bool isCategoriesValid = true;
 
@@ -25,7 +24,7 @@ class UpdatePostModel extends ChangeNotifier {
   Future<void> updatePost(Post post) async {
     startLoading();
 
-    final userRef = _firestore.collection('users').doc(post.userId);
+    final userRef = firestore.collection('users').doc(post.userId);
     final postRef = userRef.collection('posts').doc(post.id);
 
     try {
@@ -39,7 +38,7 @@ class UpdatePostModel extends ChangeNotifier {
         'age': convertNoSelectedValueToEmpty(ageDropdownValue),
         'area': convertNoSelectedValueToEmpty(areaDropdownValue),
         'categories': selectedCategories,
-        'updatedAt': FieldValue.serverTimestamp(),
+        'updatedAt': serverTimestamp(),
       });
     } on Exception catch (e) {
       print('updatePost処理中のエラーです');
@@ -53,9 +52,9 @@ class UpdatePostModel extends ChangeNotifier {
   Future<void> addPostFromDraft(Post draftedPost) async {
     startLoading();
 
-    WriteBatch _batch = _firestore.batch();
+    WriteBatch _batch = firestore.batch();
 
-    final userRef = _firestore.collection('users').doc(draftedPost.userId);
+    final userRef = firestore.collection('users').doc(draftedPost.userId);
     final postRef = userRef.collection('posts').doc();
 
     _batch.set(postRef, {
@@ -73,8 +72,8 @@ class UpdatePostModel extends ChangeNotifier {
       'replyCount': 0,
       'empathyCount': 0,
       'isReplyExisting': false,
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
+      'createdAt': serverTimestamp(),
+      'updatedAt': serverTimestamp(),
     });
 
     final userDoc = await userRef.get();
@@ -102,7 +101,7 @@ class UpdatePostModel extends ChangeNotifier {
   Future<void> updateDraftPost(Post draftedPost) async {
     startLoading();
 
-    final userRef = _firestore.collection('users').doc(draftedPost.userId);
+    final userRef = firestore.collection('users').doc(draftedPost.userId);
     final draftedPostRef =
         userRef.collection('draftedPosts').doc(draftedPost.id);
 
@@ -118,7 +117,7 @@ class UpdatePostModel extends ChangeNotifier {
         'area': convertNoSelectedValueToEmpty(areaDropdownValue),
         'categories': selectedCategories,
         'replyCount': 0,
-        'updatedAt': FieldValue.serverTimestamp(),
+        'updatedAt': serverTimestamp(),
       });
     } on Exception catch (e) {
       print('updateDraftPost処理中のエラーです');

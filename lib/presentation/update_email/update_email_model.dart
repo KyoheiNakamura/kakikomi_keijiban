@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 
 class UpdateEmailModel extends ChangeNotifier {
-  final User currentUser = FirebaseAuth.instance.currentUser!;
-  final String currentEmail = FirebaseAuth.instance.currentUser!.email!;
+  final User currentUser = auth.currentUser!;
+  final String currentEmail = auth.currentUser!.email!;
 
   bool isLoading = false;
 

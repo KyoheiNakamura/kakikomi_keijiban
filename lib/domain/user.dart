@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 
 class User {
   User(DocumentSnapshot doc) {
@@ -46,14 +46,14 @@ class User {
   }
 
   bool? isCurrentUserAnonymous() {
-    final currentUser = FirebaseAuth.instance.currentUser;
+    final currentUser = auth.currentUser;
     return currentUser?.isAnonymous;
   }
 
   String? get email => getEmail();
 
   String? getEmail() {
-    final currentUser = FirebaseAuth.instance.currentUser;
+    final currentUser = auth.currentUser;
     return currentUser?.email;
   }
 }

@@ -1,16 +1,12 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class DraftsModel extends ChangeNotifier {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
   List<Post> _drafts = [];
   List<Post> get posts => _drafts;
 
@@ -33,9 +29,9 @@ class DraftsModel extends ChangeNotifier {
   }
 
   Future<void> _getDraftPosts() async {
-    final querySnapshot = await _firestore
+    final querySnapshot = await firestore
         .collection('users')
-        .doc(_auth.currentUser?.uid)
+        .doc(auth.currentUser?.uid)
         .collection('draftedPosts')
         .get();
     final docs = querySnapshot.docs;
@@ -48,9 +44,9 @@ class DraftsModel extends ChangeNotifier {
   }
 
   Future<void> _getDraftReplies() async {
-    final querySnapshot = await _firestore
+    final querySnapshot = await firestore
         .collection('users')
-        .doc(_auth.currentUser?.uid)
+        .doc(auth.currentUser?.uid)
         .collection('draftedReplies')
         .get();
     final docs = querySnapshot.docs;
@@ -64,7 +60,7 @@ class DraftsModel extends ChangeNotifier {
       final reply = draftedReplies[i];
       final userId = reply.userId;
       final postId = reply.postId;
-      final postDoc = await _firestore
+      final postDoc = await firestore
           .collection('users')
           .doc(userId)
           .collection('posts')
@@ -77,9 +73,9 @@ class DraftsModel extends ChangeNotifier {
   }
 
   Future<void> _getDraftedRepliesToReply() async {
-    final querySnapshot = await _firestore
+    final querySnapshot = await firestore
         .collection('users')
-        .doc(_auth.currentUser?.uid)
+        .doc(auth.currentUser?.uid)
         .collection('draftedRepliesToReply')
         .get();
     final docs = querySnapshot.docs;
@@ -93,7 +89,7 @@ class DraftsModel extends ChangeNotifier {
       final userId = replyToReply.userId;
       final postId = replyToReply.postId;
       final replyId = replyToReply.replyId;
-      final replyDoc = await _firestore
+      final replyDoc = await firestore
           .collection('users')
           .doc(userId)
           .collection('posts')
@@ -102,7 +98,7 @@ class DraftsModel extends ChangeNotifier {
           .doc(replyId)
           .get();
       final reply = Reply(replyDoc);
-      final querySnapshot = await _firestore
+      final querySnapshot = await firestore
           .collection('users')
           .doc(userId)
           .collection('posts')
@@ -126,7 +122,7 @@ class DraftsModel extends ChangeNotifier {
       final reply = replies[i];
       final userId = reply.userId;
       final postId = reply.postId;
-      final postDoc = await _firestore
+      final postDoc = await firestore
           .collection('users')
           .doc(userId)
           .collection('posts')
@@ -146,7 +142,7 @@ class DraftsModel extends ChangeNotifier {
   // }) async {
   //   await _getDrafts();
   //   // // 更新後のpostを取得
-  //   // final doc = await _firestore
+  //   // final doc = await firestore
   //   //     .collection('users')
   //   //     .doc(uid)
   //   //     .collection('draftedPosts')
@@ -154,7 +150,7 @@ class DraftsModel extends ChangeNotifier {
   //   //     .get();
   //   // final post = Post(doc);
   //   // post.isDraft = true;
-  //   // final querySnapshot = await _firestore
+  //   // final querySnapshot = await firestore
   //   //     .collection('users')
   //   //     .doc(post.userId)
   //   //     .collection('posts')
@@ -168,7 +164,7 @@ class DraftsModel extends ChangeNotifier {
   //   //
   //   // for (int i = 0; i < _replies.length; i++) {
   //   //   final reply = _replies[i];
-  //   //   final _querySnapshot = await _firestore
+  //   //   final _querySnapshot = await firestore
   //   //       .collection('users')
   //   //       .doc(reply.userId)
   //   //       .collection('posts')
@@ -194,21 +190,21 @@ class DraftsModel extends ChangeNotifier {
       {required Post post, Reply? reply, ReplyToReply? replyToReply}) async {
     this._drafts.remove(post);
     if (post.isDraft == true) {
-      final draftedPostRef = _firestore
+      final draftedPostRef = firestore
           .collection('users')
           .doc(post.userId)
           .collection('draftedPosts')
           .doc(post.id);
       await draftedPostRef.delete();
     } else if (reply != null && reply.isDraft == true) {
-      final draftedReplyRef = _firestore
+      final draftedReplyRef = firestore
           .collection('users')
           .doc(reply.userId)
           .collection('draftedReplies')
           .doc(reply.id);
       await draftedReplyRef.delete();
     } else if (replyToReply != null && replyToReply.isDraft == true) {
-      final draftedReplyToReplyRef = _firestore
+      final draftedReplyToReplyRef = firestore
           .collection('users')
           .doc(replyToReply.userId)
           .collection('draftedRepliesToReply')

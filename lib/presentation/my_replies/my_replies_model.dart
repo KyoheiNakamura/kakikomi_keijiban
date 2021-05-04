@@ -1,15 +1,12 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/mixin/provide_common_posts_method_mixin.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 
 class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
   List<Post> _postsWithMyReplies = [];
   List<Post> get posts => _postsWithMyReplies;
 
@@ -32,9 +29,9 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _getPostsWithMyReplies() async {
     startLoading();
 
-    Query queryBatch = _firestore
+    Query queryBatch = firestore
         .collectionGroup('replies')
-        .where('replierId', isEqualTo: _auth.currentUser?.uid)
+        .where('replierId', isEqualTo: auth.currentUser?.uid)
         .orderBy('updatedAt', descending: true)
         .limit(loadLimit);
     final querySnapshot = await queryBatch.get();
@@ -56,9 +53,12 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       this._postsWithMyReplies = await _getRepliedPosts(docs);
     }
 
-    await addBookmark(this._postsWithMyReplies);
-    await addEmpathy(this._postsWithMyReplies);
-    await getReplies(this._postsWithMyReplies);
+    final bookmarkedPostsIds = await getBookmarkedPostsIds();
+    final empathizedPostsIds = await getEmpathizedPostsIds();
+
+    await addBookmark(this._postsWithMyReplies, bookmarkedPostsIds);
+    await addEmpathy(this._postsWithMyReplies, empathizedPostsIds);
+    await getReplies(this._postsWithMyReplies, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -67,9 +67,9 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _loadPostsWithMyReplies() async {
     startLoading();
 
-    Query queryBatch = _firestore
+    Query queryBatch = firestore
         .collectionGroup('replies')
-        .where('replierId', isEqualTo: _auth.currentUser?.uid)
+        .where('replierId', isEqualTo: auth.currentUser?.uid)
         .orderBy('updatedAt', descending: true)
         .startAfterDocument(lastVisibleOfTheBatch!)
         .limit(loadLimit);
@@ -91,9 +91,12 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       this._postsWithMyReplies += await _getRepliedPosts(docs);
     }
 
-    await addBookmark(this._postsWithMyReplies);
-    await addEmpathy(this._postsWithMyReplies);
-    await getReplies(this._postsWithMyReplies);
+    final bookmarkedPostsIds = await getBookmarkedPostsIds();
+    final empathizedPostsIds = await getEmpathizedPostsIds();
+
+    await addBookmark(this._postsWithMyReplies, bookmarkedPostsIds);
+    await addEmpathy(this._postsWithMyReplies, empathizedPostsIds);
+    await getReplies(this._postsWithMyReplies, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -101,7 +104,7 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
 
   Future<List<Post>> _getRepliedPosts(List<QueryDocumentSnapshot> docs) async {
     final postSnapshots = await Future.wait(docs
-        .map((repliedPost) => _firestore
+        .map((repliedPost) => firestore
             .collectionGroup('posts')
             .where('id', isEqualTo: repliedPost['postId'])
             .get())

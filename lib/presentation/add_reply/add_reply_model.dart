@@ -1,14 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/text_process.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 
 class AddReplyModel extends ChangeNotifier {
-  final _firestore = FirebaseFirestore.instance;
-  final _auth = FirebaseAuth.instance;
-
   bool isLoading = false;
 
   String bodyValue = '';
@@ -21,9 +18,9 @@ class AddReplyModel extends ChangeNotifier {
   Future<void> addReplyToPost(Post repliedPost) async {
     startLoading();
 
-    WriteBatch _batch = _firestore.batch();
+    WriteBatch _batch = firestore.batch();
 
-    final userRef = _firestore.collection('users').doc(repliedPost.userId);
+    final userRef = firestore.collection('users').doc(repliedPost.userId);
     final postRef = userRef.collection('posts').doc(repliedPost.id);
     final replyRef = postRef.collection('replies').doc();
 
@@ -31,7 +28,7 @@ class AddReplyModel extends ChangeNotifier {
       'id': replyRef.id,
       'userId': repliedPost.userId,
       'postId': repliedPost.id,
-      'replierId': _auth.currentUser!.uid,
+      'replierId': auth.currentUser!.uid,
       'body': removeUnnecessaryBlankLines(bodyValue),
       'nickname': removeUnnecessaryBlankLines(nicknameValue),
       'position': convertNoSelectedValueToEmpty(positionDropdownValue),
@@ -62,7 +59,7 @@ class AddReplyModel extends ChangeNotifier {
   Future<void> addDraftedReply(Post repliedPost) async {
     startLoading();
 
-    final userRef = _firestore.collection('users').doc(repliedPost.userId);
+    final userRef = firestore.collection('users').doc(repliedPost.userId);
     final draftedReplyRef = userRef.collection('draftedReplies').doc();
 
     try {
@@ -70,7 +67,7 @@ class AddReplyModel extends ChangeNotifier {
         'id': draftedReplyRef.id,
         'userId': repliedPost.userId,
         'postId': repliedPost.id,
-        'replierId': _auth.currentUser!.uid,
+        'replierId': auth.currentUser!.uid,
         'body': removeUnnecessaryBlankLines(bodyValue),
         'nickname': removeUnnecessaryBlankLines(nicknameValue),
         'position': convertNoSelectedValueToEmpty(positionDropdownValue),

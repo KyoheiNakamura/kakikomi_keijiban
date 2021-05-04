@@ -3,13 +3,12 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/mixin/provide_common_posts_method_mixin.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 
 class SearchResultPostsModel extends ChangeNotifier
     with ProvideCommonPostsMethodMixin {
-  final _firestore = FirebaseFirestore.instance;
-
   List<Post> _searchedPosts = [];
   List<Post> get posts => _searchedPosts;
 
@@ -56,13 +55,13 @@ class SearchResultPostsModel extends ChangeNotifier
     // postのfieldの値が配列(array)のとき
     // Todo positionも複数選択に変える予定なので、おいおいこっちの条件に||で追加するはず
     if (postField == 'categories') {
-      queryBatch = _firestore
+      queryBatch = firestore
           .collectionGroup('posts')
           .where(this.postField, arrayContains: this.searchWord)
           .orderBy('createdAt', descending: true)
           .limit(loadLimit);
     } else {
-      queryBatch = _firestore
+      queryBatch = firestore
           .collectionGroup('posts')
           .where(this.postField, isEqualTo: this.searchWord)
           .orderBy('createdAt', descending: true)
@@ -87,9 +86,12 @@ class SearchResultPostsModel extends ChangeNotifier
       this._searchedPosts = docs.map((doc) => Post(doc)).toList();
     }
 
-    await addBookmark(this._searchedPosts);
-    await addEmpathy(this._searchedPosts);
-    await getReplies(this._searchedPosts);
+    final bookmarkedPostsIds = await getBookmarkedPostsIds();
+    final empathizedPostsIds = await getEmpathizedPostsIds();
+
+    await addBookmark(this._searchedPosts, bookmarkedPostsIds);
+    await addEmpathy(this._searchedPosts, empathizedPostsIds);
+    await getReplies(this._searchedPosts, empathizedPostsIds);
 
     stopModalLoading();
     notifyListeners();
@@ -102,14 +104,14 @@ class SearchResultPostsModel extends ChangeNotifier
     // postのfieldの値が配列(array)のとき
     // Todo positionも複数選択に変える予定なので、おいおいこっちの条件に||で追加するはず
     if (this.postField == 'categories') {
-      queryBatch = _firestore
+      queryBatch = firestore
           .collectionGroup('posts')
           .where(this.postField, arrayContains: this.searchWord)
           .orderBy('createdAt', descending: true)
           .startAfterDocument(lastVisibleOfTheBatch!)
           .limit(loadLimit);
     } else {
-      queryBatch = _firestore
+      queryBatch = firestore
           .collectionGroup('posts')
           .where(this.postField, isEqualTo: this.searchWord)
           .orderBy('createdAt', descending: true)
@@ -134,9 +136,12 @@ class SearchResultPostsModel extends ChangeNotifier
       this._searchedPosts = docs.map((doc) => Post(doc)).toList();
     }
 
-    await addBookmark(this._searchedPosts);
-    await addEmpathy(this._searchedPosts);
-    await getReplies(this._searchedPosts);
+    final bookmarkedPostsIds = await getBookmarkedPostsIds();
+    final empathizedPostsIds = await getEmpathizedPostsIds();
+
+    await addBookmark(this._searchedPosts, bookmarkedPostsIds);
+    await addEmpathy(this._searchedPosts, empathizedPostsIds);
+    await getReplies(this._searchedPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();

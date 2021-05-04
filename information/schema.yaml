@@ -1,4 +1,5 @@
 # ユーザー情報
+# /users
 users:
   userId: auth.uid
   age: string
@@ -16,16 +17,8 @@ users:
   createdAt: timestamp
   updatedAt: timestamp
 
-  # 各ユーザーのトークン（隠す予定）: idにはtokenをそのまま使う
-  tokens:
-    id: token
-
-  # Todo 各ユーザーの機密データ
-#  confidential:
-#    id: auth.uid
-#    email: string
-
   # 各ユーザーの投稿データ
+  # /users/{userId}/posts
   posts:
     id: auto
     userId: auth.uid
@@ -44,6 +37,7 @@ users:
     createdAt: timestamp
     updatedAt: timestamp
 
+    # /users/{userId}/posts/{postId}/replies
     # 各投稿への返信データ
     replies:
       id: auto
@@ -61,6 +55,7 @@ users:
       updatedAt: timestamp
 
       # 各返信への返信データ
+      # /users/{userId}/posts/{postId}/replies/{replyId}/repliesToReply
       repliesToReply:
         id: auto
         userId: auth.uid
@@ -78,12 +73,14 @@ users:
         updatedAt: timestamp
 
   # 各ユーザーのブックマークした投稿
+  # /users/{userId}/bookmarkedPosts
   bookmarkedPosts:
     id: post.id
     userId: auth.id
     createdAt: timestamp
 
   # 各ユーザーの共感した投稿
+  # /users/{userId}/empathizedPosts
   empathizedPosts:
     id: post.id
     userId: auth.id
@@ -91,6 +88,7 @@ users:
     createdAt: timestamp
 
   # 各ユーザーの下書きした投稿
+  # /users/{userId}/draftedPosts
   draftedPosts:
   　id: auto
     userId: auth.uid
@@ -110,6 +108,7 @@ users:
     updatedAt: timestamp
 
   # 各ユーザーの下書きした投稿への返信
+  # /users/{userId}/draftedReplies
   draftedReplies:
     id: auto
     userId: post.userId
@@ -125,6 +124,7 @@ users:
     updatedAt: timestamp
 
   # 各ユーザーの下書きした返信への返信
+  # /users/{userId}/draftedRepliesToReply
   draftedRepliesToReply:
     id: auto
     userId: reply.userId
@@ -140,7 +140,27 @@ users:
     createdAt: timestamp
     updatedAt: timestamp
 
+  # 各ユーザーのトークン（隠す予定）: idにはtokenをそのまま使う
+  # /users/{userId}/tokens
+  tokens:
+    id: string
+
+  # Todo 各ユーザーの機密データ
+  # /users/{userId}/tokens
+# confidential:
+#   id: auth.uid
+#   email: string
+
+# お問い合わせメール
+# /mail/{mailId}/
+mail:
+  userId: auth.uid
+  to: email
+  message: map
+  delivery: map
+
 # お問い合わせ内容
+# /contacts
 contacts:
   id: auto
   userId: auth.uid
@@ -148,4 +168,3 @@ contacts:
   category: string
   content: string
   createdAt: timestamp
-

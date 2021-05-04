@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/domain/user.dart';
 
 class AppModel {
@@ -15,15 +16,12 @@ class AppModel {
   }
 
   Future<void> _listenAuthStateChanges() async {
-    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-    final Auth.FirebaseAuth _auth = Auth.FirebaseAuth.instance;
-
-    _auth.authStateChanges().listen((Auth.User? firebaseUser) async {
+    auth.authStateChanges().listen((Auth.User? firebaseUser) async {
       if (firebaseUser == null) {
-        await _auth.signInAnonymously();
+        await auth.signInAnonymously();
       } else {
         final userDoc =
-            await _firestore.collection('users').doc(firebaseUser.uid).get();
+            await firestore.collection('users').doc(firebaseUser.uid).get();
         if (!userDoc.exists) {
           await userDoc.reference.set({
             'userId': firebaseUser.uid,
@@ -35,11 +33,11 @@ class AppModel {
             'postCount': 0,
             'topics': [],
             'notifications': kInitialNotificationSetting,
-            'createdAt': FieldValue.serverTimestamp(),
-            'updatedAt': FieldValue.serverTimestamp(),
+            'createdAt': serverTimestamp(),
+            'updatedAt': serverTimestamp(),
           });
           final newUserDoc =
-              await _firestore.collection('users').doc(firebaseUser.uid).get();
+              await firestore.collection('users').doc(firebaseUser.uid).get();
           user = User(newUserDoc);
         } else {
           user = User(userDoc);
