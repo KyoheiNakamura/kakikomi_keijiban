@@ -139,43 +139,15 @@ mixin ProvideCommonPostsMethodMixin {
         .collection('posts')
         .doc(oldPost.id)
         .get();
-    Post post = Post(doc);
-    await addEmpathy([post], empathizedPostsIds);
-    await addBookmark([post], bookmarkedPostsIds);
-    final querySnapshot = await firestore
-        .collection('users')
-        .doc(post.userId)
-        .collection('posts')
-        .doc(post.id)
-        .collection('replies')
-        .orderBy('createdAt')
-        .get();
-    final docs = querySnapshot.docs;
-    final _replies = docs.map((doc) => Reply(doc)).toList();
-    await addEmpathy(_replies, empathizedPostsIds);
-    post.replies = _replies;
+    Post newPost = Post(doc);
+    await addBookmark([newPost], bookmarkedPostsIds);
+    await addEmpathy([newPost], empathizedPostsIds);
+    await getReplies([newPost], empathizedPostsIds);
 
-    for (int i = 0; i < _replies.length; i++) {
-      final reply = _replies[i];
-      final _querySnapshot = await firestore
-          .collection('users')
-          .doc(reply.userId)
-          .collection('posts')
-          .doc(reply.postId)
-          .collection('replies')
-          .doc(reply.id)
-          .collection('repliesToReply')
-          .orderBy('createdAt')
-          .get();
-      final _docs = _querySnapshot.docs;
-      final _repliesToReplies = _docs.map((doc) => ReplyToReply(doc)).toList();
-      await addEmpathy(_repliesToReplies, empathizedPostsIds);
-      reply.repliesToReply = _repliesToReplies;
-    }
     // 更新前のpostをpostsから削除
     posts.removeAt(indexOfPost);
     // 更新後のpostをpostsに追加
-    posts.insert(indexOfPost, post);
+    posts.insert(indexOfPost, newPost);
   }
 
   void removeThePostAfterDeleted(

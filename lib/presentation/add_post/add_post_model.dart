@@ -67,13 +67,14 @@ class AddPostModel extends ChangeNotifier {
   Future<void> addDraftedPost() async {
     startLoading();
 
-    final userRef = firestore.collection('users').doc(auth.currentUser!.uid);
+    final uid = auth.currentUser!.uid;
+    final userRef = firestore.collection('users').doc(uid);
     final draftedPostRef = userRef.collection('draftedPosts').doc();
 
     try {
       await draftedPostRef.set({
         'id': draftedPostRef.id,
-        'userId': auth.currentUser!.uid,
+        'userId': uid,
         'title': removeUnnecessaryBlankLines(titleValue),
         'body': removeUnnecessaryBlankLines(bodyValue),
         'nickname': removeUnnecessaryBlankLines(nicknameValue),
