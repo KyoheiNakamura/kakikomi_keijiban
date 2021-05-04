@@ -33,6 +33,7 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                 leading: Icon(Icons.description),
                 title: Text('自分の投稿'),
                 onTap: () async {
+                  Navigator.pop(context);
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -49,6 +50,7 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                 ),
                 title: Text('自分の返信'),
                 onTap: () async {
+                  Navigator.pop(context);
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -61,6 +63,7 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                 leading: Icon(Icons.star),
                 title: Text('ブックマーク'),
                 onTap: () async {
+                  Navigator.pop(context);
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -75,6 +78,7 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                 leading: Icon(Icons.drafts),
                 title: Text('下書き'),
                 onTap: () async {
+                  Navigator.pop(context);
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -88,6 +92,7 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                 leading: Icon(Icons.settings),
                 title: Text('設定'),
                 onTap: () async {
+                  Navigator.pop(context);
                   // if (isCurrentUserAnonymous != null &&
                   //     isCurrentUserAnonymous == false) {
                   final result = await Navigator.push(
@@ -98,7 +103,7 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                   );
                   if (result == valueFromShowConfirmDialog.logout) {
                     await model.signOut();
-                    Navigator.pop(context);
+                    // Navigator.pop(context);
                     await model.reloadTabs();
                   }
                   // } else {
@@ -117,6 +122,7 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                 leading: Icon(Icons.alternate_email),
                 title: Text('お問い合わせ'),
                 onTap: () async {
+                  Navigator.pop(context);
                   await Navigator.push(
                     context,
                     MaterialPageRoute(
