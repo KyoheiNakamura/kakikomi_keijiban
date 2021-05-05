@@ -20,6 +20,7 @@ class MyPostsPage extends StatelessWidget {
         create: (context) => MyPostsModel()..init(),
         child: SafeArea(
           child: Scaffold(
+            backgroundColor: kLightPink,
             appBar: AppBar(
               toolbarHeight: 50,
               title: Text(
@@ -29,58 +30,51 @@ class MyPostsPage extends StatelessWidget {
             ),
             body: Consumer<MyPostsModel>(builder: (context, model, child) {
               final List<Post> myPosts = model.posts;
-              // return AnnotatedRegion<SystemUiOverlayStyle>(
-              //   value: SystemUiOverlayStyle.light
-              //       .copyWith(statusBarColor: Theme.of(context).primaryColorDark),
               return SafeArea(
                 child: LoadingSpinner(
                   inAsyncCall: model.isModalLoading,
-                  child: Container(
-                    color: kLightPink,
-                    child: RefreshIndicator(
-                      onRefresh: () => model.getPostsWithReplies,
-                      child: NotificationListener<ScrollNotification>(
-                        onNotification: (notification) {
-                          if (notification.metrics.pixels ==
-                              notification.metrics.maxScrollExtent) {
-                            if (model.isLoading) {
-                              return false;
-                            } else {
-                              if (model.canLoadMore) {
-                                // ignore: unnecessary_statements
-                                model.loadPostsWithReplies;
-                              }
-                            }
-                          } else {
+                  child: RefreshIndicator(
+                    onRefresh: () => model.getPostsWithReplies,
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (notification) {
+                        if (notification.metrics.pixels ==
+                            notification.metrics.maxScrollExtent) {
+                          if (model.isLoading) {
                             return false;
+                          } else {
+                            if (model.canLoadMore) {
+                              // ignore: unnecessary_statements
+                              model.loadPostsWithReplies;
+                            }
                           }
+                        } else {
                           return false;
+                        }
+                        return false;
+                      },
+                      child: ListView.builder(
+                        padding: EdgeInsets.only(top: 30.0),
+                        itemBuilder: (BuildContext context, int index) {
+                          final post = myPosts[index];
+                          return Column(
+                            children: [
+                              PostCard(
+                                post: post,
+                                indexOfPost: index,
+                                passedModel: model,
+                              ),
+                              post == myPosts.last && model.isLoading
+                                  ? CircularProgressIndicator()
+                                  : SizedBox(),
+                            ],
+                          );
                         },
-                        child: ListView.builder(
-                          padding: EdgeInsets.only(top: 30.0),
-                          itemBuilder: (BuildContext context, int index) {
-                            final post = myPosts[index];
-                            return Column(
-                              children: [
-                                PostCard(
-                                  post: post,
-                                  indexOfPost: index,
-                                  passedModel: model,
-                                ),
-                                post == myPosts.last && model.isLoading
-                                    ? CircularProgressIndicator()
-                                    : SizedBox(),
-                              ],
-                            );
-                          },
-                          itemCount: myPosts.length,
-                        ),
+                        itemCount: myPosts.length,
                       ),
                     ),
                   ),
                 ),
               );
-              // );
             }),
           ),
         ),

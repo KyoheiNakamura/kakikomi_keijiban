@@ -20,79 +20,72 @@ class HomePostsPage extends StatelessWidget {
         child: DefaultTabController(
           length: kTabs.length,
           child: Scaffold(
+            backgroundColor: kLightPink,
             drawer: SafeArea(child: AccountDrawer()),
             body: Consumer<HomePostsModel>(builder: (context, model, child) {
               return LoadingSpinner(
                 inAsyncCall: model.isModalLoading,
-                // dismissible: true,
-                child: Container(
-                  color: kLightPink,
-                  child: Stack(
-                    children: [
-                      NestedScrollView(
-                        headerSliverBuilder:
-                            (BuildContext context, bool innerBoxIsScrolled) {
-                          return <Widget>[
-                            SliverOverlapAbsorber(
-                              handle: NestedScrollView
-                                  .sliverOverlapAbsorberHandleFor(context),
-                              sliver: SliverAppBar(
-                                toolbarHeight: 50,
-                                // elevation: 0,
-                                centerTitle: true,
-                                title: Text(
-                                  '発達障害困りごと掲示板（仮）',
-                                  style: kAppBarTextStyle,
-                                ),
-                                actions: [
-                                  IconButton(
-                                    icon: Icon(Icons.search, size: 24),
-                                    onPressed: () async {
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => SearchPage(),
-                                        ),
-                                      );
-                                      // await model
-                                      //     .getPostsWithReplies(kAllPostsTab);
-                                    },
+                child: NestedScrollView(
+                  headerSliverBuilder:
+                      (BuildContext context, bool innerBoxIsScrolled) {
+                    return <Widget>[
+                      SliverOverlapAbsorber(
+                        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
+                            context),
+                        sliver: SliverAppBar(
+                          toolbarHeight: 50,
+                          // elevation: 0,
+                          centerTitle: true,
+                          title: Text(
+                            '発達障害困りごと掲示板（仮）',
+                            style: kAppBarTextStyle,
+                          ),
+                          actions: [
+                            IconButton(
+                              icon: Icon(Icons.search, size: 24),
+                              onPressed: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SearchPage(),
                                   ),
-                                ],
-                                floating: true,
-                                pinned: true,
-                                snap: true,
-                                forceElevated: innerBoxIsScrolled,
-                                bottom: TabBar(
-                                  tabs: kTabs
-                                      .map(
-                                        (String name) => Tab(
-                                          child: Text(
-                                            name,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                        ),
-                                      )
-                                      .toList(),
-                                ),
-                              ),
+                                );
+                                // await model
+                                //     .getPostsWithReplies(kAllPostsTab);
+                              },
                             ),
-                          ];
-                        },
-
-                        /// タブ名(ページ名)で表示を場合分け
-                        body: TabBarView(
-                          children: kTabs.map((String name) {
-                            return TabBarViewChild(
-                              tabName: name,
-                              model: model,
-                            );
-                          }).toList(),
+                          ],
+                          floating: true,
+                          pinned: true,
+                          snap: true,
+                          forceElevated: innerBoxIsScrolled,
+                          bottom: TabBar(
+                            tabs: kTabs
+                                .map(
+                                  (String name) => Tab(
+                                    child: Text(
+                                      name,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                          ),
                         ),
                       ),
-                    ],
+                    ];
+                  },
+
+                  /// タブ名(ページ名)で表示を場合分け
+                  body: TabBarView(
+                    children: kTabs.map((String name) {
+                      return TabBarViewChild(
+                        tabName: name,
+                        model: model,
+                      );
+                    }).toList(),
                   ),
                 ),
               );
