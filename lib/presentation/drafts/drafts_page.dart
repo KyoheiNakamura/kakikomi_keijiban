@@ -20,6 +20,7 @@ class DraftsPage extends StatelessWidget {
         create: (context) => DraftsModel()..init(),
         child: SafeArea(
           child: Scaffold(
+            backgroundColor: kLightPink,
             appBar: AppBar(
               toolbarHeight: 50,
               title: Text(
@@ -29,9 +30,6 @@ class DraftsPage extends StatelessWidget {
             ),
             body: Consumer<DraftsModel>(builder: (context, model, child) {
               final List<Post> drafts = model.posts;
-              // return AnnotatedRegion<SystemUiOverlayStyle>(
-              //   value: SystemUiOverlayStyle.light.copyWith(
-              //       statusBarColor: Theme.of(context).primaryColorDark),
               return SafeArea(
                 child: LoadingSpinner(
                   inAsyncCall: model.isModalLoading,
@@ -62,7 +60,6 @@ class DraftsPage extends StatelessWidget {
                   ),
                 ),
               );
-              // );
             }),
           ),
         ),
