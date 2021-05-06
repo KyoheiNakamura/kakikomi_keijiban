@@ -26,7 +26,7 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   QueryDocumentSnapshot? _myPostsLastVisible;
   QueryDocumentSnapshot? _bookmarkedPostsLastVisible;
 
-  int _loadLimit = 10;
+  int _loadLimit = 8;
   // bool isPostsExisting = false;
 
   bool _allPostsCanLoadMore = false;

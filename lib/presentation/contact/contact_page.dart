@@ -26,10 +26,7 @@ class ContactPage extends StatelessWidget
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 50,
-            title: Text(
-              'お問い合わせ',
-              style: kAppBarTextStyle,
-            ),
+            title: Text('お問い合わせ'),
           ),
           body: Consumer<ContactModel>(
             builder: (context, model, child) {

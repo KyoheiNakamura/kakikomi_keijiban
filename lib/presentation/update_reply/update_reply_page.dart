@@ -37,10 +37,7 @@ class UpdateReplyPage extends StatelessWidget
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 50,
-            title: Text(
-              '編集',
-              style: kAppBarTextStyle,
-            ),
+            title: Text('編集'),
           ),
           body: Consumer<UpdateReplyModel>(
             builder: (context, model, child) {

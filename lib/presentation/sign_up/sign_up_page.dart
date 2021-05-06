@@ -15,10 +15,7 @@ class SignUpPage extends StatelessWidget with ShowExceptionDialogMixin {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
-          title: Text(
-            '会員登録',
-            style: kAppBarTextStyle,
-          ),
+          title: Text('会員登録'),
         ),
         body: Consumer<SignUpModel>(
           builder: (context, model, child) {

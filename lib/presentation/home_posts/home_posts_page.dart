@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:kakikomi_keijiban/common/components/scroll_bottom_notification_listener.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/account_drawer.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card.dart';
@@ -35,11 +36,7 @@ class HomePostsPage extends StatelessWidget {
                         sliver: SliverAppBar(
                           toolbarHeight: 50,
                           // elevation: 0,
-                          centerTitle: true,
-                          title: Text(
-                            '発達障害困りごと掲示板（仮）',
-                            style: kAppBarTextStyle,
-                          ),
+                          title: Text('発達障害困りごと掲示板（仮）'),
                           actions: [
                             IconButton(
                               icon: Icon(Icons.search, size: 24),
@@ -50,8 +47,6 @@ class HomePostsPage extends StatelessWidget {
                                     builder: (context) => SearchPage(),
                                   ),
                                 );
-                                // await model
-                                //     .getPostsWithReplies(kAllPostsTab);
                               },
                             ),
                           ],
@@ -99,7 +94,7 @@ class HomePostsPage extends StatelessWidget {
                 // elevation: 0,
                 highlightElevation: 0,
                 splashColor: kDarkPink,
-                backgroundColor: Color(0xFFFCF0F5),
+                backgroundColor: kLightPink,
                 label: Row(
                   children: [
                     Icon(
@@ -134,7 +129,6 @@ class HomePostsPage extends StatelessWidget {
                 },
               );
             }),
-            // }),
           ),
         ),
       ),
@@ -158,23 +152,9 @@ class TabBarViewChild extends StatelessWidget {
         bottom: false,
         child: Builder(
           builder: (BuildContext context) {
-            return NotificationListener<ScrollNotification>(
-              onNotification: (notification) {
-                if (notification.metrics.pixels ==
-                    notification.metrics.maxScrollExtent) {
-                  if (model.isLoading) {
-                    return false;
-                  } else {
-                    if (model.getCanLoadMore(tabName)) {
-                      // ignore: unnecessary_statements
-                      model.loadPostsWithReplies(tabName);
-                    }
-                  }
-                } else {
-                  return false;
-                }
-                return false;
-              },
+            return ScrollBottomNotificationListener(
+              model: model,
+              tabName: tabName,
               child: Scrollbar(
                 thickness: 6.0,
                 radius: Radius.circular(8.0),

@@ -28,10 +28,7 @@ class SettingsPage extends StatelessWidget with ShowConfirmDialogMixin {
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 50,
-            title: Text(
-              '設定',
-              style: kAppBarTextStyle,
-            ),
+            title: Text('設定'),
           ),
           body: Padding(
             padding: EdgeInsets.symmetric(vertical: 16.0),

@@ -34,10 +34,7 @@ class AddPostPage extends StatelessWidget
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 50,
-            title: Text(
-              '新規投稿',
-              style: kAppBarTextStyle,
-            ),
+            title: Text('新規投稿'),
             actions: [
               Padding(
                 padding: EdgeInsets.only(right: 8.0),

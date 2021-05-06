@@ -15,10 +15,7 @@ class UpdateEmailPage extends StatelessWidget with ShowExceptionDialogMixin {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
-          title: Text(
-            'メールアドレスの変更',
-            style: kAppBarTextStyle,
-          ),
+          title: Text('メールアドレスの変更'),
         ),
         body: Consumer<UpdateEmailModel>(
           builder: (context, model, child) {

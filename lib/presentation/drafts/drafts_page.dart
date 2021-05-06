@@ -23,10 +23,7 @@ class DraftsPage extends StatelessWidget {
             backgroundColor: kLightPink,
             appBar: AppBar(
               toolbarHeight: 50,
-              title: Text(
-                '下書き',
-                style: kAppBarTextStyle,
-              ),
+              title: Text('下書き'),
             ),
             body: Consumer<DraftsModel>(builder: (context, model, child) {
               final List<Post> drafts = model.posts;

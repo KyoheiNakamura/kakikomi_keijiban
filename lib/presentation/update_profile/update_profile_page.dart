@@ -18,10 +18,7 @@ class UpdateProfilePage extends StatelessWidget with ShowExceptionDialogMixin {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
-          title: Text(
-            'デフォルト入力設定',
-            style: kAppBarTextStyle,
-          ),
+          title: Text('デフォルト入力設定'),
         ),
         body: Consumer<UpdateProfileModel>(
           builder: (context, model, child) {

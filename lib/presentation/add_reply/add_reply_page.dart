@@ -34,10 +34,7 @@ class AddReplyPage extends StatelessWidget
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 50,
-            title: Text(
-              '返信',
-              style: kAppBarTextStyle,
-            ),
+            title: Text('返信'),
             actions: [
               Padding(
                 padding: EdgeInsets.only(right: 8.0),

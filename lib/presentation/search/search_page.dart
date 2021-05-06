@@ -8,10 +8,7 @@ class SearchPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 50,
-        title: Text(
-          '検索',
-          style: kAppBarTextStyle,
-        ),
+        title: Text('検索'),
       ),
       body: SingleChildScrollView(
         child: Padding(

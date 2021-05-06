@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card_model.dart';
 import 'package:kakikomi_keijiban/common/components/reply_card/reply_card_model.dart';
@@ -35,6 +36,7 @@ class App extends StatelessWidget {
           appBarTheme: AppBarTheme(
             elevation: 2,
             centerTitle: true,
+            textTheme: TextTheme(headline6: kAppBarTextStyle),
           ),
           fontFamily: 'GenShinGothic',
           pageTransitionsTheme: PageTransitionsTheme(

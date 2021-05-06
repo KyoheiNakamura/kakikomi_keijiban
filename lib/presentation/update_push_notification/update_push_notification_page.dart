@@ -18,10 +18,7 @@ class UpdatePushNotificationPage extends StatelessWidget
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
-          title: Text(
-            '通知設定',
-            style: kAppBarTextStyle,
-          ),
+          title: Text('通知設定'),
         ),
         body: Consumer<UpdatePushNotificationModel>(
           builder: (context, model, child) {
