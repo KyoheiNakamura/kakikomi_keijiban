@@ -6,8 +6,8 @@ import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 class Reply {
   Reply(DocumentSnapshot doc) {
     this.id = doc.id;
-    this.userId = doc['userId'];
     this.postId = doc['postId'];
+    this.userId = doc['userId'];
     this.replierId = doc['replierId'];
     this.body = doc['body'];
     this.nickname = doc['nickname'];
@@ -16,9 +16,6 @@ class Reply {
     this.age = doc['age'] != '' ? doc['age'] : '';
     this.area = doc['area'] != '' ? doc['area'] : '';
     this.empathyCount = doc['empathyCount'];
-    this.isDraft = false;
-    this.isEmpathized = false;
-    this.repliesToReply = [];
     final createdDate = doc['createdAt'].toDate();
     this.createdDate = createdDate;
     final updatedDate = doc['updatedAt'].toDate();

@@ -40,13 +40,10 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                   borderRadius: BorderRadius.circular(16.0),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.only(
-                      top: 32.0, left: 20.0, right: 20.0, bottom: 32.0
-                      // top: 24.0,
-                      // left: 20.0,
-                      // right: 20.0,
-                      // bottom: replies == null || replies!.isEmpty ? 32.0 : 0,
-                      ),
+                  padding: EdgeInsets.symmetric(
+                    vertical: 32,
+                    horizontal: 20,
+                  ),
                   child: Column(
                     children: [
                       /// カテゴリーのActionChipを表示してる
@@ -321,7 +318,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                     // ),
                     child: IconButton(
                       icon: Icon(
-                        Icons.edit_outlined,
+                        Icons.edit,
                         color: kLightGrey,
                       ),
                       onPressed: () async {
@@ -365,7 +362,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                     // ),
                     child: IconButton(
                       icon: Icon(
-                        Icons.edit_outlined,
+                        Icons.edit,
                         color: kLightGrey,
                       ),
                       onPressed: () async {

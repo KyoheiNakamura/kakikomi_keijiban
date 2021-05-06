@@ -262,7 +262,7 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                   // child: PopupMenuOnReplyCard(reply: reply, post: post),
                   child: IconButton(
                     icon: Icon(
-                      Icons.edit_outlined,
+                      Icons.edit,
                       color: kLightGrey,
                     ),
                     onPressed: () async {
@@ -294,7 +294,7 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                   // child: PopupMenuOnReplyCard(reply: reply, post: post),
                   child: IconButton(
                     icon: Icon(
-                      Icons.edit_outlined,
+                      Icons.edit,
                       color: kLightGrey,
                     ),
                     onPressed: () async {

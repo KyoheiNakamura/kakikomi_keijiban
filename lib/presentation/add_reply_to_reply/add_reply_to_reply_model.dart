@@ -70,10 +70,10 @@ class AddReplyToReplyModel extends ChangeNotifier {
     try {
       await draftedReplyToReplyRef.set({
         'id': draftedReplyToReplyRef.id,
-        'userId': uid,
+        'userId': repliedReply.userId,
         'postId': repliedReply.postId,
         'replyId': repliedReply.id,
-        'replierId': auth.currentUser!.uid,
+        'replierId': uid,
         'body': removeUnnecessaryBlankLines(bodyValue),
         'nickname': removeUnnecessaryBlankLines(nicknameValue),
         'position': convertNoSelectedValueToEmpty(positionDropdownValue),
