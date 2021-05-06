@@ -23,7 +23,7 @@ class ScrollBottomNotificationListener extends StatelessWidget {
                 model.loadPostsWithReplies(tabName);
               }
             } else {
-              if (model.getCanLoadMore) {
+              if (model.canLoadMore) {
                 // ignore: unnecessary_statements
                 model.loadPostsWithReplies;
               }
