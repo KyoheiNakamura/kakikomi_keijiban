@@ -80,6 +80,13 @@ class UpdateReplyToReplyModel extends ChangeNotifier {
       'replyCount': postDoc['replyCount'] + 1,
     });
 
+    final replierRef =
+        firestore.collection('users').doc(draftedReplyToReply.replierId);
+    final draftedReplyToReplyRef =
+        replierRef.collection('draftedReplies').doc(draftedReplyToReply.id);
+
+    _batch.delete(draftedReplyToReplyRef);
+
     try {
       await _batch.commit();
     } on Exception catch (e) {

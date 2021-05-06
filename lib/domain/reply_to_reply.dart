@@ -5,9 +5,9 @@ import 'package:kakikomi_keijiban/common/firebase_util.dart';
 class ReplyToReply {
   ReplyToReply(DocumentSnapshot doc) {
     this.id = doc.id;
-    this.userId = doc['userId'];
     this.postId = doc['postId'];
     this.replyId = doc['replyId'];
+    this.userId = doc['userId'];
     this.replierId = doc['replierId'];
     this.body = doc['body'];
     this.nickname = doc['nickname'];
@@ -16,8 +16,6 @@ class ReplyToReply {
     this.age = doc['age'] != '' ? doc['age'] : '';
     this.area = doc['area'] != '' ? doc['area'] : '';
     this.empathyCount = doc['empathyCount'];
-    this.isDraft = false;
-    this.isEmpathized = false;
     final createdDate = doc['createdAt'].toDate();
     this.createdDate = createdDate;
     final updatedDate = doc['updatedAt'].toDate();

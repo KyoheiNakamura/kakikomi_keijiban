@@ -15,17 +15,12 @@ class Post {
     this.gender = doc['gender'] != '' ? doc['gender'] : '';
     this.age = doc['age'] != '' ? doc['age'] : '';
     this.area = doc['area'] != '' ? doc['area'] : '';
-    final List<dynamic> _categories = doc['categories'];
     // List<dynamic>をList<String>に変換してる
+    final List<dynamic> _categories = doc['categories'];
     this.categories = List<String>.from(_categories);
     this.replyCount = doc['replyCount'];
     this.empathyCount = doc['empathyCount'];
     this.isReplyExisting = doc['isReplyExisting'];
-    this.isBookmarked = false;
-    this.isEmpathized = false;
-    this.isReplyShown = false;
-    this.isDraft = false;
-    this.replies = [];
     final Timestamp createdTime = doc['createdAt'];
     this.createdDate = createdTime.toDate();
     final Timestamp updatedTime = doc['updatedAt'];

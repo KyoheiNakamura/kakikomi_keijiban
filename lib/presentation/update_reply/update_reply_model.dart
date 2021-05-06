@@ -73,8 +73,12 @@ class UpdateReplyModel extends ChangeNotifier {
       'isReplyExisting': true,
     });
 
+    print(draftedReply.replierId);
+    final replierRef =
+        firestore.collection('users').doc(draftedReply.replierId);
+    print(auth.currentUser!.uid);
     final draftedReplyRef =
-        userRef.collection('draftedReplies').doc(draftedReply.id);
+        replierRef.collection('draftedReplies').doc(draftedReply.id);
 
     _batch.delete(draftedReplyRef);
 

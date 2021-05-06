@@ -13,7 +13,7 @@ users:
   topics: list<string>
   # ↑同様、
   # Map{key: token, value: notification}
-  notificatioins: list<string>
+  notifications: list<string>
   createdAt: timestamp
   updatedAt: timestamp
 
@@ -79,10 +79,10 @@ users:
     userId: auth.id
     createdAt: timestamp
 
-  # 各ユーザーの共感した投稿
+  # 各ユーザーの共感した投稿(返信も含む)
   # /users/{userId}/empathizedPosts
   empathizedPosts:
-    id: post.id
+    id: post.id or reply.id or replyToReplyId
     userId: auth.id
     myEmpathyCount: int
     createdAt: timestamp
@@ -140,16 +140,28 @@ users:
     createdAt: timestamp
     updatedAt: timestamp
 
-  # 各ユーザーのトークン（隠す予定）: idにはtokenをそのまま使う
+  # 各ユーザーのトークン（隠す予定）: idにはtoken(string)をそのまま使う
   # /users/{userId}/tokens
   tokens:
-    id: string
+    id: token
 
-  # Todo 各ユーザーの機密データ
+  # 自分への返信のpush通知があった際に追加しよう（新着のpush通知は追加しない）
+  # タップしたらそのpostに飛べるようにしよう
+  # /users/{userId}/notifications
+  notifications(仮):
+    id: auto
+    userId: auth.uid
+    postId: post.id
+    replierId:
+    title: string
+    body: string
+    createdAt: timestamp
+
+  # 各ユーザーの機密データ
   # /users/{userId}/tokens
-# confidential:
-#   id: auth.uid
-#   email: string
+#  confidential:
+#    id: auth.uid
+#    email: string
 
 # お問い合わせメール
 # /mail/{mailId}/
