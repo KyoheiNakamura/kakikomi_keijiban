@@ -49,7 +49,7 @@ class UpdatePushNotificationPage extends StatelessWidget
                         ),
                         leading: Icon(
                           Icons.post_add,
-                          color: kLightGrey,
+                          color: kGrey,
                         ),
                         trailing: Switch(
                           value: model.isNewPostTopicAllowed,
@@ -73,7 +73,7 @@ class UpdatePushNotificationPage extends StatelessWidget
                           transform: Matrix4.rotationY(math.pi),
                           child: Icon(
                             Icons.reply,
-                            color: kLightGrey,
+                            color: kGrey,
                           ),
                         ),
                         trailing: Switch(

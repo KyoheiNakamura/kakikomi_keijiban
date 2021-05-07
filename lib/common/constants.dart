@@ -5,7 +5,10 @@ const Color kDarkPink = Color(0xFFDC5A6E);
 const Color kPink = Color(0xFFf3d4d8);
 const Color kLightPink = Color(0xFFFCF0F5);
 const Color kUltraLightPink = Color(0xFFFFF7FA);
-const Color kLightGrey = Colors.black54;
+const Color kDarkGrey = Color(0xFF646464);
+const Color kGrey = Color(0xFFa0a0a0);
+const Color kLightGrey = Colors.grey;
+const Color kUltraLightGrey = Color(0xFFe0e0e0);
 
 const String kOnBoardingDoneKey = 'onBoardingDone';
 
@@ -234,7 +237,7 @@ const kTitleTextFormFieldDecoration = InputDecoration(
   helperText: '必須',
   helperStyle: TextStyle(color: kDarkPink),
   counterText: '50字以内でご記入ください',
-  counterStyle: TextStyle(color: kLightGrey),
+  counterStyle: TextStyle(color: kGrey),
   // counterText: isPostExisting
   //     ? '${existingPost!.title.length} 字'
   //     : '${model.titleValue.length} 字',
@@ -250,7 +253,7 @@ const kContentTextFormFieldDecoration = InputDecoration(
   helperText: '必須',
   helperStyle: TextStyle(color: kDarkPink),
   counterText: '1500字以内でご記入ください',
-  counterStyle: TextStyle(color: kLightGrey),
+  counterStyle: TextStyle(color: kGrey),
   // counterText: isPostExisting
   //     ? '${existingPost!.textBody.length} 字'
   //     : '${model.contentValue.length} 字',
@@ -264,7 +267,7 @@ const kNicknameTextFormFieldDecoration = InputDecoration(
   helperText: '必須',
   helperStyle: TextStyle(color: kDarkPink),
   counterText: '10字以内でご記入ください',
-  counterStyle: TextStyle(color: kLightGrey),
+  counterStyle: TextStyle(color: kGrey),
   // counterText: isPostExisting
   //     ? '${existingPost!.nickname.length} 字'
   //     : '${model.nicknameValue.length} 字',
@@ -336,7 +339,7 @@ const kContactContentTextFormFieldDecoration = InputDecoration(
   helperText: '必須',
   helperStyle: TextStyle(color: kDarkPink),
   counterText: '500字以内でご記入ください',
-  counterStyle: TextStyle(color: kLightGrey),
+  counterStyle: TextStyle(color: kGrey),
   // counterText: isPostExisting
   //     ? '${existingPost!.textBody.length} 字'
   //     : '${model.contentValue.length} 字',

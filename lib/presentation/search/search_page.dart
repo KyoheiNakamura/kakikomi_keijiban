@@ -101,7 +101,7 @@ class SearchGenreCard extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.all(14.0),
-                child: Icon(genreIcon, color: kLightGrey),
+                child: Icon(genreIcon, color: kGrey),
               ),
               Text(
                 genreTitle,

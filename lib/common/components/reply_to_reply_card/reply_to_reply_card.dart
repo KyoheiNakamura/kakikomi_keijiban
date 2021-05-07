@@ -55,7 +55,7 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                         transform: Matrix4.rotationY(math.pi),
                         child: Icon(
                           Icons.reply_all,
-                          color: kLightGrey,
+                          color: kGrey,
                         ),
                       ),
 
@@ -64,7 +64,7 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                         child: Center(
                           child: Text(
                             getFormattedPosterData(replyToReply),
-                            style: TextStyle(color: kLightGrey),
+                            style: TextStyle(color: kGrey),
                           ),
                         ),
                       ),
@@ -82,7 +82,7 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                               ? TextSpan(
                                   text: '（編集済み）',
                                   style: TextStyle(
-                                    color: kLightGrey,
+                                    color: kGrey,
                                     fontSize: 15.0,
                                   ),
                                 )
@@ -102,7 +102,7 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                     alignment: Alignment.centerRight,
                     child: Text(
                       replyToReply.createdAt,
-                      style: TextStyle(color: kLightGrey),
+                      style: TextStyle(color: kGrey),
                     ),
                   ),
 
@@ -165,7 +165,7 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                   children: [
                                     Icon(
                                       Icons.favorite_border_outlined,
-                                      color: kLightGrey,
+                                      color: kGrey,
                                     ),
                                     Image.asset(
                                       'lib/assets/images/anpanman_emoji.gif',
@@ -216,7 +216,7 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                   child: IconButton(
                     icon: Icon(
                       Icons.edit,
-                      color: kLightGrey,
+                      color: kGrey,
                     ),
                     onPressed: () async {
                       await Navigator.push(
@@ -253,7 +253,7 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                   child: IconButton(
                     icon: Icon(
                       Icons.edit,
-                      color: kLightGrey,
+                      color: kGrey,
                     ),
                     onPressed: () async {
                       final resultForDraftButton = await Navigator.push(

@@ -18,7 +18,6 @@ class DraftsPage extends StatelessWidget {
       },
       child: ChangeNotifierProvider<DraftsModel>(
         create: (context) => DraftsModel()..init(),
-        child: SafeArea(
           child: Scaffold(
             backgroundColor: kLightPink,
             appBar: AppBar(
@@ -27,8 +26,7 @@ class DraftsPage extends StatelessWidget {
             ),
             body: Consumer<DraftsModel>(builder: (context, model, child) {
               final List<Post> drafts = model.posts;
-              return SafeArea(
-                child: LoadingSpinner(
+              return LoadingSpinner(
                   inAsyncCall: model.isModalLoading,
                   child: Container(
                     color: kLightPink,
@@ -55,11 +53,9 @@ class DraftsPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
-              );
+                );
             }),
           ),
-        ),
       ),
     );
   }

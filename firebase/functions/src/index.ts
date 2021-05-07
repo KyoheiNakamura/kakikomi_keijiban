@@ -76,39 +76,89 @@ export const sendPushNotificationWhenReplyIsCreated =
       .firestore
       .document("users/{userId}/posts/{postId}/replies/{replyId}")
       .onCreate(async (snapshot, context) => {
-        if (snapshot) {
-          const userId = context.params.userId;
-          const userDoc = await admin.firestore()
-              .collection("users")
-              .doc(userId)
-              .get();
-          const notification = "replyToMyPost";
-          const isNotificationAllowed =
-            userDoc.data()?.pushNoticesSetting.includes(notification);
-          if (isNotificationAllowed) {
+        // const authUid = context.auth?.uid;
+        const userId = context.params.userId;
+        const replierId = snapshot.data().replierId;
+        // replyしたユーザー（authUid）が
+        // postのuserId（userId）と異なるとき
+        if (replierId != userId) {
+          if (snapshot) {
+            const userDoc = await admin.firestore()
+                .collection("users")
+                .doc(userId)
+                .get();
+            const notification = "replyToMyPost";
+            const isPushNoticeAllowed =
+              userDoc.data()?.pushNoticesSetting.includes(notification);
             const nickname = snapshot.data().nickname;
             // const title = "New Reply To Your Post!";
             const title = `${nickname}さんからの返信があります`;
             // const body = "あなたの投稿に返信があります😘";
             const body = snapshot.data().body;
-            const tokensSnapshot = await admin.firestore()
+            const postId = context.params.postId;
+            const postDoc = await admin.firestore()
                 .collection("users")
                 .doc(userId)
-                .collection("tokens")
+                .collection("posts")
+                .doc(postId)
                 .get();
-            const tokens = tokensSnapshot.docs.map((doc) => doc.id);
-            const page = "MyPostsPage";
-            return admin.messaging()
-                .sendAll(tokens.map((token: string) => ({
-                  token: token,
-                  notification: {
-                    title: title,
-                    body: body,
-                  },
-                  data: {
-                    page: page,
-                  },
-                })));
+            const emotion = postDoc.data()?.emotion;
+            const serverTimestamp =
+              admin.firestore.FieldValue.serverTimestamp();
+            const noticeDocRef = admin.firestore()
+                .collection("users")
+                .doc(userId)
+                .collection("notices")
+                .doc();
+            // プッシュ通知が許可されているとき
+            if (isPushNoticeAllowed) {
+              const tokensSnapshot = await admin.firestore()
+                  .collection("users")
+                  .doc(userId)
+                  .collection("tokens")
+                  .get();
+              const tokens = tokensSnapshot.docs.map((doc) => doc.id);
+              const page = "MyPostsPage";
+              // プッシュ通知を送る
+              await admin.messaging()
+                  .sendAll(tokens.map((token: string) => ({
+                    token: token,
+                    notification: {
+                      title: title,
+                      body: body,
+                    },
+                    data: {
+                      page: page,
+                    },
+                  })));
+              // 通知一覧（notices）に追加する
+              return noticeDocRef.set({
+                id: noticeDocRef.id,
+                userId: userId,
+                postId: postId,
+                posterId: userId,
+                title: title,
+                body: body,
+                nickname: nickname,
+                emotion: emotion != null ? emotion : "",
+                isRead: false,
+                createdAt: serverTimestamp,
+              });
+            } else {
+              // 通知（notices）に追加する
+              return noticeDocRef.set({
+                id: noticeDocRef.id,
+                userId: userId,
+                postId: postId,
+                posterId: userId,
+                title: title,
+                body: body,
+                nickname: nickname,
+                emotion: emotion != null ? emotion : "",
+                isRead: false,
+                createdAt: serverTimestamp,
+              });
+            }
           } else {
             return null;
           }
@@ -122,52 +172,101 @@ export const sendPushNotificationWhenReplyToReplyIsCreated =
       .firestore
       .document("users/{uId}/posts/{pId}/replies/{rId}/repliesToReply/{rtrId}")
       .onCreate(async (snapshot, context) => {
-        if (snapshot) {
-          const userId = context.params.uId;
-          const postId = context.params.pId;
-          const replyId = context.params.rId;
-          const replyDoc = await admin.firestore()
-              .collection("users")
-              .doc(userId)
-              .collection("posts")
-              .doc(postId)
-              .collection("replies")
-              .doc(replyId)
-              .get();
-          const replierId = replyDoc.data()?.replierId;
-          const userDoc = await admin.firestore()
-              .collection("users")
-              .doc(replierId)
-              .get();
-          // replyToReplyの場合でもreplyToMyPostと同じ通知設定にした。
-          // 実際返信は返信だし。
-          const notification = "replyToMyPost";
-          const isNotificationAllowed =
-            userDoc.data()?.pushNoticesSetting.includes(notification);
-          if (isNotificationAllowed) {
+        // const authUid = context.auth?.uid;
+        const userId = context.params.uId;
+        const postId = context.params.pId;
+        const replyId = context.params.rId;
+        const replyDoc = await admin.firestore()
+            .collection("users")
+            .doc(userId)
+            .collection("posts")
+            .doc(postId)
+            .collection("replies")
+            .doc(replyId)
+            .get();
+        const repliedUserId = replyDoc.data()?.replierId;
+        const replierId = snapshot.data()?.replierId;
+        // replyToReplyしたユーザー（authUid）が
+        // replyのuserId（replierId）と異なるとき
+        if (replierId != repliedUserId) {
+          if (snapshot) {
+            const userDoc = await admin.firestore()
+                .collection("users")
+                .doc(repliedUserId)
+                .get();
+            // replyToReplyの場合でもreplyToMyPostと同じ通知設定にした。
+            // 実際返信は返信だし。
+            const notification = "replyToMyPost";
+            const isPushNoticeAllowed =
+              userDoc.data()?.pushNoticesSetting.includes(notification);
             const nickname = snapshot.data().nickname;
             // const title = "New Reply To Your Reply!";
             const title = `${nickname}さんからの返信があります`;
             // const body = "あなたの返信に返信があります🤩";
             const body = snapshot.data().body;
-            const tokensSnapshot = await admin.firestore()
+            const postDoc = await admin.firestore()
                 .collection("users")
-                .doc(replierId)
-                .collection("tokens")
+                .doc(userId)
+                .collection("posts")
+                .doc(postId)
                 .get();
-            const tokens = tokensSnapshot.docs.map((doc) => doc.id);
-            const page = "MyRepliesPage";
-            return admin.messaging()
-                .sendAll(tokens.map((token: string) => ({
-                  token: token,
-                  notification: {
-                    title: title,
-                    body: body,
-                  },
-                  data: {
-                    page: page,
-                  },
-                })));
+            const emotion = postDoc.data()?.emotion;
+            const serverTimestamp =
+              admin.firestore.FieldValue.serverTimestamp();
+            const noticeDocRef = admin.firestore()
+                .collection("users")
+                .doc(repliedUserId)
+                .collection("notices")
+                .doc();
+            // プッシュ通知が許可されているとき
+            if (isPushNoticeAllowed) {
+              const tokensSnapshot = await admin.firestore()
+                  .collection("users")
+                  .doc(repliedUserId)
+                  .collection("tokens")
+                  .get();
+              const tokens = tokensSnapshot.docs.map((doc) => doc.id);
+              const page = "MyRepliesPage";
+              // push通知を送る
+              await admin.messaging()
+                  .sendAll(tokens.map((token: string) => ({
+                    token: token,
+                    notification: {
+                      title: title,
+                      body: body,
+                    },
+                    data: {
+                      page: page,
+                    },
+                  })));
+              // 通知一覧（notices）に追加する
+              return noticeDocRef.set({
+                id: noticeDocRef.id,
+                userId: repliedUserId,
+                postId: postId,
+                posterId: userId,
+                title: title,
+                body: body,
+                nickname: nickname,
+                emotion: emotion != null ? emotion : "",
+                isRead: false,
+                createdAt: serverTimestamp,
+              });
+            } else {
+              // 通知一覧（notices）に追加する
+              return noticeDocRef.set({
+                id: noticeDocRef.id,
+                userId: repliedUserId,
+                postId: postId,
+                posterId: userId,
+                title: title,
+                body: body,
+                nickname: nickname,
+                emotion: emotion != null ? emotion : "",
+                isRead: false,
+                createdAt: serverTimestamp,
+              });
+            }
           } else {
             return null;
           }

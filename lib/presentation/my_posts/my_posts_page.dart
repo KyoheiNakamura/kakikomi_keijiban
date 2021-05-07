@@ -19,8 +19,7 @@ class MyPostsPage extends StatelessWidget {
       },
       child: ChangeNotifierProvider<MyPostsModel>(
         create: (context) => MyPostsModel()..init(),
-        child: SafeArea(
-          child: Scaffold(
+        child: Scaffold(
             backgroundColor: kLightPink,
             appBar: AppBar(
               toolbarHeight: 50,
@@ -28,8 +27,7 @@ class MyPostsPage extends StatelessWidget {
             ),
             body: Consumer<MyPostsModel>(builder: (context, model, child) {
               final List<Post> myPosts = model.posts;
-              return SafeArea(
-                child: LoadingSpinner(
+              return LoadingSpinner(
                   inAsyncCall: model.isModalLoading,
                   child: RefreshIndicator(
                     onRefresh: () => model.getPostsWithReplies,
@@ -56,11 +54,9 @@ class MyPostsPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
-              );
+                );
             }),
           ),
-        ),
       ),
     );
   }

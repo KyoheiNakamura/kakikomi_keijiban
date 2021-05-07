@@ -154,9 +154,10 @@ users:
     userId: auth.uid
     postId: post.id
     posterId: post.userId
-    nickname: string
     title: string
     body: string
+    nickname: string
+    emotion: string
     isRead: bool
     createdAt: timestamp
 

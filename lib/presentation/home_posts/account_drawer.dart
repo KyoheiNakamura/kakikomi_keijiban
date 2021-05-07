@@ -164,7 +164,7 @@ class ChangingDrawerHeader extends StatelessWidget {
                   SizedBox(height: 8.0),
                   Text(
                     AppModel.user!.email ?? '',
-                    style: TextStyle(color: kLightGrey),
+                    style: TextStyle(color: kGrey),
                   ),
                 ],
               ),

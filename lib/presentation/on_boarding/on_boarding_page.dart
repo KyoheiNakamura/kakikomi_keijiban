@@ -13,8 +13,7 @@ class OnBoardingPage extends StatelessWidget {
       },
       child: ChangeNotifierProvider<OnBoardingModel>(
         create: (context) => OnBoardingModel(),
-        child: SafeArea(
-          child: Scaffold(
+        child: Scaffold(
             body: Consumer<OnBoardingModel>(builder: (context, model, child) {
               return Container(
                 color: kLightPink,
@@ -86,7 +85,6 @@ class OnBoardingPage extends StatelessWidget {
               );
             }),
           ),
-        ),
       ),
     );
   }

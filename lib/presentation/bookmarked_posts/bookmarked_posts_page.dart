@@ -20,7 +20,6 @@ class BookmarkedPostsPage extends StatelessWidget {
       },
       child: ChangeNotifierProvider<BookmarkedPostsModel>(
         create: (context) => BookmarkedPostsModel()..init(),
-        child: SafeArea(
           child: Scaffold(
             backgroundColor: kLightPink,
             appBar: AppBar(
@@ -30,8 +29,7 @@ class BookmarkedPostsPage extends StatelessWidget {
             body: Consumer<BookmarkedPostsModel>(
                 builder: (context, model, child) {
               final List<Post> bookmarkedPosts = model.posts;
-              return SafeArea(
-                child: LoadingSpinner(
+              return LoadingSpinner(
                   inAsyncCall: model.isModalLoading,
                   child: RefreshIndicator(
                     onRefresh: () => model.getPostsWithReplies,
@@ -58,11 +56,9 @@ class BookmarkedPostsPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
-              );
+                );
             }),
           ),
-        ),
       ),
     );
   }

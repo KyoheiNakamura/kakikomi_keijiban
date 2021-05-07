@@ -13,7 +13,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: kDeepDarkPink, // status bar color
-    statusBarBrightness: Brightness.dark, //status bar brightness
+    statusBarBrightness: Brightness.light, //status bar brightness
     // statusBarIconBrightness: Brightness.light, //status barIcon brightness
     // systemNavigationBarColor: Colors.blue, // navigation bar color
     // systemNavigationBarDividerColor: Colors.greenAccent,//Navigation bar divider color

@@ -181,7 +181,7 @@ class AddPostPage extends StatelessWidget
                                         child: Icon(
                                           Icons.category_outlined,
                                           color: model.isCategoriesValid
-                                              ? kLightGrey
+                                              ? kGrey
                                               : kDarkPink,
                                         ),
                                       ),
@@ -238,7 +238,7 @@ class AddPostPage extends StatelessWidget
                                     '5つ以内で選択してください',
                                     style: TextStyle(
                                       fontSize: 12.0,
-                                      color: kLightGrey,
+                                      color: kGrey,
                                     ),
                                   ),
                                 ],
