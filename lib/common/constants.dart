@@ -24,7 +24,7 @@ const List<Map<String, String>> kOnBoardingData = [
   },
 ];
 
-const List<String> kInitialNotificationSetting = [
+const List<String> kInitialpushNoticesSetting = [
   'replyToMyPost',
   // 'replyToMyReply',
 ];

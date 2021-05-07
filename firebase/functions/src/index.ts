@@ -69,7 +69,7 @@ export const sendPushNotificationToTopicWhenPostIsCreated =
       });
 
 // deviceごとに通知を受け取るか否かを設定できるようにしよう。
-// ↑トークンの情報がいるっぽい: users/{userId}/notifications/{notificationId}の型を
+// ↑トークンの情報がいるっぽい: users/{userId}/pushNoticesSetting/{notificationId}の型を
 // Map{key: token, value: topic}とかにすると良き？？
 export const sendPushNotificationWhenReplyIsCreated =
   functions.region("asia-northeast1")
@@ -84,10 +84,11 @@ export const sendPushNotificationWhenReplyIsCreated =
               .get();
           const notification = "replyToMyPost";
           const isNotificationAllowed =
-            userDoc.data()?.notifications.includes(notification);
+            userDoc.data()?.pushNoticesSetting.includes(notification);
           if (isNotificationAllowed) {
+            const nickname = snapshot.data().nickname;
             // const title = "New Reply To Your Post!";
-            const title = "投稿に返信がされました";
+            const title = `${nickname}さんからの返信があります`;
             // const body = "あなたの投稿に返信があります😘";
             const body = snapshot.data().body;
             const tokensSnapshot = await admin.firestore()
@@ -142,10 +143,11 @@ export const sendPushNotificationWhenReplyToReplyIsCreated =
           // 実際返信は返信だし。
           const notification = "replyToMyPost";
           const isNotificationAllowed =
-            userDoc.data()?.notifications.includes(notification);
+            userDoc.data()?.pushNoticesSetting.includes(notification);
           if (isNotificationAllowed) {
+            const nickname = snapshot.data().nickname;
             // const title = "New Reply To Your Reply!";
-            const title = "返信に返信がされました";
+            const title = `${nickname}さんからの返信があります`;
             // const body = "あなたの返信に返信があります🤩";
             const body = snapshot.data().body;
             const tokensSnapshot = await admin.firestore()

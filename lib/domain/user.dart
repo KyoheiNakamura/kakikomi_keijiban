@@ -15,14 +15,12 @@ class User {
     this.postCount = doc['postCount'];
     final List<dynamic> _topics = doc['topics'];
     this.topics = List<String>.from(_topics);
-    final List<dynamic> _notifications = doc['notifications'];
-    this.notifications = List<String>.from(_notifications);
+    final List<dynamic> _pushNoticesSetting = doc['pushNoticesSetting'];
+    this.pushNoticesSetting = List<String>.from(_pushNoticesSetting);
     // final createdDate = doc['createdAt'].toDate();
     // this._createdAt = createdDate;
-    // if (doc['updatedAt'] != null) {
-    //   final updatedDate = doc['updatedAt'].toDate();
-    //   this._updatedAt = updatedDate;
-    // }
+    // final updatedDate = doc['updatedAt'].toDate();
+    // this._updatedAt = updatedDate;
   }
 
   String id = '';
@@ -33,7 +31,7 @@ class User {
   String area = '';
   int postCount = 0;
   List<String> topics = [];
-  List<String> notifications = [];
+  List<String> pushNoticesSetting = [];
   DateTime? _createdAt;
   DateTime? _updatedAt;
 

@@ -27,7 +27,7 @@ class SelectRegistrationMethodModel extends ChangeNotifier {
       await userDocRef.update({
         'postCount': AppModel.user!.postCount,
         'topics': AppModel.user!.topics,
-        'notifications': AppModel.user!.notifications,
+        'pushNoticesSetting': AppModel.user!.pushNoticesSetting,
         'updatedAt': serverTimestamp(),
       });
       await AppModel.reloadUser();

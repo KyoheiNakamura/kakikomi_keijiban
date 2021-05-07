@@ -32,7 +32,7 @@ class AppModel {
             'area': '',
             'postCount': 0,
             'topics': [],
-            'notifications': kInitialNotificationSetting,
+            'pushNoticesSetting': kInitialpushNoticesSetting,
             'createdAt': serverTimestamp(),
             'updatedAt': serverTimestamp(),
           });
