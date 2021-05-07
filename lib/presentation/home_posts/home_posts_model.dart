@@ -10,6 +10,7 @@ import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/my_replies/my_replies_page.dart';
+import 'package:kakikomi_keijiban/presentation/notices/notices_page.dart';
 import 'package:kakikomi_keijiban/presentation/on_boarding/on_boarding_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -389,12 +390,14 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     } else if (initialMessage?.data['page'] == 'MyPostsPage') {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => MyPostsPage()),
+        // MaterialPageRoute(builder: (context) => MyPostsPage()),
+        MaterialPageRoute(builder: (context) => NoticesPage()),
       );
     } else if (initialMessage?.data['page'] == 'MyRepliesPage') {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => MyRepliesPage()),
+        // MaterialPageRoute(builder: (context) => MyRepliesPage()),
+        MaterialPageRoute(builder: (context) => NoticesPage()),
       );
     }
 

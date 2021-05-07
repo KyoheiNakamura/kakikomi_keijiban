@@ -7,7 +7,7 @@ class NoticesModel extends ChangeNotifier {
   List<Notice> notices = [];
 
   QueryDocumentSnapshot? lastVisibleOfTheBatch;
-  int loadLimit = 10;
+  int loadLimit = 8;
   // bool isPostsExisting = false;
   bool canLoadMore = false;
   bool isLoading = false;

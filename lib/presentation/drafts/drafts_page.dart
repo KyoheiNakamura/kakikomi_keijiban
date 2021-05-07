@@ -33,7 +33,7 @@ class DraftsPage extends StatelessWidget {
                     child: RefreshIndicator(
                       onRefresh: () => model.getDrafts(),
                       child: ListView.builder(
-                        padding: EdgeInsets.only(top: 30.0),
+                        padding: EdgeInsets.only(top: 30, bottom: 60),
                         itemBuilder: (BuildContext context, int index) {
                           final post = drafts[index];
                           return Column(

@@ -13,7 +13,7 @@ class SearchResultPostsModel extends ChangeNotifier
   List<Post> get posts => _searchedPosts;
 
   QueryDocumentSnapshot? lastVisibleOfTheBatch;
-  int loadLimit = 10;
+  int loadLimit = 8;
   // bool isPostsExisting = false;
   bool canLoadMore = false;
   bool isLoading = false;

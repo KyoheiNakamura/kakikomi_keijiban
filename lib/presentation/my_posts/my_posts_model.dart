@@ -14,7 +14,7 @@ class MyPostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> get loadPostsWithReplies => _loadMyPostsWithReplies();
 
   QueryDocumentSnapshot? lastVisibleOfTheBatch;
-  int loadLimit = 10;
+  int loadLimit = 8;
   // bool isPostsExisting = false;
   bool canLoadMore = false;
   bool isLoading = false;

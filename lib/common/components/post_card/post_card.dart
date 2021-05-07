@@ -7,6 +7,7 @@ import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/common/mixin/format_poster_data_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply/add_reply_page.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
+import 'package:kakikomi_keijiban/presentation/post_detail/post_detail_model.dart';
 import 'package:kakikomi_keijiban/presentation/search_result_posts/search_result_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/update_post/update_post_page.dart';
 import 'package:provider/provider.dart';
@@ -337,10 +338,12 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                 oldPost: post,
                                 indexOfPost: indexOfPost,
                               )
-                            : passedModel.refreshThePostOfPostsAfterUpdated(
-                                oldPost: post,
-                                indexOfPost: indexOfPost,
-                              );
+                            : passedModel != PostDetailModel
+                                ? passedModel.refreshThePostOfPostsAfterUpdated(
+                                    oldPost: post,
+                                    indexOfPost: indexOfPost,
+                                  )
+                                : passedModel.getPost();
                       },
                     ),
                   )

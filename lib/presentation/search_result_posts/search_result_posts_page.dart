@@ -31,7 +31,7 @@ class SearchResultPostsPage extends StatelessWidget {
                   child: ScrollBottomNotificationListener(
                     model: model,
                     child: ListView.builder(
-                      padding: EdgeInsets.only(top: 30.0),
+                      padding: EdgeInsets.only(top: 30, bottom: 60),
                       itemBuilder: (BuildContext context, int index) {
                         final post = chosenCategoryPosts[index];
                         return Column(

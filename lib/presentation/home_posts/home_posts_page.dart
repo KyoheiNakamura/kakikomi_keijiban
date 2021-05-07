@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'package:kakikomi_keijiban/common/components/scroll_bottom_notification_listener.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/account_drawer.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
