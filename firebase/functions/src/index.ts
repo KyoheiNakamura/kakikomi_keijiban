@@ -110,6 +110,10 @@ export const sendPushNotificationWhenReplyIsCreated =
                 .doc(userId)
                 .collection("notices")
                 .doc();
+            const userDocRef = admin.firestore()
+                .collection("users")
+                .doc(userId);
+            const badges = {notice: true};
             // プッシュ通知が許可されているとき
             if (isPushNoticeAllowed) {
               const tokensSnapshot = await admin.firestore()
@@ -132,7 +136,7 @@ export const sendPushNotificationWhenReplyIsCreated =
                     },
                   })));
               // 通知一覧（notices）に追加する
-              return noticeDocRef.set({
+              await noticeDocRef.set({
                 id: noticeDocRef.id,
                 userId: userId,
                 postId: postId,
@@ -144,9 +148,13 @@ export const sendPushNotificationWhenReplyIsCreated =
                 isRead: false,
                 createdAt: serverTimestamp,
               });
+              // usersのbadgesフィールドに{notice: true}を入れる
+              return userDocRef.update({
+                badges: badges,
+              });
             } else {
               // 通知（notices）に追加する
-              return noticeDocRef.set({
+              await noticeDocRef.set({
                 id: noticeDocRef.id,
                 userId: userId,
                 postId: postId,
@@ -157,6 +165,10 @@ export const sendPushNotificationWhenReplyIsCreated =
                 emotion: emotion != null ? emotion : "",
                 isRead: false,
                 createdAt: serverTimestamp,
+              });
+              // usersのbadgesフィールドに{notice: true}を入れる
+              return userDocRef.update({
+                badges: badges,
               });
             }
           } else {
@@ -190,7 +202,7 @@ export const sendPushNotificationWhenReplyToReplyIsCreated =
         // replyのuserId（replierId）と異なるとき
         if (replierId != repliedUserId) {
           if (snapshot) {
-            const userDoc = await admin.firestore()
+            const repliedUserDoc = await admin.firestore()
                 .collection("users")
                 .doc(repliedUserId)
                 .get();
@@ -198,7 +210,7 @@ export const sendPushNotificationWhenReplyToReplyIsCreated =
             // 実際返信は返信だし。
             const notification = "replyToMyPost";
             const isPushNoticeAllowed =
-              userDoc.data()?.pushNoticesSetting.includes(notification);
+              repliedUserDoc.data()?.pushNoticesSetting.includes(notification);
             const nickname = snapshot.data().nickname;
             // const title = "New Reply To Your Reply!";
             const title = `${nickname}さんからの返信があります`;
@@ -218,6 +230,10 @@ export const sendPushNotificationWhenReplyToReplyIsCreated =
                 .doc(repliedUserId)
                 .collection("notices")
                 .doc();
+            const repliedUserDocRef = admin.firestore()
+                .collection("users")
+                .doc(repliedUserId);
+            const badges = {notice: true};
             // プッシュ通知が許可されているとき
             if (isPushNoticeAllowed) {
               const tokensSnapshot = await admin.firestore()
@@ -240,7 +256,7 @@ export const sendPushNotificationWhenReplyToReplyIsCreated =
                     },
                   })));
               // 通知一覧（notices）に追加する
-              return noticeDocRef.set({
+              await noticeDocRef.set({
                 id: noticeDocRef.id,
                 userId: repliedUserId,
                 postId: postId,
@@ -252,9 +268,13 @@ export const sendPushNotificationWhenReplyToReplyIsCreated =
                 isRead: false,
                 createdAt: serverTimestamp,
               });
+              // usersのbadgesフィールドに{notice: true}を入れる
+              return repliedUserDocRef.update({
+                badges: badges,
+              });
             } else {
               // 通知一覧（notices）に追加する
-              return noticeDocRef.set({
+              await noticeDocRef.set({
                 id: noticeDocRef.id,
                 userId: repliedUserId,
                 postId: postId,
@@ -265,6 +285,10 @@ export const sendPushNotificationWhenReplyToReplyIsCreated =
                 emotion: emotion != null ? emotion : "",
                 isRead: false,
                 createdAt: serverTimestamp,
+              });
+              // usersのbadgesフィールドに{notice: true}を入れる
+              return repliedUserDocRef.update({
+                badges: badges,
               });
             }
           } else {

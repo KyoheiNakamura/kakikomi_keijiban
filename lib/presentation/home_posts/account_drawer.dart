@@ -158,12 +158,12 @@ class ChangingDrawerHeader extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    AppModel.user!.nickname,
+                    (AppModel.user?.nickname ?? ''),
                     style: TextStyle(fontSize: 24),
                   ),
                   SizedBox(height: 8.0),
                   Text(
-                    AppModel.user!.email ?? '',
+                    (AppModel.user?.email ?? ''),
                     style: TextStyle(color: kGrey),
                   ),
                 ],

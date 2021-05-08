@@ -51,8 +51,12 @@ class HomePostsPage extends StatelessWidget {
                               },
                             ),
                             IconButton(
-                              icon:
-                                  Icon(Icons.notifications_outlined, size: 24),
+                              icon: Icon(
+                                model.isNoticeExisting == true
+                                    ? Icons.notifications_active_outlined
+                                    : Icons.notifications_outlined,
+                                size: 24,
+                              ),
                               onPressed: () async {
                                 await Navigator.push(
                                   context,
@@ -60,6 +64,7 @@ class HomePostsPage extends StatelessWidget {
                                     builder: (context) => NoticesPage(),
                                   ),
                                 );
+                                model.confirmIsNoticeExisting();
                               },
                             ),
                           ],

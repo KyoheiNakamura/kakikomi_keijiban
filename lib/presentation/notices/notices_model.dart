@@ -7,7 +7,7 @@ class NoticesModel extends ChangeNotifier {
   List<Notice> notices = [];
 
   QueryDocumentSnapshot? lastVisibleOfTheBatch;
-  int loadLimit = 10;
+  int loadLimit = 15;
   // bool isPostsExisting = false;
   bool canLoadMore = false;
   bool isLoading = false;
@@ -52,7 +52,12 @@ class NoticesModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _removeNoticeBadgeIcon() async {}
+  Future<void> _removeNoticeBadgeIcon() async {
+    final userDocRef = firestore.collection('users').doc(auth.currentUser?.uid);
+    await userDocRef.update({
+      'badges': {'notice': false},
+    });
+  }
 
   void startLoading() {
     isLoading = true;
