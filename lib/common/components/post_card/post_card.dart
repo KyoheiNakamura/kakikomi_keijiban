@@ -7,6 +7,7 @@ import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/common/mixin/format_poster_data_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply/add_reply_page.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
+import 'package:kakikomi_keijiban/presentation/post_detail/post_detail_model.dart';
 import 'package:kakikomi_keijiban/presentation/search_result_posts/search_result_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/update_post/update_post_page.dart';
 import 'package:provider/provider.dart';
@@ -95,7 +96,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                       /// posterData
                       Text(
                         getFormattedPosterData(post),
-                        style: TextStyle(color: kLightGrey),
+                        style: TextStyle(color: kGrey),
                       ),
 
                       /// body
@@ -109,7 +110,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                   ? TextSpan(
                                       text: '（編集済み）',
                                       style: TextStyle(
-                                        color: kLightGrey,
+                                        color: kGrey,
                                         fontSize: 15.0,
                                       ),
                                     )
@@ -129,7 +130,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                         alignment: Alignment.centerRight,
                         child: Text(
                           post.createdAt,
-                          style: TextStyle(color: kLightGrey),
+                          style: TextStyle(color: kGrey),
                         ),
                       ),
                       Row(
@@ -216,7 +217,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                         children: [
                                           Icon(
                                             Icons.favorite_border_outlined,
-                                            color: kLightGrey,
+                                            color: kGrey,
                                           ),
                                           Image.asset(
                                             'lib/assets/images/anpanman_emoji.gif',
@@ -319,7 +320,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                     child: IconButton(
                       icon: Icon(
                         Icons.edit,
-                        color: kLightGrey,
+                        color: kGrey,
                       ),
                       onPressed: () async {
                         await Navigator.push(
@@ -337,10 +338,12 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                 oldPost: post,
                                 indexOfPost: indexOfPost,
                               )
-                            : passedModel.refreshThePostOfPostsAfterUpdated(
-                                oldPost: post,
-                                indexOfPost: indexOfPost,
-                              );
+                            : passedModel != PostDetailModel
+                                ? passedModel.refreshThePostOfPostsAfterUpdated(
+                                    oldPost: post,
+                                    indexOfPost: indexOfPost,
+                                  )
+                                : passedModel.getPost();
                       },
                     ),
                   )
@@ -363,7 +366,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                     child: IconButton(
                       icon: Icon(
                         Icons.edit,
-                        color: kLightGrey,
+                        color: kGrey,
                       ),
                       onPressed: () async {
                         final resultForDraftButton = await Navigator.push(
@@ -390,12 +393,11 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
             /// EmotionImageButton
             Positioned(
               // top: 20,
-              // width: 60.0,
-              // height: 60.0,
               width: 70.0,
               height: 70.0,
               child: GestureDetector(
-                child: kEmotionIcons[post.emotion] != null
+                child: kEmotionIcons[post.emotion] != null ||
+                        kEmotionIcons[post.emotion] != ''
                     ? Image.asset(kEmotionIcons[post.emotion]!)
                     : FlutterLogo(),
                 onTap: () async {
@@ -429,7 +431,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                         : IconButton(
                             icon: Icon(
                               Icons.star_border_outlined,
-                              color: kLightGrey,
+                              color: kGrey,
                             ),
                             onPressed: () async {
                               model.turnOnStar(post);

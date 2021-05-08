@@ -37,6 +37,7 @@ class App extends StatelessWidget {
             elevation: 2,
             centerTitle: true,
             textTheme: TextTheme(headline6: kAppBarTextStyle),
+            systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: kDarkPink),
           ),
           fontFamily: 'GenShinGothic',
           pageTransitionsTheme: PageTransitionsTheme(

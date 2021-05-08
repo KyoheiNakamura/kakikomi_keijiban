@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
@@ -32,7 +31,8 @@ class AppModel {
             'area': '',
             'postCount': 0,
             'topics': [],
-            'notifications': kInitialNotificationSetting,
+            'pushNoticesSetting': kInitialpushNoticesSetting,
+            'badges': {},
             'createdAt': serverTimestamp(),
             'updatedAt': serverTimestamp(),
           });
@@ -54,17 +54,17 @@ class AppModel {
   }
 
   Future<void> _saveTokenToFirebase(String? token) async {
-    String? userId = Auth.FirebaseAuth.instance.currentUser?.uid;
+    String? userId = auth.currentUser?.uid;
 
     if (userId != null) {
-      final fetchedToken = await FirebaseFirestore.instance
+      final fetchedToken = await firestore
           .collection('users')
           .doc(userId)
           .collection('tokens')
           .doc(token)
           .get();
       if (!fetchedToken.exists) {
-        await FirebaseFirestore.instance
+        await firestore
             .collection('users')
             .doc(userId)
             .collection('tokens')
@@ -78,12 +78,10 @@ class AppModel {
 
   static Future<void> reloadUser() async {
     try {
-      final currentUser = Auth.FirebaseAuth.instance.currentUser;
+      final currentUser = auth.currentUser;
       if (currentUser != null) {
-        final userDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(currentUser.uid)
-            .get();
+        final userDoc =
+            await firestore.collection('users').doc(currentUser.uid).get();
         user = User(userDoc);
       }
     } on Exception catch (e) {

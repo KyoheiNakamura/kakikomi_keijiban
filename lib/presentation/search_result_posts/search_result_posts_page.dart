@@ -15,8 +15,7 @@ class SearchResultPostsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<SearchResultPostsModel>(
       create: (context) => SearchResultPostsModel()..init(searchWord),
-      child: SafeArea(
-        child: Scaffold(
+      child: Scaffold(
           backgroundColor: kLightPink,
           appBar: AppBar(
             toolbarHeight: 50,
@@ -25,15 +24,14 @@ class SearchResultPostsPage extends StatelessWidget {
           body: Consumer<SearchResultPostsModel>(
               builder: (context, model, child) {
             final List<Post> chosenCategoryPosts = model.posts;
-            return SafeArea(
-              child: LoadingSpinner(
+            return LoadingSpinner(
                 inAsyncCall: model.isModalLoading,
                 child: RefreshIndicator(
                   onRefresh: () => model.getPostsWithRepliesChosenField(),
                   child: ScrollBottomNotificationListener(
                     model: model,
                     child: ListView.builder(
-                      padding: EdgeInsets.only(top: 30.0),
+                      padding: EdgeInsets.only(top: 30, bottom: 60),
                       itemBuilder: (BuildContext context, int index) {
                         final post = chosenCategoryPosts[index];
                         return Column(
@@ -53,11 +51,9 @@ class SearchResultPostsPage extends StatelessWidget {
                     ),
                   ),
                 ),
-              ),
-            );
+              );
           }),
         ),
-      ),
     );
   }
 }

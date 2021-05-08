@@ -19,8 +19,7 @@ class MyRepliesPage extends StatelessWidget {
       },
       child: ChangeNotifierProvider<MyRepliesModel>(
         create: (context) => MyRepliesModel()..init(),
-        child: SafeArea(
-          child: Scaffold(
+        child: Scaffold(
             backgroundColor: kLightPink,
             appBar: AppBar(
               toolbarHeight: 50,
@@ -28,15 +27,14 @@ class MyRepliesPage extends StatelessWidget {
             ),
             body: Consumer<MyRepliesModel>(builder: (context, model, child) {
               final List<Post> postsWithMyReplies = model.posts;
-              return SafeArea(
-                child: LoadingSpinner(
+              return LoadingSpinner(
                   inAsyncCall: model.isModalLoading,
                   child: RefreshIndicator(
                     onRefresh: () => model.getPostsWithReplies,
                     child: ScrollBottomNotificationListener(
                       model: model,
                       child: ListView.builder(
-                        padding: EdgeInsets.only(top: 30.0),
+                        padding: EdgeInsets.only(top: 30, bottom: 60),
                         itemBuilder: (BuildContext context, int index) {
                           final post = postsWithMyReplies[index];
                           return Column(
@@ -56,11 +54,9 @@ class MyRepliesPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
-              );
+                );
             }),
           ),
-        ),
       ),
     );
   }

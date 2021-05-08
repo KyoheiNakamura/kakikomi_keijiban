@@ -5,14 +5,14 @@ import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
 
 class SignUpModel extends ChangeNotifier {
-  bool isLoading = false;
+  bool isModalLoading = false;
 
   String enteredEmail = '';
   String enteredPassword = '';
   String enteredNickname = '';
 
   Future signUpAndSignInWithEmailAndUpgradeAnonymous() async {
-    startLoading();
+    startModalLoading();
 
     try {
       final AuthCredential credential = EmailAuthProvider.credential(
@@ -20,16 +20,12 @@ class SignUpModel extends ChangeNotifier {
         password: enteredPassword,
       );
       await auth.currentUser!.linkWithCredential(credential);
-
       await auth.currentUser!.reload();
-
       // Auth.UserのcurrentUserにdisplayNameをセットした。
       await auth.currentUser!.updateProfile(
         displayName: enteredNickname,
       );
-
       await AppModel.reloadUser();
-
       // anonymousのuserDocRefのデータを、email認証で登録したユーザーのデータでupdateを使って更新している。
       final userDocRef =
           firestore.collection('users').doc(auth.currentUser!.uid);
@@ -38,7 +34,8 @@ class SignUpModel extends ChangeNotifier {
         'nickname': enteredNickname,
         'postCount': AppModel.user!.postCount,
         'topics': AppModel.user!.topics,
-        'notifications': AppModel.user!.notifications,
+        'pushNoticesSetting': AppModel.user!.pushNoticesSetting,
+        'badges': AppModel.user!.badges,
         'updatedAt': serverTimestamp(),
       });
       await AppModel.reloadUser();
@@ -58,62 +55,17 @@ class SignUpModel extends ChangeNotifier {
       print(e.toString());
       throw ('エラーが発生しました。\nもう一度お試し下さい。');
     } finally {
-      stopLoading();
+      stopModalLoading();
     }
   }
 
-  // Future signUpAndSignInWithGoogleAndUpgradeAnonymous() async {
-  //   startLoading();
-  //
-  //   try {
-  //     final GoogleSignInAccount googleUser = (await GoogleSignIn().signIn())!;
-  //     final GoogleSignInAuthentication googleAuth =
-  //         await googleUser.authentication;
-  //     final OAuthCredential credential = GoogleAuthProvider.credential(
-  //       accessToken: googleAuth.accessToken,
-  //       idToken: googleAuth.idToken,
-  //     );
-  //     await auth.currentUser!.linkWithCredential(credential);
-  //     await auth.currentUser!.reload();
-  //     // anonymousのuserDocRefのデータを、google認証で登録したユーザーのデータでupdateを使って更新している。
-  //     final userDocRef =
-  //         firestore.collection('users').doc(auth.currentUser!.uid);
-  //     // setはuserDocRefのDocument idをもつDocumentにデータを保存する。
-  //     await userDocRef.update({
-  //       'nickname': auth.currentUser!.displayName,
-  //       'postCount': AppModel.user!.postCount,
-  //       'topics': AppModel.user!.topics,
-  //       'notifications': AppModel.user!.notifications,
-  //       'updatedAt': serverTimestamp(),
-  //     });
-  //     await AppModel.reloadUser();
-  //   } on FirebaseAuthException catch (e) {
-  //     if (e.code == 'email-already-in-use') {
-  //       print('このメールアドレスはすでに使用されています。');
-  //       throw ('このメールアドレスはすでに使用されています。');
-  //     } else if (e.code == 'invalid-email') {
-  //       print('このメールアドレスは形式が正しくありません。');
-  //       throw ('このメールアドレスは形式が正しくありません。');
-  //       // Todo createUserWithEmailAndPassword()の他の例外処理も書こう
-  //     } else {
-  //       print(e.toString());
-  //       throw e.toString();
-  //     }
-  //   } on Exception catch (e) {
-  //     print(e.toString());
-  //     throw e.toString();
-  //   } finally {
-  //     stopLoading();
-  //   }
-  // }
-
-  void startLoading() {
-    isLoading = true;
+  void startModalLoading() {
+    isModalLoading = true;
     notifyListeners();
   }
 
-  void stopLoading() {
-    isLoading = false;
+  void stopModalLoading() {
+    isModalLoading = false;
     notifyListeners();
   }
 

@@ -32,8 +32,8 @@ class UpdatePushNotificationModel extends ChangeNotifier {
   }
 
   void initReplyToMyPost(DocumentSnapshot userSnapshot) {
-    final List<dynamic> notifications = userSnapshot['notifications'];
-    if (notifications.contains('replyToMyPost')) {
+    final List<dynamic> pushNoticesSetting = userSnapshot['pushNoticesSetting'];
+    if (pushNoticesSetting.contains('replyToMyPost')) {
       this.isReplyToMyPostAllowed = true;
     } else {
       this.isReplyToMyPostAllowed = false;
@@ -41,8 +41,8 @@ class UpdatePushNotificationModel extends ChangeNotifier {
   }
 
   // void initReplyToMyReply(DocumentSnapshot userSnapshot) {
-  //   final List<dynamic> notifications = userSnapshot['notifications'];
-  //   if (notifications.contains('replyToMyReply')) {
+  //   final List<dynamic> pushNoticesSetting = userSnapshot['pushNoticesSetting'];
+  //   if (pushNoticesSetting.contains('replyToMyReply')) {
   //     this.isReplyToMyReplyAllowed = true;
   //   } else {
   //     this.isReplyToMyReplyAllowed = false;
@@ -79,14 +79,14 @@ class UpdatePushNotificationModel extends ChangeNotifier {
       isReplyToMyPostAllowed = true;
       notifyListeners();
       await userRef.update({
-        'notifications': FieldValue.arrayUnion([notification]),
+        'pushNoticesSetting': FieldValue.arrayUnion([notification]),
       });
     } else {
       // doNotAllowReplyToMyPost
       isReplyToMyPostAllowed = false;
       notifyListeners();
       await userRef.update({
-        'notifications': FieldValue.arrayRemove([notification]),
+        'pushNoticesSetting': FieldValue.arrayRemove([notification]),
       });
     }
   }
@@ -99,14 +99,14 @@ class UpdatePushNotificationModel extends ChangeNotifier {
   //     isReplyToMyReplyAllowed = true;
   //     notifyListeners();
   //     await userRef.update({
-  //       'notifications': FieldValue.arrayUnion([notification]),
+  //       'pushNoticesSetting': FieldValue.arrayUnion([notification]),
   //     });
   //   } else {
   //     // doNotAllowReplyToMyReply
   //     isReplyToMyReplyAllowed = false;
   //     notifyListeners();
   //     await userRef.update({
-  //       'notifications': FieldValue.arrayRemove([notification]),
+  //       'pushNoticesSetting': FieldValue.arrayRemove([notification]),
   //     });
   //   }
   // }

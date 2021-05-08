@@ -18,7 +18,6 @@ class DraftsPage extends StatelessWidget {
       },
       child: ChangeNotifierProvider<DraftsModel>(
         create: (context) => DraftsModel()..init(),
-        child: SafeArea(
           child: Scaffold(
             backgroundColor: kLightPink,
             appBar: AppBar(
@@ -27,15 +26,14 @@ class DraftsPage extends StatelessWidget {
             ),
             body: Consumer<DraftsModel>(builder: (context, model, child) {
               final List<Post> drafts = model.posts;
-              return SafeArea(
-                child: LoadingSpinner(
+              return LoadingSpinner(
                   inAsyncCall: model.isModalLoading,
                   child: Container(
                     color: kLightPink,
                     child: RefreshIndicator(
                       onRefresh: () => model.getDrafts(),
                       child: ListView.builder(
-                        padding: EdgeInsets.only(top: 30.0),
+                        padding: EdgeInsets.only(top: 30, bottom: 60),
                         itemBuilder: (BuildContext context, int index) {
                           final post = drafts[index];
                           return Column(
@@ -55,11 +53,9 @@ class DraftsPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                ),
-              );
+                );
             }),
           ),
-        ),
       ),
     );
   }

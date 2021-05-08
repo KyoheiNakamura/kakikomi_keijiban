@@ -28,7 +28,7 @@ service cloud.firestore {
         && 'area' in user && user.area is string
         && 'postCount' in user && user.postCount is int
         && 'topics' in user && user.topics is list
-        && 'notifications' in user && user.notifications is list
+        && 'pushNoticesSetting' in user && user.pushNoticesSetting is list
         && 'createdAt' in user && user.createdAt is timestamp
         && 'updatedAt' in user && user.updatedAt is timestamp
       ;
@@ -140,7 +140,7 @@ service cloud.firestore {
         && incomingData().postCount >= 0
         && incomingData().postCount < 10000
         && incomingData().topics.size() == 0
-        && incomingData().notifications.size() >= 0
+        && incomingData().pushNoticesSetting.size() >= 0
         && incomingData().createdAt == request.time
         && incomingData().updatedAt == request.time
       ;
@@ -160,7 +160,7 @@ service cloud.firestore {
       //   ||  incomingData().postCount == existingData().postCount - 1
       // )
         && incomingData().topics.size() >= 0
-        && incomingData().notifications.size() >= 0
+        && incomingData().pushNoticesSetting.size() >= 0
         && incomingData().createdAt == existingData().createdAt
         && incomingData().updatedAt == request.time
       ;

@@ -3,13 +3,13 @@ import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/mixin/provide_common_posts_method_mixin.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_page.dart';
-import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_page.dart';
-import 'package:kakikomi_keijiban/presentation/my_replies/my_replies_page.dart';
+import 'package:kakikomi_keijiban/presentation/notices/notices_page.dart';
 import 'package:kakikomi_keijiban/presentation/on_boarding/on_boarding_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -26,7 +26,7 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   QueryDocumentSnapshot? _myPostsLastVisible;
   QueryDocumentSnapshot? _bookmarkedPostsLastVisible;
 
-  int _loadLimit = 8;
+  int _loadLimit = 5;
   // bool isPostsExisting = false;
 
   bool _allPostsCanLoadMore = false;
@@ -36,10 +36,13 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   bool isLoading = false;
   bool isModalLoading = false;
 
+  bool isNoticeExisting = false;
+
   Future<void> init(BuildContext context) async {
     // 下二行await不要論
     await _showOnBoardingPage(context);
     await _openSpecifiedPageByNotification(context);
+    confirmIsNoticeExisting();
     startModalLoading();
     await _getAllPostsWithReplies();
     stopModalLoading();
@@ -382,40 +385,46 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     // If the message also contains a data property with a "type" of "chat",
     // navigate to a chat screen
     if (initialMessage?.data['page'] == 'HomePostsPage') {
-      Navigator.push(
+      await Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => HomePostsPage()),
       );
     } else if (initialMessage?.data['page'] == 'MyPostsPage') {
-      Navigator.push(
+      await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => MyPostsPage()),
+        // MaterialPageRoute(builder: (context) => MyPostsPage()),
+        MaterialPageRoute(builder: (context) => NoticesPage()),
       );
+      await confirmIsNoticeExisting();
     } else if (initialMessage?.data['page'] == 'MyRepliesPage') {
-      Navigator.push(
+      await Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => MyRepliesPage()),
+        // MaterialPageRoute(builder: (context) => MyRepliesPage()),
+        MaterialPageRoute(builder: (context) => NoticesPage()),
       );
+      await confirmIsNoticeExisting();
     }
 
     // Also handle any interaction when the app is in the background via a
     // Stream listener
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage? message) {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage? message) async {
       if (message?.data['page'] == 'HomePostsPage') {
-        Navigator.push(
+        await Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => HomePostsPage()),
         );
       } else if (message?.data['page'] == 'MyPostsPage') {
-        Navigator.push(
+        await Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MyPostsPage()),
+          MaterialPageRoute(builder: (context) => NoticesPage()),
         );
+        await confirmIsNoticeExisting();
       } else if (message?.data['page'] == 'MyRepliesPage') {
-        Navigator.push(
+        await Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MyRepliesPage()),
+          MaterialPageRoute(builder: (context) => NoticesPage()),
         );
+        await confirmIsNoticeExisting();
       }
     });
   }
@@ -433,6 +442,12 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
 
   Future<void> signOut() async {
     await auth.signOut();
+    notifyListeners();
+  }
+
+  Future<void> confirmIsNoticeExisting() async {
+    await AppModel.reloadUser();
+    isNoticeExisting = (AppModel.user?.badges['notice'] ?? false);
     notifyListeners();
   }
 

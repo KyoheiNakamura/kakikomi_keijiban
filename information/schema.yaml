@@ -13,7 +13,8 @@ users:
   topics: list<string>
   # ↑同様、
   # Map{key: token, value: notification}
-  notifications: list<string>
+  pushNoticesSetting: list<string>
+  badges: map<string, bool>
   createdAt: timestamp
   updatedAt: timestamp
 
@@ -146,15 +147,18 @@ users:
     id: token
 
   # 自分への返信のpush通知があった際に追加しよう（新着のpush通知は追加しない）
-  # タップしたらそのpostに飛べるようにしよう
-  # /users/{userId}/notifications
-  notifications(仮):
+  # タップしたらそのpostに飛べるようにしよう（通知から飛ぶ用に投稿詳細ページを作ろう）
+  # /users/{userId}/Notices
+  notices:
     id: auto
     userId: auth.uid
     postId: post.id
-    replierId:
+    posterId: post.userId
     title: string
     body: string
+    nickname: string
+    emotion: string
+    isRead: bool
     createdAt: timestamp
 
   # 各ユーザーの機密データ

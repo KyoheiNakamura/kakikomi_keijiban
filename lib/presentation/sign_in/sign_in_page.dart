@@ -20,7 +20,7 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
         body: Consumer<SignInModel>(
           builder: (context, model, child) {
             return LoadingSpinner(
-              inAsyncCall: model.isLoading,
+              inAsyncCall: model.isModalLoading,
               child: SingleChildScrollView(
                 child: Form(
                   key: _formKey,
@@ -71,10 +71,7 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                                 if (_formKey.currentState!.validate()) {
                                   try {
                                     await model.signInWithEmailAndPassword();
-                                    // Navigator.of(context).popUntil(
-                                    //   ModalRoute.withName('/'),
-                                    // );
-                                    Navigator.pop(context);
+                                    Navigator.pop(context, 'signedIn');
                                   } catch (e) {
                                     await showExceptionDialog(
                                       context,
@@ -143,10 +140,11 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                               onPressed: () async {
                                 try {
                                   await model.signInWithGoogle();
-                                  // Navigator.of(context).popUntil(
-                                  //   ModalRoute.withName('/'),
-                                  // );
-                                  Navigator.pop(context);
+                                  if (model.oldUser != model.newUser) {
+                                    Navigator.pop(context, 'signedIn');
+                                  } else {
+                                    Navigator.pop(context);
+                                  }
                                 } catch (e) {
                                   await showExceptionDialog(
                                     context,
