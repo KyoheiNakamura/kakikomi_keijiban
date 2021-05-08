@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/config/constants.dart';
 
 mixin ShowExceptionDialogMixin {
   Future<void> showExceptionDialog(

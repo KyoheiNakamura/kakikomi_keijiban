@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/config/constants.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
-import 'package:kakikomi_keijiban/domain/user.dart';
+import 'package:kakikomi_keijiban/entity/user.dart';
 
 class AppModel {
   static User? user;

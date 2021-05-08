@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/config/constants.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:keyboard_actions/keyboard_actions_config.dart';
 

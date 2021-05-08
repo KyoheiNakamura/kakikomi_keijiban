@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
-import 'package:kakikomi_keijiban/common/components/post_card/post_card_model.dart';
-import 'package:kakikomi_keijiban/common/components/reply_card/reply_card_model.dart';
-import 'package:kakikomi_keijiban/common/components/reply_to_reply_card/reply_to_reply_card_model.dart';
-import 'package:kakikomi_keijiban/common/constants.dart';
-import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_page.dart';
+import 'package:kakikomi_keijiban/ui/components/post_card/post_card_model.dart';
+import 'package:kakikomi_keijiban/ui/components/reply_card/reply_card_model.dart';
+import 'package:kakikomi_keijiban/ui/components/reply_to_reply_card/reply_to_reply_card_model.dart';
+import 'package:kakikomi_keijiban/config/constants.dart';
+import 'package:kakikomi_keijiban/ui/posts/index_home_posts_page.dart';
 import 'package:provider/provider.dart';
 
 class App extends StatelessWidget {
@@ -49,7 +49,7 @@ class App extends StatelessWidget {
         ),
         initialRoute: '/',
         routes: {
-          '/': (context) => HomePostsPage(),
+          '/': (context) => IndexHomePostsPage(),
         },
       ),
     );

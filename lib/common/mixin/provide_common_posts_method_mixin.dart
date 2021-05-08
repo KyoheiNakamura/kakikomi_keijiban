@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
-import 'package:kakikomi_keijiban/domain/reply.dart';
-import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
+import 'package:kakikomi_keijiban/entity/post.dart';
+import 'package:kakikomi_keijiban/entity/reply.dart';
+import 'package:kakikomi_keijiban/entity/reply_to_reply.dart';
 
 mixin ProvideCommonPostsMethodMixin {
   Future<List<String>> getBookmarkedPostsIds() async {
