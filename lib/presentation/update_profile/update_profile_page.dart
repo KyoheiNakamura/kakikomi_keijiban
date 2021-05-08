@@ -18,7 +18,7 @@ class UpdateProfilePage extends StatelessWidget with ShowExceptionDialogMixin {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
-          title: Text('デフォルト入力設定'),
+          title: Text('プロフィール入力設定'),
         ),
         body: Consumer<UpdateProfileModel>(
           builder: (context, model, child) {
@@ -186,12 +186,13 @@ class UpdateProfilePage extends StatelessWidget with ShowExceptionDialogMixin {
                             child: Text(
                               '更新する',
                               style: TextStyle(
-                                color: kDarkPink,
+                                color: Colors.white,
                                 fontSize: 16,
                                 // fontWeight: FontWeight.bold,
                               ),
                             ),
                             style: OutlinedButton.styleFrom(
+                              backgroundColor: kDarkPink,
                               padding: EdgeInsets.symmetric(vertical: 12.0),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16.0),

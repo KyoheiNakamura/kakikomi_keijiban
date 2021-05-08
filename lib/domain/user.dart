@@ -17,6 +17,8 @@ class User {
     this.topics = List<String>.from(_topics);
     final List<dynamic> _pushNoticesSetting = doc['pushNoticesSetting'];
     this.pushNoticesSetting = List<String>.from(_pushNoticesSetting);
+    final Map<String, dynamic> _badges = doc['badges'];
+    this.badges = Map<String, bool>.from(_badges);
     // final createdDate = doc['createdAt'].toDate();
     // this._createdAt = createdDate;
     // final updatedDate = doc['updatedAt'].toDate();
@@ -32,6 +34,7 @@ class User {
   int postCount = 0;
   List<String> topics = [];
   List<String> pushNoticesSetting = [];
+  Map<String, bool> badges = {};
   DateTime? _createdAt;
   DateTime? _updatedAt;
 

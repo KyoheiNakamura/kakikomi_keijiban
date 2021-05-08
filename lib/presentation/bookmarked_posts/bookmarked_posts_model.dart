@@ -14,7 +14,7 @@ class BookmarkedPostsModel extends ChangeNotifier
   Future<void> get loadPostsWithReplies => _loadBookmarkedPostsWithReplies();
 
   QueryDocumentSnapshot? lastVisibleOfTheBatch;
-  int loadLimit = 8;
+  int loadLimit = 5;
   // bool isPostsExisting = false;
   bool canLoadMore = false;
   bool isLoading = false;

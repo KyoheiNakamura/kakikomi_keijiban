@@ -33,6 +33,7 @@ class AppModel {
             'postCount': 0,
             'topics': [],
             'pushNoticesSetting': kInitialpushNoticesSetting,
+            'badges': {},
             'createdAt': serverTimestamp(),
             'updatedAt': serverTimestamp(),
           });
@@ -78,7 +79,7 @@ class AppModel {
 
   static Future<void> reloadUser() async {
     try {
-      final currentUser = Auth.FirebaseAuth.instance.currentUser;
+      final currentUser = auth.currentUser;
       if (currentUser != null) {
         final userDoc = await FirebaseFirestore.instance
             .collection('users')

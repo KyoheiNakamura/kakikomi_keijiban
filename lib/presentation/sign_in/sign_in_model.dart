@@ -5,19 +5,23 @@ import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
 
 class SignInModel extends ChangeNotifier {
-  bool isLoading = false;
+  bool isModalLoading = false;
+
+  final String oldUser = auth.currentUser!.uid;
+  String newUser = '';
 
   String enteredEmail = '';
   String enteredPassword = '';
 
   Future signInWithEmailAndPassword() async {
-    startLoading();
+    startModalLoading();
 
     try {
       await auth.signInWithEmailAndPassword(
         email: enteredEmail,
         password: enteredPassword,
       );
+      newUser = auth.currentUser!.uid;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-email') {
         print('このメールアドレスは形式が正しくありません。');
@@ -36,22 +40,26 @@ class SignInModel extends ChangeNotifier {
       print(e.toString());
       throw ('エラーが発生しました。\nもう一度お試し下さい。');
     } finally {
-      stopLoading();
+      stopModalLoading();
     }
   }
 
   Future signInWithGoogle() async {
-    startLoading();
+    startModalLoading();
 
     try {
-      final GoogleSignInAccount googleUser = (await GoogleSignIn().signIn())!;
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final OAuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      await auth.signInWithCredential(credential);
+      final GoogleSignInAccount? googleUser = (await GoogleSignIn().signIn());
+      if (googleUser != null) {
+        final GoogleSignInAuthentication googleAuth =
+            await googleUser.authentication;
+        final OAuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        await auth.signInWithCredential(credential);
+      } else {
+        throw ('アカウントを選択してください。');
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'account-exists-with-different-credential') {
         print('このメールアドレスはすでに使用されています');
@@ -64,17 +72,17 @@ class SignInModel extends ChangeNotifier {
       print(e.toString());
       throw ('エラーが発生しました。\nもう一度お試し下さい。');
     } finally {
-      stopLoading();
+      stopModalLoading();
     }
   }
 
-  void startLoading() {
-    isLoading = true;
+  void startModalLoading() {
+    isModalLoading = true;
     notifyListeners();
   }
 
-  void stopLoading() {
-    isLoading = false;
+  void stopModalLoading() {
+    isModalLoading = false;
     notifyListeners();
   }
 

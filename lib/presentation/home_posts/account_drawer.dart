@@ -206,16 +206,16 @@ class ChangingDrawerHeader extends StatelessWidget {
                       backgroundColor: MaterialStateProperty.all(kDarkPink),
                     ),
                     onPressed: () async {
-                      // Navigator.pop(context);
-                      await Navigator.push(
+                      Navigator.pop(context);
+                      final result = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => SelectRegistrationMethodPage(),
                         ),
                       );
-                      model.reloadTabs();
-                      // model.getCurrentUser();
-                      // Navigator.pop(context);
+                      if (result == 'signedIn') {
+                        await model.reloadTabs();
+                      }
                     },
                   ),
                   SizedBox(height: 16.0),
@@ -225,15 +225,14 @@ class ChangingDrawerHeader extends StatelessWidget {
                       style: TextStyle(color: kDarkPink),
                     ),
                     onPressed: () async {
-                      // Navigator.pop(context);
-                      await Navigator.push(
+                      Navigator.pop(context);
+                      final result = await Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => SignInPage()),
                       );
-                      Navigator.pop(context);
-                      model.reloadTabs();
-                      // model.getCurrentUser();
-                      // Navigator.pop(context);
+                      if (result == 'signedIn') {
+                        await model.reloadTabs();
+                      }
                     },
                   )
                 ],

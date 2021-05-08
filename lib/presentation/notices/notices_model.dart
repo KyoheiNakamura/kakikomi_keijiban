@@ -7,7 +7,7 @@ class NoticesModel extends ChangeNotifier {
   List<Notice> notices = [];
 
   QueryDocumentSnapshot? lastVisibleOfTheBatch;
-  int loadLimit = 8;
+  int loadLimit = 10;
   // bool isPostsExisting = false;
   bool canLoadMore = false;
   bool isLoading = false;
@@ -15,12 +15,12 @@ class NoticesModel extends ChangeNotifier {
 
   Future<void> init() async {
     startModalLoading();
-    await _getMyNotices();
+    await getMyNotices();
     stopModalLoading();
     await _removeNoticeBadgeIcon();
   }
 
-  Future<void> _getMyNotices() async {
+  Future<void> getMyNotices() async {
     startLoading();
 
     Query queryBatch = firestore

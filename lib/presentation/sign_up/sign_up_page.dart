@@ -20,7 +20,7 @@ class SignUpPage extends StatelessWidget with ShowExceptionDialogMixin {
         body: Consumer<SignUpModel>(
           builder: (context, model, child) {
             return LoadingSpinner(
-              inAsyncCall: model.isLoading,
+              inAsyncCall: model.isModalLoading,
               child: SingleChildScrollView(
                 child: Form(
                   key: _formKey,
