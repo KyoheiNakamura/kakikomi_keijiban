@@ -57,18 +57,21 @@ const Map<String, String> kEmotionIcons = {
   '呼びかけ': 'lib/assets/images/anpanman_charactors_9.png',
 };
 
-// kEmotionListを変更したら、↑のkEmotionIconsにも値を追加する！！
+/// kEmotionListを変更したら、↑のkEmotionIconsにも値を追加する！！
 const List<String> kEmotionList = [
   kPleaseSelect,
   'うれしい',
+  // '希望',
   'かなしい',
   // 'つらい',
   'いかり',
   // '落ち込み',
   '相談',
   '疑問',
+  // '質問',
   '提案',
   '悩み',
+  '愚痴',
   'エール',
   '呼びかけ',
 ];
@@ -117,6 +120,7 @@ const List<String> kCategoryList = [
   '福祉サービス',
   '仕事',
   '就職',
+  '転職',
   '休職',
   '退職',
   '職業選択',
