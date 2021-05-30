@@ -82,8 +82,7 @@ class UpdateReplyToReplyPage extends StatelessWidget
                               onChanged: (newValue) {
                                 model.nicknameValue = newValue;
                               },
-                              decoration:
-                                  kEmotionDropdownButtonFormFieldDecoration,
+                              decoration: kNicknameTextFormFieldDecoration,
                             ),
                             SizedBox(height: 32.0),
 

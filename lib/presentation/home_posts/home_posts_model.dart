@@ -33,9 +33,9 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   bool _myPostsCanLoadMore = false;
   bool _bookmarkedPostsCanLoadMore = false;
 
-  ScrollController _allPostsScrollController = ScrollController();
-  ScrollController _myPostsScrollController = ScrollController();
-  ScrollController _bookmarkedPostsScrollController = ScrollController();
+  // ScrollController _allPostsScrollController = ScrollController();
+  // ScrollController _myPostsScrollController = ScrollController();
+  // ScrollController _bookmarkedPostsScrollController = ScrollController();
 
   bool isLoading = false;
   bool isModalLoading = false;
@@ -43,7 +43,6 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   bool isNoticeExisting = false;
 
   Future<void> init(BuildContext context) async {
-    // 下二行await不要論
     await _showOnBoardingPage(context);
     await _openSpecifiedPageByNotification(context);
     confirmIsNoticeExisting();
@@ -154,15 +153,25 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     }
   }
 
-  ScrollController? getScrollController(TabType tabType) {
-    if (tabType == TabType.allPostsTab) {
-      return _allPostsScrollController;
-    } else if (tabType == TabType.myPostsTab) {
-      return _myPostsScrollController;
-    } else if (tabType == TabType.bookmarkedPostsTab) {
-      return _bookmarkedPostsScrollController;
-    }
-  }
+  // ScrollController? getScrollController(TabType tabType) {
+  //   if (tabType == TabType.allPostsTab) {
+  //     return _allPostsScrollController;
+  //   } else if (tabType == TabType.myPostsTab) {
+  //     return _myPostsScrollController;
+  //   } else if (tabType == TabType.bookmarkedPostsTab) {
+  //     return _bookmarkedPostsScrollController;
+  //   }
+  // }
+
+  // void animateTabToViewInsetsTop(TabType tabType) {
+  //   if (tabType == TabType.allPostsTab) {
+  //     _animateAllPostsTabToViewInsetsTop();
+  //   } else if (tabType == TabType.myPostsTab) {
+  //     _animateMyPostsTabToViewInsetsTop();
+  //   } else if (tabType == TabType.bookmarkedPostsTab) {
+  //     _animateBookmarkedPostsTabToViewInsetsTop();
+  //   }
+  // }
 
   Future<void> _getAllPostsWithReplies() async {
     startLoading();
@@ -390,6 +399,30 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     notifyListeners();
   }
 
+  // void _animateAllPostsTabToViewInsetsTop() {
+  //   _allPostsScrollController.animateTo(
+  //     0.0,
+  //     duration: const Duration(milliseconds: 300),
+  //     curve: Curves.easeIn,
+  //   );
+  // }
+  //
+  // void _animateMyPostsTabToViewInsetsTop() {
+  //   _myPostsScrollController.animateTo(
+  //     0.0,
+  //     duration: const Duration(milliseconds: 300),
+  //     curve: Curves.easeIn,
+  //   );
+  // }
+  //
+  // void _animateBookmarkedPostsTabToViewInsetsTop() {
+  //   _bookmarkedPostsScrollController.animateTo(
+  //     0.0,
+  //     duration: const Duration(milliseconds: 300),
+  //     curve: Curves.easeIn,
+  //   );
+  // }
+
   Future<void> _openSpecifiedPageByNotification(BuildContext context) async {
     // Get any messages which caused the application to open from
     // a terminated state.
@@ -483,6 +516,14 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   void stopModalLoading() {
     isModalLoading = false;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    // _allPostsScrollController.dispose();
+    // _myPostsScrollController.dispose();
+    // _bookmarkedPostsScrollController.dispose();
+    super.dispose();
   }
 
 // void getPostsRealtime() {

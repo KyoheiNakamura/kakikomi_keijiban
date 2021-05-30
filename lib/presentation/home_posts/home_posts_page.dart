@@ -13,24 +13,28 @@ import 'package:kakikomi_keijiban/presentation/notices/notices_page.dart';
 import 'package:kakikomi_keijiban/presentation/search/search_page.dart';
 import 'package:provider/provider.dart';
 
-enum TabType {
-  allPostsTab,
-  myPostsTab,
-  bookmarkedPostsTab,
+class HomePostsPage extends StatefulWidget {
+  @override
+  _HomePostsPageState createState() => _HomePostsPageState();
 }
 
-String tabName(TabType tabType) {
-  switch (tabType) {
-    case TabType.allPostsTab:
-      return '新着の投稿';
-    case TabType.myPostsTab:
-      return '自分の投稿';
-    case TabType.bookmarkedPostsTab:
-      return 'ブックマーク';
+class _HomePostsPageState extends State<HomePostsPage>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _tabController = TabController(length: TabType.values.length, vsync: this);
   }
-}
 
-class HomePostsPage extends StatelessWidget {
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<HomePostsModel>(
@@ -90,18 +94,25 @@ class HomePostsPage extends StatelessWidget {
                           snap: true,
                           forceElevated: innerBoxIsScrolled,
                           bottom: TabBar(
-                            tabs: TabType.values
-                                .map(
-                                  (TabType tabType) => Tab(
-                                    child: Text(
-                                      tabName(tabType),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                      ),
+                            controller: _tabController,
+                            onTap: (index) {
+                              // if (_tabController.index == index) {
+                              //   final tabType = TabType.values[index];
+                              //   model.animateTabToViewInsetsTop(tabType);
+                              // }
+                            },
+                            tabs: TabType.values.map(
+                              (TabType tabType) {
+                                return Tab(
+                                  child: Text(
+                                    tabName(tabType),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                )
-                                .toList(),
+                                );
+                              },
+                            ).toList(),
                           ),
                         ),
                       ),
@@ -110,6 +121,7 @@ class HomePostsPage extends StatelessWidget {
 
                   /// タブ名(ページ名)で表示を場合分け
                   body: TabBarView(
+                    controller: _tabController,
                     children: TabType.values.map((TabType tabType) {
                       return TabBarViewChild(
                         tabType: tabType,
@@ -191,7 +203,7 @@ class TabBarViewChild extends StatelessWidget {
               onRefresh: () => model.getPostsWithReplies(tabType),
               child: CustomScrollView(
                 key: PageStorageKey<TabType>(tabType),
-                controller: model.getScrollController(tabType),
+                // controller: model.getScrollController(tabType),
                 slivers: [
                   SliverOverlapInjector(
                     handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
@@ -231,5 +243,22 @@ class TabBarViewChild extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+enum TabType {
+  allPostsTab,
+  myPostsTab,
+  bookmarkedPostsTab,
+}
+
+String tabName(TabType tabType) {
+  switch (tabType) {
+    case TabType.allPostsTab:
+      return '新着の投稿';
+    case TabType.myPostsTab:
+      return '自分の投稿';
+    case TabType.bookmarkedPostsTab:
+      return 'ブックマーク';
   }
 }
