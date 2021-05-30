@@ -33,7 +33,7 @@ mixin ShowConfirmDialogMixin {
               ),
               onPressed: () async {
                 Navigator.of(context).pop();
-                Navigator.of(context).pop(valueFromShowConfirmDialog.discard);
+                Navigator.of(context).pop(ValueFromShowConfirmDialog.discard);
                 // Navigator.of(context).popUntil(
                 //   ModalRoute.withName('/'),
                 // );
@@ -74,7 +74,7 @@ mixin ShowConfirmDialogMixin {
               ),
               onPressed: () async {
                 Navigator.of(context).pop();
-                Navigator.of(context).pop(valueFromShowConfirmDialog.logout);
+                Navigator.of(context).pop(ValueFromShowConfirmDialog.logout);
                 // Navigator.of(context).popUntil(
                 //   ModalRoute.withName('/'),
                 // );

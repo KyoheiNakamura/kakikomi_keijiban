@@ -15,9 +15,9 @@ class OnBoardingPage extends StatelessWidget {
         create: (context) => OnBoardingModel(),
         child: SafeArea(
           child: Scaffold(
+            backgroundColor: kLightPink,
             body: Consumer<OnBoardingModel>(builder: (context, model, child) {
               return Container(
-                color: kLightPink,
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(vertical: 16.0),
                 child: Column(

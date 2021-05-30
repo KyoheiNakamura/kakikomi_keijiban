@@ -10,4 +10,4 @@ enum PopupMenuItemsOnCard { update, delete }
 
 enum ResultForDraftButton { addPostFromDraft, updateDraft }
 
-enum valueFromShowConfirmDialog { discard, logout }
+enum ValueFromShowConfirmDialog { discard, logout }

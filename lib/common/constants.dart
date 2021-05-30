@@ -32,15 +32,15 @@ const List<String> kInitialpushNoticesSetting = [
   // 'replyToMyReply',
 ];
 
-const String kAllPostsTab = '新着の投稿';
-const String kMyPostsTab = '自分の投稿';
-const String kBookmarkedPostsTab = 'ブックマーク';
-
-const List<String> kTabs = <String>[
-  kAllPostsTab,
-  kMyPostsTab,
-  kBookmarkedPostsTab
-];
+// const String kAllPostsTab = '新着の投稿';
+// const String kMyPostsTab = '自分の投稿';
+// const String kBookmarkedPostsTab = 'ブックマーク';
+//
+// const List<String> kTabs = <String>[
+//   kAllPostsTab,
+//   kMyPostsTab,
+//   kBookmarkedPostsTab
+// ];
 
 const String kPleaseSelect = '選択してください';
 const String kDoNotSelect = '選択しない';

@@ -7,6 +7,7 @@ import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/common/mixin/format_poster_data_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply/add_reply_page.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
+import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/post_detail/post_detail_model.dart';
 import 'package:kakikomi_keijiban/presentation/search_result_posts/search_result_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/update_post/update_post_page.dart';
@@ -17,13 +18,13 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
     required this.post,
     required this.indexOfPost,
     required this.passedModel,
-    this.tabName,
+    this.tabType,
   });
 
   final Post post;
   final int indexOfPost;
   final passedModel;
-  final String? tabName;
+  final TabType? tabType;
 
   @override
   Widget build(BuildContext context) {
@@ -332,9 +333,9 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                             );
                           }),
                         );
-                        tabName != null
+                        tabType != null
                             ? passedModel.refreshThePostOfPostsAfterUpdated(
-                                tabName: tabName,
+                                tabType: tabType,
                                 oldPost: post,
                                 indexOfPost: indexOfPost,
                               )
@@ -436,9 +437,9 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                             onPressed: () async {
                               model.turnOnStar(post);
                               await model.addBookmarkedPost(post);
-                              if (tabName != null) {
-                                await passedModel
-                                    .getPostsWithReplies(kBookmarkedPostsTab);
+                              if (tabType != null) {
+                                await passedModel.getPostsWithReplies(
+                                    TabType.bookmarkedPostsTab);
                               }
                             },
                           ),

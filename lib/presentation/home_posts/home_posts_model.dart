@@ -33,6 +33,10 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   bool _myPostsCanLoadMore = false;
   bool _bookmarkedPostsCanLoadMore = false;
 
+  ScrollController _allPostsScrollController = ScrollController();
+  ScrollController _myPostsScrollController = ScrollController();
+  ScrollController _bookmarkedPostsScrollController = ScrollController();
+
   bool isLoading = false;
   bool isModalLoading = false;
 
@@ -58,73 +62,73 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     await _getBookmarkedPostsWithReplies();
   }
 
-  List<Post> getPosts(String tabName) {
-    if (tabName == kAllPostsTab) {
+  List<Post> getPosts(TabType tabType) {
+    if (tabType == TabType.allPostsTab) {
       return this._allPosts;
-    } else if (tabName == kMyPostsTab) {
+    } else if (tabType == TabType.myPostsTab) {
       return this._myPosts;
-    } else if (tabName == kBookmarkedPostsTab) {
+    } else if (tabType == TabType.bookmarkedPostsTab) {
       return this._bookmarkedPosts;
     } else {
       return [];
     }
   }
 
-  bool getCanLoadMore(String tabName) {
-    if (tabName == kAllPostsTab) {
+  bool canLoadMore(TabType tabType) {
+    if (tabType == TabType.allPostsTab) {
       return this._allPostsCanLoadMore;
-    } else if (tabName == kMyPostsTab) {
+    } else if (tabType == TabType.myPostsTab) {
       return this._myPostsCanLoadMore;
-    } else if (tabName == kBookmarkedPostsTab) {
+    } else if (tabType == TabType.bookmarkedPostsTab) {
       return this._bookmarkedPostsCanLoadMore;
     } else {
       return false;
     }
   }
 
-  Future<void> getPostsWithReplies(String tabName) async {
+  Future<void> getPostsWithReplies(TabType tabType) async {
     startModalLoading();
-    if (tabName == kAllPostsTab) {
+    if (tabType == TabType.allPostsTab) {
       await _getAllPostsWithReplies();
-    } else if (tabName == kMyPostsTab) {
+    } else if (tabType == TabType.myPostsTab) {
       await _getMyPostsWithReplies();
     }
     stopModalLoading();
-    if (tabName == kBookmarkedPostsTab) {
+    if (tabType == TabType.bookmarkedPostsTab) {
       await _getBookmarkedPostsWithReplies();
     }
   }
 
-  Future<void> loadPostsWithReplies(String tabName) async {
-    if (tabName == kAllPostsTab) {
+  Future<void> loadPostsWithReplies(TabType tabType) async {
+    if (tabType == TabType.allPostsTab) {
       await _loadAllPostsWithReplies();
-    } else if (tabName == kMyPostsTab) {
+    } else if (tabType == TabType.myPostsTab) {
       await _loadMyPostsWithReplies();
-    } else if (tabName == kBookmarkedPostsTab) {
+    } else if (tabType == TabType.bookmarkedPostsTab) {
       await _loadBookmarkedPostsWithReplies();
     }
   }
 
   Future<void> refreshThePostOfPostsAfterUpdated({
-    required String tabName,
+    required TabType tabType,
     required Post oldPost,
     required int indexOfPost,
   }) async {
-    if (tabName == kAllPostsTab) {
+    if (tabType == TabType.allPostsTab) {
       await refreshThePostAfterUpdated(
         posts: _allPosts,
         oldPost: oldPost,
         indexOfPost: indexOfPost,
       );
       notifyListeners();
-    } else if (tabName == kMyPostsTab) {
+    } else if (tabType == TabType.myPostsTab) {
       await refreshThePostAfterUpdated(
         posts: _myPosts,
         oldPost: oldPost,
         indexOfPost: indexOfPost,
       );
       notifyListeners();
-    } else if (tabName == kBookmarkedPostsTab) {
+    } else if (tabType == TabType.bookmarkedPostsTab) {
       await refreshThePostAfterUpdated(
         posts: _bookmarkedPosts,
         oldPost: oldPost,
@@ -135,18 +139,28 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   }
 
   void removeThePostOfPostsAfterDeleted({
-    required String tabName,
+    required TabType tabType,
     required Post post,
   }) {
-    if (tabName == kAllPostsTab) {
+    if (tabType == TabType.allPostsTab) {
       removeThePostAfterDeleted(posts: _allPosts, post: post);
       notifyListeners();
-    } else if (tabName == kMyPostsTab) {
+    } else if (tabType == TabType.myPostsTab) {
       removeThePostAfterDeleted(posts: _myPosts, post: post);
       notifyListeners();
-    } else if (tabName == kBookmarkedPostsTab) {
+    } else if (tabType == TabType.bookmarkedPostsTab) {
       removeThePostAfterDeleted(posts: _bookmarkedPosts, post: post);
       notifyListeners();
+    }
+  }
+
+  ScrollController? getScrollController(TabType tabType) {
+    if (tabType == TabType.allPostsTab) {
+      return _allPostsScrollController;
+    } else if (tabType == TabType.myPostsTab) {
+      return _myPostsScrollController;
+    } else if (tabType == TabType.bookmarkedPostsTab) {
+      return _bookmarkedPostsScrollController;
     }
   }
 

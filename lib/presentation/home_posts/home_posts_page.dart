@@ -13,13 +13,30 @@ import 'package:kakikomi_keijiban/presentation/notices/notices_page.dart';
 import 'package:kakikomi_keijiban/presentation/search/search_page.dart';
 import 'package:provider/provider.dart';
 
+enum TabType {
+  allPostsTab,
+  myPostsTab,
+  bookmarkedPostsTab,
+}
+
+String tabName(TabType tabType) {
+  switch (tabType) {
+    case TabType.allPostsTab:
+      return '新着の投稿';
+    case TabType.myPostsTab:
+      return '自分の投稿';
+    case TabType.bookmarkedPostsTab:
+      return 'ブックマーク';
+  }
+}
+
 class HomePostsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<HomePostsModel>(
       create: (context) => HomePostsModel()..init(context),
       child: DefaultTabController(
-        length: kTabs.length,
+        length: TabType.values.length,
         child: Scaffold(
           backgroundColor: kLightPink,
           drawer: SafeArea(child: AccountDrawer()),
@@ -73,11 +90,11 @@ class HomePostsPage extends StatelessWidget {
                           snap: true,
                           forceElevated: innerBoxIsScrolled,
                           bottom: TabBar(
-                            tabs: kTabs
+                            tabs: TabType.values
                                 .map(
-                                  (String name) => Tab(
+                                  (TabType tabType) => Tab(
                                     child: Text(
-                                      name,
+                                      tabName(tabType),
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -93,9 +110,9 @@ class HomePostsPage extends StatelessWidget {
 
                   /// タブ名(ページ名)で表示を場合分け
                   body: TabBarView(
-                    children: kTabs.map((String name) {
+                    children: TabType.values.map((TabType tabType) {
                       return TabBarViewChild(
-                        tabName: name,
+                        tabType: tabType,
                         model: model,
                       );
                     }).toList(),
@@ -131,17 +148,17 @@ class HomePostsPage extends StatelessWidget {
                 ],
               ),
               onPressed: () async {
-                final result = await Navigator.push<valueFromShowConfirmDialog>(
+                final result = await Navigator.push<ValueFromShowConfirmDialog>(
                   context,
                   MaterialPageRoute(
                     builder: (context) => AddPostPage(),
                   ),
                 );
                 // 投稿された時
-                if (result != valueFromShowConfirmDialog.discard) {
+                if (result != ValueFromShowConfirmDialog.discard) {
                   model.startModalLoading();
-                  await model.getPostsWithReplies(kAllPostsTab);
-                  await model.getPostsWithReplies(kMyPostsTab);
+                  await model.getPostsWithReplies(TabType.allPostsTab);
+                  await model.getPostsWithReplies(TabType.myPostsTab);
                   model.stopModalLoading();
                 }
               },
@@ -154,26 +171,27 @@ class HomePostsPage extends StatelessWidget {
 }
 
 class TabBarViewChild extends StatelessWidget {
-  TabBarViewChild({required this.tabName, required this.model});
+  TabBarViewChild({required this.tabType, required this.model});
 
-  final String tabName;
+  final TabType tabType;
   final HomePostsModel model;
 
   @override
   Widget build(BuildContext context) {
-    final List<Post> posts = model.getPosts(tabName);
+    final List<Post> posts = model.getPosts(tabType);
     return Builder(
       builder: (BuildContext context) {
         return ScrollBottomNotificationListener(
           model: model,
-          tabName: tabName,
+          tabType: tabType,
           child: Scrollbar(
             thickness: 6.0,
             radius: Radius.circular(8.0),
             child: RefreshIndicator(
-              onRefresh: () => model.getPostsWithReplies(tabName),
+              onRefresh: () => model.getPostsWithReplies(tabType),
               child: CustomScrollView(
-                key: PageStorageKey<String>(tabName),
+                key: PageStorageKey<TabType>(tabType),
+                controller: model.getScrollController(tabType),
                 slivers: [
                   SliverOverlapInjector(
                     handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
@@ -194,7 +212,7 @@ class TabBarViewChild extends StatelessWidget {
                                 post: post,
                                 indexOfPost: index,
                                 passedModel: model,
-                                tabName: tabName,
+                                tabType: tabType,
                               ),
                               post == posts.last && model.isLoading
                                   ? CircularProgressIndicator()

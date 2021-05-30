@@ -101,7 +101,7 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                       builder: (context) => SettingsPage(),
                     ),
                   );
-                  if (result == valueFromShowConfirmDialog.logout) {
+                  if (result == ValueFromShowConfirmDialog.logout) {
                     await model.signOut();
                     // Navigator.pop(context);
                     await model.reloadTabs();
