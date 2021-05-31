@@ -7,7 +7,6 @@ import 'package:kakikomi_keijiban/common/mixin/build_keyboard_actions_config_don
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
-import 'package:kakikomi_keijiban/domain/user.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
 import 'package:kakikomi_keijiban/presentation/update_reply_to_reply/update_reply_to_reply_model.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -18,11 +17,13 @@ class UpdateReplyToReplyPage extends StatelessWidget
         ShowConfirmDialogMixin,
         KeyboardActionsConfigDoneMixin,
         ShowExceptionDialogMixin {
-  UpdateReplyToReplyPage(
-      {required this.existingReplyToReply, required this.passedModel});
+  UpdateReplyToReplyPage({
+    required this.existingReplyToReply,
+    required this.passedModel,
+  });
 
   final ReplyToReply existingReplyToReply;
-  final passedModel;
+  final dynamic passedModel;
   final _formKey = GlobalKey<FormState>();
   final FocusNode _focusNodeContent = FocusNode();
 
@@ -38,12 +39,12 @@ class UpdateReplyToReplyPage extends StatelessWidget
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 50,
-            title: Text('編集'),
+            title: const Text('編集'),
           ),
           body: Consumer<UpdateReplyToReplyModel>(
             builder: (context, model, child) {
-              final User? user = AppModel.user;
-              final bool isUserExisting = user != null;
+              final user = AppModel.user;
+              final isUserExisting = user != null;
               return LoadingSpinner(
                 inAsyncCall: model.isLoading,
                 child: KeyboardActions(
@@ -53,7 +54,7 @@ class UpdateReplyToReplyPage extends StatelessWidget
                       key: _formKey,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 48.0, horizontal: 24.0),
+                            vertical: 48, horizontal: 24),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -72,7 +73,7 @@ class UpdateReplyToReplyPage extends StatelessWidget
                               },
                               decoration: kContentTextFormFieldDecoration,
                             ),
-                            SizedBox(height: 32.0),
+                            const SizedBox(height: 32),
 
                             /// nickname
                             TextFormField(
@@ -85,7 +86,7 @@ class UpdateReplyToReplyPage extends StatelessWidget
                               decoration:
                                   kEmotionDropdownButtonFormFieldDecoration,
                             ),
-                            SizedBox(height: 32.0),
+                            const SizedBox(height: 32),
 
                             /// position
                             DropdownButtonFormField(
@@ -95,9 +96,9 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                       existingReplyToReply.position
                                   : isUserExisting
                                       ? model.positionDropdownValue =
-                                          user.position
+                                          user!.position
                                       : model.positionDropdownValue,
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.arrow_downward,
                                 // color: kDarkPink,
                               ),
@@ -116,7 +117,7 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                 );
                               }).toList(),
                             ),
-                            SizedBox(height: 32.0),
+                            const SizedBox(height: 32),
 
                             /// gender
                             DropdownButtonFormField(
@@ -126,9 +127,9 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                   ? model.genderDropdownValue =
                                       existingReplyToReply.gender
                                   : isUserExisting
-                                      ? model.genderDropdownValue = user.gender
+                                      ? model.genderDropdownValue = user!.gender
                                       : model.genderDropdownValue,
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.arrow_downward,
                                 // color: kDarkPink,
                               ),
@@ -147,7 +148,7 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                 );
                               }).toList(),
                             ),
-                            SizedBox(height: 32.0),
+                            const SizedBox(height: 32),
 
                             /// age
                             DropdownButtonFormField(
@@ -157,9 +158,9 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                   ? model.ageDropdownValue =
                                       existingReplyToReply.age
                                   : isUserExisting
-                                      ? model.ageDropdownValue = user.age
+                                      ? model.ageDropdownValue = user!.age
                                       : model.ageDropdownValue,
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.arrow_downward,
                                 // color: kDarkPink,
                               ),
@@ -177,7 +178,7 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                 );
                               }).toList(),
                             ),
-                            SizedBox(height: 32.0),
+                            const SizedBox(height: 32),
 
                             /// area
                             DropdownButtonFormField(
@@ -187,9 +188,9 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                   ? model.areaDropdownValue =
                                       existingReplyToReply.area
                                   : isUserExisting
-                                      ? model.areaDropdownValue = user.area
+                                      ? model.areaDropdownValue = user!.area
                                       : model.areaDropdownValue,
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.arrow_downward,
                                 // color: kDarkPink,
                               ),
@@ -208,8 +209,8 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                 );
                               }).toList(),
                             ),
-                            SizedBox(
-                              height: 48.0,
+                            const SizedBox(
+                              height: 48,
                             ),
 
                             /// 投稿更新ボタン
@@ -221,7 +222,7 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                           await model.updateReplyToReply(
                                               existingReplyToReply);
                                           Navigator.pop(context);
-                                        } catch (e) {
+                                        } on String catch (e) {
                                           await showExceptionDialog(
                                             context,
                                             e.toString(),
@@ -235,7 +236,7 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                             context);
                                       }
                                     },
-                                    child: Text(
+                                    child: const Text(
                                       '更新する',
                                       style: TextStyle(
                                         color: kDarkPink,
@@ -244,12 +245,12 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                       ),
                                     ),
                                     style: OutlinedButton.styleFrom(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 12.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(15),
                                       ),
-                                      side: BorderSide(color: kDarkPink),
+                                      side: const BorderSide(color: kDarkPink),
                                     ),
                                   )
                                 :
@@ -272,7 +273,7 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                                 ResultForDraftButton
                                                     .addPostFromDraft,
                                               );
-                                            } catch (e) {
+                                            } on String catch (e) {
                                               await showExceptionDialog(
                                                 context,
                                                 e.toString(),
@@ -286,7 +287,7 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                                 context);
                                           }
                                         },
-                                        child: Text(
+                                        child: const Text(
                                           '投稿する',
                                           style: TextStyle(
                                             color: Colors.white,
@@ -296,16 +297,17 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                         ),
                                         style: OutlinedButton.styleFrom(
                                           backgroundColor: kDarkPink,
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 12.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12),
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(16.0),
+                                                BorderRadius.circular(16),
                                           ),
-                                          side: BorderSide(color: kDarkPink),
+                                          side: const BorderSide(
+                                              color: kDarkPink),
                                         ),
                                       ),
-                                      SizedBox(height: 16.0),
+                                      const SizedBox(height: 16),
 
                                       /// 下書き保存ボタン
                                       OutlinedButton(
@@ -316,8 +318,9 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                               await model
                                                   .updateDraftReplyToReply(
                                                       existingReplyToReply);
-                                              final snackBar = SnackBar(
-                                                content: Text('下書きに保存しました'),
+                                              const snackBar = SnackBar(
+                                                content:
+                                                    const Text('下書きに保存しました'),
                                               );
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(snackBar);
@@ -326,7 +329,7 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                                 ResultForDraftButton
                                                     .updateDraft,
                                               );
-                                            } catch (e) {
+                                            } on String catch (e) {
                                               await showExceptionDialog(
                                                 context,
                                                 e.toString(),
@@ -340,7 +343,7 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                                 context);
                                           }
                                         },
-                                        child: Text(
+                                        child: const Text(
                                           '下書きに保存する',
                                           style: TextStyle(
                                             color: kDarkPink,
@@ -349,13 +352,14 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                           ),
                                         ),
                                         style: OutlinedButton.styleFrom(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 12.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12),
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(16.0),
+                                                BorderRadius.circular(16),
                                           ),
-                                          side: BorderSide(color: kDarkPink),
+                                          side: const BorderSide(
+                                              color: kDarkPink),
                                         ),
                                       ),
                                     ],

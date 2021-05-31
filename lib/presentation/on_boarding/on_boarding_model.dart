@@ -7,7 +7,7 @@ class OnBoardingModel extends ChangeNotifier {
   int currentPage = 0;
 
   void onPageChangedCallBack(int pageNumber) {
-    this.currentPage = pageNumber;
+    currentPage = pageNumber;
     notifyListeners();
   }
 

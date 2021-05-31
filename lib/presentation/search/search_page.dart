@@ -8,21 +8,21 @@ class SearchPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 50,
-        title: Text('検索'),
+        title: const Text('検索'),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 24.0),
+          padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
+            children: const [
               /// emotion
               SearchGenreCard(
                 genreTitle: '気持ち',
                 genreIcon: Icons.mood,
                 genreList: kEmotionList,
               ),
-              SizedBox(height: 24.0),
+              SizedBox(height: 24),
 
               /// category
               SearchGenreCard(
@@ -30,7 +30,7 @@ class SearchPage extends StatelessWidget {
                 genreIcon: Icons.category_outlined,
                 genreList: kCategoryList,
               ),
-              SizedBox(height: 24.0),
+              SizedBox(height: 24),
 
               /// position
               SearchGenreCard(
@@ -38,7 +38,7 @@ class SearchPage extends StatelessWidget {
                 genreIcon: Icons.group,
                 genreList: kPositionList,
               ),
-              SizedBox(height: 24.0),
+              SizedBox(height: 24),
 
               /// gender
               SearchGenreCard(
@@ -46,7 +46,7 @@ class SearchPage extends StatelessWidget {
                 genreIcon: Icons.lens_outlined,
                 genreList: kGenderList,
               ),
-              SizedBox(height: 24.0),
+              SizedBox(height: 24),
 
               /// age
               SearchGenreCard(
@@ -54,7 +54,7 @@ class SearchPage extends StatelessWidget {
                 genreIcon: Icons.date_range,
                 genreList: kAgeList,
               ),
-              SizedBox(height: 24.0),
+              SizedBox(height: 24),
 
               /// area
               SearchGenreCard(
@@ -62,7 +62,7 @@ class SearchPage extends StatelessWidget {
                 genreIcon: Icons.place_outlined,
                 genreList: kAreaList,
               ),
-              SizedBox(height: 24.0),
+              SizedBox(height: 24),
             ],
           ),
         ),
@@ -72,7 +72,7 @@ class SearchPage extends StatelessWidget {
 }
 
 class SearchGenreCard extends StatelessWidget {
-  SearchGenreCard({
+  const SearchGenreCard({
     required this.genreTitle,
     required this.genreIcon,
     required this.genreList,
@@ -84,15 +84,9 @@ class SearchGenreCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // if (genreList.contains(kPleaseSelect)) {
-    //   genreList.remove(kPleaseSelect);
-    // }
-    // if (genreList.contains(kDoNotSelect)) {
-    //   genreList.remove(kDoNotSelect);
-    // }
     return Card(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,20 +94,20 @@ class SearchGenreCard extends StatelessWidget {
           Row(
             children: [
               Padding(
-                padding: const EdgeInsets.all(14.0),
+                padding: const EdgeInsets.all(14),
                 child: Icon(genreIcon, color: kGrey),
               ),
               Text(
                 genreTitle,
-                style: TextStyle(color: Colors.grey[700], fontSize: 16.0),
+                style: TextStyle(color: Colors.grey[700], fontSize: 16),
               ),
             ],
           ),
           Padding(
-            padding: EdgeInsets.only(left: 16.0, right: 16.0, bottom: 14.0),
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
             child: Wrap(
-              spacing: 8.0,
-              runSpacing: 2.0,
+              spacing: 8,
+              runSpacing: 2,
               // alignment: WrapAlignment.center,
               children: genreList.map<Widget>((value) {
                 return value != kPleaseSelect && value != kDoNotSelect
@@ -131,7 +125,7 @@ class SearchGenreCard extends StatelessWidget {
                           // side: BorderSide(color: kPink),
                         ),
                         onPressed: () async {
-                          await Navigator.push(
+                          await Navigator.push<void>(
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
@@ -147,61 +141,6 @@ class SearchGenreCard extends StatelessWidget {
         ],
       ),
     );
-
-    // return Container(
-    //   decoration: BoxDecoration(
-    //     border: Border.all(color: Colors.grey[500]!),
-    //     borderRadius: BorderRadius.circular(5),
-    //   ),
-    //   child: Column(
-    //     crossAxisAlignment: CrossAxisAlignment.start,
-    //     children: [
-    //       Row(
-    //         children: [
-    //           Padding(
-    //             padding: const EdgeInsets.all(14.0),
-    //             child: Icon(genreIcon, color: kLightGrey),
-    //           ),
-    //           Text(
-    //             genreTitle,
-    //             style: TextStyle(color: Colors.grey[700], fontSize: 16.0),
-    //           ),
-    //         ],
-    //       ),
-    //       Padding(
-    //         padding: EdgeInsets.only(left: 16.0, right: 16.0, bottom: 14.0),
-    //         child: Wrap(
-    //           spacing: 8.0,
-    //           runSpacing: 2.0,
-    //           // alignment: WrapAlignment.center,
-    //           children: genreList.map<Widget>((value) {
-    //             return ActionChip(
-    //               label: Text(
-    //                 value,
-    //                 style: TextStyle(color: Colors.grey[800]),
-    //               ),
-    //               backgroundColor: Colors.grey[200],
-    //               pressElevation: 0,
-    //               shape: RoundedRectangleBorder(
-    //                 borderRadius: BorderRadius.circular(20),
-    //                 side: BorderSide(color: Colors.grey[500]!),
-    //               ),
-    //               onPressed: () async {
-    //                 await Navigator.push(
-    //                   context,
-    //                   MaterialPageRoute(
-    //                     builder: (context) => SearchResultPostsPage(value),
-    //                   ),
-    //                 );
-    //                 // await homeModel.getPostsWithReplies();
-    //               },
-    //             );
-    //           }).toList(),
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // );
   }
 }
 
@@ -238,7 +177,7 @@ class SearchGenreCard extends StatelessWidget {
 //       Row(
 //         children: [
 //           Padding(
-//             padding: const EdgeInsets.all(14.0),
+//             padding: const EdgeInsets.all(14),
 //             child: Icon(
 //               Icons.category_outlined,
 //               color: kLightGrey,
@@ -248,17 +187,17 @@ class SearchGenreCard extends StatelessWidget {
 //             'カテゴリー',
 //             style: TextStyle(
 //               color: Colors.grey[700],
-//               fontSize: 16.0,
+//               fontSize: 16,
 //             ),
 //           ),
 //         ],
 //       ),
 //       Padding(
-//         padding: EdgeInsets.only(
-//             left: 16.0, right: 16.0, bottom: 14.0),
+//         padding: const EdgeInsets.only(
+//             left: 16, right: 16, bottom: 14),
 //         child: Wrap(
-//           spacing: 16.0,
-//           runSpacing: 2.0,
+//           spacing: 16,
+//           runSpacing: 2,
 //           // alignment: WrapAlignment.center,
 //           children: kCategoryList.map<Widget>((item) {
 //             return ChoiceChip(
@@ -277,15 +216,15 @@ class SearchGenreCard extends StatelessWidget {
 // ),
 // Padding(
 //   padding:
-//       EdgeInsets.only(left: 12.0, top: 8.0, right: 12.0),
+//       EdgeInsets.only(left: 12, top: 8, right: 12),
 //   child: Text(
 //     '必須',
 //     style: TextStyle(
-//       fontSize: 12.0,
+//       fontSize: 12,
 //       color: kDarkPink,
 //     ),
 //   ),
 // ),
 // SizedBox(
-//   height: 32.0,
+//   height: 32,
 // ),

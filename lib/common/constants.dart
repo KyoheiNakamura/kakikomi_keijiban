@@ -350,17 +350,17 @@ const kContactContentTextFormFieldDecoration = InputDecoration(
 );
 
 const kAppBarTextStyle = TextStyle(
-  fontSize: 17.0,
+  fontSize: 17,
   fontWeight: FontWeight.bold,
 );
 
 const kDropdownButtonFormFieldTextStyle = TextStyle(
   color: Colors.black,
-  fontSize: 15.0,
+  fontSize: 15,
 );
 
 const kValidEmailRegularExpression =
     r"^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$";
 // r"[^\s]+@[^\s]+";
 
-const kValidPasswordRegularExpression = r"^([a-zA-Z0-9!-/:-@¥[-`{-~]{8,})$";
+const kValidPasswordRegularExpression = r'^([a-zA-Z0-9!-/:-@¥[-`{-~]{8,})$';

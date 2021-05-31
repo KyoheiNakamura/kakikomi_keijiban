@@ -10,15 +10,15 @@ mixin ShowConfirmDialogMixin {
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
+            borderRadius: BorderRadius.circular(16),
           ),
-          title: Text('変更内容の破棄'),
-          content: Text('変更した内容が破棄されますがよろしいですか？'),
+          title: const Text('変更内容の破棄'),
+          content: const Text('変更した内容が破棄されますがよろしいですか？'),
           contentPadding:
-              EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           actions: <Widget>[
             TextButton(
-              child: Text(
+              child: const Text(
                 'キャンセル',
                 style: TextStyle(color: kDarkPink),
               ),
@@ -27,7 +27,7 @@ mixin ShowConfirmDialogMixin {
               },
             ),
             TextButton(
-              child: Text(
+              child: const Text(
                 '破棄',
                 style: TextStyle(color: kDarkPink),
               ),
@@ -52,14 +52,14 @@ mixin ShowConfirmDialogMixin {
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
+            borderRadius: BorderRadius.circular(16),
           ),
-          content: Text('ログアウトしてもよろしいですか？'),
+          content: const Text('ログアウトしてもよろしいですか？'),
           contentPadding:
-              EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           actions: <Widget>[
             TextButton(
-              child: Text(
+              child: const Text(
                 'キャンセル',
                 style: TextStyle(color: kDarkPink),
               ),
@@ -68,7 +68,7 @@ mixin ShowConfirmDialogMixin {
               },
             ),
             TextButton(
-              child: Text(
+              child: const Text(
                 'ログアウト',
                 style: TextStyle(color: kDarkPink),
               ),
@@ -93,14 +93,14 @@ mixin ShowConfirmDialogMixin {
       builder: (BuildContext context) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
+            borderRadius: BorderRadius.circular(16),
           ),
-          content: Text('必須項目を入力してください。'),
+          content: const Text('必須項目を入力してください。'),
           contentPadding:
-              EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+              const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           actions: <Widget>[
             TextButton(
-              child: Text(
+              child: const Text(
                 'OK',
                 style: TextStyle(color: kDarkPink),
               ),

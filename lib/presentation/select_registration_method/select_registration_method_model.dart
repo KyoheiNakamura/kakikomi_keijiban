@@ -14,11 +14,10 @@ class SelectRegistrationMethodModel extends ChangeNotifier {
     startModalLoading();
 
     try {
-      final GoogleSignInAccount? googleUser = (await GoogleSignIn().signIn());
+      final googleUser = await GoogleSignIn().signIn();
       if (googleUser != null) {
-        final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
-        final OAuthCredential credential = GoogleAuthProvider.credential(
+        final googleAuth = await googleUser.authentication;
+        final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
         );
@@ -39,22 +38,22 @@ class SelectRegistrationMethodModel extends ChangeNotifier {
         });
         await AppModel.reloadUser();
       } else {
-        throw ('アカウントを選択してください。');
+        throw 'アカウントを選択してください。';
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'credential-already-in-use') {
         print('このGoogleアカウントはすでに使用されています。');
-        throw ('このGoogleアカウントは\nすでに使用されています。');
+        throw 'このGoogleアカウントは\nすでに使用されています。';
       } else if (e.code == 'email-already-in-use') {
         print('このメールアドレスはすでに使用されています。');
-        throw ('このメールアドレスは\nすでに使用されています。');
+        throw 'このメールアドレスは\nすでに使用されています。';
       } else {
         print(e.toString());
-        throw ('エラーが発生しました。\nもう一度お試し下さい。');
+        throw 'エラーが発生しました。\nもう一度お試し下さい。';
       }
     } on Exception catch (e) {
       print(e.toString());
-      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+      throw 'エラーが発生しました。\nもう一度お試し下さい。';
     } finally {
       stopModalLoading();
     }

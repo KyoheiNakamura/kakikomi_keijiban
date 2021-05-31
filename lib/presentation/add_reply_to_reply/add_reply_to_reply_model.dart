@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
@@ -18,14 +17,14 @@ class AddReplyToReplyModel extends ChangeNotifier {
   Future<void> addReplyToReply(Reply repliedReply) async {
     startLoading();
 
-    WriteBatch _batch = firestore.batch();
+    final _batch = firestore.batch();
 
     final userRef = firestore.collection('users').doc(repliedReply.userId);
     final postRef = userRef.collection('posts').doc(repliedReply.postId);
     final replyRef = postRef.collection('replies').doc(repliedReply.id);
     final replyToReplyRef = replyRef.collection('repliesToReply').doc();
 
-    _batch.set(replyToReplyRef, {
+    _batch.set(replyToReplyRef, <String, dynamic>{
       'id': replyToReplyRef.id,
       'userId': repliedReply.userId,
       'postId': repliedReply.postId,
@@ -44,8 +43,8 @@ class AddReplyToReplyModel extends ChangeNotifier {
 
     final postDoc = await postRef.get();
 
-    _batch.update(postRef, {
-      'replyCount': postDoc['replyCount'] + 1,
+    _batch.update(postRef, <String, dynamic>{
+      'replyCount': (postDoc['replyCount'] as int) + 1,
     });
 
     try {
@@ -53,7 +52,7 @@ class AddReplyToReplyModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('addReplyToReplyのバッチ処理中のエラーです');
       print(e.toString());
-      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+      throw 'エラーが発生しました。\nもう一度お試し下さい。';
     } finally {
       stopLoading();
     }
@@ -68,7 +67,7 @@ class AddReplyToReplyModel extends ChangeNotifier {
         userRef.collection('draftedRepliesToReply').doc();
 
     try {
-      await draftedReplyToReplyRef.set({
+      await draftedReplyToReplyRef.set(<String, dynamic>{
         'id': draftedReplyToReplyRef.id,
         'userId': repliedReply.userId,
         'postId': repliedReply.postId,
@@ -87,7 +86,7 @@ class AddReplyToReplyModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('addDraftedReplyToReply処理中のエラーです');
       print(e.toString());
-      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+      throw 'エラーが発生しました。\nもう一度お試し下さい。';
     } finally {
       stopLoading();
     }

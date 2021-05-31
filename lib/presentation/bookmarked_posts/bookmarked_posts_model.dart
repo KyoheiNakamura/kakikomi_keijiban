@@ -29,7 +29,7 @@ class BookmarkedPostsModel extends ChangeNotifier
   Future<void> _getBookmarkedPostsWithReplies() async {
     startModalLoading();
 
-    Query queryBatch = firestore
+    final queryBatch = firestore
         .collection('users')
         .doc(auth.currentUser?.uid)
         .collection('bookmarkedPosts')
@@ -37,27 +37,27 @@ class BookmarkedPostsModel extends ChangeNotifier
         .limit(loadLimit);
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
-    this._bookmarkedPosts.clear();
+    _bookmarkedPosts.clear();
     if (docs.length == 0) {
       // isPostsExisting = false;
-      this.canLoadMore = false;
-      this._bookmarkedPosts = [];
+      canLoadMore = false;
+      _bookmarkedPosts = [];
     } else if (docs.length < loadLimit) {
       // isPostsExisting = true;
-      this.canLoadMore = false;
+      canLoadMore = false;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      this._bookmarkedPosts = await getBookmarkedPosts(docs);
+      _bookmarkedPosts = await getBookmarkedPosts(docs);
     } else {
       // isPostsExisting = true;
-      this.canLoadMore = true;
+      canLoadMore = true;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      this._bookmarkedPosts = await getBookmarkedPosts(docs);
+      _bookmarkedPosts = await getBookmarkedPosts(docs);
     }
 
     final empathizedPostsIds = await getEmpathizedPostsIds();
 
-    await addEmpathy(this._bookmarkedPosts, empathizedPostsIds);
-    await getReplies(this._bookmarkedPosts, empathizedPostsIds);
+    await addEmpathy(_bookmarkedPosts, empathizedPostsIds);
+    await getReplies(_bookmarkedPosts, empathizedPostsIds);
 
     stopModalLoading();
     notifyListeners();
@@ -66,7 +66,7 @@ class BookmarkedPostsModel extends ChangeNotifier
   Future<void> _loadBookmarkedPostsWithReplies() async {
     startLoading();
 
-    Query queryBatch = firestore
+    final queryBatch = firestore
         .collection('users')
         .doc(auth.currentUser?.uid)
         .collection('bookmarkedPosts')
@@ -77,24 +77,24 @@ class BookmarkedPostsModel extends ChangeNotifier
     final docs = querySnapshot.docs;
     if (docs.length == 0) {
       // isPostsExisting = false;
-      this.canLoadMore = false;
-      this._bookmarkedPosts += [];
+      canLoadMore = false;
+      _bookmarkedPosts += [];
     } else if (docs.length < loadLimit) {
       // isPostsExisting = true;
-      this.canLoadMore = false;
-      this.lastVisibleOfTheBatch = docs[docs.length - 1];
-      this._bookmarkedPosts += await getBookmarkedPosts(docs);
+      canLoadMore = false;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      _bookmarkedPosts += await getBookmarkedPosts(docs);
     } else {
       // isPostsExisting = true;
-      this.canLoadMore = true;
-      this.lastVisibleOfTheBatch = docs[docs.length - 1];
-      this._bookmarkedPosts += await getBookmarkedPosts(docs);
+      canLoadMore = true;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      _bookmarkedPosts += await getBookmarkedPosts(docs);
     }
 
     final empathizedPostsIds = await getEmpathizedPostsIds();
 
-    await addEmpathy(this._bookmarkedPosts, empathizedPostsIds);
-    await getReplies(this._bookmarkedPosts, empathizedPostsIds);
+    await addEmpathy(_bookmarkedPosts, empathizedPostsIds);
+    await getReplies(_bookmarkedPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -105,7 +105,7 @@ class BookmarkedPostsModel extends ChangeNotifier
     required int indexOfPost,
   }) async {
     await refreshThePostAfterUpdated(
-      posts: this._bookmarkedPosts,
+      posts: _bookmarkedPosts,
       oldPost: oldPost,
       indexOfPost: indexOfPost,
     );
@@ -114,7 +114,7 @@ class BookmarkedPostsModel extends ChangeNotifier
   }
 
   void removeThePostOfPostsAfterDeleted(Post post) {
-    this._bookmarkedPosts.remove(post);
+    _bookmarkedPosts.remove(post);
     notifyListeners();
   }
 

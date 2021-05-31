@@ -19,7 +19,7 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
   @override
   Widget build(BuildContext context) {
     return Consumer<HomePostsModel>(builder: (context, model, child) {
-      final bool? isCurrentUserAnonymous =
+      final isCurrentUserAnonymous =
           AppModel.user?.isCurrentUserAnonymous() ?? false;
       return SizedBox(
         width: MediaQuery.of(context).size.width * 0.8,
@@ -27,14 +27,15 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              ChangingDrawerHeader(isCurrentUserAnonymous),
-              Divider(thickness: 1.0),
+              ChangingDrawerHeader(
+                  isCurrentUserAnonymous: isCurrentUserAnonymous),
+              const Divider(thickness: 1),
               ListTile(
-                leading: Icon(Icons.description),
-                title: Text('自分の投稿'),
+                leading: const Icon(Icons.description),
+                title: const Text('自分の投稿'),
                 onTap: () async {
                   Navigator.pop(context);
-                  await Navigator.push(
+                  await Navigator.push<void>(
                     context,
                     MaterialPageRoute(
                       builder: (context) => MyPostsPage(),
@@ -46,12 +47,12 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                 leading: Transform(
                   alignment: Alignment.topCenter,
                   transform: Matrix4.rotationY(math.pi),
-                  child: Icon(Icons.reply),
+                  child: const Icon(Icons.reply),
                 ),
-                title: Text('自分の返信'),
+                title: const Text('自分の返信'),
                 onTap: () async {
                   Navigator.pop(context);
-                  await Navigator.push(
+                  await Navigator.push<void>(
                     context,
                     MaterialPageRoute(
                       builder: (context) => MyRepliesPage(),
@@ -60,11 +61,11 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.star),
-                title: Text('ブックマーク'),
+                leading: const Icon(Icons.star),
+                title: const Text('ブックマーク'),
                 onTap: () async {
                   Navigator.pop(context);
-                  await Navigator.push(
+                  await Navigator.push<void>(
                     context,
                     MaterialPageRoute(
                       builder: (context) => BookmarkedPostsPage(),
@@ -75,11 +76,11 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.drafts),
-                title: Text('下書き'),
+                leading: const Icon(Icons.drafts),
+                title: const Text('下書き'),
                 onTap: () async {
                   Navigator.pop(context);
-                  await Navigator.push(
+                  await Navigator.push<void>(
                     context,
                     MaterialPageRoute(
                       builder: (context) => DraftsPage(),
@@ -87,15 +88,16 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                   );
                 },
               ),
-              Divider(thickness: 1.0),
+              const Divider(thickness: 1),
               ListTile(
-                leading: Icon(Icons.settings),
-                title: Text('設定'),
+                leading: const Icon(Icons.settings),
+                title: const Text('設定'),
                 onTap: () async {
                   Navigator.pop(context);
                   // if (isCurrentUserAnonymous != null &&
                   //     isCurrentUserAnonymous == false) {
-                  final result = await Navigator.push(
+                  final result =
+                      await Navigator.push<ValueFromShowConfirmDialog>(
                     context,
                     MaterialPageRoute(
                       builder: (context) => SettingsPage(),
@@ -117,13 +119,13 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                   // Navigator.pop(context);
                 },
               ),
-              Divider(thickness: 1.0),
+              const Divider(thickness: 1),
               ListTile(
-                leading: Icon(Icons.alternate_email),
-                title: Text('お問い合わせ'),
+                leading: const Icon(Icons.alternate_email),
+                title: const Text('お問い合わせ'),
                 onTap: () async {
                   Navigator.pop(context);
-                  await Navigator.push(
+                  await Navigator.push<void>(
                     context,
                     MaterialPageRoute(
                       builder: (context) => ContactPage(),
@@ -140,104 +142,102 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
 }
 
 class ChangingDrawerHeader extends StatelessWidget {
-  ChangingDrawerHeader(this.isCurrentUserAnonymous);
+  const ChangingDrawerHeader({required this.isCurrentUserAnonymous});
   final bool? isCurrentUserAnonymous;
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<HomePostsModel>(builder: (context, model, child) {
-      return isCurrentUserAnonymous == false
-          ? Padding(
-              padding: EdgeInsets.only(
-                left: 16.0,
-                top: 120.0,
-                right: 16.0,
-                bottom: 16.0,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    (AppModel.user?.nickname ?? ''),
-                    style: TextStyle(fontSize: 24),
-                  ),
-                  SizedBox(height: 8.0),
-                  Text(
-                    (AppModel.user?.email ?? ''),
-                    style: TextStyle(color: kGrey),
-                  ),
-                ],
-              ),
-            )
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(top: 16.0, bottom: 24.0),
-                    child: Row(
-                      children: [
-                        IconButton(
-                          padding: EdgeInsets.zero,
-                          constraints: BoxConstraints(),
-                          onPressed: () {},
-                          icon: Icon(Icons.help_outline),
-                          color: kDarkPink,
-                        ),
-                        SizedBox(width: 16.0),
-                        Flexible(
-                          child: Text(
-                            '全ての機能をご利用いただくには新規会員登録もしくはログインが必要です。',
-                            style: TextStyle(
-                              fontSize: 13.0,
-                            ),
+    return Consumer<HomePostsModel>(
+      builder: (context, model, child) {
+        return isCurrentUserAnonymous == false
+            ? Padding(
+                padding: const EdgeInsets.fromLTRB(16, 120, 16, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      AppModel.user?.nickname ?? '',
+                      style: const TextStyle(fontSize: 24),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      AppModel.user?.email ?? '',
+                      style: const TextStyle(color: kGrey),
+                    ),
+                  ],
+                ),
+              )
+            : Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16, bottom: 24),
+                      child: Row(
+                        children: [
+                          IconButton(
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: () {},
+                            icon: const Icon(Icons.help_outline),
+                            color: kDarkPink,
                           ),
-                        )
-                      ],
+                          const SizedBox(width: 16),
+                          const Flexible(
+                            child: Text(
+                              '全ての機能をご利用いただくには新規会員登録もしくはログインが必要です。',
+                              style: TextStyle(
+                                fontSize: 13,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  OutlinedButton(
-                    child: Text(
-                      '会員登録',
-                      style: TextStyle(color: Colors.white),
+                    OutlinedButton(
+                      child: const Text(
+                        '会員登録',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(kDarkPink),
+                      ),
+                      onPressed: () async {
+                        Navigator.pop(context);
+                        final result = await Navigator.push<String>(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                SelectRegistrationMethodPage(),
+                          ),
+                        );
+                        if (result == 'signedIn') {
+                          await model.reloadTabs();
+                        }
+                      },
                     ),
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(kDarkPink),
-                    ),
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => SelectRegistrationMethodPage(),
-                        ),
-                      );
-                      if (result == 'signedIn') {
-                        await model.reloadTabs();
-                      }
-                    },
-                  ),
-                  SizedBox(height: 16.0),
-                  OutlinedButton(
-                    child: Text(
-                      'ログイン',
-                      style: TextStyle(color: kDarkPink),
-                    ),
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      final result = await Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SignInPage()),
-                      );
-                      if (result == 'signedIn') {
-                        await model.reloadTabs();
-                      }
-                    },
-                  )
-                ],
-              ),
-            );
-    });
+                    const SizedBox(height: 16),
+                    OutlinedButton(
+                      child: const Text(
+                        'ログイン',
+                        style: TextStyle(color: kDarkPink),
+                      ),
+                      onPressed: () async {
+                        Navigator.pop(context);
+                        final result = await Navigator.push<String>(
+                          context,
+                          MaterialPageRoute(builder: (context) => SignInPage()),
+                        );
+                        if (result == 'signedIn') {
+                          await model.reloadTabs();
+                        }
+                      },
+                    )
+                  ],
+                ),
+              );
+      },
+    );
   }
 }

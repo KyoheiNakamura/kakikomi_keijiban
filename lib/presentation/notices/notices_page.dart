@@ -15,7 +15,7 @@ class NoticesPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
-          title: Text('通知'),
+          title: const Text('通知'),
         ),
         body: Consumer<NoticesModel>(
           builder: (context, model, child) {
@@ -32,7 +32,7 @@ class NoticesPage extends StatelessWidget {
                         ? GestureDetector(
                             behavior: HitTestBehavior.translucent,
                             onTap: () async {
-                              await Navigator.push(
+                              await Navigator.push<void>(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
@@ -41,12 +41,7 @@ class NoticesPage extends StatelessWidget {
                               );
                             },
                             child: Padding(
-                              padding: EdgeInsets.only(
-                                left: 16,
-                                top: 8,
-                                right: 16,
-                                bottom: 8,
-                              ),
+                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -62,40 +57,42 @@ class NoticesPage extends StatelessWidget {
                                           width: 50,
                                           height: 50,
                                         )
-                                      : FlutterLogo(),
-                                  SizedBox(width: 16),
+                                      : const FlutterLogo(),
+                                  const SizedBox(width: 16),
                                   Flexible(
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        SizedBox(height: 8),
+                                        const SizedBox(height: 8),
 
                                         /// title
                                         Text(
                                           '${notices[index].title}',
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 14,
                                           ),
                                           maxLines: 2,
                                         ),
-                                        SizedBox(height: 8),
+                                        const SizedBox(height: 8),
 
                                         /// body
                                         Text(
                                           '${notices[index].body}',
-                                          style: TextStyle(color: kDarkGrey),
+                                          style: const TextStyle(
+                                            color: kDarkGrey,
+                                          ),
                                           maxLines: 5,
                                           overflow: TextOverflow.ellipsis,
                                           // softWrap: true,
                                         ),
-                                        SizedBox(height: 4),
+                                        const SizedBox(height: 4),
 
                                         /// createdAt
                                         Text(
                                           '${notices[index].createdAt}',
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             color: kLightGrey,
                                           ),
                                         ),
@@ -106,10 +103,10 @@ class NoticesPage extends StatelessWidget {
                               ),
                             ),
                           )
-                        : SizedBox();
+                        : const SizedBox();
                   },
                   separatorBuilder: (BuildContext context, int index) =>
-                      Divider(),
+                      const Divider(),
                 ),
               ),
             );

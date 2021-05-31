@@ -7,7 +7,6 @@ import 'package:kakikomi_keijiban/common/mixin/build_keyboard_actions_config_don
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/domain/reply.dart';
-import 'package:kakikomi_keijiban/domain/user.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
 import 'package:kakikomi_keijiban/presentation/update_reply/update_reply_model.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -18,10 +17,13 @@ class UpdateReplyPage extends StatelessWidget
         ShowConfirmDialogMixin,
         KeyboardActionsConfigDoneMixin,
         ShowExceptionDialogMixin {
-  UpdateReplyPage({required this.existingReply, required this.passedModel});
+  UpdateReplyPage({
+    required this.existingReply,
+    required this.passedModel,
+  });
 
   final Reply existingReply;
-  final passedModel;
+  final dynamic passedModel;
   final _formKey = GlobalKey<FormState>();
   final FocusNode _focusNodeContent = FocusNode();
 
@@ -37,12 +39,12 @@ class UpdateReplyPage extends StatelessWidget
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 50,
-            title: Text('編集'),
+            title: const Text('編集'),
           ),
           body: Consumer<UpdateReplyModel>(
             builder: (context, model, child) {
-              final User? user = AppModel.user;
-              final bool isUserExisting = user != null;
+              final user = AppModel.user;
+              final isUserExisting = user != null;
               return LoadingSpinner(
                 inAsyncCall: model.isLoading,
                 child: KeyboardActions(
@@ -52,7 +54,7 @@ class UpdateReplyPage extends StatelessWidget
                       key: _formKey,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 48.0, horizontal: 24.0),
+                            vertical: 48, horizontal: 24),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -71,7 +73,7 @@ class UpdateReplyPage extends StatelessWidget
                               },
                               decoration: kContentTextFormFieldDecoration,
                             ),
-                            SizedBox(height: 32.0),
+                            const SizedBox(height: 32),
 
                             /// nickname
                             TextFormField(
@@ -84,7 +86,7 @@ class UpdateReplyPage extends StatelessWidget
                               decoration:
                                   kEmotionDropdownButtonFormFieldDecoration,
                             ),
-                            SizedBox(height: 32.0),
+                            const SizedBox(height: 32),
 
                             /// position
                             DropdownButtonFormField(
@@ -94,9 +96,9 @@ class UpdateReplyPage extends StatelessWidget
                                       existingReply.position
                                   : isUserExisting
                                       ? model.positionDropdownValue =
-                                          user.position
+                                          user!.position
                                       : model.positionDropdownValue,
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.arrow_downward,
                                 // color: kDarkPink,
                               ),
@@ -115,7 +117,7 @@ class UpdateReplyPage extends StatelessWidget
                                 );
                               }).toList(),
                             ),
-                            SizedBox(height: 32.0),
+                            const SizedBox(height: 32),
 
                             /// gender
                             DropdownButtonFormField(
@@ -125,9 +127,9 @@ class UpdateReplyPage extends StatelessWidget
                                   ? model.genderDropdownValue =
                                       existingReply.gender
                                   : isUserExisting
-                                      ? model.genderDropdownValue = user.gender
+                                      ? model.genderDropdownValue = user!.gender
                                       : model.genderDropdownValue,
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.arrow_downward,
                                 // color: kDarkPink,
                               ),
@@ -146,7 +148,7 @@ class UpdateReplyPage extends StatelessWidget
                                 );
                               }).toList(),
                             ),
-                            SizedBox(height: 32.0),
+                            const SizedBox(height: 32),
 
                             /// age
                             DropdownButtonFormField(
@@ -155,9 +157,9 @@ class UpdateReplyPage extends StatelessWidget
                               value: existingReply.age.isNotEmpty
                                   ? model.ageDropdownValue = existingReply.age
                                   : isUserExisting
-                                      ? model.ageDropdownValue = user.age
+                                      ? model.ageDropdownValue = user!.age
                                       : model.ageDropdownValue,
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.arrow_downward,
                                 // color: kDarkPink,
                               ),
@@ -175,7 +177,7 @@ class UpdateReplyPage extends StatelessWidget
                                 );
                               }).toList(),
                             ),
-                            SizedBox(height: 32.0),
+                            const SizedBox(height: 32),
 
                             /// area
                             DropdownButtonFormField(
@@ -184,9 +186,9 @@ class UpdateReplyPage extends StatelessWidget
                               value: existingReply.area.isNotEmpty
                                   ? model.areaDropdownValue = existingReply.area
                                   : isUserExisting
-                                      ? model.areaDropdownValue = user.area
+                                      ? model.areaDropdownValue = user!.area
                                       : model.areaDropdownValue,
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.arrow_downward,
                                 // color: kDarkPink,
                               ),
@@ -205,8 +207,8 @@ class UpdateReplyPage extends StatelessWidget
                                 );
                               }).toList(),
                             ),
-                            SizedBox(
-                              height: 48.0,
+                            const SizedBox(
+                              height: 48,
                             ),
 
                             /// 投稿更新ボタン
@@ -218,7 +220,7 @@ class UpdateReplyPage extends StatelessWidget
                                           await model
                                               .updateReply(existingReply);
                                           Navigator.pop(context);
-                                        } catch (e) {
+                                        } on String catch (e) {
                                           await showExceptionDialog(
                                             context,
                                             e.toString(),
@@ -232,7 +234,7 @@ class UpdateReplyPage extends StatelessWidget
                                             context);
                                       }
                                     },
-                                    child: Text(
+                                    child: const Text(
                                       '更新する',
                                       style: TextStyle(
                                         color: kDarkPink,
@@ -241,12 +243,12 @@ class UpdateReplyPage extends StatelessWidget
                                       ),
                                     ),
                                     style: OutlinedButton.styleFrom(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 12.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(15),
                                       ),
-                                      side: BorderSide(color: kDarkPink),
+                                      side: const BorderSide(color: kDarkPink),
                                     ),
                                   )
                                 :
@@ -269,7 +271,7 @@ class UpdateReplyPage extends StatelessWidget
                                                 ResultForDraftButton
                                                     .addPostFromDraft,
                                               );
-                                            } catch (e) {
+                                            } on String catch (e) {
                                               await showExceptionDialog(
                                                 context,
                                                 e.toString(),
@@ -283,7 +285,7 @@ class UpdateReplyPage extends StatelessWidget
                                                 context);
                                           }
                                         },
-                                        child: Text(
+                                        child: const Text(
                                           '投稿する',
                                           style: TextStyle(
                                             color: Colors.white,
@@ -293,16 +295,17 @@ class UpdateReplyPage extends StatelessWidget
                                         ),
                                         style: OutlinedButton.styleFrom(
                                           backgroundColor: kDarkPink,
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 12.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12),
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(16.0),
+                                                BorderRadius.circular(16),
                                           ),
-                                          side: BorderSide(color: kDarkPink),
+                                          side: const BorderSide(
+                                              color: kDarkPink),
                                         ),
                                       ),
-                                      SizedBox(height: 16.0),
+                                      const SizedBox(height: 16),
 
                                       /// 下書き保存ボタン
                                       OutlinedButton(
@@ -312,9 +315,8 @@ class UpdateReplyPage extends StatelessWidget
                                             try {
                                               await model.updateDraftedReply(
                                                   existingReply);
-                                              final snackBar = SnackBar(
-                                                content: Text('下書きに保存しました'),
-                                              );
+                                              const snackBar = SnackBar(
+                                                  content: Text('下書きに保存しました'));
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(snackBar);
                                               Navigator.pop(
@@ -322,7 +324,7 @@ class UpdateReplyPage extends StatelessWidget
                                                 ResultForDraftButton
                                                     .updateDraft,
                                               );
-                                            } catch (e) {
+                                            } on String catch (e) {
                                               await showExceptionDialog(
                                                 context,
                                                 e.toString(),
@@ -336,7 +338,7 @@ class UpdateReplyPage extends StatelessWidget
                                                 context);
                                           }
                                         },
-                                        child: Text(
+                                        child: const Text(
                                           '下書きに保存する',
                                           style: TextStyle(
                                             color: kDarkPink,
@@ -345,13 +347,14 @@ class UpdateReplyPage extends StatelessWidget
                                           ),
                                         ),
                                         style: OutlinedButton.styleFrom(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 12.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12),
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(16.0),
+                                                BorderRadius.circular(16),
                                           ),
-                                          side: BorderSide(color: kDarkPink),
+                                          side: const BorderSide(
+                                              color: kDarkPink),
                                         ),
                                       ),
                                     ],

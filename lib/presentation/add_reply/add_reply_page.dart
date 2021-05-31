@@ -6,7 +6,6 @@ import 'package:kakikomi_keijiban/common/mixin/build_keyboard_actions_config_don
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
-import 'package:kakikomi_keijiban/domain/user.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply/add_reply_model.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
@@ -34,45 +33,47 @@ class AddReplyPage extends StatelessWidget
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 50,
-            title: Text('返信'),
+            title: const Text('返信'),
             actions: [
               Padding(
-                padding: EdgeInsets.only(right: 8.0),
-                child:
-                    Consumer<AddReplyModel>(builder: (context, model, child) {
-                  return TextButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        try {
-                          await model.addDraftedReply(repliedPost);
-                          final snackBar = SnackBar(
-                            content: Text('下書きに保存しました'),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          Navigator.pop(context);
-                        } catch (e) {
-                          await showExceptionDialog(
-                            context,
-                            e.toString(),
-                          );
+                padding: const EdgeInsets.only(right: 8),
+                child: Consumer<AddReplyModel>(
+                  builder: (context, model, child) {
+                    return TextButton(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          try {
+                            await model.addDraftedReply(repliedPost);
+                            const snackBar = SnackBar(
+                              content: Text('下書きに保存しました'),
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                            Navigator.pop(context);
+                          } on String catch (e) {
+                            await showExceptionDialog(
+                              context,
+                              e.toString(),
+                            );
+                          }
+                        } else {
+                          await showRequiredInputConfirmDialog(context);
                         }
-                      } else {
-                        await showRequiredInputConfirmDialog(context);
-                      }
-                    },
-                    child: Text(
-                      '下書き保存',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  );
-                }),
+                      },
+                      child: const Text(
+                        '下書き保存',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    );
+                  },
+                ),
               )
             ],
           ),
           body: Consumer<AddReplyModel>(
             builder: (context, model, child) {
-              final User? user = AppModel.user;
-              final bool isUserExisting = user != null;
+              final user = AppModel.user;
+              final isUserExisting = user != null;
               return LoadingSpinner(
                 inAsyncCall: model.isLoading,
                 child: KeyboardActions(
@@ -82,7 +83,7 @@ class AddReplyPage extends StatelessWidget
                       key: _formKey,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 48.0, horizontal: 24.0),
+                            vertical: 48, horizontal: 24),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -100,12 +101,12 @@ class AddReplyPage extends StatelessWidget
                               },
                               decoration: kContentTextFormFieldDecoration,
                             ),
-                            SizedBox(height: 32.0),
+                            const SizedBox(height: 32),
 
                             /// nickname
                             TextFormField(
                               initialValue: isUserExisting
-                                  ? model.nicknameValue = user.nickname
+                                  ? model.nicknameValue = user!.nickname
                                   : model.nicknameValue = '匿名',
                               validator: model.validateNicknameCallback,
                               onChanged: (newValue) {
@@ -113,15 +114,15 @@ class AddReplyPage extends StatelessWidget
                               },
                               decoration: kNicknameTextFormFieldDecoration,
                             ),
-                            SizedBox(height: 32.0),
+                            const SizedBox(height: 32),
 
                             /// position
                             DropdownButtonFormField(
                               focusColor: Colors.pink[50],
                               value: isUserExisting
-                                  ? model.positionDropdownValue = user.position
+                                  ? model.positionDropdownValue = user!.position
                                   : model.positionDropdownValue,
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.arrow_downward,
                                 // color: kDarkPink,
                               ),
@@ -140,16 +141,16 @@ class AddReplyPage extends StatelessWidget
                                 );
                               }).toList(),
                             ),
-                            SizedBox(height: 32.0),
+                            const SizedBox(height: 32),
 
                             /// gender
                             DropdownButtonFormField(
                               // focusNode: _genderFocusNode,
                               focusColor: Colors.pink[50],
                               value: isUserExisting
-                                  ? model.genderDropdownValue = user.gender
+                                  ? model.genderDropdownValue = user!.gender
                                   : model.genderDropdownValue,
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.arrow_downward,
                                 // color: kDarkPink,
                               ),
@@ -168,16 +169,16 @@ class AddReplyPage extends StatelessWidget
                                 );
                               }).toList(),
                             ),
-                            SizedBox(height: 32.0),
+                            const SizedBox(height: 32),
 
                             /// age
                             DropdownButtonFormField(
                               // focusNode: _ageFocusNode,
                               focusColor: Colors.pink[50],
                               value: isUserExisting
-                                  ? model.ageDropdownValue = user.age
+                                  ? model.ageDropdownValue = user!.age
                                   : model.ageDropdownValue,
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.arrow_downward,
                                 // color: kDarkPink,
                               ),
@@ -195,16 +196,16 @@ class AddReplyPage extends StatelessWidget
                                 );
                               }).toList(),
                             ),
-                            SizedBox(height: 32.0),
+                            const SizedBox(height: 32),
 
                             /// area
                             DropdownButtonFormField(
                               // focusNode: _areaFocusNode,
                               focusColor: Colors.pink[50],
                               value: isUserExisting
-                                  ? model.areaDropdownValue = user.area
+                                  ? model.areaDropdownValue = user!.area
                                   : model.areaDropdownValue,
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.arrow_downward,
                                 // color: kDarkPink,
                               ),
@@ -223,7 +224,7 @@ class AddReplyPage extends StatelessWidget
                                 );
                               }).toList(),
                             ),
-                            SizedBox(height: 48.0),
+                            const SizedBox(height: 48),
 
                             /// 投稿送信ボタン
                             OutlinedButton(
@@ -232,7 +233,7 @@ class AddReplyPage extends StatelessWidget
                                   try {
                                     await model.addReplyToPost(repliedPost);
                                     Navigator.pop(context);
-                                  } catch (e) {
+                                  } on String catch (e) {
                                     await showExceptionDialog(
                                       context,
                                       e.toString(),
@@ -245,7 +246,7 @@ class AddReplyPage extends StatelessWidget
                                   await showRequiredInputConfirmDialog(context);
                                 }
                               },
-                              child: Text(
+                              child: const Text(
                                 '返信する',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -255,15 +256,16 @@ class AddReplyPage extends StatelessWidget
                               ),
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: kDarkPink,
-                                padding: EdgeInsets.symmetric(vertical: 12.0),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(15),
                                 ),
-                                side: BorderSide(color: kDarkPink),
+                                side: const BorderSide(color: kDarkPink),
                               ),
                             ),
 
-                            SizedBox(height: 16.0),
+                            const SizedBox(height: 16),
 
                             /// 下書き保存ボタン
                             OutlinedButton(
@@ -271,13 +273,13 @@ class AddReplyPage extends StatelessWidget
                                 if (_formKey.currentState!.validate()) {
                                   try {
                                     await model.addDraftedReply(repliedPost);
-                                    final snackBar = SnackBar(
+                                    const snackBar = SnackBar(
                                       content: Text('下書きに保存しました'),
                                     );
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(snackBar);
                                     Navigator.pop(context);
-                                  } catch (e) {
+                                  } on String catch (e) {
                                     await showExceptionDialog(
                                       context,
                                       e.toString(),
@@ -287,7 +289,7 @@ class AddReplyPage extends StatelessWidget
                                   await showRequiredInputConfirmDialog(context);
                                 }
                               },
-                              child: Text(
+                              child: const Text(
                                 '下書きに保存する',
                                 style: TextStyle(
                                   color: kDarkPink,
@@ -296,11 +298,12 @@ class AddReplyPage extends StatelessWidget
                                 ),
                               ),
                               style: OutlinedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(vertical: 12.0),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16.0),
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
-                                side: BorderSide(color: kDarkPink),
+                                side: const BorderSide(color: kDarkPink),
                               ),
                             ),
                           ],

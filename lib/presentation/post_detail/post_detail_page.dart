@@ -7,7 +7,7 @@ import 'package:kakikomi_keijiban/presentation/post_detail/post_detail_model.dar
 import 'package:provider/provider.dart';
 
 class PostDetailPage extends StatelessWidget {
-  PostDetailPage(this.notice);
+  const PostDetailPage(this.notice);
   final Notice notice;
 
   @override
@@ -18,21 +18,21 @@ class PostDetailPage extends StatelessWidget {
         backgroundColor: kLightPink,
         appBar: AppBar(
           toolbarHeight: 50,
-          title: Text('投稿'),
+          title: const Text('投稿'),
         ),
         body: Consumer<PostDetailModel>(builder: (context, model, child) {
           return LoadingSpinner(
             inAsyncCall: model.isModalLoading,
             child: SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.only(top: 30, bottom: 60),
+                padding: const EdgeInsets.only(top: 30, bottom: 60),
                 child: model.post != null
                     ? PostCard(
                         post: model.post!,
                         indexOfPost: 0,
                         passedModel: model,
                       )
-                    : SizedBox(),
+                    : const SizedBox(),
               ),
             ),
           );

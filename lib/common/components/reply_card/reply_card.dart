@@ -22,7 +22,7 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
 
   final Reply reply;
   final Post post;
-  final passedModel;
+  final dynamic passedModel;
 
   @override
   Widget build(BuildContext context) {
@@ -30,22 +30,22 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
       return Stack(
         alignment: AlignmentDirectional.topEnd,
         children: [
-          SizedBox(height: 20.0),
+          const SizedBox(height: 20),
           Card(
             elevation: 0,
             color: kUltraLightPink,
-            margin: EdgeInsets.only(top: 20.0),
+            margin: const EdgeInsets.only(top: 20),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16.0),
+              borderRadius: BorderRadius.circular(16),
               // side: BorderSide(
               //   color: kLightPink,
-              //   width: 2.0,
+              //   width: 2,
               // ),
             ),
             child: Column(
               children: [
                 Container(
-                  padding: EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.all(20),
                   child: Column(
                     children: [
                       Row(
@@ -54,7 +54,7 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                           Transform(
                             alignment: Alignment.topCenter,
                             transform: Matrix4.rotationY(math.pi),
-                            child: Icon(
+                            child: const Icon(
                               Icons.reply,
                               color: kGrey,
                             ),
@@ -64,8 +64,8 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                           Flexible(
                             child: Center(
                               child: Text(
-                                getFormattedPosterData(reply),
-                                style: TextStyle(color: kGrey),
+                                getFormattedReplierData(reply),
+                                style: const TextStyle(color: kGrey),
                               ),
                             ),
                           ),
@@ -74,23 +74,23 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
 
                       /// body
                       Padding(
-                        padding: EdgeInsets.symmetric(vertical: 15.0),
+                        padding: const EdgeInsets.symmetric(vertical: 15),
                         child: RichText(
                           text: TextSpan(
                             children: [
                               TextSpan(text: reply.body),
                               reply.createdDate != reply.updatedDate
-                                  ? TextSpan(
+                                  ? const TextSpan(
                                       text: '（編集済み）',
                                       style: TextStyle(
                                         color: kGrey,
-                                        fontSize: 15.0,
+                                        fontSize: 15,
                                       ),
                                     )
-                                  : TextSpan(),
+                                  : const TextSpan(),
                             ],
-                            style: TextStyle(
-                              fontSize: 16.0,
+                            style: const TextStyle(
+                              fontSize: 16,
                               height: 1.8,
                               color: Colors.black,
                             ),
@@ -103,7 +103,7 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                         alignment: Alignment.centerRight,
                         child: Text(
                           reply.createdAt,
-                          style: TextStyle(color: kGrey),
+                          style: const TextStyle(color: kGrey),
                         ),
                       ),
                       Row(
@@ -113,7 +113,7 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                           passedModel is! DraftsModel
                               ? OutlinedButton(
                                   onPressed: () async {
-                                    await Navigator.push(
+                                    await Navigator.push<void>(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
@@ -122,20 +122,20 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                     );
                                     await model.getRepliesToReply(reply);
                                   },
-                                  child: Text(
+                                  child: const Text(
                                     '返信する',
                                     style: TextStyle(
-                                        color: kDarkPink, fontSize: 15.0),
+                                        color: kDarkPink, fontSize: 15),
                                   ),
                                   style: OutlinedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16.0),
+                                      borderRadius: BorderRadius.circular(16),
                                     ),
-                                    side: BorderSide(color: kPink),
+                                    side: const BorderSide(color: kPink),
                                     primary: kDarkPink,
                                   ),
                                 )
-                              : SizedBox(),
+                              : const SizedBox(),
 
                           /// ワカルボタン
                           passedModel is! DraftsModel
@@ -148,7 +148,7 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                       },
                                       icon: Row(
                                         children: [
-                                          Icon(
+                                          const Icon(
                                             Icons.favorite,
                                             color: Colors.pinkAccent,
                                           ),
@@ -167,12 +167,12 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                           reply.empathyCount != 0
                                               ? Text(
                                                   '${reply.empathyCount} ',
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                     color: kDarkPink,
                                                   ),
                                                 )
-                                              : SizedBox(),
-                                          Text(
+                                              : const SizedBox(),
+                                          const Text(
                                             'ワカル',
                                             style: TextStyle(
                                               color: kDarkPink,
@@ -188,7 +188,7 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                       },
                                       icon: Row(
                                         children: [
-                                          Icon(
+                                          const Icon(
                                             Icons.favorite_border_outlined,
                                             color: kGrey,
                                           ),
@@ -207,12 +207,12 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                           reply.empathyCount != 0
                                               ? Text(
                                                   '${reply.empathyCount} ',
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                     color: kDarkPink,
                                                   ),
                                                 )
-                                              : SizedBox(),
-                                          Text(
+                                              : const SizedBox(),
+                                          const Text(
                                             'ワカル',
                                             style: TextStyle(
                                               color: kDarkPink,
@@ -221,7 +221,7 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                         ],
                                       ),
                                     )
-                              : SizedBox(),
+                              : const SizedBox(),
                         ],
                       ),
                     ],
@@ -242,8 +242,8 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                               ),
                               reply.repliesToReply.isNotEmpty &&
                                       reply.repliesToReply.last == replyToReply
-                                  ? SizedBox(height: 24.0)
-                                  : SizedBox(),
+                                  ? const SizedBox(height: 24)
+                                  : const SizedBox(),
                             ],
                           );
                         }).toList()
@@ -257,16 +257,16 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
           reply.isMe() == true && passedModel is! DraftsModel
               ? Positioned.directional(
                   textDirection: TextDirection.ltr,
-                  top: 10.0,
-                  end: -8.0,
+                  top: 10,
+                  end: -8,
                   // child: PopupMenuOnReplyCard(reply: reply, post: post),
                   child: IconButton(
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.edit,
                       color: kGrey,
                     ),
                     onPressed: () async {
-                      await Navigator.push(
+                      await Navigator.push<void>(
                         context,
                         MaterialPageRoute(builder: (context) {
                           return UpdateReplyPage(
@@ -281,7 +281,7 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                     },
                   ),
                 )
-              : SizedBox(),
+              : const SizedBox(),
 
           /// EditIconButton
           reply.isMe() == true &&
@@ -289,16 +289,17 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                   reply.isDraft == true
               ? Positioned.directional(
                   textDirection: TextDirection.ltr,
-                  top: 10.0,
-                  end: -8.0,
+                  top: 10,
+                  end: -8,
                   // child: PopupMenuOnReplyCard(reply: reply, post: post),
                   child: IconButton(
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.edit,
                       color: kGrey,
                     ),
                     onPressed: () async {
-                      final resultForDraftButton = await Navigator.push(
+                      final resultForDraftButton =
+                          await Navigator.push<ResultForDraftButton>(
                         context,
                         MaterialPageRoute(
                           builder: (context) {
@@ -322,7 +323,7 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                     },
                   ),
                 )
-              : SizedBox(),
+              : const SizedBox(),
         ],
       );
     });
@@ -347,12 +348,12 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
 //     //           inAsyncCall: model.isLoading,
 //     //           child: AlertDialog(
 //     //             shape: RoundedRectangleBorder(
-//     //               borderRadius: BorderRadius.circular(16.0),
+//     //               borderRadius: BorderRadius.circular(16),
 //     //             ),
-//     //             title: Text('返信の削除'),
+//     //             title: const Text('返信の削除'),
 //     //             content: Text('本当に削除しますか？'),
 //     //             contentPadding:
-//     //                 EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+//     //                 EdgeInsets.symmetric(horizontal: 24, vertical: 20),
 //     //             actions: <Widget>[
 //     //               TextButton(
 //     //                 child: Text(
@@ -401,7 +402,7 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
 //           color: kLightGrey,
 //         ),
 //         shape: RoundedRectangleBorder(
-//           borderRadius: BorderRadius.circular(15.0),
+//           borderRadius: BorderRadius.circular(15),
 //         ),
 //         elevation: 1,
 //         onSelected: (result) async {
@@ -424,11 +425,11 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
 //           PopupMenuItem<PopupMenuItemsOnCard>(
 //             value: PopupMenuItemsOnCard.update,
 //             child: Container(
-//               width: 100.0,
+//               width: 100,
 //               child: Row(
 //                 children: [
 //                   Icon(Icons.update, color: kLightGrey),
-//                   SizedBox(width: 8.0),
+//                   SizedBox(width: 8),
 //                   Text(
 //                     '編集する',
 //                     style: TextStyle(color: kLightGrey),
@@ -441,11 +442,11 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
 //           // PopupMenuItem<PopupMenuItemsOnCard>(
 //           //   value: PopupMenuItemsOnCard.delete,
 //           //   child: Container(
-//           //     width: 100.0,
+//           //     width: 100,
 //           //     child: Row(
 //           //       children: [
 //           //         Icon(Icons.delete, color: kLightGrey),
-//           //         SizedBox(width: 8.0),
+//           //         SizedBox(width: 8),
 //           //         Text(
 //           //           '削除する',
 //           //           style: TextStyle(color: kLightGrey),

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_page.dart';
 
 class ScrollBottomNotificationListener extends StatelessWidget {
-  ScrollBottomNotificationListener({
+  const ScrollBottomNotificationListener({
     required this.model,
     required this.child,
     this.tabType,
   });
 
-  final model;
+  final dynamic model;
   final Widget child;
   final TabType? tabType;
 
@@ -18,16 +18,16 @@ class ScrollBottomNotificationListener extends StatelessWidget {
       onNotification: (notification) {
         if (notification.metrics.pixels ==
             notification.metrics.maxScrollExtent) {
-          if (model.isLoading) {
+          if (model.isLoading as bool) {
             return false;
           } else {
             if (tabType != null) {
-              if (model.canLoadMore(tabType)) {
+              if (model.canLoadMore(tabType) as bool) {
                 // ignore: unnecessary_statements
                 model.loadPostsWithReplies(tabType);
               }
             } else {
-              if (model.canLoadMore) {
+              if (model.canLoadMore as bool) {
                 // ignore: unnecessary_statements
                 model.loadPostsWithReplies;
               }

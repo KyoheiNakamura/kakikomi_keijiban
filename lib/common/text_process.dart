@@ -4,9 +4,9 @@
 ///   - 末尾の改行
 /// を取り除く
 String removeUnnecessaryBlankLines(String input) {
-  RegExp headBlankLines = RegExp(r'^\n+');
-  RegExp blankLines = RegExp(r'\n{3,}');
-  RegExp lastBlankLines = RegExp(r'\n+$');
+  final headBlankLines = RegExp(r'^\n+');
+  final blankLines = RegExp(r'\n{3,}');
+  final lastBlankLines = RegExp(r'\n+$');
   return input
       .replaceAll(headBlankLines, '')
       .replaceAll(blankLines, '\n\n')

@@ -14,8 +14,8 @@ class PostDetailModel extends ChangeNotifier
   bool isModalLoading = false;
 
   Future<void> init(Notice notice) async {
-    this.posterId = notice.posterId;
-    this.postId = notice.postId;
+    posterId = notice.posterId;
+    postId = notice.postId;
     startModalLoading();
     await getPost();
     stopModalLoading();
@@ -31,11 +31,11 @@ class PostDetailModel extends ChangeNotifier
         .collection('posts')
         .doc(postId)
         .get();
-    this.post = Post(snapshot);
+    post = Post(snapshot);
 
-    await addBookmark([this.post], bookmarkedPostsIds);
-    await addEmpathy([this.post], empathizedPostsIds);
-    await getReplies([this.post!], empathizedPostsIds);
+    await addBookmark(<Post>[post!], bookmarkedPostsIds);
+    await addEmpathy(<Post>[post!], empathizedPostsIds);
+    await getReplies([post!], empathizedPostsIds);
 
     notifyListeners();
   }

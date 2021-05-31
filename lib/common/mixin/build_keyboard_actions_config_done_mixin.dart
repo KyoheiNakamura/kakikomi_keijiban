@@ -16,7 +16,7 @@ mixin KeyboardActionsConfigDoneMixin {
     );
   }
 
-  _keyboardActionItems(_focusNode) {
+  KeyboardActionsItem _keyboardActionItems(FocusNode _focusNode) {
     return KeyboardActionsItem(
       focusNode: _focusNode,
       toolbarButtons: [
@@ -34,12 +34,12 @@ mixin KeyboardActionsConfigDoneMixin {
       },
       child: Container(
         color: Colors.transparent,
-        padding: EdgeInsets.only(left: 8.0, right: 16.0),
-        child: Text(
+        padding: const EdgeInsets.only(left: 8, right: 16),
+        child: const Text(
           '完了',
           style: TextStyle(
             color: kDarkPink,
-            fontSize: 16.0,
+            fontSize: 16,
           ),
         ),
       ),

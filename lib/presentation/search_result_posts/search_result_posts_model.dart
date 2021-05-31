@@ -22,9 +22,9 @@ class SearchResultPostsModel extends ChangeNotifier
   String postField = '';
   String searchWord = '';
 
-  Future<void> init(String searchWord) async {
+  Future<void> init(String _searchWord) async {
     startModalLoading();
-    this.searchWord = searchWord;
+    searchWord = _searchWord;
     getPostField(searchWord);
     await getPostsWithRepliesChosenField();
     stopModalLoading();
@@ -32,19 +32,19 @@ class SearchResultPostsModel extends ChangeNotifier
 
   void getPostField(String searchWord) {
     if (kCategoryList.contains(searchWord)) {
-      this.postField = 'categories';
+      postField = 'categories';
     } else if (kEmotionList.contains(searchWord)) {
-      this.postField = 'emotion';
+      postField = 'emotion';
     } else if (kPositionList.contains(searchWord)) {
-      this.postField = 'position';
+      postField = 'position';
     } else if (kGenderList.contains(searchWord)) {
-      this.postField = 'gender';
+      postField = 'gender';
     } else if (kAgeList.contains(searchWord)) {
-      this.postField = 'age';
+      postField = 'age';
     } else if (kAreaList.contains(searchWord)) {
-      this.postField = 'area';
+      postField = 'area';
     } else {
-      this.postField = '';
+      postField = '';
     }
   }
 
@@ -57,41 +57,41 @@ class SearchResultPostsModel extends ChangeNotifier
     if (postField == 'categories') {
       queryBatch = firestore
           .collectionGroup('posts')
-          .where(this.postField, arrayContains: this.searchWord)
+          .where(postField, arrayContains: searchWord)
           .orderBy('createdAt', descending: true)
           .limit(loadLimit);
     } else {
       queryBatch = firestore
           .collectionGroup('posts')
-          .where(this.postField, isEqualTo: this.searchWord)
+          .where(postField, isEqualTo: searchWord)
           .orderBy('createdAt', descending: true)
           .limit(loadLimit);
     }
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
-    this._searchedPosts.clear();
+    _searchedPosts.clear();
     if (docs.length == 0) {
       // isPostsExisting = false;
-      this.canLoadMore = false;
-      this._searchedPosts = [];
+      canLoadMore = false;
+      _searchedPosts = [];
     } else if (docs.length < loadLimit) {
       // isPostsExisting = true;
-      this.canLoadMore = false;
-      this.lastVisibleOfTheBatch = docs[docs.length - 1];
-      this._searchedPosts = docs.map((doc) => Post(doc)).toList();
+      canLoadMore = false;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      _searchedPosts = docs.map((doc) => Post(doc)).toList();
     } else {
       // isPostsExisting = true;
-      this.canLoadMore = true;
-      this.lastVisibleOfTheBatch = docs[docs.length - 1];
-      this._searchedPosts = docs.map((doc) => Post(doc)).toList();
+      canLoadMore = true;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      _searchedPosts = docs.map((doc) => Post(doc)).toList();
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
     final empathizedPostsIds = await getEmpathizedPostsIds();
 
-    await addBookmark(this._searchedPosts, bookmarkedPostsIds);
-    await addEmpathy(this._searchedPosts, empathizedPostsIds);
-    await getReplies(this._searchedPosts, empathizedPostsIds);
+    await addBookmark(_searchedPosts, bookmarkedPostsIds);
+    await addEmpathy(_searchedPosts, empathizedPostsIds);
+    await getReplies(_searchedPosts, empathizedPostsIds);
 
     stopModalLoading();
     notifyListeners();
@@ -103,17 +103,17 @@ class SearchResultPostsModel extends ChangeNotifier
     final Query queryBatch;
     // postのfieldの値が配列(array)のとき
     // Todo positionも複数選択に変える予定なので、おいおいこっちの条件に||で追加するはず
-    if (this.postField == 'categories') {
+    if (postField == 'categories') {
       queryBatch = firestore
           .collectionGroup('posts')
-          .where(this.postField, arrayContains: this.searchWord)
+          .where(postField, arrayContains: searchWord)
           .orderBy('createdAt', descending: true)
           .startAfterDocument(lastVisibleOfTheBatch!)
           .limit(loadLimit);
     } else {
       queryBatch = firestore
           .collectionGroup('posts')
-          .where(this.postField, isEqualTo: this.searchWord)
+          .where(postField, isEqualTo: searchWord)
           .orderBy('createdAt', descending: true)
           .startAfterDocument(lastVisibleOfTheBatch!)
           .limit(loadLimit);
@@ -122,26 +122,26 @@ class SearchResultPostsModel extends ChangeNotifier
     final docs = querySnapshot.docs;
     if (docs.length == 0) {
       // isPostsExisting = false;
-      this.canLoadMore = false;
-      this._searchedPosts = [];
+      canLoadMore = false;
+      _searchedPosts = [];
     } else if (docs.length < loadLimit) {
       // isPostsExisting = true;
-      this.canLoadMore = false;
-      this.lastVisibleOfTheBatch = docs[docs.length - 1];
-      this._searchedPosts = docs.map((doc) => Post(doc)).toList();
+      canLoadMore = false;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      _searchedPosts = docs.map((doc) => Post(doc)).toList();
     } else {
       // isPostsExisting = true;
-      this.canLoadMore = true;
-      this.lastVisibleOfTheBatch = docs[docs.length - 1];
-      this._searchedPosts = docs.map((doc) => Post(doc)).toList();
+      canLoadMore = true;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      _searchedPosts = docs.map((doc) => Post(doc)).toList();
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
     final empathizedPostsIds = await getEmpathizedPostsIds();
 
-    await addBookmark(this._searchedPosts, bookmarkedPostsIds);
-    await addEmpathy(this._searchedPosts, empathizedPostsIds);
-    await getReplies(this._searchedPosts, empathizedPostsIds);
+    await addBookmark(_searchedPosts, bookmarkedPostsIds);
+    await addEmpathy(_searchedPosts, empathizedPostsIds);
+    await getReplies(_searchedPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -152,7 +152,7 @@ class SearchResultPostsModel extends ChangeNotifier
     required int indexOfPost,
   }) async {
     await refreshThePostAfterUpdated(
-      posts: this._searchedPosts,
+      posts: _searchedPosts,
       oldPost: oldPost,
       indexOfPost: indexOfPost,
     );
@@ -161,7 +161,7 @@ class SearchResultPostsModel extends ChangeNotifier
   }
 
   void removeThePostOfPostsAfterDeleted(Post post) {
-    this._searchedPosts.remove(post);
+    _searchedPosts.remove(post);
     notifyListeners();
   }
 

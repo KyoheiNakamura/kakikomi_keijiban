@@ -23,7 +23,7 @@ class NoticesModel extends ChangeNotifier {
   Future<void> getMyNotices() async {
     startLoading();
 
-    Query queryBatch = firestore
+    final queryBatch = firestore
         .collection('users')
         .doc(auth.currentUser?.uid)
         .collection('notices')
@@ -31,21 +31,21 @@ class NoticesModel extends ChangeNotifier {
         .limit(loadLimit);
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
-    this.notices.clear();
+    notices.clear();
     if (docs.length == 0) {
       // isPostsExisting = false;
-      this.canLoadMore = false;
-      this.notices = [];
+      canLoadMore = false;
+      notices = [];
     } else if (docs.length < loadLimit) {
       // isPostsExisting = true;
-      this.canLoadMore = false;
-      this.lastVisibleOfTheBatch = docs[docs.length - 1];
-      this.notices = docs.map((doc) => Notice(doc)).toList();
+      canLoadMore = false;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      notices = docs.map((doc) => Notice(doc)).toList();
     } else {
       // isPostsExisting = true;
-      this.canLoadMore = true;
-      this.lastVisibleOfTheBatch = docs[docs.length - 1];
-      this.notices = docs.map((doc) => Notice(doc)).toList();
+      canLoadMore = true;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      notices = docs.map((doc) => Notice(doc)).toList();
     }
 
     stopLoading();

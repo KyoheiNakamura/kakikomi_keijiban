@@ -26,7 +26,7 @@ class ContactPage extends StatelessWidget
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 50,
-            title: Text('お問い合わせ'),
+            title: const Text('お問い合わせ'),
           ),
           body: Consumer<ContactModel>(
             builder: (context, model, child) {
@@ -39,7 +39,7 @@ class ContactPage extends StatelessWidget
                       key: _formKey,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 32.0, horizontal: 24.0),
+                            vertical: 32, horizontal: 24),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -52,15 +52,15 @@ class ContactPage extends StatelessWidget
                               },
                               decoration: kContactEmailTextFormFieldDecoration,
                             ),
-                            SizedBox(height: 32.0),
+                            const SizedBox(height: 32),
 
                             /// contactCategory
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 32.0),
+                              padding: const EdgeInsets.only(bottom: 32),
                               child: DropdownButtonFormField(
                                 validator: model.validateContactCallback,
                                 value: model.contactDropdownValue,
-                                icon: Icon(Icons.arrow_downward),
+                                icon: const Icon(Icons.arrow_downward),
                                 iconSize: 24,
                                 elevation: 1,
                                 style: kDropdownButtonFormFieldTextStyle,
@@ -93,7 +93,7 @@ class ContactPage extends StatelessWidget
                               decoration:
                                   kContactContentTextFormFieldDecoration,
                             ),
-                            SizedBox(height: 40.0),
+                            const SizedBox(height: 40),
 
                             /// 投稿送信ボタン
                             OutlinedButton(
@@ -105,11 +105,11 @@ class ContactPage extends StatelessWidget
                                       ModalRoute.withName('/'),
                                     );
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
+                                      const SnackBar(
                                         content: Text('お問い合わせが送信されました。'),
                                       ),
                                     );
-                                  } catch (e) {
+                                  } on String catch (e) {
                                     await showExceptionDialog(
                                       context,
                                       e.toString(),
@@ -117,7 +117,7 @@ class ContactPage extends StatelessWidget
                                   }
                                 }
                               },
-                              child: Text(
+                              child: const Text(
                                 'お問い合わせをする',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -127,11 +127,12 @@ class ContactPage extends StatelessWidget
                               ),
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: kDarkPink,
-                                padding: EdgeInsets.symmetric(vertical: 12.0),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
                                 // shape: RoundedRectangleBorder(
                                 //   borderRadius: BorderRadius.circular(15),
                                 // ),
-                                side: BorderSide(color: kDarkPink),
+                                side: const BorderSide(color: kDarkPink),
                               ),
                             )
                           ],

@@ -3,17 +3,16 @@ import 'package:intl/intl.dart';
 
 class Notice {
   Notice(DocumentSnapshot doc) {
-    this.id = doc.id;
-    this.userId = doc['userId'];
-    this.postId = doc['postId'];
-    this.posterId = doc['posterId'];
-    this.title = doc['title'];
-    this.body = doc['body'];
-    this.nickname = doc['nickname'];
-    this.emotion = doc['emotion'];
-    this.isRead = doc['isRead'];
-    final Timestamp createdTime = doc['createdAt'];
-    this.createdDate = createdTime.toDate();
+    id = doc.id;
+    userId = doc['userId'] as String;
+    postId = doc['postId'] as String;
+    posterId = doc['posterId'] as String;
+    title = doc['title'] as String;
+    body = doc['body'] as String;
+    nickname = doc['nickname'] as String;
+    emotion = doc['emotion'] as String;
+    isRead = doc['isRead'] as bool;
+    createdDate = (doc['createdAt'] as Timestamp).toDate();
   }
 
   String id = '';
@@ -29,8 +28,8 @@ class Notice {
 
   String get createdAt => _formatDate(createdDate);
 
-  String _formatDate(date) {
+  String _formatDate(DateTime date) {
     final formatter = DateFormat('MM/dd HH:mm');
-    return date != null ? formatter.format(date) : '';
+    return formatter.format(date);
   }
 }

@@ -15,7 +15,7 @@ class UpdateEmailPage extends StatelessWidget with ShowExceptionDialogMixin {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
-          title: Text('メールアドレスの変更'),
+          title: const Text('メールアドレスの変更'),
         ),
         body: Consumer<UpdateEmailModel>(
           builder: (context, model, child) {
@@ -26,18 +26,18 @@ class UpdateEmailPage extends StatelessWidget with ShowExceptionDialogMixin {
                   key: _formKey,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 32.0, horizontal: 24.0),
+                        vertical: 32, horizontal: 24),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         /// currentEmail
-                        Text('現在のメールアドレス'),
-                        SizedBox(height: 8.0),
+                        const Text('現在のメールアドレス'),
+                        const SizedBox(height: 8),
                         SelectableText(
                           model.currentEmail,
-                          style: TextStyle(fontSize: 17.0),
+                          style: const TextStyle(fontSize: 17),
                         ),
-                        SizedBox(height: 32.0),
+                        const SizedBox(height: 32),
 
                         /// newEmail
                         TextFormField(
@@ -46,13 +46,13 @@ class UpdateEmailPage extends StatelessWidget with ShowExceptionDialogMixin {
                             model.enteredEmail = newValue.trim();
                           },
                           autofocus: true,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             // prefixIcon: Icon(Icons.text_fields),
                             labelText: '新しいメールアドレス',
                           ),
                         ),
-                        SizedBox(height: 32.0),
+                        const SizedBox(height: 32),
 
                         /// password
                         TextFormField(
@@ -61,13 +61,13 @@ class UpdateEmailPage extends StatelessWidget with ShowExceptionDialogMixin {
                             model.enteredPassword = newValue.trim();
                           },
                           obscureText: true,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             // prefixIcon: Icon(Icons.text_fields),
                             labelText: 'パスワード',
                           ),
                         ),
-                        SizedBox(height: 40.0),
+                        const SizedBox(height: 40),
 
                         /// 投稿送信ボタン
                         OutlinedButton(
@@ -79,11 +79,11 @@ class UpdateEmailPage extends StatelessWidget with ShowExceptionDialogMixin {
                                   ModalRoute.withName('/'),
                                 );
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text('メールアドレスが変更されました。'),
+                                  const SnackBar(
+                                    content: const Text('メールアドレスが変更されました。'),
                                   ),
                                 );
-                              } catch (e) {
+                              } on String catch (e) {
                                 await showExceptionDialog(
                                   context,
                                   e.toString(),
@@ -91,7 +91,7 @@ class UpdateEmailPage extends StatelessWidget with ShowExceptionDialogMixin {
                               }
                             }
                           },
-                          child: Text(
+                          child: const Text(
                             'メールアドレスを変更する',
                             style: TextStyle(
                               color: Colors.white,
@@ -101,11 +101,11 @@ class UpdateEmailPage extends StatelessWidget with ShowExceptionDialogMixin {
                           ),
                           style: OutlinedButton.styleFrom(
                             backgroundColor: kDarkPink,
-                            padding: EdgeInsets.symmetric(vertical: 12.0),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                             // shape: RoundedRectangleBorder(
                             //   borderRadius: BorderRadius.circular(15),
                             // ),
-                            side: BorderSide(color: kDarkPink),
+                            side: const BorderSide(color: kDarkPink),
                           ),
                         )
                       ],

@@ -23,25 +23,27 @@ class UpdatePushNotificationModel extends ChangeNotifier {
   }
 
   void initNewPostTopic(DocumentSnapshot userSnapshot) {
-    final List<dynamic> topics = userSnapshot['topics'];
+    final topics = userSnapshot['topics'] as List<String>;
     if (topics.contains('newPost')) {
-      this.isNewPostTopicAllowed = true;
+      isNewPostTopicAllowed = true;
     } else {
-      this.isNewPostTopicAllowed = false;
+      isNewPostTopicAllowed = false;
     }
   }
 
   void initReplyToMyPost(DocumentSnapshot userSnapshot) {
-    final List<dynamic> pushNoticesSetting = userSnapshot['pushNoticesSetting'];
+    final pushNoticesSetting =
+        userSnapshot['pushNoticesSetting'] as List<String>;
     if (pushNoticesSetting.contains('replyToMyPost')) {
-      this.isReplyToMyPostAllowed = true;
+      isReplyToMyPostAllowed = true;
     } else {
-      this.isReplyToMyPostAllowed = false;
+      isReplyToMyPostAllowed = false;
     }
   }
 
   // void initReplyToMyReply(DocumentSnapshot userSnapshot) {
-  //   final List<dynamic> pushNoticesSetting = userSnapshot['pushNoticesSetting'];
+  //   final pushNoticesSetting =
+  //       userSnapshot['pushNoticesSetting'] as List<String>;
   //   if (pushNoticesSetting.contains('replyToMyReply')) {
   //     this.isReplyToMyReplyAllowed = true;
   //   } else {
@@ -49,8 +51,9 @@ class UpdatePushNotificationModel extends ChangeNotifier {
   //   }
   // }
 
+  // ignore: avoid_positional_boolean_parameters
   Future<void> toggleSubscriptionForNewPostTopic(bool value) async {
-    final topic = 'newPost';
+    const topic = 'newPost';
     final userRef = firestore.collection('users').doc(currentUser.uid);
     if (value) {
       // subscribeToNewPost
@@ -58,7 +61,7 @@ class UpdatePushNotificationModel extends ChangeNotifier {
       notifyListeners();
       await _messaging.subscribeToTopic(topic);
       await userRef.update({
-        'topics': FieldValue.arrayUnion([topic]),
+        'topics': FieldValue.arrayUnion(<String>[topic]),
       });
     } else {
       // unsubscribeFromNewPost
@@ -66,27 +69,28 @@ class UpdatePushNotificationModel extends ChangeNotifier {
       notifyListeners();
       await _messaging.unsubscribeFromTopic(topic);
       await userRef.update({
-        'topics': FieldValue.arrayRemove([topic]),
+        'topics': FieldValue.arrayRemove(<String>[topic]),
       });
     }
   }
 
+  // ignore: avoid_positional_boolean_parameters
   Future<void> togglePermissionForReplyToMyPost(bool value) async {
-    final notification = 'replyToMyPost';
+    const notification = 'replyToMyPost';
     final userRef = firestore.collection('users').doc(currentUser.uid);
     if (value) {
       // allowReplyToMyPost
       isReplyToMyPostAllowed = true;
       notifyListeners();
       await userRef.update({
-        'pushNoticesSetting': FieldValue.arrayUnion([notification]),
+        'pushNoticesSetting': FieldValue.arrayUnion(<String>[notification]),
       });
     } else {
       // doNotAllowReplyToMyPost
       isReplyToMyPostAllowed = false;
       notifyListeners();
       await userRef.update({
-        'pushNoticesSetting': FieldValue.arrayRemove([notification]),
+        'pushNoticesSetting': FieldValue.arrayRemove(<String>[notification]),
       });
     }
   }

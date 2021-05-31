@@ -25,20 +25,20 @@ class SignInModel extends ChangeNotifier {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-email') {
         print('このメールアドレスは形式が正しくありません。');
-        throw ('このメールアドレスは\n形式が正しくありません。');
+        throw 'このメールアドレスは\n形式が正しくありません。';
       } else if (e.code == 'user-not-found') {
         print('このメールアドレスは登録されていません。');
-        throw ('このメールアドレスは\n登録されていません。');
+        throw 'このメールアドレスは\n登録されていません。';
       } else if (e.code == 'wrong-password') {
         print('パスワードが正しくありません。');
-        throw ('パスワードが正しくありません。');
+        throw 'パスワードが正しくありません。';
       } else {
         print(e.toString());
-        throw ('エラーが発生しました。\nもう一度お試し下さい。');
+        throw 'エラーが発生しました。\nもう一度お試し下さい。';
       }
     } on Exception catch (e) {
       print(e.toString());
-      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+      throw 'エラーが発生しました。\nもう一度お試し下さい。';
     } finally {
       stopModalLoading();
     }
@@ -48,29 +48,28 @@ class SignInModel extends ChangeNotifier {
     startModalLoading();
 
     try {
-      final GoogleSignInAccount? googleUser = (await GoogleSignIn().signIn());
+      final googleUser = await GoogleSignIn().signIn();
       if (googleUser != null) {
-        final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
-        final OAuthCredential credential = GoogleAuthProvider.credential(
+        final googleAuth = await googleUser.authentication;
+        final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
         );
         await auth.signInWithCredential(credential);
       } else {
-        throw ('アカウントを選択してください。');
+        throw 'アカウントを選択してください。';
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'account-exists-with-different-credential') {
         print('このメールアドレスはすでに使用されています');
-        throw ('このメールアドレスは\nすでに使用されています。');
+        throw 'このメールアドレスは\nすでに使用されています。';
       } else {
         print(e.toString());
-        throw ('エラーが発生しました。\nもう一度お試し下さい。');
+        throw 'エラーが発生しました。\nもう一度お試し下さい。';
       }
     } on Exception catch (e) {
       print(e.toString());
-      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+      throw 'エラーが発生しました。\nもう一度お試し下さい。';
     } finally {
       stopModalLoading();
     }

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
@@ -7,7 +5,6 @@ import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/mixin/build_keyboard_actions_config_done_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
-import 'package:kakikomi_keijiban/domain/user.dart';
 import 'package:kakikomi_keijiban/presentation/add_post/add_post_model.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
@@ -34,10 +31,10 @@ class AddPostPage extends StatelessWidget
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 50,
-            title: Text('新規投稿'),
+            title: const Text('新規投稿'),
             actions: [
               Padding(
-                padding: EdgeInsets.only(right: 8.0),
+                padding: const EdgeInsets.only(right: 8),
                 child: Consumer<AddPostModel>(builder: (context, model, child) {
                   return TextButton(
                     onPressed: () async {
@@ -45,12 +42,12 @@ class AddPostPage extends StatelessWidget
                           _formKey.currentState!.validate()) {
                         try {
                           await model.addDraftedPost();
-                          final snackBar = SnackBar(
+                          const snackBar = SnackBar(
                             content: Text('下書きに保存しました'),
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                           Navigator.pop(context);
-                        } catch (e) {
+                        } on String catch (e) {
                           await showExceptionDialog(
                             context,
                             e.toString(),
@@ -63,7 +60,7 @@ class AddPostPage extends StatelessWidget
                     style: TextButton.styleFrom(
                       primary: kDarkPink,
                     ),
-                    child: Text(
+                    child: const Text(
                       '下書き保存',
                       style: TextStyle(color: Colors.white),
                     ),
@@ -74,8 +71,8 @@ class AddPostPage extends StatelessWidget
           ),
           body: Consumer<AddPostModel>(
             builder: (context, model, child) {
-              final User? user = AppModel.user;
-              final bool isUserExisting = user != null;
+              final user = AppModel.user;
+              final isUserExisting = user != null;
               return LoadingSpinner(
                 inAsyncCall: model.isLoading,
                 child: KeyboardActions(
@@ -85,15 +82,15 @@ class AddPostPage extends StatelessWidget
                       key: _formKey,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                          vertical: 48.0,
-                          horizontal: 24.0,
+                          vertical: 48,
+                          horizontal: 24,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             /// title
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 32.0),
+                              padding: const EdgeInsets.only(bottom: 32),
                               child: TextFormField(
                                 initialValue: null,
                                 validator: model.validateTitleCallback,
@@ -106,7 +103,7 @@ class AddPostPage extends StatelessWidget
 
                             /// content
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 32.0),
+                              padding: const EdgeInsets.only(bottom: 32),
                               child: TextFormField(
                                 focusNode: _focusNodeContent,
                                 initialValue: null,
@@ -124,10 +121,10 @@ class AddPostPage extends StatelessWidget
 
                             /// nickname
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 32.0),
+                              padding: const EdgeInsets.only(bottom: 32),
                               child: TextFormField(
                                 initialValue: isUserExisting
-                                    ? model.nicknameValue = user.nickname
+                                    ? model.nicknameValue = user!.nickname
                                     : model.nicknameValue = '匿名',
                                 validator: model.validateNicknameCallback,
                                 onChanged: (newValue) {
@@ -139,11 +136,11 @@ class AddPostPage extends StatelessWidget
 
                             /// emotion
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 32.0),
+                              padding: const EdgeInsets.only(bottom: 32),
                               child: DropdownButtonFormField(
                                 validator: model.validateEmotionCallback,
                                 value: model.emotionDropdownValue,
-                                icon: Icon(Icons.arrow_downward),
+                                icon: const Icon(Icons.arrow_downward),
                                 iconSize: 24,
                                 elevation: 1,
                                 style: kDropdownButtonFormFieldTextStyle,
@@ -177,7 +174,7 @@ class AddPostPage extends StatelessWidget
                                   Row(
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.all(14.0),
+                                        padding: const EdgeInsets.all(14),
                                         child: Icon(
                                           Icons.category_outlined,
                                           color: model.isCategoriesValid
@@ -191,17 +188,17 @@ class AddPostPage extends StatelessWidget
                                           color: model.isCategoriesValid
                                               ? Colors.grey[700]
                                               : kDarkPink,
-                                          fontSize: 16.0,
+                                          fontSize: 16,
                                         ),
                                       ),
                                     ],
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 16.0, right: 16.0, bottom: 14.0),
+                                    padding: const EdgeInsets.only(
+                                        left: 16, right: 16, bottom: 14),
                                     child: Wrap(
-                                      spacing: 8.0,
-                                      runSpacing: 2.0,
+                                      spacing: 8,
+                                      runSpacing: 2,
                                       // alignment: WrapAlignment.center,
                                       children:
                                           kCategoryList.map<Widget>((item) {
@@ -216,11 +213,8 @@ class AddPostPage extends StatelessWidget
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.only(
-                                  left: 10.0,
-                                  top: 8.0,
-                                  right: 10.0,
-                                  bottom: 32.0),
+                              padding: const EdgeInsets.only(
+                                  left: 10, top: 8, right: 10, bottom: 32),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -229,15 +223,15 @@ class AddPostPage extends StatelessWidget
                                     model.isCategoriesValid
                                         ? '必須'
                                         : 'カテゴリーを選択してください',
-                                    style: TextStyle(
-                                      fontSize: 12.0,
+                                    style: const TextStyle(
+                                      fontSize: 12,
                                       color: kDarkPink,
                                     ),
                                   ),
-                                  Text(
+                                  const Text(
                                     '5つ以内で選択してください',
                                     style: TextStyle(
-                                      fontSize: 12.0,
+                                      fontSize: 12,
                                       color: kGrey,
                                     ),
                                   ),
@@ -248,14 +242,14 @@ class AddPostPage extends StatelessWidget
                             /// position
                             // Todo positionを複数選択できるようにしよう
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 32.0),
+                              padding: const EdgeInsets.only(bottom: 32),
                               child: DropdownButtonFormField(
                                 // validator: model.validatePositionCallback,
                                 value: isUserExisting
                                     ? model.positionDropdownValue =
-                                        user.position
+                                        user!.position
                                     : model.positionDropdownValue,
-                                icon: Icon(Icons.arrow_downward),
+                                icon: const Icon(Icons.arrow_downward),
                                 iconSize: 24,
                                 elevation: 1,
                                 style: kDropdownButtonFormFieldTextStyle,
@@ -275,12 +269,12 @@ class AddPostPage extends StatelessWidget
 
                             /// gender
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 32.0),
+                              padding: const EdgeInsets.only(bottom: 32),
                               child: DropdownButtonFormField(
                                 value: isUserExisting
-                                    ? model.genderDropdownValue = user.gender
+                                    ? model.genderDropdownValue = user!.gender
                                     : model.genderDropdownValue,
-                                icon: Icon(Icons.arrow_downward),
+                                icon: const Icon(Icons.arrow_downward),
                                 iconSize: 24,
                                 elevation: 1,
                                 style: kDropdownButtonFormFieldTextStyle,
@@ -300,12 +294,12 @@ class AddPostPage extends StatelessWidget
 
                             /// age
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 32.0),
+                              padding: const EdgeInsets.only(bottom: 32),
                               child: DropdownButtonFormField(
                                 value: isUserExisting
-                                    ? model.ageDropdownValue = user.age
+                                    ? model.ageDropdownValue = user!.age
                                     : model.ageDropdownValue,
-                                icon: Icon(Icons.arrow_downward),
+                                icon: const Icon(Icons.arrow_downward),
                                 iconSize: 24,
                                 elevation: 1,
                                 style: kDropdownButtonFormFieldTextStyle,
@@ -325,12 +319,12 @@ class AddPostPage extends StatelessWidget
 
                             /// area
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 48.0),
+                              padding: const EdgeInsets.only(bottom: 48),
                               child: DropdownButtonFormField(
                                 value: isUserExisting
-                                    ? model.areaDropdownValue = user.area
+                                    ? model.areaDropdownValue = user!.area
                                     : model.areaDropdownValue,
-                                icon: Icon(Icons.arrow_downward),
+                                icon: const Icon(Icons.arrow_downward),
                                 iconSize: 24,
                                 elevation: 1,
                                 style: kDropdownButtonFormFieldTextStyle,
@@ -356,7 +350,7 @@ class AddPostPage extends StatelessWidget
                                   try {
                                     await model.addPost();
                                     Navigator.pop(context);
-                                  } catch (e) {
+                                  } on String catch (e) {
                                     await showExceptionDialog(
                                       context,
                                       e.toString(),
@@ -369,7 +363,7 @@ class AddPostPage extends StatelessWidget
                                   await showRequiredInputConfirmDialog(context);
                                 }
                               },
-                              child: Text(
+                              child: const Text(
                                 '投稿する',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -379,15 +373,16 @@ class AddPostPage extends StatelessWidget
                               ),
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: kDarkPink,
-                                padding: EdgeInsets.symmetric(vertical: 12.0),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16.0),
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
-                                side: BorderSide(color: kDarkPink),
+                                side: const BorderSide(color: kDarkPink),
                               ),
                             ),
 
-                            SizedBox(height: 16.0),
+                            const SizedBox(height: 16),
 
                             /// 下書き保存ボタン
                             OutlinedButton(
@@ -396,13 +391,13 @@ class AddPostPage extends StatelessWidget
                                     _formKey.currentState!.validate()) {
                                   try {
                                     await model.addDraftedPost();
-                                    final snackBar = SnackBar(
+                                    const snackBar = SnackBar(
                                       content: Text('下書きに保存しました'),
                                     );
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(snackBar);
                                     Navigator.pop(context);
-                                  } catch (e) {
+                                  } on String catch (e) {
                                     await showExceptionDialog(
                                       context,
                                       e.toString(),
@@ -415,7 +410,7 @@ class AddPostPage extends StatelessWidget
                                   await showRequiredInputConfirmDialog(context);
                                 }
                               },
-                              child: Text(
+                              child: const Text(
                                 '下書きに保存する',
                                 style: TextStyle(
                                   color: kDarkPink,
@@ -424,11 +419,12 @@ class AddPostPage extends StatelessWidget
                                 ),
                               ),
                               style: OutlinedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(vertical: 12.0),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16.0),
+                                  borderRadius: BorderRadius.circular(16),
                                 ),
-                                side: BorderSide(color: kDarkPink),
+                                side: const BorderSide(color: kDarkPink),
                               ),
                             ),
                           ],
@@ -447,14 +443,17 @@ class AddPostPage extends StatelessWidget
 }
 
 class FilterChipWidget extends StatelessWidget {
-  FilterChipWidget({required this.chipName, required this.model});
+  const FilterChipWidget({
+    required this.chipName,
+    required this.model,
+  });
 
   final String chipName;
   final AddPostModel model;
 
   @override
   Widget build(BuildContext context) {
-    bool isSelected = model.selectedCategories.contains(chipName);
+    final isSelected = model.selectedCategories.contains(chipName);
     return FilterChip(
       label: Text(
         chipName,
@@ -494,8 +493,8 @@ class FilterChipWidget extends StatelessWidget {
 //       Row(
 //         children: [
 //           Padding(
-//             padding: const EdgeInsets.all(14.0),
-//             child: Icon(
+//             padding: const EdgeInsets.all(14),
+//             child: const Icon(
 //               Icons.category_outlined,
 //               color: kLightGrey,
 //             ),
@@ -504,17 +503,17 @@ class FilterChipWidget extends StatelessWidget {
 //             'カテゴリー',
 //             style: TextStyle(
 //               color: Colors.grey[700],
-//               fontSize: 16.0,
+//               fontSize: 16,
 //             ),
 //           ),
 //         ],
 //       ),
 //       Padding(
-//         padding: EdgeInsets.only(
-//             left: 16.0, right: 16.0, bottom: 14.0),
+//         padding: const EdgeInsets.only(
+//             left: 16, right: 16, bottom: 14),
 //         child: Wrap(
-//           spacing: 16.0,
-//           runSpacing: 2.0,
+//           spacing: 16,
+//           runSpacing: 2,
 //           // alignment: WrapAlignment.center,
 //           children: kCategoryList.map<Widget>((item) {
 //             return ChoiceChip(
@@ -533,15 +532,15 @@ class FilterChipWidget extends StatelessWidget {
 // ),
 // Padding(
 //   padding:
-//       EdgeInsets.only(left: 12.0, top: 8.0, right: 12.0),
+//       EdgeInsets.only(left: 12, top: 8, right: 12),
 //   child: Text(
 //     '必須',
 //     style: TextStyle(
-//       fontSize: 12.0,
+//       fontSize: 12,
 //       color: kDarkPink,
 //     ),
 //   ),
 // ),
-// SizedBox(
-//   height: 32.0,
+// const SizedBox(
+//   height: 32,
 // ),

@@ -29,36 +29,36 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _getPostsWithMyReplies() async {
     startLoading();
 
-    Query queryBatch = firestore
+    final queryBatch = firestore
         .collectionGroup('replies')
         .where('replierId', isEqualTo: auth.currentUser?.uid)
         .orderBy('updatedAt', descending: true)
         .limit(loadLimit);
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
-    this._postsWithMyReplies.clear();
+    _postsWithMyReplies.clear();
     if (docs.length == 0) {
       // isPostsExisting = false;
-      this.canLoadMore = false;
-      this._postsWithMyReplies = [];
+      canLoadMore = false;
+      _postsWithMyReplies = [];
     } else if (docs.length < loadLimit) {
       // isPostsExisting = true;
-      this.canLoadMore = false;
-      this.lastVisibleOfTheBatch = docs[docs.length - 1];
-      this._postsWithMyReplies = await _getRepliedPosts(docs);
+      canLoadMore = false;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      _postsWithMyReplies = await _getRepliedPosts(docs);
     } else {
       // isPostsExisting = true;
-      this.canLoadMore = true;
-      this.lastVisibleOfTheBatch = docs[docs.length - 1];
-      this._postsWithMyReplies = await _getRepliedPosts(docs);
+      canLoadMore = true;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      _postsWithMyReplies = await _getRepliedPosts(docs);
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
     final empathizedPostsIds = await getEmpathizedPostsIds();
 
-    await addBookmark(this._postsWithMyReplies, bookmarkedPostsIds);
-    await addEmpathy(this._postsWithMyReplies, empathizedPostsIds);
-    await getReplies(this._postsWithMyReplies, empathizedPostsIds);
+    await addBookmark(_postsWithMyReplies, bookmarkedPostsIds);
+    await addEmpathy(_postsWithMyReplies, empathizedPostsIds);
+    await getReplies(_postsWithMyReplies, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -67,7 +67,7 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _loadPostsWithMyReplies() async {
     startLoading();
 
-    Query queryBatch = firestore
+    final queryBatch = firestore
         .collectionGroup('replies')
         .where('replierId', isEqualTo: auth.currentUser?.uid)
         .orderBy('updatedAt', descending: true)
@@ -77,26 +77,26 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     final docs = querySnapshot.docs;
     if (docs.length == 0) {
       // isPostsExisting = false;
-      this.canLoadMore = false;
-      this._postsWithMyReplies += [];
+      canLoadMore = false;
+      _postsWithMyReplies += [];
     } else if (docs.length < loadLimit) {
       // isPostsExisting = true;
-      this.canLoadMore = false;
-      this.lastVisibleOfTheBatch = docs[docs.length - 1];
-      this._postsWithMyReplies += await _getRepliedPosts(docs);
+      canLoadMore = false;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      _postsWithMyReplies += await _getRepliedPosts(docs);
     } else {
       // isPostsExisting = true;
-      this.canLoadMore = true;
-      this.lastVisibleOfTheBatch = docs[docs.length - 1];
-      this._postsWithMyReplies += await _getRepliedPosts(docs);
+      canLoadMore = true;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      _postsWithMyReplies += await _getRepliedPosts(docs);
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
     final empathizedPostsIds = await getEmpathizedPostsIds();
 
-    await addBookmark(this._postsWithMyReplies, bookmarkedPostsIds);
-    await addEmpathy(this._postsWithMyReplies, empathizedPostsIds);
-    await getReplies(this._postsWithMyReplies, empathizedPostsIds);
+    await addBookmark(_postsWithMyReplies, bookmarkedPostsIds);
+    await addEmpathy(_postsWithMyReplies, empathizedPostsIds);
+    await getReplies(_postsWithMyReplies, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -111,7 +111,7 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
         .toList());
     final repliedPostDocs =
         postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
-    List<Post> repliedPosts = repliedPostDocs.map((doc) => Post(doc)).toList();
+    final repliedPosts = repliedPostDocs.map((doc) => Post(doc)).toList();
     return repliedPosts;
   }
 
@@ -120,7 +120,7 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     required int indexOfPost,
   }) async {
     await refreshThePostAfterUpdated(
-      posts: this._postsWithMyReplies,
+      posts: _postsWithMyReplies,
       oldPost: oldPost,
       indexOfPost: indexOfPost,
     );
@@ -129,7 +129,7 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   }
 
   void removeThePostOfPostsAfterDeleted(Post post) {
-    this._postsWithMyReplies.remove(post);
+    _postsWithMyReplies.remove(post);
     notifyListeners();
   }
 
