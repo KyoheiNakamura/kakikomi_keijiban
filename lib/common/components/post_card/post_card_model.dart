@@ -22,7 +22,7 @@ class PostCardModel extends ChangeNotifier {
     // postドメインにrepliesを持たせているので、postCardでpost.repliesに入れてやってる
     post.replies = replies;
 
-    for (int i = 0; i < replies.length; i++) {
+    for (var i = 0; i < replies.length; i++) {
       final reply = replies[i];
       final _querySnapshot = await firestore
           .collection('users')
@@ -76,7 +76,7 @@ class PostCardModel extends ChangeNotifier {
     final userRef = firestore.collection('users').doc(auth.currentUser?.uid);
     final bookmarkedPostRef =
         userRef.collection('bookmarkedPosts').doc(post.id);
-    await bookmarkedPostRef.set({
+    await bookmarkedPostRef.set(<String, dynamic>{
       /// bookmarkedPosts自身のIDにはpostIdと同じIDをsetしている
       'id': post.id,
       'userId': post.userId,
@@ -127,7 +127,7 @@ class PostCardModel extends ChangeNotifier {
     final userRef = firestore.collection('users').doc(auth.currentUser?.uid);
     final empathizedPostsRef =
         userRef.collection('empathizedPosts').doc(post.id);
-    await empathizedPostsRef.set({
+    await empathizedPostsRef.set(<String, dynamic>{
       /// empathizedPosts自身のIDにはpostIdと同じIDをsetしている
       'id': post.id,
       'userId': post.userId,
@@ -142,9 +142,9 @@ class PostCardModel extends ChangeNotifier {
         .doc(post.id);
 
     final postSnapshot = await postRef.get();
-    final currentEmpathyCount = postSnapshot['empathyCount'];
+    final currentEmpathyCount = postSnapshot['empathyCount'] as int;
 
-    await postRef.update({
+    await postRef.update(<String, int>{
       'empathyCount': currentEmpathyCount + 1,
     });
   }
@@ -165,10 +165,10 @@ class PostCardModel extends ChangeNotifier {
         .doc(post.id);
 
     final postSnapshot = await postRef.get();
-    final currentEmpathyCount = postSnapshot['empathyCount'];
+    final currentEmpathyCount = postSnapshot['empathyCount'] as int;
 
     if (currentEmpathyCount > 0) {
-      await postRef.update({
+      await postRef.update(<String, int>{
         'empathyCount': currentEmpathyCount - 1,
       });
     }

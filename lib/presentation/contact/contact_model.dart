@@ -14,19 +14,18 @@ class ContactModel extends ChangeNotifier {
   Future<void> submitContactForm() async {
     startLoading();
 
-    HttpsCallable sendMail =
-        FirebaseFunctions.instanceFor(region: 'asia-northeast1')
-            .httpsCallable('sendMailWhenContactIsSubmitted');
+    final sendMail = FirebaseFunctions.instanceFor(region: 'asia-northeast1')
+        .httpsCallable('sendMailWhenContactIsSubmitted');
     try {
-      await sendMail.call({
-        'email': this.email,
-        'category': this.contactDropdownValue,
-        'content': this.contentValue,
+      await sendMail.call<dynamic>({
+        'email': email,
+        'category': contactDropdownValue,
+        'content': contentValue,
       });
     } on Exception catch (e) {
       print('submitFormの送信時のエラーです');
       print(e.toString());
-      throw ('エラーが発生しました。\nもう一度お試しください。');
+      throw 'エラーが発生しました。\nもう一度お試しください。';
     } finally {
       stopLoading();
     }

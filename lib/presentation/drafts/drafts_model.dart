@@ -24,7 +24,7 @@ class DraftsModel extends ChangeNotifier {
     await _getDraftPosts();
     await _getDraftReplies();
     await _getDraftedRepliesToReply();
-    this._drafts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    _drafts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     notifyListeners();
   }
 
@@ -35,12 +35,11 @@ class DraftsModel extends ChangeNotifier {
         .collection('draftedPosts')
         .get();
     final docs = querySnapshot.docs;
-    List<Post> draftedPosts = docs.map((doc) {
-      final post = Post(doc);
-      post.isDraft = true;
+    final draftedPosts = docs.map((doc) {
+      final post = Post(doc)..isDraft = true;
       return post;
     }).toList();
-    this._drafts += draftedPosts;
+    _drafts += draftedPosts;
   }
 
   Future<void> _getDraftReplies() async {
@@ -50,13 +49,12 @@ class DraftsModel extends ChangeNotifier {
         .collection('draftedReplies')
         .get();
     final docs = querySnapshot.docs;
-    final List<Reply> draftedReplies = docs.map((doc) {
-      final reply = Reply(doc);
-      reply.isDraft = true;
+    final draftedReplies = docs.map((doc) {
+      final reply = Reply(doc)..isDraft = true;
       return reply;
     }).toList();
 
-    for (int i = 0; i < draftedReplies.length; i++) {
+    for (var i = 0; i < draftedReplies.length; i++) {
       final reply = draftedReplies[i];
       final userId = reply.userId;
       final postId = reply.postId;
@@ -68,7 +66,7 @@ class DraftsModel extends ChangeNotifier {
           .get();
       final post = Post(postDoc);
       post.replies.add(reply);
-      this._drafts.add(post);
+      _drafts.add(post);
     }
   }
 
@@ -79,9 +77,8 @@ class DraftsModel extends ChangeNotifier {
         .collection('draftedRepliesToReply')
         .get();
     final docs = querySnapshot.docs;
-    final List<ReplyToReply> draftedRepliesToReply = docs.map((doc) {
-      final replyToReply = ReplyToReply(doc);
-      replyToReply.isDraft = true;
+    final draftedRepliesToReply = docs.map((doc) {
+      final replyToReply = ReplyToReply(doc)..isDraft = true;
       return replyToReply;
     }).toList();
 
@@ -108,17 +105,16 @@ class DraftsModel extends ChangeNotifier {
           .collection('repliesToReply')
           .get();
       final docs = querySnapshot.docs;
-      final List<ReplyToReply> repliesToReply =
-          docs.map((doc) => ReplyToReply(doc)).toList();
-      repliesToReply.add(replyToReply);
-      repliesToReply.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+      final repliesToReply = docs.map((doc) => ReplyToReply(doc)).toList()
+        ..add(replyToReply)
+        ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
       reply.repliesToReply.addAll(repliesToReply);
       return reply;
     }).toList();
 
-    final List<Reply> replies = await Future.wait(futures);
+    final replies = await Future.wait(futures);
 
-    for (int i = 0; i < replies.length; i++) {
+    for (var i = 0; i < replies.length; i++) {
       final reply = replies[i];
       final userId = reply.userId;
       final postId = reply.postId;
@@ -130,7 +126,7 @@ class DraftsModel extends ChangeNotifier {
           .get();
       final post = Post(postDoc);
       post.replies.add(reply);
-      this._drafts.add(post);
+      _drafts.add(post);
     }
   }
 
@@ -179,16 +175,16 @@ class DraftsModel extends ChangeNotifier {
   //   //   reply.repliesToReply = _repliesToReplies;
   //   // }
   //   // // 更新前のpostをpostsから削除
-  //   // this._drafts.removeAt(indexOfPost);
+  //   // _drafts.removeAt(indexOfPost);
   //   // // 更新後のpostをpostsに追加
-  //   // this._drafts.insert(indexOfPost, post);
+  //   // _drafts.insert(indexOfPost, post);
   //   // notifyListeners();
   // }
 
   // postはthis._drafts.remove(post);するために必ず渡す
   Future<void> removeDraft(
       {required Post post, Reply? reply, ReplyToReply? replyToReply}) async {
-    this._drafts.remove(post);
+    _drafts.remove(post);
     if (post.isDraft == true) {
       final draftedPostRef = firestore
           .collection('users')

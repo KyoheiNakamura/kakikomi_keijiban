@@ -11,7 +11,7 @@ mixin ProvideCommonPostsMethodMixin {
         .doc(auth.currentUser?.uid)
         .collection('bookmarkedPosts')
         .get();
-    final List<String> bookmarkedPostsIds = bookmarkedPostsSnapshot.docs
+    final bookmarkedPostsIds = bookmarkedPostsSnapshot.docs
         .map((bookmarkedPost) => bookmarkedPost.id)
         .toList();
     return bookmarkedPostsIds;
@@ -19,8 +19,8 @@ mixin ProvideCommonPostsMethodMixin {
 
   Future<void> addBookmark(
       List<dynamic> list, List<String> bookmarkedPostsIds) async {
-    for (int i = 0; i < list.length; i++) {
-      for (int n = 0; n < bookmarkedPostsIds.length; n++) {
+    for (var i = 0; i < list.length; i++) {
+      for (var n = 0; n < bookmarkedPostsIds.length; n++) {
         if (list[i].id == bookmarkedPostsIds[n]) {
           list[i].isBookmarked = true;
         }
@@ -34,7 +34,7 @@ mixin ProvideCommonPostsMethodMixin {
         .doc(auth.currentUser?.uid)
         .collection('empathizedPosts')
         .get();
-    final List<String> empathizedPostsIds = empathizedPostsSnapshot.docs
+    final empathizedPostsIds = empathizedPostsSnapshot.docs
         .map((empathizedPost) => empathizedPost.id)
         .toList();
     return empathizedPostsIds;
@@ -42,8 +42,8 @@ mixin ProvideCommonPostsMethodMixin {
 
   Future<void> addEmpathy(
       List<dynamic> list, List<String> empathizedPostsIds) async {
-    for (int i = 0; i < list.length; i++) {
-      for (int n = 0; n < empathizedPostsIds.length; n++) {
+    for (var i = 0; i < list.length; i++) {
+      for (var n = 0; n < empathizedPostsIds.length; n++) {
         if (list[i].id == empathizedPostsIds[n]) {
           list[i].isEmpathized = true;
         }
@@ -53,7 +53,7 @@ mixin ProvideCommonPostsMethodMixin {
 
   Future<void> getReplies(
       List<Post> _posts, List<String> empathizedPostsId) async {
-    for (int i = 0; i < _posts.length; i++) {
+    for (var i = 0; i < _posts.length; i++) {
       final post = _posts[i];
       final querySnapshot = await firestore
           .collection('users')
@@ -74,7 +74,7 @@ mixin ProvideCommonPostsMethodMixin {
 
   Future<void> _getRepliesToReply(
       List<Reply> _replies, List<String> empathizedPostsId) async {
-    for (int i = 0; i < _replies.length; i++) {
+    for (var i = 0; i < _replies.length; i++) {
       final reply = _replies[i];
       final _querySnapshot = await firestore
           .collection('users')
@@ -109,9 +109,9 @@ mixin ProvideCommonPostsMethodMixin {
       } else {
         return null;
       }
-    }).toList();
-    // bookmarkedPostDocsからnullを全て削除
-    bookmarkedPostDocs.removeWhere((element) => element == null);
+    }).toList()
+      // bookmarkedPostDocsからnullを全て削除
+      ..removeWhere((element) => element == null);
     final bookmarkedPosts =
         bookmarkedPostDocs.map((doc) => Post(doc!)).toList();
     _addBookmarkToBookmarkedPosts(bookmarkedPosts);
@@ -119,7 +119,7 @@ mixin ProvideCommonPostsMethodMixin {
   }
 
   void _addBookmarkToBookmarkedPosts(List<Post> bookmarkedPosts) {
-    for (int i = 0; i < bookmarkedPosts.length; i++) {
+    for (var i = 0; i < bookmarkedPosts.length; i++) {
       bookmarkedPosts[i].isBookmarked = true;
     }
   }
@@ -139,15 +139,16 @@ mixin ProvideCommonPostsMethodMixin {
         .collection('posts')
         .doc(oldPost.id)
         .get();
-    Post newPost = Post(doc);
-    await addBookmark([newPost], bookmarkedPostsIds);
-    await addEmpathy([newPost], empathizedPostsIds);
+    final newPost = Post(doc);
+    await addBookmark(<Post>[newPost], bookmarkedPostsIds);
+    await addEmpathy(<Post>[newPost], empathizedPostsIds);
     await getReplies([newPost], empathizedPostsIds);
 
-    // 更新前のpostをpostsから削除
-    posts.removeAt(indexOfPost);
-    // 更新後のpostをpostsに追加
-    posts.insert(indexOfPost, newPost);
+    posts
+      // 更新前のpostをpostsから削除
+      ..removeAt(indexOfPost)
+      // 更新後のpostをpostsに追加
+      ..insert(indexOfPost, newPost);
   }
 
   void removeThePostAfterDeleted(

@@ -6,12 +6,12 @@ import 'package:kakikomi_keijiban/app.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Handling a background message: ${message.messageId}");
+  print('Handling a background message: ${message.messageId}');
 }
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: kDeepDarkPink, // status bar color
     statusBarBrightness: Brightness.light, //status bar brightness
     // statusBarIconBrightness: Brightness.light, //status barIcon brightness
@@ -23,7 +23,8 @@ void main() async {
   // If your message is a notification one (includes a notification property),
   // the Firebase SDKs will intercept this and display a visible notification
   // to your users (assuming you have requested permission & the user has
-  // notifications enabled). Once displayed, the background handler will be executed (if provided).
+  // notifications enabled). Once displayed, the background handler
+  // will be executed (if provided).
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(App());
 }

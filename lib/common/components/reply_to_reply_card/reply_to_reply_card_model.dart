@@ -43,7 +43,7 @@ class ReplyToReplyCardModel extends ChangeNotifier {
     final userRef = firestore.collection('users').doc(auth.currentUser?.uid);
     final empathizedPostsRef =
         userRef.collection('empathizedPosts').doc(replyToReply.id);
-    await empathizedPostsRef.set({
+    await empathizedPostsRef.set(<String, dynamic>{
       /// empathizedPosts自身のIDにはreplyToReplyIdと同じIDをsetしている
       'id': replyToReply.id,
       'userId': replyToReply.userId,
@@ -62,9 +62,9 @@ class ReplyToReplyCardModel extends ChangeNotifier {
         .doc(replyToReply.id);
 
     final replyToReplySnapshot = await replyToReplyRef.get();
-    final currentEmpathyCount = replyToReplySnapshot['empathyCount'];
+    final currentEmpathyCount = replyToReplySnapshot['empathyCount'] as int;
 
-    await replyToReplyRef.update({
+    await replyToReplyRef.update(<String, int>{
       'empathyCount': currentEmpathyCount + 1,
     });
   }
@@ -89,10 +89,10 @@ class ReplyToReplyCardModel extends ChangeNotifier {
         .doc(replyToReply.id);
 
     final replyToReplySnapshot = await replyToReplyRef.get();
-    final currentEmpathyCount = replyToReplySnapshot['empathyCount'];
+    final currentEmpathyCount = replyToReplySnapshot['empathyCount'] as int;
 
     if (currentEmpathyCount > 0) {
-      await replyToReplyRef.update({
+      await replyToReplyRef.update(<String, int>{
         'empathyCount': currentEmpathyCount - 1,
       });
     }

@@ -29,7 +29,7 @@ class MyPostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _getMyPostsWithReplies() async {
     startLoading();
 
-    Query queryBatch = firestore
+    final queryBatch = firestore
         .collection('users')
         .doc(auth.currentUser?.uid)
         .collection('posts')
@@ -37,29 +37,29 @@ class MyPostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
         .limit(loadLimit);
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
-    this._myPosts.clear();
+    _myPosts.clear();
     if (docs.length == 0) {
       // isPostsExisting = false;
-      this.canLoadMore = false;
-      this._myPosts = [];
+      canLoadMore = false;
+      _myPosts = [];
     } else if (docs.length < loadLimit) {
       // isPostsExisting = true;
-      this.canLoadMore = false;
-      this.lastVisibleOfTheBatch = docs[docs.length - 1];
-      this._myPosts = docs.map((doc) => Post(doc)).toList();
+      canLoadMore = false;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      _myPosts = docs.map((doc) => Post(doc)).toList();
     } else {
       // isPostsExisting = true;
-      this.canLoadMore = true;
-      this.lastVisibleOfTheBatch = docs[docs.length - 1];
-      this._myPosts = docs.map((doc) => Post(doc)).toList();
+      canLoadMore = true;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      _myPosts = docs.map((doc) => Post(doc)).toList();
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
     final empathizedPostsIds = await getEmpathizedPostsIds();
 
-    await addBookmark(this._myPosts, bookmarkedPostsIds);
-    await addEmpathy(this._myPosts, empathizedPostsIds);
-    await getReplies(this._myPosts, empathizedPostsIds);
+    await addBookmark(_myPosts, bookmarkedPostsIds);
+    await addEmpathy(_myPosts, empathizedPostsIds);
+    await getReplies(_myPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -68,7 +68,7 @@ class MyPostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _loadMyPostsWithReplies() async {
     startLoading();
 
-    Query queryBatch = firestore
+    final queryBatch = firestore
         .collection('users')
         .doc(auth.currentUser?.uid)
         .collection('posts')
@@ -79,26 +79,26 @@ class MyPostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     final docs = querySnapshot.docs;
     if (docs.length == 0) {
       // isPostsExisting = false;
-      this.canLoadMore = false;
-      this._myPosts += [];
+      canLoadMore = false;
+      _myPosts += [];
     } else if (docs.length < loadLimit) {
       // isPostsExisting = true;
-      this.canLoadMore = false;
-      this.lastVisibleOfTheBatch = docs[docs.length - 1];
-      this._myPosts += docs.map((doc) => Post(doc)).toList();
+      canLoadMore = false;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      _myPosts += docs.map((doc) => Post(doc)).toList();
     } else {
       // isPostsExisting = true;
-      this.canLoadMore = true;
-      this.lastVisibleOfTheBatch = docs[docs.length - 1];
-      this._myPosts += docs.map((doc) => Post(doc)).toList();
+      canLoadMore = true;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      _myPosts += docs.map((doc) => Post(doc)).toList();
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
     final empathizedPostsIds = await getEmpathizedPostsIds();
 
-    await addBookmark(this._myPosts, bookmarkedPostsIds);
-    await addEmpathy(this._myPosts, empathizedPostsIds);
-    await getReplies(this._myPosts, empathizedPostsIds);
+    await addBookmark(_myPosts, bookmarkedPostsIds);
+    await addEmpathy(_myPosts, empathizedPostsIds);
+    await getReplies(_myPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -109,7 +109,7 @@ class MyPostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     required int indexOfPost,
   }) async {
     await refreshThePostAfterUpdated(
-      posts: this._myPosts,
+      posts: _myPosts,
       oldPost: oldPost,
       indexOfPost: indexOfPost,
     );
@@ -118,7 +118,7 @@ class MyPostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   }
 
   void removeThePostOfPostsAfterDeleted(Post post) {
-    this._myPosts.remove(post);
+    _myPosts.remove(post);
     notifyListeners();
   }
 

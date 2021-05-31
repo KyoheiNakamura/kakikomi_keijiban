@@ -2,12 +2,12 @@ import 'package:kakikomi_keijiban/common/constants.dart';
 
 class AddReply {
   AddReply() {
-    this.bodyValue = '';
-    this.nicknameValue = '';
-    this.positionDropdownValue = kPleaseSelect;
-    this.genderDropdownValue = kPleaseSelect;
-    this.ageDropdownValue = kPleaseSelect;
-    this.areaDropdownValue = kPleaseSelect;
+    bodyValue = '';
+    nicknameValue = '';
+    positionDropdownValue = kPleaseSelect;
+    genderDropdownValue = kPleaseSelect;
+    ageDropdownValue = kPleaseSelect;
+    areaDropdownValue = kPleaseSelect;
   }
 
   String bodyValue = '';

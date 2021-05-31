@@ -16,7 +16,7 @@ class SelectRegistrationMethodPage extends StatelessWidget
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
-          title: Text('会員登録またはログイン'),
+          title: const Text('会員登録またはログイン'),
         ),
         // Todo めちゃくちゃ簡潔に書けそうなので、後で書き直そう
         body: Consumer<SelectRegistrationMethodModel>(
@@ -28,19 +28,19 @@ class SelectRegistrationMethodPage extends StatelessWidget
               children: [
                 Padding(
                   padding: const EdgeInsets.only(
-                      left: 16.0, top: 24.0, right: 16.0, bottom: 12.0),
+                      left: 16, top: 24, right: 16, bottom: 12),
                   child: OutlinedButton(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
+                      children: const <Widget>[
                         // Icon(Icons.email_outlined, color: Colors.white),
                         Padding(
-                          padding: const EdgeInsets.all(12.0),
+                          padding: const EdgeInsets.all(12),
                           child: Text(
                             'メールアドレスで登録',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 16.0,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -48,7 +48,7 @@ class SelectRegistrationMethodPage extends StatelessWidget
                       ],
                     ),
                     onPressed: () async {
-                      await Navigator.push(
+                      await Navigator.push<void>(
                         context,
                         MaterialPageRoute(builder: (context) => SignUpPage()),
                       );
@@ -61,19 +61,19 @@ class SelectRegistrationMethodPage extends StatelessWidget
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
-                      left: 16.0, top: 12.0, right: 16.0, bottom: 16.0),
+                      left: 16, top: 12, right: 16, bottom: 16),
                   child: OutlinedButton(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
+                      children: const <Widget>[
                         // Icon(Icons.login_outlined, color: kDarkPink),
                         Padding(
-                          padding: const EdgeInsets.all(12.0),
+                          padding: const EdgeInsets.all(12),
                           child: Text(
                             'アカウントをすでにお持ちの方',
                             style: TextStyle(
                               color: kDarkPink,
-                              fontSize: 16.0,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -81,7 +81,7 @@ class SelectRegistrationMethodPage extends StatelessWidget
                       ],
                     ),
                     onPressed: () async {
-                      await Navigator.push(
+                      await Navigator.push<void>(
                         context,
                         MaterialPageRoute(builder: (context) => SignInPage()),
                       );
@@ -89,16 +89,16 @@ class SelectRegistrationMethodPage extends StatelessWidget
                     },
                   ),
                 ),
-                Divider(thickness: 1.0),
+                const Divider(thickness: 1),
                 Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16),
                       OutlinedButton(
                         child: Padding(
-                          padding: const EdgeInsets.all(12.0),
+                          padding: const EdgeInsets.all(12),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -106,11 +106,11 @@ class SelectRegistrationMethodPage extends StatelessWidget
                                 'lib/assets/images/google_logo.png',
                                 scale: 15,
                               ),
-                              SizedBox(width: 8.0),
-                              Text(
+                              const SizedBox(width: 8),
+                              const Text(
                                 'Googleで登録',
                                 style: TextStyle(
-                                  fontSize: 16.0,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -126,7 +126,7 @@ class SelectRegistrationMethodPage extends StatelessWidget
                             } else {
                               Navigator.pop(context);
                             }
-                          } catch (e) {
+                          } on String catch (e) {
                             await showExceptionDialog(
                               context,
                               e.toString(),

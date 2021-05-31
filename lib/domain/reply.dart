@@ -5,21 +5,19 @@ import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
 
 class Reply {
   Reply(DocumentSnapshot doc) {
-    this.id = doc.id;
-    this.postId = doc['postId'];
-    this.userId = doc['userId'];
-    this.replierId = doc['replierId'];
-    this.body = doc['body'];
-    this.nickname = doc['nickname'];
-    this.position = doc['position'] != '' ? doc['position'] : '';
-    this.gender = doc['gender'] != '' ? doc['gender'] : '';
-    this.age = doc['age'] != '' ? doc['age'] : '';
-    this.area = doc['area'] != '' ? doc['area'] : '';
-    this.empathyCount = doc['empathyCount'];
-    final createdDate = doc['createdAt'].toDate();
-    this.createdDate = createdDate;
-    final updatedDate = doc['updatedAt'].toDate();
-    this.updatedDate = updatedDate;
+    id = doc.id;
+    postId = doc['postId'] as String;
+    userId = doc['userId'] as String;
+    replierId = doc['replierId'] as String;
+    body = doc['body'] as String;
+    nickname = doc['nickname'] as String;
+    position = doc['position'] != '' ? doc['position'] as String : '';
+    gender = doc['gender'] != '' ? doc['gender'] as String : '';
+    age = doc['age'] != '' ? doc['age'] as String : '';
+    area = doc['area'] != '' ? doc['area'] as String : '';
+    empathyCount = doc['empathyCount'] as int;
+    createdDate = (doc['createdAt'] as Timestamp).toDate();
+    updatedDate = (doc['updatedAt'] as Timestamp).toDate();
   }
 
   String id = '';
@@ -33,18 +31,19 @@ class Reply {
   String age = '';
   String area = '';
   int empathyCount = 0;
+  DateTime createdDate = DateTime.now();
+  DateTime updatedDate = DateTime.now();
+
   bool isDraft = false;
   bool isEmpathized = false;
   List<ReplyToReply> repliesToReply = [];
-  DateTime createdDate = DateTime.now();
-  DateTime updatedDate = DateTime.now();
 
   String get createdAt => _formatDate(createdDate);
   String get updatedAt => _formatDate(updatedDate);
 
-  String _formatDate(date) {
+  String _formatDate(DateTime date) {
     final formatter = DateFormat('yyyy/MM/dd HH:mm');
-    return date != null ? formatter.format(date) : '';
+    return formatter.format(date);
   }
 
   bool isMe() {

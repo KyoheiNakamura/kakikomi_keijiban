@@ -18,24 +18,24 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   List<Post> _myPosts = [];
   List<Post> _bookmarkedPosts = [];
 
-  Query? _allPostsQuery;
-  Query? _myPostsQuery;
-  Query? _bookmarkedPostsQuery;
+  late Query _allPostsQuery;
+  late Query _myPostsQuery;
+  late Query _bookmarkedPostsQuery;
 
-  QueryDocumentSnapshot? _allPostsLastVisible;
-  QueryDocumentSnapshot? _myPostsLastVisible;
-  QueryDocumentSnapshot? _bookmarkedPostsLastVisible;
+  late QueryDocumentSnapshot _allPostsLastVisible;
+  late QueryDocumentSnapshot _myPostsLastVisible;
+  late QueryDocumentSnapshot _bookmarkedPostsLastVisible;
 
-  int _loadLimit = 5;
+  final int _loadLimit = 5;
   // bool isPostsExisting = false;
 
   bool _allPostsCanLoadMore = false;
   bool _myPostsCanLoadMore = false;
   bool _bookmarkedPostsCanLoadMore = false;
 
-  ScrollController _allPostsScrollController = ScrollController();
-  ScrollController _myPostsScrollController = ScrollController();
-  ScrollController _bookmarkedPostsScrollController = ScrollController();
+  // ScrollController _allPostsScrollController = ScrollController();
+  // ScrollController _myPostsScrollController = ScrollController();
+  // ScrollController _bookmarkedPostsScrollController = ScrollController();
 
   bool isLoading = false;
   bool isModalLoading = false;
@@ -64,11 +64,11 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
 
   List<Post> getPosts(TabType tabType) {
     if (tabType == TabType.allPostsTab) {
-      return this._allPosts;
+      return _allPosts;
     } else if (tabType == TabType.myPostsTab) {
-      return this._myPosts;
+      return _myPosts;
     } else if (tabType == TabType.bookmarkedPostsTab) {
-      return this._bookmarkedPosts;
+      return _bookmarkedPosts;
     } else {
       return [];
     }
@@ -76,11 +76,11 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
 
   bool canLoadMore(TabType tabType) {
     if (tabType == TabType.allPostsTab) {
-      return this._allPostsCanLoadMore;
+      return _allPostsCanLoadMore;
     } else if (tabType == TabType.myPostsTab) {
-      return this._myPostsCanLoadMore;
+      return _myPostsCanLoadMore;
     } else if (tabType == TabType.bookmarkedPostsTab) {
-      return this._bookmarkedPostsCanLoadMore;
+      return _bookmarkedPostsCanLoadMore;
     } else {
       return false;
     }
@@ -154,48 +154,48 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     }
   }
 
-  ScrollController? getScrollController(TabType tabType) {
-    if (tabType == TabType.allPostsTab) {
-      return _allPostsScrollController;
-    } else if (tabType == TabType.myPostsTab) {
-      return _myPostsScrollController;
-    } else if (tabType == TabType.bookmarkedPostsTab) {
-      return _bookmarkedPostsScrollController;
-    }
-  }
+  // ScrollController? getScrollController(TabType tabType) {
+  //   if (tabType == TabType.allPostsTab) {
+  //     return _allPostsScrollController;
+  //   } else if (tabType == TabType.myPostsTab) {
+  //     return _myPostsScrollController;
+  //   } else if (tabType == TabType.bookmarkedPostsTab) {
+  //     return _bookmarkedPostsScrollController;
+  //   }
+  // }
 
   Future<void> _getAllPostsWithReplies() async {
     startLoading();
 
-    this._allPostsQuery = firestore
+    _allPostsQuery = firestore
         .collectionGroup('posts')
         .orderBy('createdAt', descending: true)
         .limit(_loadLimit);
-    final querySnapshot = await this._allPostsQuery!.get();
+    final querySnapshot = await _allPostsQuery.get();
     final docs = querySnapshot.docs;
-    this._allPosts.clear();
+    _allPosts.clear();
     if (docs.length == 0) {
       // isPostsExisting = false;
-      this._allPostsCanLoadMore = false;
-      this._allPosts = [];
+      _allPostsCanLoadMore = false;
+      _allPosts = [];
     } else if (docs.length < _loadLimit) {
       // isPostsExisting = true;
-      this._allPostsCanLoadMore = false;
-      this._allPostsLastVisible = docs[docs.length - 1];
-      this._allPosts = docs.map((doc) => Post(doc)).toList();
+      _allPostsCanLoadMore = false;
+      _allPostsLastVisible = docs[docs.length - 1];
+      _allPosts = docs.map((doc) => Post(doc)).toList();
     } else {
       // isPostsExisting = true;
-      this._allPostsCanLoadMore = true;
-      this._allPostsLastVisible = docs[docs.length - 1];
-      this._allPosts = docs.map((doc) => Post(doc)).toList();
+      _allPostsCanLoadMore = true;
+      _allPostsLastVisible = docs[docs.length - 1];
+      _allPosts = docs.map((doc) => Post(doc)).toList();
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
     final empathizedPostsIds = await getEmpathizedPostsIds();
 
-    await addBookmark(this._allPosts, bookmarkedPostsIds);
-    await addEmpathy(this._allPosts, empathizedPostsIds);
-    await getReplies(this._allPosts, empathizedPostsIds);
+    await addBookmark(_allPosts, bookmarkedPostsIds);
+    await addEmpathy(_allPosts, empathizedPostsIds);
+    await getReplies(_allPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -204,35 +204,35 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _loadAllPostsWithReplies() async {
     startLoading();
 
-    this._allPostsQuery = firestore
+    _allPostsQuery = firestore
         .collectionGroup('posts')
         .orderBy('createdAt', descending: true)
-        .startAfterDocument(_allPostsLastVisible!)
+        .startAfterDocument(_allPostsLastVisible)
         .limit(_loadLimit);
-    final querySnapshot = await this._allPostsQuery!.get();
+    final querySnapshot = await _allPostsQuery.get();
     final docs = querySnapshot.docs;
     if (docs.length == 0) {
       // isPostsExisting = false;
-      this._allPostsCanLoadMore = false;
-      this._allPosts += [];
+      _allPostsCanLoadMore = false;
+      _allPosts += [];
     } else if (docs.length < _loadLimit) {
       // isPostsExisting = true;
-      this._allPostsCanLoadMore = false;
-      this._allPostsLastVisible = docs[docs.length - 1];
-      this._allPosts += docs.map((doc) => Post(doc)).toList();
+      _allPostsCanLoadMore = false;
+      _allPostsLastVisible = docs[docs.length - 1];
+      _allPosts += docs.map((doc) => Post(doc)).toList();
     } else {
       // isPostsExisting = true;
-      this._allPostsCanLoadMore = true;
-      this._allPostsLastVisible = docs[docs.length - 1];
-      this._allPosts += docs.map((doc) => Post(doc)).toList();
+      _allPostsCanLoadMore = true;
+      _allPostsLastVisible = docs[docs.length - 1];
+      _allPosts += docs.map((doc) => Post(doc)).toList();
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
     final empathizedPostsIds = await getEmpathizedPostsIds();
 
-    await addBookmark(this._allPosts, bookmarkedPostsIds);
-    await addEmpathy(this._allPosts, empathizedPostsIds);
-    await getReplies(this._allPosts, empathizedPostsIds);
+    await addBookmark(_allPosts, bookmarkedPostsIds);
+    await addEmpathy(_allPosts, empathizedPostsIds);
+    await getReplies(_allPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -241,37 +241,37 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _getMyPostsWithReplies() async {
     startLoading();
 
-    this._myPostsQuery = firestore
+    _myPostsQuery = firestore
         .collection('users')
         .doc(auth.currentUser?.uid)
         .collection('posts')
         .orderBy('updatedAt', descending: true)
         .limit(_loadLimit);
-    final querySnapshot = await this._myPostsQuery!.get();
+    final querySnapshot = await _myPostsQuery.get();
     final docs = querySnapshot.docs;
-    this._myPosts.clear();
+    _myPosts.clear();
     if (docs.length == 0) {
       // isPostsExisting = false;
-      this._myPostsCanLoadMore = false;
-      this._myPosts = [];
+      _myPostsCanLoadMore = false;
+      _myPosts = [];
     } else if (docs.length < _loadLimit) {
       // isPostsExisting = true;
-      this._myPostsCanLoadMore = false;
-      this._myPostsLastVisible = docs[docs.length - 1];
-      this._myPosts = docs.map((doc) => Post(doc)).toList();
+      _myPostsCanLoadMore = false;
+      _myPostsLastVisible = docs[docs.length - 1];
+      _myPosts = docs.map((doc) => Post(doc)).toList();
     } else {
       // isPostsExisting = true;
-      this._myPostsCanLoadMore = true;
-      this._myPostsLastVisible = docs[docs.length - 1];
-      this._myPosts = docs.map((doc) => Post(doc)).toList();
+      _myPostsCanLoadMore = true;
+      _myPostsLastVisible = docs[docs.length - 1];
+      _myPosts = docs.map((doc) => Post(doc)).toList();
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
     final empathizedPostsIds = await getEmpathizedPostsIds();
 
-    await addBookmark(this._myPosts, bookmarkedPostsIds);
-    await addEmpathy(this._myPosts, empathizedPostsIds);
-    await getReplies(this._myPosts, empathizedPostsIds);
+    await addBookmark(_myPosts, bookmarkedPostsIds);
+    await addEmpathy(_myPosts, empathizedPostsIds);
+    await getReplies(_myPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -280,37 +280,37 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _loadMyPostsWithReplies() async {
     startLoading();
 
-    this._myPostsQuery = firestore
+    _myPostsQuery = firestore
         .collection('users')
         .doc(auth.currentUser?.uid)
         .collection('posts')
         .orderBy('createdAt', descending: true)
-        .startAfterDocument(this._myPostsLastVisible!)
+        .startAfterDocument(_myPostsLastVisible)
         .limit(_loadLimit);
-    final querySnapshot = await this._myPostsQuery!.get();
+    final querySnapshot = await _myPostsQuery.get();
     final docs = querySnapshot.docs;
     if (docs.length == 0) {
       // isPostsExisting = false;
-      this._myPostsCanLoadMore = false;
-      this._myPosts += [];
+      _myPostsCanLoadMore = false;
+      _myPosts += [];
     } else if (docs.length < _loadLimit) {
       // isPostsExisting = true;
-      this._myPostsCanLoadMore = false;
-      this._myPostsLastVisible = docs[docs.length - 1];
-      this._myPosts += docs.map((doc) => Post(doc)).toList();
+      _myPostsCanLoadMore = false;
+      _myPostsLastVisible = docs[docs.length - 1];
+      _myPosts += docs.map((doc) => Post(doc)).toList();
     } else {
       // isPostsExisting = true;
-      this._myPostsCanLoadMore = true;
-      this._myPostsLastVisible = docs[docs.length - 1];
-      this._myPosts += docs.map((doc) => Post(doc)).toList();
+      _myPostsCanLoadMore = true;
+      _myPostsLastVisible = docs[docs.length - 1];
+      _myPosts += docs.map((doc) => Post(doc)).toList();
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
     final empathizedPostsIds = await getEmpathizedPostsIds();
 
-    await addBookmark(this._myPosts, bookmarkedPostsIds);
-    await addEmpathy(this._myPosts, empathizedPostsIds);
-    await getReplies(this._myPosts, empathizedPostsIds);
+    await addBookmark(_myPosts, bookmarkedPostsIds);
+    await addEmpathy(_myPosts, empathizedPostsIds);
+    await getReplies(_myPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -319,35 +319,35 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _getBookmarkedPostsWithReplies() async {
     startLoading();
 
-    this._bookmarkedPostsQuery = firestore
+    _bookmarkedPostsQuery = firestore
         .collection('users')
         .doc(auth.currentUser?.uid)
         .collection('bookmarkedPosts')
         .orderBy('createdAt', descending: true)
         .limit(_loadLimit);
-    final querySnapshot = await this._bookmarkedPostsQuery!.get();
+    final querySnapshot = await _bookmarkedPostsQuery.get();
     final docs = querySnapshot.docs;
-    this._bookmarkedPosts.clear();
+    _bookmarkedPosts.clear();
     if (docs.length == 0) {
       // isPostsExisting = false;
-      this._bookmarkedPostsCanLoadMore = false;
-      this._bookmarkedPosts = [];
+      _bookmarkedPostsCanLoadMore = false;
+      _bookmarkedPosts = [];
     } else if (docs.length < _loadLimit) {
       // isPostsExisting = true;
-      this._bookmarkedPostsCanLoadMore = false;
-      this._bookmarkedPostsLastVisible = docs[docs.length - 1];
-      this._bookmarkedPosts = await getBookmarkedPosts(docs);
+      _bookmarkedPostsCanLoadMore = false;
+      _bookmarkedPostsLastVisible = docs[docs.length - 1];
+      _bookmarkedPosts = await getBookmarkedPosts(docs);
     } else {
       // isPostsExisting = true;
-      this._bookmarkedPostsCanLoadMore = true;
-      this._bookmarkedPostsLastVisible = docs[docs.length - 1];
-      this._bookmarkedPosts = await getBookmarkedPosts(docs);
+      _bookmarkedPostsCanLoadMore = true;
+      _bookmarkedPostsLastVisible = docs[docs.length - 1];
+      _bookmarkedPosts = await getBookmarkedPosts(docs);
     }
 
     final empathizedPostsIds = await getEmpathizedPostsIds();
 
-    await addEmpathy(this._bookmarkedPosts, empathizedPostsIds);
-    await getReplies(this._bookmarkedPosts, empathizedPostsIds);
+    await addEmpathy(_bookmarkedPosts, empathizedPostsIds);
+    await getReplies(_bookmarkedPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -356,35 +356,35 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _loadBookmarkedPostsWithReplies() async {
     startLoading();
 
-    this._bookmarkedPostsQuery = firestore
+    _bookmarkedPostsQuery = firestore
         .collection('users')
         .doc(auth.currentUser?.uid)
         .collection('bookmarkedPosts')
         .orderBy('createdAt', descending: true)
-        .startAfterDocument(_bookmarkedPostsLastVisible!)
+        .startAfterDocument(_bookmarkedPostsLastVisible)
         .limit(_loadLimit);
-    final querySnapshot = await this._bookmarkedPostsQuery!.get();
+    final querySnapshot = await _bookmarkedPostsQuery.get();
     final docs = querySnapshot.docs;
     if (docs.length == 0) {
       // isPostsExisting = false;
-      this._bookmarkedPostsCanLoadMore = false;
-      this._bookmarkedPosts += [];
+      _bookmarkedPostsCanLoadMore = false;
+      _bookmarkedPosts += [];
     } else if (docs.length < _loadLimit) {
       // isPostsExisting = true;
-      this._bookmarkedPostsCanLoadMore = false;
-      this._bookmarkedPostsLastVisible = docs[docs.length - 1];
-      this._bookmarkedPosts += await getBookmarkedPosts(docs);
+      _bookmarkedPostsCanLoadMore = false;
+      _bookmarkedPostsLastVisible = docs[docs.length - 1];
+      _bookmarkedPosts += await getBookmarkedPosts(docs);
     } else {
       // isPostsExisting = true;
-      this._bookmarkedPostsCanLoadMore = true;
-      this._bookmarkedPostsLastVisible = docs[docs.length - 1];
-      this._bookmarkedPosts += await getBookmarkedPosts(docs);
+      _bookmarkedPostsCanLoadMore = true;
+      _bookmarkedPostsLastVisible = docs[docs.length - 1];
+      _bookmarkedPosts += await getBookmarkedPosts(docs);
     }
 
     final empathizedPostsIds = await getEmpathizedPostsIds();
 
-    await addEmpathy(this._bookmarkedPosts, empathizedPostsIds);
-    await getReplies(this._bookmarkedPosts, empathizedPostsIds);
+    await addEmpathy(_bookmarkedPosts, empathizedPostsIds);
+    await getReplies(_bookmarkedPosts, empathizedPostsIds);
 
     stopLoading();
     notifyListeners();
@@ -393,25 +393,24 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   Future<void> _openSpecifiedPageByNotification(BuildContext context) async {
     // Get any messages which caused the application to open from
     // a terminated state.
-    RemoteMessage? initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
+    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
 
     // If the message also contains a data property with a "type" of "chat",
     // navigate to a chat screen
     if (initialMessage?.data['page'] == 'HomePostsPage') {
-      await Navigator.push(
+      await Navigator.push<void>(
         context,
         MaterialPageRoute(builder: (context) => HomePostsPage()),
       );
     } else if (initialMessage?.data['page'] == 'MyPostsPage') {
-      await Navigator.push(
+      await Navigator.push<void>(
         context,
         // MaterialPageRoute(builder: (context) => MyPostsPage()),
         MaterialPageRoute(builder: (context) => NoticesPage()),
       );
       await confirmIsNoticeExisting();
     } else if (initialMessage?.data['page'] == 'MyRepliesPage') {
-      await Navigator.push(
+      await Navigator.push<void>(
         context,
         // MaterialPageRoute(builder: (context) => MyRepliesPage()),
         MaterialPageRoute(builder: (context) => NoticesPage()),
@@ -423,18 +422,18 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     // Stream listener
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage? message) async {
       if (message?.data['page'] == 'HomePostsPage') {
-        await Navigator.push(
+        await Navigator.push<void>(
           context,
           MaterialPageRoute(builder: (context) => HomePostsPage()),
         );
       } else if (message?.data['page'] == 'MyPostsPage') {
-        await Navigator.push(
+        await Navigator.push<void>(
           context,
           MaterialPageRoute(builder: (context) => NoticesPage()),
         );
         await confirmIsNoticeExisting();
       } else if (message?.data['page'] == 'MyRepliesPage') {
-        await Navigator.push(
+        await Navigator.push<void>(
           context,
           MaterialPageRoute(builder: (context) => NoticesPage()),
         );
@@ -447,7 +446,7 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     final preference = await SharedPreferences.getInstance();
     // 最初の起動ならチュートリアル表示
     if (preference.getBool(kOnBoardingDoneKey) != true) {
-      Navigator.push(
+      Navigator.push<void>(
         context,
         MaterialPageRoute(builder: (context) => OnBoardingPage()),
       );
@@ -461,7 +460,7 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
 
   Future<void> confirmIsNoticeExisting() async {
     await AppModel.reloadUser();
-    isNoticeExisting = (AppModel.user?.badges['notice'] ?? false);
+    isNoticeExisting = AppModel.user?.badges['notice'] ?? false;
     notifyListeners();
   }
 
@@ -491,7 +490,7 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   //     final docs = snapshot.docs;
   //     final _posts = docs.map((doc) => Post(doc)).toList();
   //     _posts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-  //     this._posts = _posts;
+  //     _posts = _posts;
   //     notifyListeners();
   //   });
   // }

@@ -18,7 +18,7 @@ class UpdateProfileModel extends ChangeNotifier {
     startLoading();
 
     final userRef = firestore.collection('users').doc(currentUser.uid);
-    List<String> _userProfileList = _convertNoSelectedValueToEmpty();
+    final _userProfileList = _convertNoSelectedValueToEmpty();
 
     try {
       await currentUser.updateProfile(
@@ -39,21 +39,20 @@ class UpdateProfileModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('updateUserProfile処理中のエラーです');
       print(e.toString());
-      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+      throw 'エラーが発生しました。\nもう一度お試し下さい。';
     } finally {
       stopLoading();
     }
   }
 
   List<String> _convertNoSelectedValueToEmpty() {
-    List<String> userProfileList = [
+    final userProfileList = [
       nicknameValue,
       positionDropdownValue,
       genderDropdownValue,
       ageDropdownValue,
       areaDropdownValue,
-    ];
-    userProfileList = userProfileList.map((profileData) {
+    ].map((profileData) {
       if (profileData == kPleaseSelect || profileData == kDoNotSelect) {
         return '';
       } else {

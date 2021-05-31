@@ -15,7 +15,7 @@ class UpdatePasswordPage extends StatelessWidget with ShowExceptionDialogMixin {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
-          title: Text('パスワードの変更'),
+          title: const Text('パスワードの変更'),
         ),
         body: Consumer<UpdatePasswordModel>(
           builder: (context, model, child) {
@@ -26,18 +26,18 @@ class UpdatePasswordPage extends StatelessWidget with ShowExceptionDialogMixin {
                   key: _formKey,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 32.0, horizontal: 24.0),
+                        vertical: 32, horizontal: 24),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         /// currentEmail
-                        Text('メールアドレス'),
-                        SizedBox(height: 8.0),
+                        const Text('メールアドレス'),
+                        const SizedBox(height: 8),
                         Text(
                           model.email,
-                          style: TextStyle(fontSize: 17.0),
+                          style: const TextStyle(fontSize: 17),
                         ),
-                        SizedBox(height: 32.0),
+                        const SizedBox(height: 32),
 
                         /// currentPassword
                         TextFormField(
@@ -47,13 +47,13 @@ class UpdatePasswordPage extends StatelessWidget with ShowExceptionDialogMixin {
                           },
                           obscureText: true,
                           autofocus: true,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             // prefixIcon: Icon(Icons.text_fields),
                             labelText: '現在のパスワード',
                           ),
                         ),
-                        SizedBox(height: 32.0),
+                        const SizedBox(height: 32),
 
                         /// newPassword
                         TextFormField(
@@ -62,13 +62,13 @@ class UpdatePasswordPage extends StatelessWidget with ShowExceptionDialogMixin {
                             model.enteredNewPassword = newValue;
                           },
                           obscureText: true,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             // prefixIcon: Icon(Icons.password),
                             labelText: '新しいパスワード（8文字以上の半角英数記号）',
                           ),
                         ),
-                        SizedBox(height: 40.0),
+                        const SizedBox(height: 40),
 
                         /// 投稿送信ボタン
                         OutlinedButton(
@@ -80,11 +80,11 @@ class UpdatePasswordPage extends StatelessWidget with ShowExceptionDialogMixin {
                                   ModalRoute.withName('/'),
                                 );
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
+                                  const SnackBar(
                                     content: Text('パスワードが変更されました。'),
                                   ),
                                 );
-                              } catch (e) {
+                              } on String catch (e) {
                                 await showExceptionDialog(
                                   context,
                                   e.toString(),
@@ -92,7 +92,7 @@ class UpdatePasswordPage extends StatelessWidget with ShowExceptionDialogMixin {
                               }
                             }
                           },
-                          child: Text(
+                          child: const Text(
                             'パスワードを変更する',
                             style: TextStyle(
                               color: Colors.white,
@@ -102,11 +102,11 @@ class UpdatePasswordPage extends StatelessWidget with ShowExceptionDialogMixin {
                           ),
                           style: OutlinedButton.styleFrom(
                             backgroundColor: kDarkPink,
-                            padding: EdgeInsets.symmetric(vertical: 12.0),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                             // shape: RoundedRectangleBorder(
                             //   borderRadius: BorderRadius.circular(15),
                             // ),
-                            side: BorderSide(color: kDarkPink),
+                            side: const BorderSide(color: kDarkPink),
                           ),
                         )
                       ],

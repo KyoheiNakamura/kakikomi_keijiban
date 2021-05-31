@@ -7,7 +7,6 @@ import 'package:kakikomi_keijiban/common/mixin/build_keyboard_actions_config_don
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/domain/post.dart';
-import 'package:kakikomi_keijiban/domain/user.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
 import 'package:kakikomi_keijiban/presentation/update_post/update_post_model.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -18,10 +17,13 @@ class UpdatePostPage extends StatelessWidget
         ShowConfirmDialogMixin,
         KeyboardActionsConfigDoneMixin,
         ShowExceptionDialogMixin {
-  UpdatePostPage({required this.existingPost, required this.passedModel});
+  UpdatePostPage({
+    required this.existingPost,
+    required this.passedModel,
+  });
 
   final Post existingPost;
-  final passedModel;
+  final dynamic passedModel;
   final _formKey = GlobalKey<FormState>();
   final FocusNode _focusNodeContent = FocusNode();
 
@@ -37,12 +39,12 @@ class UpdatePostPage extends StatelessWidget
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 50,
-            title: Text('編集'),
+            title: const Text('編集'),
           ),
           body: Consumer<UpdatePostModel>(
             builder: (context, model, child) {
-              final User? user = AppModel.user;
-              final bool isUserExisting = user != null;
+              final user = AppModel.user;
+              final isUserExisting = user != null;
               if (model.selectedCategories.isEmpty) {
                 model.selectedCategories.addAll(existingPost.categories);
               }
@@ -55,15 +57,15 @@ class UpdatePostPage extends StatelessWidget
                       key: _formKey,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                          vertical: 48.0,
-                          horizontal: 24.0,
+                          vertical: 48,
+                          horizontal: 24,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             /// title
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 32.0),
+                              padding: const EdgeInsets.only(bottom: 32),
                               child: TextFormField(
                                 initialValue: model.titleValue =
                                     existingPost.title,
@@ -77,7 +79,7 @@ class UpdatePostPage extends StatelessWidget
 
                             /// content
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 32.0),
+                              padding: const EdgeInsets.only(bottom: 32),
                               child: TextFormField(
                                 focusNode: _focusNodeContent,
                                 initialValue: model.bodyValue =
@@ -96,7 +98,7 @@ class UpdatePostPage extends StatelessWidget
 
                             /// nickname
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 32.0),
+                              padding: const EdgeInsets.only(bottom: 32),
                               child: TextFormField(
                                 initialValue: model.nicknameValue =
                                     existingPost.nickname,
@@ -110,12 +112,12 @@ class UpdatePostPage extends StatelessWidget
 
                             /// emotion
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 32.0),
+                              padding: const EdgeInsets.only(bottom: 32),
                               child: DropdownButtonFormField(
                                 validator: model.validateEmotionCallback,
                                 value: model.emotionDropdownValue =
                                     existingPost.emotion,
-                                icon: Icon(Icons.arrow_downward),
+                                icon: const Icon(Icons.arrow_downward),
                                 iconSize: 24,
                                 elevation: 1,
                                 style: kDropdownButtonFormFieldTextStyle,
@@ -149,7 +151,7 @@ class UpdatePostPage extends StatelessWidget
                                   Row(
                                     children: [
                                       Padding(
-                                        padding: const EdgeInsets.all(14.0),
+                                        padding: const EdgeInsets.all(14),
                                         child: Icon(
                                           Icons.category_outlined,
                                           color: model.isCategoriesValid
@@ -163,17 +165,17 @@ class UpdatePostPage extends StatelessWidget
                                           color: model.isCategoriesValid
                                               ? Colors.grey[700]
                                               : kDarkPink,
-                                          fontSize: 16.0,
+                                          fontSize: 16,
                                         ),
                                       ),
                                     ],
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.only(
-                                        left: 16.0, right: 16.0, bottom: 14.0),
+                                    padding: const EdgeInsets.fromLTRB(
+                                        16, 0, 16, 14),
                                     child: Wrap(
-                                      spacing: 8.0,
-                                      runSpacing: 2.0,
+                                      spacing: 8,
+                                      runSpacing: 2,
                                       // alignment: WrapAlignment.center,
                                       children:
                                           kCategoryList.map<Widget>((item) {
@@ -188,11 +190,7 @@ class UpdatePostPage extends StatelessWidget
                               ),
                             ),
                             Padding(
-                              padding: EdgeInsets.only(
-                                  left: 10.0,
-                                  top: 8.0,
-                                  right: 10.0,
-                                  bottom: 32.0),
+                              padding: const EdgeInsets.fromLTRB(10, 8, 10, 32),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -201,15 +199,15 @@ class UpdatePostPage extends StatelessWidget
                                     model.isCategoriesValid
                                         ? '必須'
                                         : 'カテゴリーを選択してください',
-                                    style: TextStyle(
-                                      fontSize: 12.0,
+                                    style: const TextStyle(
+                                      fontSize: 12,
                                       color: kDarkPink,
                                     ),
                                   ),
-                                  Text(
+                                  const Text(
                                     '5つ以内で選択してください',
                                     style: TextStyle(
-                                      fontSize: 12.0,
+                                      fontSize: 12,
                                       color: kGrey,
                                     ),
                                   ),
@@ -220,7 +218,7 @@ class UpdatePostPage extends StatelessWidget
                             /// position
                             // Todo positionを複数選択できるようにしよう
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 32.0),
+                              padding: const EdgeInsets.only(bottom: 32),
                               child: DropdownButtonFormField(
                                 // validator: model.validatePositionCallback,
                                 value: existingPost.position.isNotEmpty
@@ -228,9 +226,9 @@ class UpdatePostPage extends StatelessWidget
                                         existingPost.position
                                     : isUserExisting
                                         ? model.positionDropdownValue =
-                                            user.position
+                                            user!.position
                                         : model.positionDropdownValue,
-                                icon: Icon(Icons.arrow_downward),
+                                icon: const Icon(Icons.arrow_downward),
                                 iconSize: 24,
                                 elevation: 1,
                                 style: kDropdownButtonFormFieldTextStyle,
@@ -250,16 +248,16 @@ class UpdatePostPage extends StatelessWidget
 
                             /// gender
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 32.0),
+                              padding: const EdgeInsets.only(bottom: 32),
                               child: DropdownButtonFormField(
                                 value: existingPost.gender.isNotEmpty
                                     ? model.genderDropdownValue =
                                         existingPost.gender
                                     : isUserExisting
                                         ? model.genderDropdownValue =
-                                            user.gender
+                                            user!.gender
                                         : model.genderDropdownValue,
-                                icon: Icon(Icons.arrow_downward),
+                                icon: const Icon(Icons.arrow_downward),
                                 iconSize: 24,
                                 elevation: 1,
                                 style: kDropdownButtonFormFieldTextStyle,
@@ -279,14 +277,14 @@ class UpdatePostPage extends StatelessWidget
 
                             /// age
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 32.0),
+                              padding: const EdgeInsets.only(bottom: 32),
                               child: DropdownButtonFormField(
                                 value: existingPost.age.isNotEmpty
                                     ? model.ageDropdownValue = existingPost.age
                                     : isUserExisting
-                                        ? model.ageDropdownValue = user.age
+                                        ? model.ageDropdownValue = user!.age
                                         : model.ageDropdownValue,
-                                icon: Icon(Icons.arrow_downward),
+                                icon: const Icon(Icons.arrow_downward),
                                 iconSize: 24,
                                 elevation: 1,
                                 style: kDropdownButtonFormFieldTextStyle,
@@ -306,15 +304,15 @@ class UpdatePostPage extends StatelessWidget
 
                             /// area
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 48.0),
+                              padding: const EdgeInsets.only(bottom: 48),
                               child: DropdownButtonFormField(
                                 value: existingPost.area.isNotEmpty
                                     ? model.areaDropdownValue =
                                         existingPost.area
                                     : isUserExisting
-                                        ? model.areaDropdownValue = user.area
+                                        ? model.areaDropdownValue = user!.area
                                         : model.areaDropdownValue,
-                                icon: Icon(Icons.arrow_downward),
+                                icon: const Icon(Icons.arrow_downward),
                                 iconSize: 24,
                                 elevation: 1,
                                 style: kDropdownButtonFormFieldTextStyle,
@@ -341,7 +339,7 @@ class UpdatePostPage extends StatelessWidget
                                         try {
                                           await model.updatePost(existingPost);
                                           Navigator.pop(context);
-                                        } catch (e) {
+                                        } on String catch (e) {
                                           await showExceptionDialog(
                                             context,
                                             e.toString(),
@@ -355,7 +353,7 @@ class UpdatePostPage extends StatelessWidget
                                             context);
                                       }
                                     },
-                                    child: Text(
+                                    child: const Text(
                                       '更新する',
                                       style: TextStyle(
                                         color: kDarkPink,
@@ -364,13 +362,12 @@ class UpdatePostPage extends StatelessWidget
                                       ),
                                     ),
                                     style: OutlinedButton.styleFrom(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 12.0),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(16.0),
+                                        borderRadius: BorderRadius.circular(16),
                                       ),
-                                      side: BorderSide(color: kDarkPink),
+                                      side: const BorderSide(color: kDarkPink),
                                     ),
                                   )
                                 :
@@ -394,7 +391,7 @@ class UpdatePostPage extends StatelessWidget
                                                 ResultForDraftButton
                                                     .addPostFromDraft,
                                               );
-                                            } catch (e) {
+                                            } on String catch (e) {
                                               await showExceptionDialog(
                                                 context,
                                                 e.toString(),
@@ -409,7 +406,7 @@ class UpdatePostPage extends StatelessWidget
                                                 context);
                                           }
                                         },
-                                        child: Text(
+                                        child: const Text(
                                           '投稿する',
                                           style: TextStyle(
                                             color: Colors.white,
@@ -419,16 +416,17 @@ class UpdatePostPage extends StatelessWidget
                                         ),
                                         style: OutlinedButton.styleFrom(
                                           backgroundColor: kDarkPink,
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 12.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12),
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(16.0),
+                                                BorderRadius.circular(16),
                                           ),
-                                          side: BorderSide(color: kDarkPink),
+                                          side: const BorderSide(
+                                              color: kDarkPink),
                                         ),
                                       ),
-                                      SizedBox(height: 16.0),
+                                      const SizedBox(height: 16),
 
                                       /// 下書き保存ボタン
                                       OutlinedButton(
@@ -440,7 +438,7 @@ class UpdatePostPage extends StatelessWidget
                                             try {
                                               await model.updateDraftPost(
                                                   existingPost);
-                                              final snackBar = SnackBar(
+                                              const snackBar = SnackBar(
                                                 content: Text('下書きに保存しました'),
                                               );
                                               ScaffoldMessenger.of(context)
@@ -450,7 +448,7 @@ class UpdatePostPage extends StatelessWidget
                                                 ResultForDraftButton
                                                     .updateDraft,
                                               );
-                                            } catch (e) {
+                                            } on String catch (e) {
                                               await showExceptionDialog(
                                                 context,
                                                 e.toString(),
@@ -464,7 +462,7 @@ class UpdatePostPage extends StatelessWidget
                                                 context);
                                           }
                                         },
-                                        child: Text(
+                                        child: const Text(
                                           '下書きに保存する',
                                           style: TextStyle(
                                             color: kDarkPink,
@@ -473,13 +471,14 @@ class UpdatePostPage extends StatelessWidget
                                           ),
                                         ),
                                         style: OutlinedButton.styleFrom(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 12.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12),
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
-                                                BorderRadius.circular(16.0),
+                                                BorderRadius.circular(16),
                                           ),
-                                          side: BorderSide(color: kDarkPink),
+                                          side: const BorderSide(
+                                              color: kDarkPink),
                                         ),
                                       ),
                                     ],
@@ -500,14 +499,17 @@ class UpdatePostPage extends StatelessWidget
 }
 
 class FilterChipWidget extends StatelessWidget {
-  FilterChipWidget({required this.chipName, required this.model});
+  const FilterChipWidget({
+    required this.chipName,
+    required this.model,
+  });
 
   final String chipName;
   final UpdatePostModel model;
 
   @override
   Widget build(BuildContext context) {
-    bool isSelected = model.selectedCategories.contains(chipName);
+    final isSelected = model.selectedCategories.contains(chipName);
     return FilterChip(
       label: Text(
         chipName,

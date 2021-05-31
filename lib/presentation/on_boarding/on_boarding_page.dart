@@ -16,75 +16,79 @@ class OnBoardingPage extends StatelessWidget {
         child: SafeArea(
           child: Scaffold(
             backgroundColor: kLightPink,
-            body: Consumer<OnBoardingModel>(builder: (context, model, child) {
-              return Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 16.0),
-                child: Column(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: PageView.builder(
-                        onPageChanged: model.onPageChangedCallBack,
-                        itemBuilder: (context, index) => OnBoardingContent(
-                          image: kOnBoardingData[index]['image']!,
-                          text: kOnBoardingData[index]['text']!,
+            body: Consumer<OnBoardingModel>(
+              builder: (context, model, child) {
+                return Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: PageView.builder(
+                          onPageChanged: model.onPageChangedCallBack,
+                          itemBuilder: (context, index) => OnBoardingContent(
+                            image: kOnBoardingData[index]['image']!,
+                            text: kOnBoardingData[index]['text']!,
+                          ),
+                          itemCount: kOnBoardingData.length,
                         ),
-                        itemCount: kOnBoardingData.length,
                       ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Spacer(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(
-                              kOnBoardingData.length,
-                              (index) => DotIndicator(
-                                index: index,
-                                model: model,
-                              ),
-                            ),
-                          ),
-                          Spacer(flex: 4),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16.0),
-                            child: SizedBox(
-                              width: double.infinity,
-                              child: OutlinedButton(
-                                onPressed: () async {
-                                  await model.beDoneOnBoardingPage(context);
-                                },
-                                child: Text(
-                                  'はじめる',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    // fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                style: OutlinedButton.styleFrom(
-                                  backgroundColor: kDarkPink,
-                                  padding: EdgeInsets.symmetric(vertical: 12.0),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(16.0),
-                                  ),
-                                  side: BorderSide(color: kDarkPink),
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                          // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            const Spacer(),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(
+                                kOnBoardingData.length,
+                                (index) => DotIndicator(
+                                  index: index,
+                                  model: model,
                                 ),
                               ),
                             ),
-                          ),
-                          Spacer(),
-                        ],
+                            const Spacer(flex: 4),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: SizedBox(
+                                width: double.infinity,
+                                child: OutlinedButton(
+                                  onPressed: () async {
+                                    await model.beDoneOnBoardingPage(context);
+                                  },
+                                  child: const Text(
+                                    'はじめる',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      // fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  style: OutlinedButton.styleFrom(
+                                    backgroundColor: kDarkPink,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    side: const BorderSide(color: kDarkPink),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const Spacer(),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -93,7 +97,10 @@ class OnBoardingPage extends StatelessWidget {
 }
 
 class DotIndicator extends StatelessWidget {
-  DotIndicator({required this.index, required this.model});
+  const DotIndicator({
+    required this.index,
+    required this.model,
+  });
 
   final int index;
   final OnBoardingModel model;
@@ -101,20 +108,23 @@ class DotIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
-      duration: Duration(milliseconds: 200),
-      margin: EdgeInsets.only(right: 5.0),
+      duration: const Duration(milliseconds: 200),
+      margin: const EdgeInsets.only(right: 5),
       width: model.currentPage == index ? 20 : 6,
       height: 6,
       decoration: BoxDecoration(
         color: model.currentPage == index ? Colors.pinkAccent : kPink,
-        borderRadius: BorderRadius.circular(3.0),
+        borderRadius: BorderRadius.circular(3),
       ),
     );
   }
 }
 
 class OnBoardingContent extends StatelessWidget {
-  OnBoardingContent({required this.image, required this.text});
+  const OnBoardingContent({
+    required this.image,
+    required this.text,
+  });
 
   final String image;
   final String text;
@@ -123,7 +133,7 @@ class OnBoardingContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Spacer(),
+        const Spacer(),
         Expanded(
           flex: 6,
           child: Image.asset(
@@ -131,18 +141,14 @@ class OnBoardingContent extends StatelessWidget {
             fit: BoxFit.contain,
           ),
         ),
-        Spacer(),
+        const Spacer(),
         Expanded(
           flex: 1,
-          child: Container(
-            width: 320.0,
+          child: SizedBox(
+            width: 320,
             child: Text(
               text,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  // fontSize: 17.0,
-                  // fontWeight: FontWeight.bold,
-                  ),
             ),
           ),
         ),

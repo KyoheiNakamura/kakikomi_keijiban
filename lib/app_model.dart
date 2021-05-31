@@ -22,7 +22,7 @@ class AppModel {
         final userDoc =
             await firestore.collection('users').doc(firebaseUser.uid).get();
         if (!userDoc.exists) {
-          await userDoc.reference.set({
+          await userDoc.reference.set(<String, dynamic>{
             'userId': firebaseUser.uid,
             'nickname': '匿名',
             'position': '',
@@ -30,9 +30,9 @@ class AppModel {
             'age': '',
             'area': '',
             'postCount': 0,
-            'topics': [],
+            'topics': <String>[],
             'pushNoticesSetting': kInitialpushNoticesSetting,
-            'badges': {},
+            'badges': <String, bool>{},
             'createdAt': serverTimestamp(),
             'updatedAt': serverTimestamp(),
           });
@@ -47,16 +47,16 @@ class AppModel {
   }
 
   Future<void> _listenOnTokenRefresh() async {
-    String? token = await FirebaseMessaging.instance.getToken();
+    final token = await FirebaseMessaging.instance.getToken();
 
     await _saveTokenToFirebase(token);
     FirebaseMessaging.instance.onTokenRefresh.listen(_saveTokenToFirebase);
   }
 
   Future<void> _saveTokenToFirebase(String? token) async {
-    String? userId = auth.currentUser?.uid;
+    final userId = auth.currentUser?.uid;
 
-    if (userId != null) {
+    if (userId != null && token != null) {
       final fetchedToken = await firestore
           .collection('users')
           .doc(userId)
@@ -69,7 +69,7 @@ class AppModel {
             .doc(userId)
             .collection('tokens')
             .doc(token)
-            .set({
+            .set(<String, String>{
           'id': token,
         });
       }

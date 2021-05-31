@@ -18,39 +18,39 @@ class AddReplyModel extends ChangeNotifier {
   Future<void> addReplyToPost(Post repliedPost) async {
     startLoading();
 
-    WriteBatch _batch = firestore.batch();
+    final _batch = firestore.batch();
 
     final userRef = firestore.collection('users').doc(repliedPost.userId);
     final postRef = userRef.collection('posts').doc(repliedPost.id);
     final replyRef = postRef.collection('replies').doc();
 
-    _batch.set(replyRef, {
-      'id': replyRef.id,
-      'userId': repliedPost.userId,
-      'postId': repliedPost.id,
-      'replierId': auth.currentUser!.uid,
-      'body': removeUnnecessaryBlankLines(bodyValue),
-      'nickname': removeUnnecessaryBlankLines(nicknameValue),
-      'position': convertNoSelectedValueToEmpty(positionDropdownValue),
-      'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
-      'age': convertNoSelectedValueToEmpty(ageDropdownValue),
-      'area': convertNoSelectedValueToEmpty(areaDropdownValue),
-      'empathyCount': 0,
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
-
-    _batch.update(postRef, {
-      'replyCount': repliedPost.replyCount + 1,
-      'isReplyExisting': true,
-    });
+    _batch
+      ..set(replyRef, {
+        'id': replyRef.id,
+        'userId': repliedPost.userId,
+        'postId': repliedPost.id,
+        'replierId': auth.currentUser!.uid,
+        'body': removeUnnecessaryBlankLines(bodyValue),
+        'nickname': removeUnnecessaryBlankLines(nicknameValue),
+        'position': convertNoSelectedValueToEmpty(positionDropdownValue),
+        'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
+        'age': convertNoSelectedValueToEmpty(ageDropdownValue),
+        'area': convertNoSelectedValueToEmpty(areaDropdownValue),
+        'empathyCount': 0,
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      })
+      ..update(postRef, <String, dynamic>{
+        'replyCount': repliedPost.replyCount + 1,
+        'isReplyExisting': true,
+      });
 
     try {
       await _batch.commit();
     } on Exception catch (e) {
       print('addReplyのバッチ処理中のエラーです');
       print(e.toString());
-      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+      throw 'エラーが発生しました。\nもう一度お試し下さい。';
     } finally {
       stopLoading();
     }
@@ -64,7 +64,7 @@ class AddReplyModel extends ChangeNotifier {
     final draftedReplyRef = userRef.collection('draftedReplies').doc();
 
     try {
-      await draftedReplyRef.set({
+      await draftedReplyRef.set(<String, dynamic>{
         'id': draftedReplyRef.id,
         'userId': repliedPost.userId,
         'postId': repliedPost.id,
@@ -82,7 +82,7 @@ class AddReplyModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('addDraftedReply処理中のエラーです');
       print(e.toString());
-      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+      throw 'エラーが発生しました。\nもう一度お試し下さい。';
     } finally {
       stopLoading();
     }

@@ -15,7 +15,7 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
-          title: Text('ログイン'),
+          title: const Text('ログイン'),
         ),
         body: Consumer<SignInModel>(
           builder: (context, model, child) {
@@ -27,12 +27,7 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                   child: Column(
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(
-                          top: 24.0,
-                          bottom: 16.0,
-                          left: 24.0,
-                          right: 24.0,
-                        ),
+                        padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -42,13 +37,13 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                               onChanged: (newValue) {
                                 model.enteredEmail = newValue.trim();
                               },
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 border: OutlineInputBorder(),
                                 // prefixIcon: Icon(Icons.text_fields),
                                 labelText: 'メールアドレス',
                               ),
                             ),
-                            SizedBox(height: 24.0),
+                            const SizedBox(height: 24),
 
                             /// password
                             TextFormField(
@@ -57,13 +52,13 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                                 model.enteredPassword = newValue.trim();
                               },
                               obscureText: true,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 border: OutlineInputBorder(),
                                 // prefixIcon: Icon(Icons.password),
                                 labelText: 'パスワード（8文字以上の半角英数記号）',
                               ),
                             ),
-                            SizedBox(height: 24.0),
+                            const SizedBox(height: 24),
 
                             /// 投稿送信ボタン
                             OutlinedButton(
@@ -72,7 +67,7 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                                   try {
                                     await model.signInWithEmailAndPassword();
                                     Navigator.pop(context, 'signedIn');
-                                  } catch (e) {
+                                  } on String catch (e) {
                                     await showExceptionDialog(
                                       context,
                                       e.toString(),
@@ -80,7 +75,7 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                                   }
                                 }
                               },
-                              child: Text(
+                              child: const Text(
                                 'ログインする',
                                 style: TextStyle(
                                   color: Colors.white,
@@ -90,35 +85,31 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                               ),
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: kDarkPink,
-                                padding: EdgeInsets.symmetric(vertical: 12.0),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
                                 // shape: RoundedRectangleBorder(
                                 //   borderRadius: BorderRadius.circular(15),
                                 // ),
-                                side: BorderSide(color: kDarkPink),
+                                side: const BorderSide(color: kDarkPink),
                               ),
                             ),
                           ],
                         ),
                       ),
-                      Divider(thickness: 1.0),
+                      const Divider(thickness: 1),
                       Padding(
-                        padding: EdgeInsets.only(
-                          top: 16.0,
-                          bottom: 24.0,
-                          left: 24.0,
-                          right: 24.0,
-                        ),
+                        padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Text(
                             //   'SNSアカウントからログイン',
-                            //   style: TextStyle(fontSize: 16.0),
+                            //   style: TextStyle(fontSize: 16),
                             // ),
-                            SizedBox(height: 16.0),
+                            const SizedBox(height: 16),
                             OutlinedButton(
                               child: Padding(
-                                padding: const EdgeInsets.all(12.0),
+                                padding: const EdgeInsets.all(12),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -126,11 +117,11 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                                       'lib/assets/images/google_logo.png',
                                       scale: 15,
                                     ),
-                                    SizedBox(width: 8.0),
-                                    Text(
+                                    const SizedBox(width: 8),
+                                    const Text(
                                       'Googleでログイン',
                                       style: TextStyle(
-                                        fontSize: 16.0,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -145,7 +136,7 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                                   } else {
                                     Navigator.pop(context);
                                   }
-                                } catch (e) {
+                                } on String catch (e) {
                                   await showExceptionDialog(
                                     context,
                                     e.toString(),

@@ -38,7 +38,7 @@ class UpdateReplyToReplyModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('updateReplyToReply処理中のエラーです');
       print(e.toString());
-      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+      throw 'エラーが発生しました。\nもう一度お試し下さい。';
     } finally {
       stopLoading();
     }
@@ -48,7 +48,7 @@ class UpdateReplyToReplyModel extends ChangeNotifier {
       ReplyToReply draftedReplyToReply) async {
     startLoading();
 
-    WriteBatch _batch = firestore.batch();
+    final _batch = firestore.batch();
 
     final userRef =
         firestore.collection('users').doc(draftedReplyToReply.userId);
@@ -76,8 +76,8 @@ class UpdateReplyToReplyModel extends ChangeNotifier {
 
     final postDoc = await postRef.get();
 
-    _batch.update(postRef, {
-      'replyCount': postDoc['replyCount'] + 1,
+    _batch.update(postRef, <String, dynamic>{
+      'replyCount': (postDoc['replyCount'] as int) + 1,
     });
 
     final replierRef =
@@ -92,7 +92,7 @@ class UpdateReplyToReplyModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('addReplyToReplyFromDraftのバッチ処理中のエラーです');
       print(e.toString());
-      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+      throw 'エラーが発生しました。\nもう一度お試し下さい。';
     } finally {
       stopLoading();
     }
@@ -119,7 +119,7 @@ class UpdateReplyToReplyModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('updateDraftReplyToReply処理中のエラーです');
       print(e.toString());
-      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+      throw 'エラーが発生しました。\nもう一度お試し下さい。';
     } finally {
       stopLoading();
     }

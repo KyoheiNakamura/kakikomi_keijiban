@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
@@ -35,7 +34,7 @@ class UpdateReplyModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('updateReply処理中のエラーです');
       print(e.toString());
-      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+      throw 'エラーが発生しました。\nもう一度お試し下さい。';
     } finally {
       stopLoading();
     }
@@ -44,7 +43,7 @@ class UpdateReplyModel extends ChangeNotifier {
   Future<void> addReplyToPostFromDraft(Reply draftedReply) async {
     startLoading();
 
-    WriteBatch _batch = firestore.batch();
+    final _batch = firestore.batch();
 
     final userRef = firestore.collection('users').doc(draftedReply.userId);
     final postRef = userRef.collection('posts').doc(draftedReply.postId);
@@ -68,8 +67,8 @@ class UpdateReplyModel extends ChangeNotifier {
 
     final postDoc = await postRef.get();
 
-    _batch.update(postRef, {
-      'replyCount': postDoc['replyCount'] + 1,
+    _batch.update(postRef, <String, dynamic>{
+      'replyCount': (postDoc['replyCount'] as int) + 1,
       'isReplyExisting': true,
     });
 
@@ -87,7 +86,7 @@ class UpdateReplyModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('addReplyToPostFromDraftのバッチ処理中のエラーです');
       print(e.toString());
-      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+      throw 'エラーが発生しました。\nもう一度お試し下さい。';
     } finally {
       stopLoading();
     }
@@ -113,7 +112,7 @@ class UpdateReplyModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('updateDraftReply処理中のエラーです');
       print(e.toString());
-      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+      throw 'エラーが発生しました。\nもう一度お試し下さい。';
     } finally {
       stopLoading();
     }

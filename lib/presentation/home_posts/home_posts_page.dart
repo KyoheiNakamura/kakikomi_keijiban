@@ -6,7 +6,6 @@ import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/enum.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
 import 'package:kakikomi_keijiban/presentation/add_post/add_post_page.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/notices/notices_page.dart';
@@ -54,12 +53,12 @@ class HomePostsPage extends StatelessWidget {
                         sliver: SliverAppBar(
                           toolbarHeight: 50,
                           // elevation: 0,
-                          title: Text('発達障害困りごと掲示板（仮）'),
+                          title: const Text('発達障害困りごと掲示板（仮）'),
                           actions: [
                             IconButton(
-                              icon: Icon(Icons.search, size: 24),
+                              icon: const Icon(Icons.search, size: 24),
                               onPressed: () async {
-                                await Navigator.push(
+                                await Navigator.push<void>(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => SearchPage(),
@@ -75,7 +74,7 @@ class HomePostsPage extends StatelessWidget {
                                 size: 24,
                               ),
                               onPressed: () async {
-                                await Navigator.push(
+                                await Navigator.push<void>(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => NoticesPage(),
@@ -95,7 +94,7 @@ class HomePostsPage extends StatelessWidget {
                                   (TabType tabType) => Tab(
                                     child: Text(
                                       tabName(tabType),
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -132,7 +131,7 @@ class HomePostsPage extends StatelessWidget {
               splashColor: kDarkPink,
               backgroundColor: kLightPink,
               label: Row(
-                children: [
+                children: const [
                   Icon(
                     Icons.create,
                     color: kDarkPink,
@@ -171,37 +170,37 @@ class HomePostsPage extends StatelessWidget {
 }
 
 class TabBarViewChild extends StatelessWidget {
-  TabBarViewChild({required this.tabType, required this.model});
+  const TabBarViewChild({
+    required this.tabType,
+    required this.model,
+  });
 
   final TabType tabType;
   final HomePostsModel model;
 
   @override
   Widget build(BuildContext context) {
-    final List<Post> posts = model.getPosts(tabType);
+    final posts = model.getPosts(tabType);
     return Builder(
       builder: (BuildContext context) {
         return ScrollBottomNotificationListener(
           model: model,
           tabType: tabType,
           child: Scrollbar(
-            thickness: 6.0,
-            radius: Radius.circular(8.0),
+            thickness: 6,
+            radius: const Radius.circular(8),
             child: RefreshIndicator(
               onRefresh: () => model.getPostsWithReplies(tabType),
               child: CustomScrollView(
                 key: PageStorageKey<TabType>(tabType),
-                controller: model.getScrollController(tabType),
+                // controller: model.getScrollController(tabType),
                 slivers: [
                   SliverOverlapInjector(
                     handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
                         context),
                   ),
                   SliverPadding(
-                    padding: EdgeInsets.only(
-                      top: 30.0,
-                      bottom: 60.0,
-                    ),
+                    padding: const EdgeInsets.fromLTRB(0, 30, 0, 60),
                     sliver: SliverList(
                       delegate: SliverChildBuilderDelegate(
                         (context, index) {
@@ -215,8 +214,8 @@ class TabBarViewChild extends StatelessWidget {
                                 tabType: tabType,
                               ),
                               post == posts.last && model.isLoading
-                                  ? CircularProgressIndicator()
-                                  : SizedBox(),
+                                  ? const CircularProgressIndicator()
+                                  : const SizedBox(),
                             ],
                           );
                         },

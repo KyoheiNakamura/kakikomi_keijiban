@@ -18,7 +18,7 @@ class UpdatePushNotificationPage extends StatelessWidget
       child: Scaffold(
         appBar: AppBar(
           toolbarHeight: 50,
-          title: Text('通知設定'),
+          title: const Text('通知設定'),
         ),
         body: Consumer<UpdatePushNotificationModel>(
           builder: (context, model, child) {
@@ -26,28 +26,28 @@ class UpdatePushNotificationPage extends StatelessWidget
               inAsyncCall: model.isLoading,
               child: GestureDetector(
                 onTap: () {
-                  FocusScopeNode currentFocus = FocusScope.of(context);
+                  final currentFocus = FocusScope.of(context);
                   if (!currentFocus.hasPrimaryFocus) {
                     currentFocus.unfocus();
                   }
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                    vertical: 16.0,
-                    // horizontal: 24.0,
+                    vertical: 16,
+                    // horizontal: 24,
                   ),
                   child: ListView(
                     children: [
                       /// newPostTopic
                       ListTile(
-                        title: Text(
+                        title: const Text(
                           '新着の投稿のお知らせ',
                           style: TextStyle(
                             // fontWeight: FontWeight.w500,
                             fontSize: 17,
                           ),
                         ),
-                        leading: Icon(
+                        leading: const Icon(
                           Icons.post_add,
                           color: kGrey,
                         ),
@@ -61,7 +61,7 @@ class UpdatePushNotificationPage extends StatelessWidget
 
                       /// ReplyToMyPost
                       ListTile(
-                        title: Text(
+                        title: const Text(
                           '返信のお知らせ',
                           style: TextStyle(
                             // fontWeight: FontWeight.w500,
@@ -71,7 +71,7 @@ class UpdatePushNotificationPage extends StatelessWidget
                         leading: Transform(
                           alignment: Alignment.topCenter,
                           transform: Matrix4.rotationY(math.pi),
-                          child: Icon(
+                          child: const Icon(
                             Icons.reply,
                             color: kGrey,
                           ),
@@ -86,7 +86,7 @@ class UpdatePushNotificationPage extends StatelessWidget
 
                       // /// ReplyToMyReply
                       // ListTile(
-                      //   title: Text(
+                      //   title: const Text(
                       //     '返信への返信のお知らせ',
                       //     style: TextStyle(
                       //       // fontWeight: FontWeight.w500,
@@ -96,7 +96,7 @@ class UpdatePushNotificationPage extends StatelessWidget
                       //   leading: Transform(
                       //     alignment: Alignment.topCenter,
                       //     transform: Matrix4.rotationY(math.pi),
-                      //     child: Icon(
+                      //     child: const Icon(
                       //       Icons.reply_all,
                       //       color: kLightGrey,
                       //     ),

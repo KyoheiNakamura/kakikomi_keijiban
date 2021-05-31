@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
@@ -23,7 +22,7 @@ class AddPostModel extends ChangeNotifier {
     startLoading();
 
     final uid = auth.currentUser!.uid;
-    WriteBatch _batch = firestore.batch();
+    final _batch = firestore.batch();
 
     final userRef = firestore.collection('users').doc(uid);
     final postRef = userRef.collection('posts').doc();
@@ -49,8 +48,8 @@ class AddPostModel extends ChangeNotifier {
 
     final userDoc = await userRef.get();
 
-    _batch.update(userRef, {
-      'postCount': userDoc['postCount'] + 1,
+    _batch.update(userRef, <String, dynamic>{
+      'postCount': (userDoc['postCount'] as int) + 1,
     });
 
     try {
@@ -58,7 +57,7 @@ class AddPostModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('addPostのバッチ処理中のエラーです');
       print(e.toString());
-      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+      throw 'エラーが発生しました。\nもう一度お試し下さい。';
     } finally {
       stopLoading();
     }
@@ -72,7 +71,7 @@ class AddPostModel extends ChangeNotifier {
     final draftedPostRef = userRef.collection('draftedPosts').doc();
 
     try {
-      await draftedPostRef.set({
+      await draftedPostRef.set(<String, dynamic>{
         'id': draftedPostRef.id,
         'userId': uid,
         'title': removeUnnecessaryBlankLines(titleValue),
@@ -93,7 +92,7 @@ class AddPostModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('addDraftedPost処理中のエラーです');
       print(e.toString());
-      throw ('エラーが発生しました。\nもう一度お試し下さい。');
+      throw 'エラーが発生しました。\nもう一度お試し下さい。';
     } finally {
       stopLoading();
     }

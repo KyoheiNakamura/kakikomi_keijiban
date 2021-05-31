@@ -33,14 +33,14 @@ class App extends StatelessWidget {
           primaryColorDark: kDeepDarkPink,
           accentColor: kDarkPink,
           brightness: Brightness.light,
-          appBarTheme: AppBarTheme(
+          appBarTheme: const AppBarTheme(
             elevation: 2,
             centerTitle: true,
             textTheme: TextTheme(headline6: kAppBarTextStyle),
             systemOverlayStyle: SystemUiOverlayStyle(statusBarColor: kDarkPink),
           ),
           fontFamily: 'GenShinGothic',
-          pageTransitionsTheme: PageTransitionsTheme(
+          pageTransitionsTheme: const PageTransitionsTheme(
             builders: <TargetPlatform, PageTransitionsBuilder>{
               TargetPlatform.android: ZoomPageTransitionsBuilder(),
               TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
