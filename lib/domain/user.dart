@@ -20,9 +20,15 @@ class User {
         ? doc['area'] as String
         : kPleaseSelect;
     postCount = doc['postCount'] as int;
-    topics = doc['topics'] as List<String>;
-    pushNoticesSetting = doc['pushNoticesSetting'] as List<String>;
-    badges = doc['badges'] as Map<String, bool>;
+    final _topics = doc['topics'] as List<dynamic>;
+    topics = List<String>.from(_topics);
+    final _pushNoticesSetting = doc['pushNoticesSetting'] as List<dynamic>;
+    pushNoticesSetting = List<String>.from(_pushNoticesSetting);
+    final _badges = doc['badges'] as Map<String, dynamic>;
+    badges = Map<String, bool>.from(_badges);
+    // topics = doc['topics'] as List<String>;
+    // pushNoticesSetting = doc['pushNoticesSetting'] as List<String>;
+    // badges = doc['badges'] as Map<String, bool>;
     createdDate = (doc['createdAt'] as Timestamp).toDate();
     updatedDate = (doc['updatedAt'] as Timestamp).toDate();
   }
