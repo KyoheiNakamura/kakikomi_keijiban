@@ -15,7 +15,9 @@ class Post {
     gender = doc['gender'] != '' ? doc['gender'] as String : '';
     age = doc['age'] != '' ? doc['age'] as String : '';
     area = doc['area'] != '' ? doc['area'] as String : '';
-    categories = doc['categories'] as List<String>;
+    final _categories = doc['categories'] as List<dynamic>;
+    categories = List<String>.from(_categories);
+    // categories = doc['categories'] as List<String>;
     replyCount = doc['replyCount'] as int;
     empathyCount = doc['empathyCount'] as int;
     isReplyExisting = doc['isReplyExisting'] as bool;
