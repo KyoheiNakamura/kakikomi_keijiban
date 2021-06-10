@@ -124,6 +124,20 @@ mixin ProvideCommonPostsMethodMixin {
     }
   }
 
+  Future<List<Post>> getRepliedPosts(List<QueryDocumentSnapshot> docs) async {
+    final postIds = docs.map((doc) => doc.reference.parent.parent!.id).toSet();
+    final postSnapshots = await Future.wait(postIds
+        .map((postId) => firestore
+            .collectionGroup('posts')
+            .where('id', isEqualTo: postId)
+            .get())
+        .toList());
+    final repliedPostDocs =
+        postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
+    final repliedPosts = repliedPostDocs.map((doc) => Post(doc)).toList();
+    return repliedPosts;
+  }
+
 // empathyとbookmark付ける
   Future<void> refreshThePostAfterUpdated({
     required List<Post> posts,

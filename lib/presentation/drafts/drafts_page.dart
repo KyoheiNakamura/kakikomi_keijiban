@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
+import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
@@ -27,7 +27,7 @@ class DraftsPage extends StatelessWidget {
             builder: (context, model, child) {
               final drafts = model.posts;
               return LoadingSpinner(
-                inAsyncCall: model.isModalLoading,
+                isModalLoading: model.isModalLoading,
                 child: Container(
                   color: kLightPink,
                   child: RefreshIndicator(

@@ -11,7 +11,7 @@ class OnBoardingModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> beDoneOnBoardingPage(BuildContext context) async {
+  Future<void> completeOnBoardingPage(BuildContext context) async {
     final preference = await SharedPreferences.getInstance();
     // チュートリアル終了後に環境変数をtrueでセットする。
     await preference.setBool(kOnBoardingDoneKey, true);

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/common/components/common_app_bar.dart';
+import 'package:kakikomi_keijiban/common/components/common_posts/common_posts_page.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/manager/firestore_manager.dart';
 import 'package:kakikomi_keijiban/presentation/search_result_posts/search_result_posts_page.dart';
 
 class SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 50,
-        title: const Text('検索'),
-      ),
+      appBar: commonAppBar(title: '検索'),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
@@ -128,8 +128,13 @@ class SearchGenreCard extends StatelessWidget {
                           await Navigator.push<void>(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  SearchResultPostsPage(value),
+                              // builder: (context) =>
+                              //     SearchResultPostsPage(value),
+                              builder: (context) => CommonPostsPage(
+                                title: '検索結果',
+                                type: CommonPostsType.searchResultPosts,
+                                searchWord: value,
+                              ),
                             ),
                           );
                         },

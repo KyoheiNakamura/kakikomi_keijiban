@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
+import 'package:kakikomi_keijiban/common/components/common_app_bar.dart';
+import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card.dart';
-import 'package:kakikomi_keijiban/common/components/scroll_bottom_notification_listener.dart';
+import 'package:kakikomi_keijiban/common/components/common_scroll_bottom_notification_listener.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_model.dart';
 import 'package:provider/provider.dart';
@@ -20,18 +21,15 @@ class MyPostsPage extends StatelessWidget {
         create: (context) => MyPostsModel()..init(),
         child: Scaffold(
           backgroundColor: kLightPink,
-          appBar: AppBar(
-            toolbarHeight: 50,
-            title: const Text('自分の投稿'),
-          ),
+          appBar: commonAppBar(title: '自分の投稿'),
           body: Consumer<MyPostsModel>(
             builder: (context, model, child) {
               final myPosts = model.posts;
               return LoadingSpinner(
-                inAsyncCall: model.isModalLoading,
+                isModalLoading: model.isModalLoading,
                 child: RefreshIndicator(
                   onRefresh: () => model.getPostsWithReplies,
-                  child: ScrollBottomNotificationListener(
+                  child: CommonScrollBottomNotificationListener(
                     model: model,
                     child: ListView.builder(
                       padding: const EdgeInsets.only(top: 30, bottom: 60),

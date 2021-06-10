@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
+import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/sign_up/sign_up_model.dart';
@@ -20,7 +20,7 @@ class SignUpPage extends StatelessWidget with ShowExceptionDialogMixin {
         body: Consumer<SignUpModel>(
           builder: (context, model, child) {
             return LoadingSpinner(
-              inAsyncCall: model.isModalLoading,
+              isModalLoading: model.isModalLoading,
               child: SingleChildScrollView(
                 child: Form(
                   key: _formKey,

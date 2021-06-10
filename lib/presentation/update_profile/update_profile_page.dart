@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
-import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
+import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/update_profile/update_profile_model.dart';
@@ -23,7 +23,7 @@ class UpdateProfilePage extends StatelessWidget with ShowExceptionDialogMixin {
         body: Consumer<UpdateProfileModel>(
           builder: (context, model, child) {
             return LoadingSpinner(
-              inAsyncCall: model.isLoading,
+              isModalLoading: model.isLoading,
               child: GestureDetector(
                 onTap: () {
                   final currentFocus = FocusScope.of(context);

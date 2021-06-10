@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
+import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card.dart';
-import 'package:kakikomi_keijiban/common/components/scroll_bottom_notification_listener.dart';
+import 'package:kakikomi_keijiban/common/components/common_scroll_bottom_notification_listener.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/presentation/search_result_posts/search_result_posts_model.dart';
 import 'package:provider/provider.dart';
@@ -24,10 +24,10 @@ class SearchResultPostsPage extends StatelessWidget {
           builder: (context, model, child) {
             final chosenCategoryPosts = model.posts;
             return LoadingSpinner(
-              inAsyncCall: model.isModalLoading,
+              isModalLoading: model.isModalLoading,
               child: RefreshIndicator(
                 onRefresh: () => model.getPostsWithRepliesChosenField(),
-                child: ScrollBottomNotificationListener(
+                child: CommonScrollBottomNotificationListener(
                   model: model,
                   child: ListView.builder(
                     padding: const EdgeInsets.only(top: 30, bottom: 60),

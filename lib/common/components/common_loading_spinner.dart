@@ -2,44 +2,29 @@ import 'package:flutter/material.dart';
 
 class LoadingSpinner extends StatelessWidget {
   const LoadingSpinner({
-    required this.inAsyncCall,
+    required this.isModalLoading,
     required this.child,
     this.opacity = 0.3,
     this.color = Colors.black38,
-    this.progressIndicator = const CircularProgressIndicator(),
-    this.offset,
     this.dismissible = false,
   });
 
-  final bool inAsyncCall;
+  final bool isModalLoading;
   final double opacity;
   final Color color;
-  final Widget progressIndicator;
-  final Offset? offset;
   final bool dismissible;
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    var widgetList = <Widget>[]..add(child);
-    if (inAsyncCall) {
-      Widget layOutProgressIndicator;
-      if (offset == null)
-        layOutProgressIndicator = Center(child: progressIndicator);
-      else {
-        layOutProgressIndicator = Positioned(
-          child: progressIndicator,
-          left: offset!.dx,
-          top: offset!.dy,
-        );
-      }
+    var widgetList = <Widget>[child];
+    if (isModalLoading) {
       final modal = [
-        new Opacity(
-          // child: ModalBarrier(dismissible: dismissible),
+        Opacity(
           child: ModalBarrier(dismissible: dismissible, color: color),
           opacity: opacity,
         ),
-        layOutProgressIndicator
+        const Center(child: CircularProgressIndicator()),
       ];
       widgetList += modal;
     }

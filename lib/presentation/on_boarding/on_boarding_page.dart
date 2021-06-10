@@ -8,151 +8,144 @@ class OnBoardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
+      onWillPop: () async => false,
       child: ChangeNotifierProvider<OnBoardingModel>(
         create: (context) => OnBoardingModel(),
-        child: SafeArea(
-          child: Scaffold(
-            backgroundColor: kLightPink,
-            body: Consumer<OnBoardingModel>(
-              builder: (context, model, child) {
-                return Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: PageView.builder(
-                          onPageChanged: model.onPageChangedCallBack,
-                          itemBuilder: (context, index) => OnBoardingContent(
-                            image: kOnBoardingData[index]['image']!,
-                            text: kOnBoardingData[index]['text']!,
+        child: Scaffold(
+          backgroundColor: kLightPink,
+          body: Consumer<OnBoardingModel>(
+            builder: (context, model, child) {
+              const types = OnBoardingPageType.values;
+              return SafeArea(
+                child: Column(
+                  children: [
+                    /// 画像と説明のページビュー
+                    Expanded(
+                      flex: 6,
+                      child: PageView.builder(
+                        onPageChanged: model.onPageChangedCallBack,
+                        itemBuilder: (context, index) {
+                          final image = onBoardingPageImage(types[index]);
+                          final text = onBoardingPageText(types[index]);
+                          return Column(
+                            children: [
+                              const Spacer(flex: 2),
+                              Expanded(
+                                flex: 12,
+                                child: Image.asset(
+                                  image,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                              const Spacer(),
+                              Expanded(
+                                flex: 1,
+                                child: SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
+                                  child: Text(
+                                    text,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                        itemCount: types.length,
+                      ),
+                    ),
+
+                    /// ページインジケーターとはじめるボタン
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        children: [
+                          const Spacer(),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+
+                            /// ページインジケーター
+                            children: List.generate(
+                              types.length,
+                              (index) {
+                                return AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  margin: const EdgeInsets.only(right: 8),
+                                  width: model.currentPage == index ? 20 : 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                    color: model.currentPage == index
+                                        ? Colors.pinkAccent
+                                        : kPink,
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                );
+                              },
+                            ),
                           ),
-                          itemCount: kOnBoardingData.length,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          // mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            const Spacer(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(
-                                kOnBoardingData.length,
-                                (index) => DotIndicator(
-                                  index: index,
-                                  model: model,
-                                ),
+                          const Spacer(flex: 2),
+                          OutlinedButton(
+                            onPressed: () async {
+                              await model.completeOnBoardingPage(context);
+                            },
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: kDarkPink,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 32),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              side: const BorderSide(color: kDarkPink),
+                            ),
+                            child: const Text(
+                              'はじめる',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const Spacer(flex: 4),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: SizedBox(
-                                width: double.infinity,
-                                child: OutlinedButton(
-                                  onPressed: () async {
-                                    await model.beDoneOnBoardingPage(context);
-                                  },
-                                  child: const Text(
-                                    'はじめる',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      // fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  style: OutlinedButton.styleFrom(
-                                    backgroundColor: kDarkPink,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 12),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                    side: const BorderSide(color: kDarkPink),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const Spacer(),
-                          ],
-                        ),
+                          ),
+                          const Spacer(flex: 3),
+                        ],
                       ),
-                    ],
-                  ),
-                );
-              },
-            ),
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
         ),
       ),
     );
   }
-}
 
-class DotIndicator extends StatelessWidget {
-  const DotIndicator({
-    required this.index,
-    required this.model,
-  });
+  String onBoardingPageImage(OnBoardingPageType type) {
+    switch (type) {
+      case OnBoardingPageType.onBoardingPage1:
+        return 'lib/assets/images/anpanman_charactors.jpeg';
+      case OnBoardingPageType.onBoardingPage2:
+        return 'lib/assets/images/anpanman_charactors.jpeg';
+      case OnBoardingPageType.onBoardingPage3:
+        return 'lib/assets/images/anpanman_charactors.jpeg';
+    }
+  }
 
-  final int index;
-  final OnBoardingModel model;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      margin: const EdgeInsets.only(right: 5),
-      width: model.currentPage == index ? 20 : 6,
-      height: 6,
-      decoration: BoxDecoration(
-        color: model.currentPage == index ? Colors.pinkAccent : kPink,
-        borderRadius: BorderRadius.circular(3),
-      ),
-    );
+  String onBoardingPageText(OnBoardingPageType type) {
+    switch (type) {
+      case OnBoardingPageType.onBoardingPage1:
+        return '発達障害お悩み掲示板（仮）は発達障害をテーマに扱う掲示板アプリです。';
+      case OnBoardingPageType.onBoardingPage2:
+        return '当事者の方はもちろん、ご家族、友人の方などもお気軽にご利用ください。';
+      case OnBoardingPageType.onBoardingPage3:
+        return 'ああああああああああああああああああああああああああああああああ';
+    }
   }
 }
 
-class OnBoardingContent extends StatelessWidget {
-  const OnBoardingContent({
-    required this.image,
-    required this.text,
-  });
-
-  final String image;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Spacer(),
-        Expanded(
-          flex: 6,
-          child: Image.asset(
-            image,
-            fit: BoxFit.contain,
-          ),
-        ),
-        const Spacer(),
-        Expanded(
-          flex: 1,
-          child: SizedBox(
-            width: 320,
-            child: Text(
-              text,
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+enum OnBoardingPageType {
+  onBoardingPage1,
+  onBoardingPage2,
+  onBoardingPage3,
 }

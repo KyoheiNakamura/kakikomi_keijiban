@@ -12,21 +12,6 @@ const Color kUltraLightGrey = Color(0xFFe0e0e0);
 
 const String kOnBoardingDoneKey = 'onBoardingDone';
 
-const List<Map<String, String>> kOnBoardingData = [
-  {
-    'text': '発達障害お悩み掲示板（仮）は発達障害をテーマに扱う掲示板アプリです。',
-    'image': 'lib/assets/images/anpanman_charactors.jpeg',
-  },
-  {
-    'text': '当事者の方はもちろん、ご家族、友人の方などもお気軽にご利用ください。',
-    'image': 'lib/assets/images/anpanman_charactors.jpeg',
-  },
-  {
-    'text': 'ああああああああああああああああああああああああああああああああ',
-    'image': 'lib/assets/images/anpanman_charactors.jpeg',
-  },
-];
-
 const List<String> kInitialpushNoticesSetting = [
   'replyToMyPost',
   // 'replyToMyReply',

@@ -45,12 +45,12 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       // isPostsExisting = true;
       canLoadMore = false;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      _postsWithMyReplies = await _getRepliedPosts(docs);
+      _postsWithMyReplies = await getRepliedPosts(docs);
     } else {
       // isPostsExisting = true;
       canLoadMore = true;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      _postsWithMyReplies = await _getRepliedPosts(docs);
+      _postsWithMyReplies = await getRepliedPosts(docs);
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
@@ -83,12 +83,12 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       // isPostsExisting = true;
       canLoadMore = false;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      _postsWithMyReplies += await _getRepliedPosts(docs);
+      _postsWithMyReplies += await getRepliedPosts(docs);
     } else {
       // isPostsExisting = true;
       canLoadMore = true;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      _postsWithMyReplies += await _getRepliedPosts(docs);
+      _postsWithMyReplies += await getRepliedPosts(docs);
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
@@ -100,19 +100,6 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
 
     stopLoading();
     notifyListeners();
-  }
-
-  Future<List<Post>> _getRepliedPosts(List<QueryDocumentSnapshot> docs) async {
-    final postSnapshots = await Future.wait(docs
-        .map((repliedPost) => firestore
-            .collectionGroup('posts')
-            .where('id', isEqualTo: repliedPost['postId'])
-            .get())
-        .toList());
-    final repliedPostDocs =
-        postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
-    final repliedPosts = repliedPostDocs.map((doc) => Post(doc)).toList();
-    return repliedPosts;
   }
 
   Future<void> refreshThePostOfPostsAfterUpdated({
