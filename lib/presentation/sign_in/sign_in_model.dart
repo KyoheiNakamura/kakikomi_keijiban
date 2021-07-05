@@ -10,16 +10,16 @@ class SignInModel extends ChangeNotifier {
   final String oldUser = auth.currentUser!.uid;
   String newUser = '';
 
-  String enteredEmail = '';
-  String enteredPassword = '';
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   Future signInWithEmailAndPassword() async {
     startModalLoading();
 
     try {
       await auth.signInWithEmailAndPassword(
-        email: enteredEmail,
-        password: enteredPassword,
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
       );
       newUser = auth.currentUser!.uid;
     } on FirebaseAuthException catch (e) {
@@ -88,7 +88,7 @@ class SignInModel extends ChangeNotifier {
   String? validateEmailCallback(String? value) {
     if (value == null ||
         value.isEmpty ||
-        RegExp(kValidEmailRegularExpression).hasMatch(enteredEmail) == false) {
+        RegExp(kValidEmailRegularExpression).hasMatch(emailController.text.trim()) == false) {
       return 'メールアドレスを入力してください';
     } else {
       return null;
@@ -99,7 +99,7 @@ class SignInModel extends ChangeNotifier {
     if (value == null || value.isEmpty) {
       return 'パスワードを入力してください';
     } else if (RegExp(kValidPasswordRegularExpression)
-            .hasMatch(enteredPassword) ==
+            .hasMatch(passwordController.text.trim()) ==
         false) {
       return '8文字以上の半角英数記号でご記入ください';
     } else {

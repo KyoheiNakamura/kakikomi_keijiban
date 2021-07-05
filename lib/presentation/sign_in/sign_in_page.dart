@@ -33,10 +33,8 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                           children: [
                             /// email
                             TextFormField(
+                              controller: model.emailController,
                               validator: model.validateEmailCallback,
-                              onChanged: (newValue) {
-                                model.enteredEmail = newValue.trim();
-                              },
                               decoration: const InputDecoration(
                                 border: OutlineInputBorder(),
                                 // prefixIcon: Icon(Icons.text_fields),
@@ -47,10 +45,8 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
 
                             /// password
                             TextFormField(
+                              controller: model.passwordController,
                               validator: model.validatePasswordCallback,
-                              onChanged: (newValue) {
-                                model.enteredPassword = newValue.trim();
-                              },
                               obscureText: true,
                               decoration: const InputDecoration(
                                 border: OutlineInputBorder(),

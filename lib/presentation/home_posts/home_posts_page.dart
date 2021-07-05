@@ -72,7 +72,7 @@ class HomePostsPage extends StatelessWidget {
                             floating: true,
                             pinned: true,
                             snap: true,
-                            forceElevated: innerBoxIsScrolled,
+                            // forceElevated: innerBoxIsScrolled,
                             bottom: TabBar(
                               tabs: TabType.values.map(
                                 (TabType tabType) {
@@ -96,7 +96,6 @@ class HomePostsPage extends StatelessWidget {
                     body: TabBarView(
                       children: TabType.values.map((TabType tabType) {
                         return TabBarViewChild(
-                          // key: PageStorageKey<TabType>(tabType),
                           tabType: tabType,
                           model: model,
                         );
@@ -177,11 +176,9 @@ enum TabType {
 
 class TabBarViewChild extends StatelessWidget {
   const TabBarViewChild({
-    // required Key key,
     required this.tabType,
     required this.model,
   });
-  // : super(key: key);
 
   final TabType tabType;
   final HomePostsModel model;
@@ -201,7 +198,6 @@ class TabBarViewChild extends StatelessWidget {
               radius: const Radius.circular(8),
               child: CustomScrollView(
                 key: PageStorageKey<TabType>(tabType),
-                // controller: model.getScrollController(tabType),
                 slivers: [
                   SliverOverlapInjector(
                     handle: NestedScrollView.sliverOverlapAbsorberHandleFor(

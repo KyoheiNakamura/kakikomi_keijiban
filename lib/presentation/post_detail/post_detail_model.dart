@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/mixin/provide_common_posts_method_mixin.dart';
-import 'package:kakikomi_keijiban/domain/notice.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/entity/notice.dart';
+import 'package:kakikomi_keijiban/entity/post.dart';
 
 class PostDetailModel extends ChangeNotifier
     with ProvideCommonPostsMethodMixin {
@@ -31,7 +31,7 @@ class PostDetailModel extends ChangeNotifier
         .collection('posts')
         .doc(postId)
         .get();
-    post = Post(snapshot);
+    post = Post.fromDoc(snapshot);
 
     await addBookmark(<Post>[post!], bookmarkedPostsIds);
     await addEmpathy(<Post>[post!], empathizedPostsIds);

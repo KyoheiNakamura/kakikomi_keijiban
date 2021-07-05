@@ -80,7 +80,7 @@ class UpdateEmailPage extends StatelessWidget with ShowExceptionDialogMixin {
                                 );
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: const Text('メールアドレスが変更されました。'),
+                                    content: Text('メールアドレスが変更されました。'),
                                   ),
                                 );
                               } on String catch (e) {

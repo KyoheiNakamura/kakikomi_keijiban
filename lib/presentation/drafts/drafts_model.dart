@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
-import 'package:kakikomi_keijiban/domain/reply.dart';
-import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
+import 'package:kakikomi_keijiban/entity/post.dart';
+import 'package:kakikomi_keijiban/entity/reply.dart';
+import 'package:kakikomi_keijiban/entity/reply_to_reply.dart';
 
 class DraftsModel extends ChangeNotifier {
   List<Post> _drafts = [];
@@ -24,7 +24,7 @@ class DraftsModel extends ChangeNotifier {
     await _getDraftPosts();
     await _getDraftReplies();
     await _getDraftedRepliesToReply();
-    _drafts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    _drafts.sort((a, b) => b.createdAt!.compareTo(a.createdAt!));
     notifyListeners();
   }
 
@@ -36,7 +36,7 @@ class DraftsModel extends ChangeNotifier {
         .get();
     final docs = querySnapshot.docs;
     final draftedPosts = docs.map((doc) {
-      final post = Post(doc)..isDraft = true;
+      final post = Post.fromDoc(doc)..isDraft = true;
       return post;
     }).toList();
     _drafts += draftedPosts;
@@ -64,7 +64,7 @@ class DraftsModel extends ChangeNotifier {
           .collection('posts')
           .doc(postId)
           .get();
-      final post = Post(postDoc);
+      final post = Post.fromDoc(postDoc);
       post.replies.add(reply);
       _drafts.add(post);
     }
@@ -124,7 +124,7 @@ class DraftsModel extends ChangeNotifier {
           .collection('posts')
           .doc(postId)
           .get();
-      final post = Post(postDoc);
+      final post = Post.fromDoc(postDoc);
       post.replies.add(reply);
       _drafts.add(post);
     }
@@ -144,7 +144,7 @@ class DraftsModel extends ChangeNotifier {
   //   //     .collection('draftedPosts')
   //   //     .doc(oldPost.id)
   //   //     .get();
-  //   // final post = Post(doc);
+  //   // final post = Post.fromDoc(doc);
   //   // post.isDraft = true;
   //   // final querySnapshot = await firestore
   //   //     .collection('users')

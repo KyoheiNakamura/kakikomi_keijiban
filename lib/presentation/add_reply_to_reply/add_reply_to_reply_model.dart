@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/text_process.dart';
-import 'package:kakikomi_keijiban/domain/reply.dart';
+import 'package:kakikomi_keijiban/entity/reply.dart';
 
 class AddReplyToReplyModel extends ChangeNotifier {
   bool isLoading = false;
 
-  String bodyValue = '';
-  String nicknameValue = '';
+  TextEditingController bodyController = TextEditingController();
+  TextEditingController nicknameController = TextEditingController(
+    text: AppModel.user != null ? AppModel.user!.nickname : '匿名',
+  );
+
   String positionDropdownValue = kPleaseSelect;
   String genderDropdownValue = kPleaseSelect;
   String ageDropdownValue = kPleaseSelect;
@@ -30,8 +34,8 @@ class AddReplyToReplyModel extends ChangeNotifier {
       'postId': repliedReply.postId,
       'replyId': repliedReply.id,
       'replierId': auth.currentUser!.uid,
-      'body': removeUnnecessaryBlankLines(bodyValue),
-      'nickname': removeUnnecessaryBlankLines(nicknameValue),
+      'body': removeUnnecessaryBlankLines(bodyController.text),
+      'nickname': removeUnnecessaryBlankLines(nicknameController.text),
       'position': convertNoSelectedValueToEmpty(positionDropdownValue),
       'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
       'age': convertNoSelectedValueToEmpty(ageDropdownValue),
@@ -73,8 +77,8 @@ class AddReplyToReplyModel extends ChangeNotifier {
         'postId': repliedReply.postId,
         'replyId': repliedReply.id,
         'replierId': uid,
-        'body': removeUnnecessaryBlankLines(bodyValue),
-        'nickname': removeUnnecessaryBlankLines(nicknameValue),
+        'body': removeUnnecessaryBlankLines(bodyController.text),
+        'nickname': removeUnnecessaryBlankLines(nicknameController.text),
         'position': convertNoSelectedValueToEmpty(positionDropdownValue),
         'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
         'age': convertNoSelectedValueToEmpty(ageDropdownValue),
@@ -126,5 +130,12 @@ class AddReplyToReplyModel extends ChangeNotifier {
       return '10字以内でご記入ください';
     }
     return null;
+  }
+
+  @override
+  void dispose() {
+    bodyController.dispose();
+    nicknameController.dispose();
+    super.dispose();
   }
 }

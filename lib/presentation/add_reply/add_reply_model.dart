@@ -1,15 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/text_process.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/entity/post.dart';
 
 class AddReplyModel extends ChangeNotifier {
   bool isLoading = false;
 
-  String bodyValue = '';
-  String nicknameValue = '';
+  TextEditingController bodyController = TextEditingController();
+  TextEditingController nicknameController = TextEditingController(
+    text: AppModel.user != null ? AppModel.user!.nickname : '匿名',
+  );
+
   String positionDropdownValue = kPleaseSelect;
   String genderDropdownValue = kPleaseSelect;
   String ageDropdownValue = kPleaseSelect;
@@ -30,8 +34,8 @@ class AddReplyModel extends ChangeNotifier {
         'userId': repliedPost.userId,
         'postId': repliedPost.id,
         'replierId': auth.currentUser!.uid,
-        'body': removeUnnecessaryBlankLines(bodyValue),
-        'nickname': removeUnnecessaryBlankLines(nicknameValue),
+        'body': removeUnnecessaryBlankLines(bodyController.text),
+        'nickname': removeUnnecessaryBlankLines(nicknameController.text),
         'position': convertNoSelectedValueToEmpty(positionDropdownValue),
         'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
         'age': convertNoSelectedValueToEmpty(ageDropdownValue),
@@ -41,7 +45,7 @@ class AddReplyModel extends ChangeNotifier {
         'updatedAt': FieldValue.serverTimestamp(),
       })
       ..update(postRef, <String, dynamic>{
-        'replyCount': repliedPost.replyCount + 1,
+        'replyCount': repliedPost.replyCount! + 1,
         'isReplyExisting': true,
       });
 
@@ -69,8 +73,8 @@ class AddReplyModel extends ChangeNotifier {
         'userId': repliedPost.userId,
         'postId': repliedPost.id,
         'replierId': uid,
-        'body': removeUnnecessaryBlankLines(bodyValue),
-        'nickname': removeUnnecessaryBlankLines(nicknameValue),
+        'body': removeUnnecessaryBlankLines(bodyController.text),
+        'nickname': removeUnnecessaryBlankLines(nicknameController.text),
         'position': convertNoSelectedValueToEmpty(positionDropdownValue),
         'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
         'age': convertNoSelectedValueToEmpty(ageDropdownValue),
@@ -122,5 +126,12 @@ class AddReplyModel extends ChangeNotifier {
       return '10字以内でご記入ください';
     }
     return null;
+  }
+
+  @override
+  void dispose() {
+    bodyController.dispose();
+    nicknameController.dispose();
+    super.dispose();
   }
 }

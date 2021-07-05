@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/mixin/provide_common_posts_method_mixin.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/entity/post.dart';
 
 class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   List<Post> _postsWithMyReplies = [];
@@ -37,7 +37,7 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
     _postsWithMyReplies.clear();
-    if (docs.length == 0) {
+    if (docs.isEmpty) {
       // isPostsExisting = false;
       canLoadMore = false;
       _postsWithMyReplies = [];
@@ -75,7 +75,7 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
         .limit(loadLimit);
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
-    if (docs.length == 0) {
+    if (docs.isEmpty) {
       // isPostsExisting = false;
       canLoadMore = false;
       _postsWithMyReplies += [];

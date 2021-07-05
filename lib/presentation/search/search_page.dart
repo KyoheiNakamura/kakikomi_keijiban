@@ -3,7 +3,6 @@ import 'package:kakikomi_keijiban/common/components/common_app_bar.dart';
 import 'package:kakikomi_keijiban/common/components/common_posts/common_posts_page.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/manager/firestore_manager.dart';
-import 'package:kakikomi_keijiban/presentation/search_result_posts/search_result_posts_page.dart';
 
 class SearchPage extends StatelessWidget {
   @override

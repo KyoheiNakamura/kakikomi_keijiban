@@ -5,7 +5,7 @@ import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/mixin/build_keyboard_actions_config_done_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
-import 'package:kakikomi_keijiban/domain/reply.dart';
+import 'package:kakikomi_keijiban/entity/reply.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply_to_reply/add_reply_to_reply_model.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
 import 'package:provider/provider.dart';
@@ -87,29 +87,21 @@ class AddReplyToReplyPage extends StatelessWidget
                           children: [
                             /// content
                             TextFormField(
+                              controller: model.bodyController,
                               focusNode: _focusNodeContent,
-                              initialValue: null,
                               validator: model.validateContentCallback,
                               // maxLength: 1000,
                               maxLines: null,
                               minLines: 5,
                               keyboardType: TextInputType.multiline,
-                              onChanged: (newValue) {
-                                model.bodyValue = newValue;
-                              },
                               decoration: kContentTextFormFieldDecoration,
                             ),
                             const SizedBox(height: 32),
 
                             /// nickname
                             TextFormField(
-                              initialValue: isUserExisting
-                                  ? model.nicknameValue = user!.nickname
-                                  : model.nicknameValue = '匿名',
+                              controller: model.nicknameController,
                               validator: model.validateNicknameCallback,
-                              onChanged: (newValue) {
-                                model.nicknameValue = newValue;
-                              },
                               decoration: kNicknameTextFormFieldDecoration,
                             ),
                             const SizedBox(height: 32),

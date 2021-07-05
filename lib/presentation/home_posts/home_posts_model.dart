@@ -7,7 +7,7 @@ import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/mixin/provide_common_posts_method_mixin.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/entity/post.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/notices/notices_page.dart';
 import 'package:kakikomi_keijiban/presentation/on_boarding/on_boarding_page.dart';
@@ -174,7 +174,7 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     final querySnapshot = await _allPostsQuery.get();
     final docs = querySnapshot.docs;
     _allPosts.clear();
-    if (docs.length == 0) {
+    if (docs.isEmpty) {
       // isPostsExisting = false;
       _allPostsCanLoadMore = false;
       _allPosts = [];
@@ -182,12 +182,12 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       // isPostsExisting = true;
       _allPostsCanLoadMore = false;
       _allPostsLastVisible = docs[docs.length - 1];
-      _allPosts = docs.map((doc) => Post(doc)).toList();
+      _allPosts = docs.map((doc) => Post.fromDoc(doc)).toList();
     } else {
       // isPostsExisting = true;
       _allPostsCanLoadMore = true;
       _allPostsLastVisible = docs[docs.length - 1];
-      _allPosts = docs.map((doc) => Post(doc)).toList();
+      _allPosts = docs.map((doc) => Post.fromDoc(doc)).toList();
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
@@ -211,7 +211,7 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
         .limit(_loadLimit);
     final querySnapshot = await _allPostsQuery.get();
     final docs = querySnapshot.docs;
-    if (docs.length == 0) {
+    if (docs.isEmpty) {
       // isPostsExisting = false;
       _allPostsCanLoadMore = false;
       _allPosts += [];
@@ -219,12 +219,12 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       // isPostsExisting = true;
       _allPostsCanLoadMore = false;
       _allPostsLastVisible = docs[docs.length - 1];
-      _allPosts += docs.map((doc) => Post(doc)).toList();
+      _allPosts += docs.map((doc) => Post.fromDoc(doc)).toList();
     } else {
       // isPostsExisting = true;
       _allPostsCanLoadMore = true;
       _allPostsLastVisible = docs[docs.length - 1];
-      _allPosts += docs.map((doc) => Post(doc)).toList();
+      _allPosts += docs.map((doc) => Post.fromDoc(doc)).toList();
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
@@ -250,7 +250,7 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     final querySnapshot = await _myPostsQuery.get();
     final docs = querySnapshot.docs;
     _myPosts.clear();
-    if (docs.length == 0) {
+    if (docs.isEmpty) {
       // isPostsExisting = false;
       _myPostsCanLoadMore = false;
       _myPosts = [];
@@ -258,12 +258,12 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       // isPostsExisting = true;
       _myPostsCanLoadMore = false;
       _myPostsLastVisible = docs[docs.length - 1];
-      _myPosts = docs.map((doc) => Post(doc)).toList();
+      _myPosts = docs.map((doc) => Post.fromDoc(doc)).toList();
     } else {
       // isPostsExisting = true;
       _myPostsCanLoadMore = true;
       _myPostsLastVisible = docs[docs.length - 1];
-      _myPosts = docs.map((doc) => Post(doc)).toList();
+      _myPosts = docs.map((doc) => Post.fromDoc(doc)).toList();
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
@@ -289,7 +289,7 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
         .limit(_loadLimit);
     final querySnapshot = await _myPostsQuery.get();
     final docs = querySnapshot.docs;
-    if (docs.length == 0) {
+    if (docs.isEmpty) {
       // isPostsExisting = false;
       _myPostsCanLoadMore = false;
       _myPosts += [];
@@ -297,12 +297,12 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       // isPostsExisting = true;
       _myPostsCanLoadMore = false;
       _myPostsLastVisible = docs[docs.length - 1];
-      _myPosts += docs.map((doc) => Post(doc)).toList();
+      _myPosts += docs.map((doc) => Post.fromDoc(doc)).toList();
     } else {
       // isPostsExisting = true;
       _myPostsCanLoadMore = true;
       _myPostsLastVisible = docs[docs.length - 1];
-      _myPosts += docs.map((doc) => Post(doc)).toList();
+      _myPosts += docs.map((doc) => Post.fromDoc(doc)).toList();
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
@@ -328,7 +328,7 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     final querySnapshot = await _bookmarkedPostsQuery.get();
     final docs = querySnapshot.docs;
     _bookmarkedPosts.clear();
-    if (docs.length == 0) {
+    if (docs.isEmpty) {
       // isPostsExisting = false;
       _bookmarkedPostsCanLoadMore = false;
       _bookmarkedPosts = [];
@@ -365,7 +365,7 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
         .limit(_loadLimit);
     final querySnapshot = await _bookmarkedPostsQuery.get();
     final docs = querySnapshot.docs;
-    if (docs.length == 0) {
+    if (docs.isEmpty) {
       // isPostsExisting = false;
       _bookmarkedPostsCanLoadMore = false;
       _bookmarkedPosts += [];
@@ -488,7 +488,7 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   //   final snapshots = firestore.collection('posts').snapshots();
   //   snapshots.listen((snapshot) {
   //     final docs = snapshot.docs;
-  //     final _posts = docs.map((doc) => Post(doc)).toList();
+  //     final _posts = docs.map((doc) => Post.fromDoc(doc)).toList();
   //     _posts.sort((a, b) => b.createdAt.compareTo(a.createdAt));
   //     _posts = _posts;
   //     notifyListeners();

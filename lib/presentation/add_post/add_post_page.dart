@@ -92,29 +92,23 @@ class AddPostPage extends StatelessWidget
                             Padding(
                               padding: const EdgeInsets.only(bottom: 32),
                               child: TextFormField(
-                                initialValue: null,
+                                controller: model.titleController,
                                 validator: model.validateTitleCallback,
-                                onChanged: (newValue) {
-                                  model.titleValue = newValue;
-                                },
                                 decoration: kTitleTextFormFieldDecoration,
                               ),
                             ),
 
-                            /// content
+                            /// body
                             Padding(
                               padding: const EdgeInsets.only(bottom: 32),
                               child: TextFormField(
                                 focusNode: _focusNodeContent,
-                                initialValue: null,
+                                controller: model.bodyController,
                                 validator: model.validateContentCallback,
                                 // maxLength: 1000,
                                 minLines: 5,
                                 maxLines: null,
                                 keyboardType: TextInputType.multiline,
-                                onChanged: (newValue) {
-                                  model.bodyValue = newValue;
-                                },
                                 decoration: kContentTextFormFieldDecoration,
                               ),
                             ),
@@ -123,13 +117,8 @@ class AddPostPage extends StatelessWidget
                             Padding(
                               padding: const EdgeInsets.only(bottom: 32),
                               child: TextFormField(
-                                initialValue: isUserExisting
-                                    ? model.nicknameValue = user!.nickname
-                                    : model.nicknameValue = '匿名',
+                                controller: model.nicknameController,
                                 validator: model.validateNicknameCallback,
-                                onChanged: (newValue) {
-                                  model.nicknameValue = newValue;
-                                },
                                 decoration: kNicknameTextFormFieldDecoration,
                               ),
                             ),

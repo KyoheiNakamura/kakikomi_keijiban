@@ -4,9 +4,9 @@ import 'package:kakikomi_keijiban/common/components/reply_card/reply_card_model.
 import 'package:kakikomi_keijiban/common/components/reply_to_reply_card/reply_to_reply_card_model.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/enum.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
-import 'package:kakikomi_keijiban/domain/reply.dart';
-import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
+import 'package:kakikomi_keijiban/entity/post.dart';
+import 'package:kakikomi_keijiban/entity/reply.dart';
+import 'package:kakikomi_keijiban/entity/reply_to_reply.dart';
 import 'package:kakikomi_keijiban/common/mixin/format_poster_data_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
 import 'package:kakikomi_keijiban/presentation/update_reply_to_reply/update_reply_to_reply_page.dart';
