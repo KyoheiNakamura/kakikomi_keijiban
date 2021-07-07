@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
-import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
+import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/common/mixin/build_keyboard_actions_config_done_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/entity/post.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
 import 'package:kakikomi_keijiban/presentation/update_post/update_post_model.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -35,7 +35,8 @@ class UpdatePostPage extends StatelessWidget
         return true;
       },
       child: ChangeNotifierProvider<UpdatePostModel>(
-        create: (context) => UpdatePostModel(),
+        create: (context) =>
+            UpdatePostModel(existingPost: existingPost)..init(),
         child: Scaffold(
           appBar: AppBar(
             toolbarHeight: 50,
@@ -46,10 +47,10 @@ class UpdatePostPage extends StatelessWidget
               final user = AppModel.user;
               final isUserExisting = user != null;
               if (model.selectedCategories.isEmpty) {
-                model.selectedCategories.addAll(existingPost.categories);
+                model.selectedCategories.addAll(existingPost.categories!);
               }
               return LoadingSpinner(
-                inAsyncCall: model.isLoading,
+                isModalLoading: model.isLoading,
                 child: KeyboardActions(
                   config: buildConfig(context, _focusNodeContent),
                   child: SingleChildScrollView(
@@ -67,12 +68,8 @@ class UpdatePostPage extends StatelessWidget
                             Padding(
                               padding: const EdgeInsets.only(bottom: 32),
                               child: TextFormField(
-                                initialValue: model.titleValue =
-                                    existingPost.title,
+                                controller: model.titleController,
                                 validator: model.validateTitleCallback,
-                                onChanged: (newValue) {
-                                  model.titleValue = newValue;
-                                },
                                 decoration: kTitleTextFormFieldDecoration,
                               ),
                             ),
@@ -82,16 +79,10 @@ class UpdatePostPage extends StatelessWidget
                               padding: const EdgeInsets.only(bottom: 32),
                               child: TextFormField(
                                 focusNode: _focusNodeContent,
-                                initialValue: model.bodyValue =
-                                    existingPost.body,
+                                controller: model.bodyController,
                                 validator: model.validateContentCallback,
-                                // maxLength: 1000,
                                 minLines: 3,
                                 maxLines: null,
-                                // keyboardType: TextInputType.multiline,
-                                onChanged: (newValue) {
-                                  model.bodyValue = newValue;
-                                },
                                 decoration: kContentTextFormFieldDecoration,
                               ),
                             ),
@@ -100,12 +91,8 @@ class UpdatePostPage extends StatelessWidget
                             Padding(
                               padding: const EdgeInsets.only(bottom: 32),
                               child: TextFormField(
-                                initialValue: model.nicknameValue =
-                                    existingPost.nickname,
+                                controller: model.nicknameController,
                                 validator: model.validateNicknameCallback,
-                                onChanged: (newValue) {
-                                  model.nicknameValue = newValue;
-                                },
                                 decoration: kNicknameTextFormFieldDecoration,
                               ),
                             ),
@@ -116,7 +103,7 @@ class UpdatePostPage extends StatelessWidget
                               child: DropdownButtonFormField(
                                 validator: model.validateEmotionCallback,
                                 value: model.emotionDropdownValue =
-                                    existingPost.emotion,
+                                    existingPost.emotion!,
                                 icon: const Icon(Icons.arrow_downward),
                                 iconSize: 24,
                                 elevation: 1,
@@ -221,9 +208,9 @@ class UpdatePostPage extends StatelessWidget
                               padding: const EdgeInsets.only(bottom: 32),
                               child: DropdownButtonFormField(
                                 // validator: model.validatePositionCallback,
-                                value: existingPost.position.isNotEmpty
+                                value: existingPost.position!.isNotEmpty
                                     ? model.positionDropdownValue =
-                                        existingPost.position
+                                        existingPost.position!
                                     : isUserExisting
                                         ? model.positionDropdownValue =
                                             user!.position
@@ -250,9 +237,9 @@ class UpdatePostPage extends StatelessWidget
                             Padding(
                               padding: const EdgeInsets.only(bottom: 32),
                               child: DropdownButtonFormField(
-                                value: existingPost.gender.isNotEmpty
+                                value: existingPost.gender!.isNotEmpty
                                     ? model.genderDropdownValue =
-                                        existingPost.gender
+                                        existingPost.gender!
                                     : isUserExisting
                                         ? model.genderDropdownValue =
                                             user!.gender
@@ -279,8 +266,8 @@ class UpdatePostPage extends StatelessWidget
                             Padding(
                               padding: const EdgeInsets.only(bottom: 32),
                               child: DropdownButtonFormField(
-                                value: existingPost.age.isNotEmpty
-                                    ? model.ageDropdownValue = existingPost.age
+                                value: existingPost.age!.isNotEmpty
+                                    ? model.ageDropdownValue = existingPost.age!
                                     : isUserExisting
                                         ? model.ageDropdownValue = user!.age
                                         : model.ageDropdownValue,
@@ -306,9 +293,9 @@ class UpdatePostPage extends StatelessWidget
                             Padding(
                               padding: const EdgeInsets.only(bottom: 48),
                               child: DropdownButtonFormField(
-                                value: existingPost.area.isNotEmpty
+                                value: existingPost.area!.isNotEmpty
                                     ? model.areaDropdownValue =
-                                        existingPost.area
+                                        existingPost.area!
                                     : isUserExisting
                                         ? model.areaDropdownValue = user!.area
                                         : model.areaDropdownValue,
@@ -337,7 +324,7 @@ class UpdatePostPage extends StatelessWidget
                                       if (model.validateSelectedCategories() &&
                                           _formKey.currentState!.validate()) {
                                         try {
-                                          await model.updatePost(existingPost);
+                                          await model.updatePost();
                                           Navigator.pop(context);
                                         } on String catch (e) {
                                           await showExceptionDialog(
@@ -519,10 +506,11 @@ class FilterChipWidget extends StatelessWidget {
       ),
       selected: isSelected == true,
       onSelected: (_) {
-        isSelected
-            ? model.selectedCategories.remove(chipName)
-            : model.selectedCategories.add(chipName);
-        model.reload();
+        model.toggleCategory(chipName);
+        // isSelected
+        //     ? model.selectedCategories.remove(chipName)
+        //     : model.selectedCategories.add(chipName);
+        // model.reload();
       },
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),

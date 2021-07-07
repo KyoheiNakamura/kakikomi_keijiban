@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
-import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
+import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/update_push_notification/update_push_notification_model.dart';
@@ -23,7 +23,7 @@ class UpdatePushNotificationPage extends StatelessWidget
         body: Consumer<UpdatePushNotificationModel>(
           builder: (context, model, child) {
             return LoadingSpinner(
-              inAsyncCall: model.isLoading,
+              isModalLoading: model.isLoading,
               child: GestureDetector(
                 onTap: () {
                   final currentFocus = FocusScope.of(context);

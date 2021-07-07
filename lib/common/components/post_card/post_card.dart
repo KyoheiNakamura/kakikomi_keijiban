@@ -3,7 +3,7 @@ import 'package:kakikomi_keijiban/common/components/post_card/post_card_model.da
 import 'package:kakikomi_keijiban/common/components/reply_card/reply_card.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/enum.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/entity/post.dart';
 import 'package:kakikomi_keijiban/common/mixin/format_poster_data_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply/add_reply_page.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
@@ -57,29 +57,32 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                             spacing: 4,
                             // runSpacing: 2,
                             // alignment: WrapAlignment.center,
-                            children: post.categories.map<Widget>((category) {
-                              return ActionChip(
-                                label: Text(
-                                  category,
-                                  style: const TextStyle(color: kDarkPink),
-                                ),
-                                backgroundColor: kUltraLightPink,
-                                pressElevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
-                                  side: const BorderSide(color: kPink),
-                                ),
-                                onPressed: () async {
-                                  await Navigator.push<void>(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          SearchResultPostsPage(category),
-                                    ),
-                                  );
-                                },
-                              );
-                            }).toList(),
+                            children: post.categories != null
+                                ? post.categories!.map<Widget>((category) {
+                                    return ActionChip(
+                                      label: Text(
+                                        category,
+                                        style:
+                                            const TextStyle(color: kDarkPink),
+                                      ),
+                                      backgroundColor: kUltraLightPink,
+                                      pressElevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
+                                        side: const BorderSide(color: kPink),
+                                      ),
+                                      onPressed: () async {
+                                        await Navigator.push<void>(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                SearchResultPostsPage(category),
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  }).toList()
+                                : [],
                           ),
                         ),
                       ),
@@ -89,7 +92,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                         padding:
                             const EdgeInsets.only(top: 8, left: 8, right: 8),
                         child: Text(
-                          post.title,
+                          post.title != null ? post.title! : '',
                           style: const TextStyle(fontSize: 17),
                         ),
                       ),
@@ -110,7 +113,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                               post.createdDate != post.updatedDate
                                   ? const TextSpan(
                                       text: '（編集済み）',
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: kGrey,
                                         fontSize: 15,
                                       ),
@@ -130,7 +133,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                       Align(
                         alignment: Alignment.centerRight,
                         child: Text(
-                          post.createdAt,
+                          post.createdDate,
                           style: const TextStyle(color: kGrey),
                         ),
                       ),
@@ -385,6 +388,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                         if (resultForDraftButton ==
                             ResultForDraftButton.updateDraft) {
                           await passedModel.getDrafts();
+                          print('aaaa');
                         } else if (resultForDraftButton ==
                             ResultForDraftButton.addPostFromDraft) {
                           await passedModel.removeDraft(post: post);
@@ -408,7 +412,8 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                   await Navigator.push<void>(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SearchResultPostsPage(post.emotion),
+                      builder: (context) =>
+                          SearchResultPostsPage(post.emotion!),
                     ),
                   );
                 },

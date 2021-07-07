@@ -1,15 +1,14 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
+import 'package:kakikomi_keijiban/common/components/common_posts/common_posts_page.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
-import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts_page.dart';
+import 'package:kakikomi_keijiban/manager/firestore_manager.dart';
 import 'package:kakikomi_keijiban/presentation/contact/contact_page.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_page.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_model.dart';
-import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_page.dart';
-import 'package:kakikomi_keijiban/presentation/my_replies/my_replies_page.dart';
 import 'package:kakikomi_keijiban/presentation/select_registration_method/select_registration_method_page.dart';
 import 'package:kakikomi_keijiban/presentation/settings/settings_page.dart';
 import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_page.dart';
@@ -38,7 +37,11 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                   await Navigator.push<void>(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MyPostsPage(),
+                      // builder: (context) => MyPostsPage(),
+                      builder: (context) => const CommonPostsPage(
+                        title: '自分の投稿',
+                        type: CommonPostsType.myPosts,
+                      ),
                     ),
                   );
                 },
@@ -55,7 +58,10 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                   await Navigator.push<void>(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => MyRepliesPage(),
+                      builder: (context) => const CommonPostsPage(
+                        title: '自分の返信',
+                        type: CommonPostsType.myReplies,
+                      ),
                     ),
                   );
                 },
@@ -68,7 +74,11 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                   await Navigator.push<void>(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => BookmarkedPostsPage(),
+                      // builder: (context) => BookmarkedPostsPage(),
+                      builder: (context) => const CommonPostsPage(
+                        title: 'ブックマーク',
+                        type: CommonPostsType.bookmarkedPosts,
+                      ),
                     ),
                   );
                   // await model.getPostsWithReplies(kAllPostsTab);

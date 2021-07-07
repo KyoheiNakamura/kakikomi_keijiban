@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_page.dart';
 
-class ScrollBottomNotificationListener extends StatelessWidget {
-  const ScrollBottomNotificationListener({
+class CommonScrollBottomNotificationListener extends StatelessWidget {
+  const CommonScrollBottomNotificationListener({
     required this.model,
     required this.child,
     this.tabType,

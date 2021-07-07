@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
+import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/sign_up/sign_up_model.dart';
@@ -20,7 +20,7 @@ class SignUpPage extends StatelessWidget with ShowExceptionDialogMixin {
         body: Consumer<SignUpModel>(
           builder: (context, model, child) {
             return LoadingSpinner(
-              inAsyncCall: model.isModalLoading,
+              isModalLoading: model.isModalLoading,
               child: SingleChildScrollView(
                 child: Form(
                   key: _formKey,
@@ -32,10 +32,8 @@ class SignUpPage extends StatelessWidget with ShowExceptionDialogMixin {
                       children: [
                         /// nickname
                         TextFormField(
+                          controller: model.nicknameController,
                           validator: model.validateNicknameCallback,
-                          onChanged: (newValue) {
-                            model.enteredNickname = newValue;
-                          },
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             // prefixIcon: Icon(Icons.password),
@@ -46,10 +44,8 @@ class SignUpPage extends StatelessWidget with ShowExceptionDialogMixin {
 
                         /// email
                         TextFormField(
+                          controller: model.emailController,
                           validator: model.validateEmailCallback,
-                          onChanged: (newValue) {
-                            model.enteredEmail = newValue.trim();
-                          },
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             // prefixIcon: Icon(Icons.text_fields),
@@ -60,10 +56,8 @@ class SignUpPage extends StatelessWidget with ShowExceptionDialogMixin {
 
                         /// password
                         TextFormField(
+                          controller: model.passwordController,
                           validator: model.validatePasswordCallback,
-                          onChanged: (newValue) {
-                            model.enteredPassword = newValue.trim();
-                          },
                           obscureText: true,
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),

@@ -1,6 +1,6 @@
-import 'package:kakikomi_keijiban/domain/post.dart';
-import 'package:kakikomi_keijiban/domain/reply.dart';
-import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
+import 'package:kakikomi_keijiban/entity/post.dart';
+import 'package:kakikomi_keijiban/entity/reply.dart';
+import 'package:kakikomi_keijiban/entity/reply_to_reply.dart';
 
 mixin FormatPosterDataMixin {
   String getFormattedPosterData(Post post) {
@@ -16,7 +16,9 @@ mixin FormatPosterDataMixin {
     ];
 
     for (final data in posterData) {
-      data.isNotEmpty ? posterInfo += '$data/' : posterInfo += '';
+      data != null && data.isNotEmpty
+          ? posterInfo += '$data/'
+          : posterInfo += '';
       final lastSlashIndex = posterInfo.length - 1;
       formattedPosterInfo = posterInfo.substring(0, lastSlashIndex);
     }

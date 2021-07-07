@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/mixin/provide_common_posts_method_mixin.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/entity/post.dart';
 
 class MyPostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   List<Post> _myPosts = [];
@@ -38,7 +38,7 @@ class MyPostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
     _myPosts.clear();
-    if (docs.length == 0) {
+    if (docs.isEmpty) {
       // isPostsExisting = false;
       canLoadMore = false;
       _myPosts = [];
@@ -46,12 +46,12 @@ class MyPostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       // isPostsExisting = true;
       canLoadMore = false;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      _myPosts = docs.map((doc) => Post(doc)).toList();
+      _myPosts = docs.map((doc) => Post.fromDoc(doc)).toList();
     } else {
       // isPostsExisting = true;
       canLoadMore = true;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      _myPosts = docs.map((doc) => Post(doc)).toList();
+      _myPosts = docs.map((doc) => Post.fromDoc(doc)).toList();
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
@@ -77,7 +77,7 @@ class MyPostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
         .limit(loadLimit);
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
-    if (docs.length == 0) {
+    if (docs.isEmpty) {
       // isPostsExisting = false;
       canLoadMore = false;
       _myPosts += [];
@@ -85,12 +85,12 @@ class MyPostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       // isPostsExisting = true;
       canLoadMore = false;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      _myPosts += docs.map((doc) => Post(doc)).toList();
+      _myPosts += docs.map((doc) => Post.fromDoc(doc)).toList();
     } else {
       // isPostsExisting = true;
       canLoadMore = true;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      _myPosts += docs.map((doc) => Post(doc)).toList();
+      _myPosts += docs.map((doc) => Post.fromDoc(doc)).toList();
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();

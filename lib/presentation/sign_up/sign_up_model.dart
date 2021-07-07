@@ -7,23 +7,23 @@ import 'package:kakikomi_keijiban/common/firebase_util.dart';
 class SignUpModel extends ChangeNotifier {
   bool isModalLoading = false;
 
-  String enteredEmail = '';
-  String enteredPassword = '';
-  String enteredNickname = '';
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController nicknameController = TextEditingController();
 
   Future signUpAndSignInWithEmailAndUpgradeAnonymous() async {
     startModalLoading();
 
     try {
       final credential = EmailAuthProvider.credential(
-        email: enteredEmail,
-        password: enteredPassword,
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
       );
       await auth.currentUser!.linkWithCredential(credential);
       await auth.currentUser!.reload();
       // Auth.UserのcurrentUserにdisplayNameをセットした。
       await auth.currentUser!.updateProfile(
-        displayName: enteredNickname,
+        displayName: nicknameController.text.trim(),
       );
       await AppModel.reloadUser();
       // anonymousのuserDocRefのデータを、email認証で登録したユーザーのデータでupdateを使って更新している。
@@ -31,7 +31,7 @@ class SignUpModel extends ChangeNotifier {
           firestore.collection('users').doc(auth.currentUser!.uid);
       // setはuserDocRefのDocument idをもつDocumentにデータを保存する。
       await userDocRef.update({
-        'nickname': enteredNickname,
+        'nickname': nicknameController.text.trim(),
         'postCount': AppModel.user!.postCount,
         'topics': AppModel.user!.topics,
         'pushNoticesSetting': AppModel.user!.pushNoticesSetting,
@@ -82,7 +82,9 @@ class SignUpModel extends ChangeNotifier {
   String? validateEmailCallback(String? value) {
     if (value == null ||
         value.isEmpty ||
-        RegExp(kValidEmailRegularExpression).hasMatch(enteredEmail) == false) {
+        RegExp(kValidEmailRegularExpression)
+                .hasMatch(emailController.text.trim()) ==
+            false) {
       return 'メールアドレスを入力してください';
     } else {
       return null;
@@ -93,7 +95,7 @@ class SignUpModel extends ChangeNotifier {
     if (value == null || value.isEmpty) {
       return 'パスワードを入力してください';
     } else if (RegExp(kValidPasswordRegularExpression)
-            .hasMatch(enteredPassword) ==
+            .hasMatch(passwordController.text.trim()) ==
         false) {
       return '8文字以上の半角英数記号でご記入ください';
     } else {

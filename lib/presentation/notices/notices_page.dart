@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
+import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/presentation/notices/notices_model.dart';
 import 'package:kakikomi_keijiban/presentation/post_detail/post_detail_page.dart';
@@ -21,7 +21,7 @@ class NoticesPage extends StatelessWidget {
           builder: (context, model, child) {
             final notices = model.notices;
             return LoadingSpinner(
-              inAsyncCall: model.isModalLoading,
+              isModalLoading: model.isModalLoading,
               child: RefreshIndicator(
                 onRefresh: () => model.getMyNotices(),
                 child: ListView.separated(
@@ -68,7 +68,7 @@ class NoticesPage extends StatelessWidget {
 
                                         /// title
                                         Text(
-                                          '${notices[index].title}',
+                                          notices[index].title,
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 14,
@@ -79,7 +79,7 @@ class NoticesPage extends StatelessWidget {
 
                                         /// body
                                         Text(
-                                          '${notices[index].body}',
+                                          notices[index].body,
                                           style: const TextStyle(
                                             color: kDarkGrey,
                                           ),
@@ -91,7 +91,7 @@ class NoticesPage extends StatelessWidget {
 
                                         /// createdAt
                                         Text(
-                                          '${notices[index].createdAt}',
+                                          notices[index].createdAt,
                                           style: const TextStyle(
                                             color: kLightGrey,
                                           ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
+import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/select_registration_method/select_registration_method_model.dart';
@@ -22,7 +22,7 @@ class SelectRegistrationMethodPage extends StatelessWidget
         body: Consumer<SelectRegistrationMethodModel>(
             builder: (context, model, child) {
           return LoadingSpinner(
-            inAsyncCall: model.isModalLoading,
+            isModalLoading: model.isModalLoading,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -35,7 +35,7 @@ class SelectRegistrationMethodPage extends StatelessWidget
                       children: const <Widget>[
                         // Icon(Icons.email_outlined, color: Colors.white),
                         Padding(
-                          padding: const EdgeInsets.all(12),
+                          padding: EdgeInsets.all(12),
                           child: Text(
                             'メールアドレスで登録',
                             style: TextStyle(
@@ -68,7 +68,7 @@ class SelectRegistrationMethodPage extends StatelessWidget
                       children: const <Widget>[
                         // Icon(Icons.login_outlined, color: kDarkPink),
                         Padding(
-                          padding: const EdgeInsets.all(12),
+                          padding: EdgeInsets.all(12),
                           child: Text(
                             'アカウントをすでにお持ちの方',
                             style: TextStyle(

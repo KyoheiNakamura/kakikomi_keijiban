@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
+import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/update_password/update_password_model.dart';
@@ -20,7 +20,7 @@ class UpdatePasswordPage extends StatelessWidget with ShowExceptionDialogMixin {
         body: Consumer<UpdatePasswordModel>(
           builder: (context, model, child) {
             return LoadingSpinner(
-              inAsyncCall: model.isLoading,
+              isModalLoading: model.isLoading,
               child: SingleChildScrollView(
                 child: Form(
                   key: _formKey,

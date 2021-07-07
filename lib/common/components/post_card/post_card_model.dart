@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
-import 'package:kakikomi_keijiban/domain/reply.dart';
-import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
+import 'package:kakikomi_keijiban/entity/post.dart';
+import 'package:kakikomi_keijiban/entity/reply.dart';
+import 'package:kakikomi_keijiban/entity/reply_to_reply.dart';
 
 class PostCardModel extends ChangeNotifier {
   bool isLoading = false;
@@ -121,7 +121,7 @@ class PostCardModel extends ChangeNotifier {
 
   // １回のみワカルできる
   Future<void> addEmpathizedPost(Post post) async {
-    post.empathyCount = post.empathyCount + 1;
+    post.empathyCount = post.empathyCount! + 1;
     notifyListeners();
 
     final userRef = firestore.collection('users').doc(auth.currentUser?.uid);
@@ -150,7 +150,7 @@ class PostCardModel extends ChangeNotifier {
   }
 
   Future<void> deleteEmpathizedPost(Post post) async {
-    post.empathyCount = post.empathyCount - 1;
+    post.empathyCount = post.empathyCount! - 1;
     notifyListeners();
 
     final userRef = firestore.collection('users').doc(auth.currentUser?.uid);

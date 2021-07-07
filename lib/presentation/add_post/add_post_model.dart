@@ -1,15 +1,22 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/text_process.dart';
+import 'package:kakikomi_keijiban/entity/post.dart';
+import 'package:kakikomi_keijiban/repository/post_repository.dart';
 
 class AddPostModel extends ChangeNotifier {
   bool isLoading = false;
   bool isCategoriesValid = true;
 
-  String titleValue = '';
-  String bodyValue = '';
-  String nicknameValue = '';
+  TextEditingController titleController = TextEditingController();
+  TextEditingController bodyController = TextEditingController();
+  TextEditingController nicknameController = TextEditingController(
+    text: AppModel.user != null ? AppModel.user!.nickname : '匿名',
+  );
+
   String emotionDropdownValue = kPleaseSelect;
   String selectedCategory = '';
   List<String> selectedCategories = [];
@@ -25,26 +32,47 @@ class AddPostModel extends ChangeNotifier {
     final _batch = firestore.batch();
 
     final userRef = firestore.collection('users').doc(uid);
-    final postRef = userRef.collection('posts').doc();
+    // final postRef = userRef.collection('posts').doc();
 
-    _batch.set(postRef, {
-      'id': postRef.id,
-      'userId': uid,
-      'title': removeUnnecessaryBlankLines(titleValue),
-      'body': removeUnnecessaryBlankLines(bodyValue),
-      'nickname': removeUnnecessaryBlankLines(nicknameValue),
-      'emotion': convertNoSelectedValueToEmpty(emotionDropdownValue),
-      'position': convertNoSelectedValueToEmpty(positionDropdownValue),
-      'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
-      'age': convertNoSelectedValueToEmpty(ageDropdownValue),
-      'area': convertNoSelectedValueToEmpty(areaDropdownValue),
-      'categories': selectedCategories,
-      'replyCount': 0,
-      'empathyCount': 0,
-      'isReplyExisting': false,
-      'createdAt': serverTimestamp(),
-      'updatedAt': serverTimestamp(),
-    });
+    final newPost = Post(
+      title: removeUnnecessaryBlankLines(titleController.text),
+      body: removeUnnecessaryBlankLines(bodyController.text),
+      nickname: removeUnnecessaryBlankLines(nicknameController.text),
+      emotion: convertNoSelectedValueToEmpty(emotionDropdownValue),
+      position: convertNoSelectedValueToEmpty(positionDropdownValue),
+      gender: convertNoSelectedValueToEmpty(genderDropdownValue),
+      age: convertNoSelectedValueToEmpty(ageDropdownValue),
+      area: convertNoSelectedValueToEmpty(areaDropdownValue),
+      categories: selectedCategories,
+      replyCountFieldValue: FieldValue.increment(0),
+      empathyCountFieldValue: FieldValue.increment(0),
+      isReplyExisting: false,
+    );
+
+    PostRepository.instance.createPostWithBatch(
+      userId: uid,
+      post: newPost,
+      batch: _batch,
+    );
+
+    // _batch.set(postRef, {
+    //   'id': postRef.id,
+    //   'userId': uid,
+    //   'title': removeUnnecessaryBlankLines(titleValue),
+    //   'body': removeUnnecessaryBlankLines(bodyValue),
+    //   'nickname': removeUnnecessaryBlankLines(nicknameValue),
+    //   'emotion': convertNoSelectedValueToEmpty(emotionDropdownValue),
+    //   'position': convertNoSelectedValueToEmpty(positionDropdownValue),
+    //   'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
+    //   'age': convertNoSelectedValueToEmpty(ageDropdownValue),
+    //   'area': convertNoSelectedValueToEmpty(areaDropdownValue),
+    //   'categories': selectedCategories,
+    //   'replyCount': 0,
+    //   'empathyCount': 0,
+    //   'isReplyExisting': false,
+    //   'createdAt': serverTimestamp(),
+    //   'updatedAt': serverTimestamp(),
+    // });
 
     final userDoc = await userRef.get();
 
@@ -74,9 +102,9 @@ class AddPostModel extends ChangeNotifier {
       await draftedPostRef.set(<String, dynamic>{
         'id': draftedPostRef.id,
         'userId': uid,
-        'title': removeUnnecessaryBlankLines(titleValue),
-        'body': removeUnnecessaryBlankLines(bodyValue),
-        'nickname': removeUnnecessaryBlankLines(nicknameValue),
+        'title': removeUnnecessaryBlankLines(titleController.text),
+        'body': removeUnnecessaryBlankLines(bodyController.text),
+        'nickname': removeUnnecessaryBlankLines(nicknameController.text),
         'emotion': convertNoSelectedValueToEmpty(emotionDropdownValue),
         'position': convertNoSelectedValueToEmpty(positionDropdownValue),
         'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
@@ -171,5 +199,13 @@ class AddPostModel extends ChangeNotifier {
   void stopLoading() {
     isLoading = false;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    bodyController.dispose();
+    nicknameController.dispose();
+    super.dispose();
   }
 }

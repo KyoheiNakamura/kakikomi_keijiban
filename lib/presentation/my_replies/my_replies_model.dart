@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/mixin/provide_common_posts_method_mixin.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/entity/post.dart';
 
 class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
   List<Post> _postsWithMyReplies = [];
@@ -37,7 +37,7 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
     _postsWithMyReplies.clear();
-    if (docs.length == 0) {
+    if (docs.isEmpty) {
       // isPostsExisting = false;
       canLoadMore = false;
       _postsWithMyReplies = [];
@@ -45,12 +45,12 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       // isPostsExisting = true;
       canLoadMore = false;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      _postsWithMyReplies = await _getRepliedPosts(docs);
+      _postsWithMyReplies = await getRepliedPosts(docs);
     } else {
       // isPostsExisting = true;
       canLoadMore = true;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      _postsWithMyReplies = await _getRepliedPosts(docs);
+      _postsWithMyReplies = await getRepliedPosts(docs);
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
@@ -75,7 +75,7 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
         .limit(loadLimit);
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
-    if (docs.length == 0) {
+    if (docs.isEmpty) {
       // isPostsExisting = false;
       canLoadMore = false;
       _postsWithMyReplies += [];
@@ -83,12 +83,12 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       // isPostsExisting = true;
       canLoadMore = false;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      _postsWithMyReplies += await _getRepliedPosts(docs);
+      _postsWithMyReplies += await getRepliedPosts(docs);
     } else {
       // isPostsExisting = true;
       canLoadMore = true;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      _postsWithMyReplies += await _getRepliedPosts(docs);
+      _postsWithMyReplies += await getRepliedPosts(docs);
     }
 
     final bookmarkedPostsIds = await getBookmarkedPostsIds();
@@ -100,19 +100,6 @@ class MyRepliesModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
 
     stopLoading();
     notifyListeners();
-  }
-
-  Future<List<Post>> _getRepliedPosts(List<QueryDocumentSnapshot> docs) async {
-    final postSnapshots = await Future.wait(docs
-        .map((repliedPost) => firestore
-            .collectionGroup('posts')
-            .where('id', isEqualTo: repliedPost['postId'])
-            .get())
-        .toList());
-    final repliedPostDocs =
-        postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
-    final repliedPosts = repliedPostDocs.map((doc) => Post(doc)).toList();
-    return repliedPosts;
   }
 
   Future<void> refreshThePostOfPostsAfterUpdated({

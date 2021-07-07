@@ -47,10 +47,8 @@ class App extends StatelessWidget {
             },
           ),
         ),
-        initialRoute: '/',
-        routes: {
-          '/': (context) => HomePostsPage(),
-        },
+        home: HomePostsPage(),
+        // home: SamplePage(),
       ),
     );
   }

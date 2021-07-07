@@ -23,7 +23,7 @@ class UpdatePushNotificationModel extends ChangeNotifier {
   }
 
   void initNewPostTopic(DocumentSnapshot userSnapshot) {
-    final topics = userSnapshot['topics'] as List<String>;
+    final topics = userSnapshot['topics'] as List<dynamic>;
     if (topics.contains('newPost')) {
       isNewPostTopicAllowed = true;
     } else {
@@ -33,7 +33,7 @@ class UpdatePushNotificationModel extends ChangeNotifier {
 
   void initReplyToMyPost(DocumentSnapshot userSnapshot) {
     final pushNoticesSetting =
-        userSnapshot['pushNoticesSetting'] as List<String>;
+        userSnapshot['pushNoticesSetting'] as List<dynamic>;
     if (pushNoticesSetting.contains('replyToMyPost')) {
       isReplyToMyPostAllowed = true;
     } else {

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
-import 'package:kakikomi_keijiban/common/components/loading_spinner.dart';
+import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/common/mixin/build_keyboard_actions_config_done_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
-import 'package:kakikomi_keijiban/domain/reply.dart';
+import 'package:kakikomi_keijiban/entity/reply.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
 import 'package:kakikomi_keijiban/presentation/update_reply/update_reply_model.dart';
 import 'package:keyboard_actions/keyboard_actions.dart';
@@ -46,7 +46,7 @@ class UpdateReplyPage extends StatelessWidget
               final user = AppModel.user;
               final isUserExisting = user != null;
               return LoadingSpinner(
-                inAsyncCall: model.isLoading,
+                isModalLoading: model.isLoading,
                 child: KeyboardActions(
                   config: buildConfig(context, _focusNodeContent),
                   child: SingleChildScrollView(

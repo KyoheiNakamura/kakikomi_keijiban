@@ -1,17 +1,40 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/text_process.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
+import 'package:kakikomi_keijiban/entity/post.dart';
+import 'package:kakikomi_keijiban/repository/post_repository.dart';
 
 class UpdatePostModel extends ChangeNotifier {
+  UpdatePostModel({required this.existingPost});
+  final Post existingPost;
+
   final currentUser = auth.currentUser;
   bool isLoading = false;
   bool isCategoriesValid = true;
 
+  TextEditingController? titleController;
+  TextEditingController? bodyController;
+  TextEditingController? nicknameController;
+
+  void init() {
+    titleController = TextEditingController(text: existingPost.title);
+    bodyController = TextEditingController(text: existingPost.body);
+    nicknameController = TextEditingController(text: existingPost.nickname);
+    emotionDropdownValue = existingPost.emotion!;
+    positionDropdownValue = existingPost.position!;
+    genderDropdownValue = existingPost.gender!;
+    ageDropdownValue = existingPost.age!;
+    areaDropdownValue = existingPost.area!;
+
+    notifyListeners();
+  }
+
   String titleValue = '';
   String bodyValue = '';
   String nicknameValue = '';
+
   String emotionDropdownValue = kPleaseSelect;
   String selectedCategory = '';
   List<String> selectedCategories = [];
@@ -20,25 +43,27 @@ class UpdatePostModel extends ChangeNotifier {
   String ageDropdownValue = kPleaseSelect;
   String areaDropdownValue = kPleaseSelect;
 
-  Future<void> updatePost(Post post) async {
+  Future<void> updatePost() async {
     startLoading();
 
-    final userRef = firestore.collection('users').doc(post.userId);
-    final postRef = userRef.collection('posts').doc(post.id);
+    final newPost = Post(
+      title: removeUnnecessaryBlankLines(titleController!.text),
+      body: removeUnnecessaryBlankLines(bodyController!.text),
+      nickname: removeUnnecessaryBlankLines(nicknameController!.text),
+      emotion: convertNoSelectedValueToEmpty(emotionDropdownValue),
+      position: convertNoSelectedValueToEmpty(positionDropdownValue),
+      gender: convertNoSelectedValueToEmpty(genderDropdownValue),
+      age: convertNoSelectedValueToEmpty(ageDropdownValue),
+      area: convertNoSelectedValueToEmpty(areaDropdownValue),
+      categories: selectedCategories,
+    );
 
-    try {
-      await postRef.update({
-        'title': removeUnnecessaryBlankLines(titleValue),
-        'body': removeUnnecessaryBlankLines(bodyValue),
-        'nickname': removeUnnecessaryBlankLines(nicknameValue),
-        'emotion': convertNoSelectedValueToEmpty(emotionDropdownValue),
-        'position': convertNoSelectedValueToEmpty(positionDropdownValue),
-        'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
-        'age': convertNoSelectedValueToEmpty(ageDropdownValue),
-        'area': convertNoSelectedValueToEmpty(areaDropdownValue),
-        'categories': selectedCategories,
-        'updatedAt': serverTimestamp(),
-      });
+    try {      
+      await PostRepository.instance.updatePost(
+        userId: existingPost.userId!,
+        postId: existingPost.id!,
+        newPost: newPost,
+      );
     } on Exception catch (e) {
       print('updatePost処理中のエラーです');
       print(e.toString());
@@ -47,6 +72,34 @@ class UpdatePostModel extends ChangeNotifier {
       stopLoading();
     }
   }
+
+  // Future<void> updatePost(Post post) async {
+  //   startLoading();
+
+  //   final userRef = firestore.collection('users').doc(post.userId);
+  //   final postRef = userRef.collection('posts').doc(post.id);
+
+  //   try {
+  //     await postRef.update({
+  //       'title': removeUnnecessaryBlankLines(titleValue),
+  //       'body': removeUnnecessaryBlankLines(bodyValue),
+  //       'nickname': removeUnnecessaryBlankLines(nicknameValue),
+  //       'emotion': convertNoSelectedValueToEmpty(emotionDropdownValue),
+  //       'position': convertNoSelectedValueToEmpty(positionDropdownValue),
+  //       'gender': convertNoSelectedValueToEmpty(genderDropdownValue),
+  //       'age': convertNoSelectedValueToEmpty(ageDropdownValue),
+  //       'area': convertNoSelectedValueToEmpty(areaDropdownValue),
+  //       'categories': selectedCategories,
+  //       'updatedAt': serverTimestamp(),
+  //     });
+  //   } on Exception catch (e) {
+  //     print('updatePost処理中のエラーです');
+  //     print(e.toString());
+  //     throw 'エラーが発生しました。\nもう一度お試し下さい。';
+  //   } finally {
+  //     stopLoading();
+  //   }
+  // }
 
   Future<void> addPostFromDraft(Post draftedPost) async {
     startLoading();
@@ -135,6 +188,15 @@ class UpdatePostModel extends ChangeNotifier {
     }
   }
 
+  void toggleCategory(String chipName) {
+    if (selectedCategories.contains(chipName)) {
+      selectedCategories.remove(chipName);
+    } else {
+      selectedCategories.add(chipName);
+    }
+    notifyListeners();
+  }
+
   String? validateTitleCallback(String? value) {
     if (value == null || value.isEmpty) {
       return 'タイトルを入力してください';
@@ -198,5 +260,13 @@ class UpdatePostModel extends ChangeNotifier {
   void stopLoading() {
     isLoading = false;
     notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    titleController?.dispose();
+    bodyController?.dispose();
+    nicknameController?.dispose();
+    super.dispose();
   }
 }

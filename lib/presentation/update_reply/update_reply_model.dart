@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/text_process.dart';
-import 'package:kakikomi_keijiban/domain/reply.dart';
+import 'package:kakikomi_keijiban/entity/reply.dart';
 
 class UpdateReplyModel extends ChangeNotifier {
   bool isLoading = false;

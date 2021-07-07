@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
-import 'package:kakikomi_keijiban/domain/post.dart';
-import 'package:kakikomi_keijiban/domain/reply.dart';
-import 'package:kakikomi_keijiban/domain/reply_to_reply.dart';
+import 'package:kakikomi_keijiban/entity/post.dart';
+import 'package:kakikomi_keijiban/entity/reply.dart';
+import 'package:kakikomi_keijiban/entity/reply_to_reply.dart';
 
 mixin ProvideCommonPostsMethodMixin {
   Future<List<String>> getBookmarkedPostsIds() async {
@@ -113,7 +113,7 @@ mixin ProvideCommonPostsMethodMixin {
       // bookmarkedPostDocsからnullを全て削除
       ..removeWhere((element) => element == null);
     final bookmarkedPosts =
-        bookmarkedPostDocs.map((doc) => Post(doc!)).toList();
+        bookmarkedPostDocs.map((doc) => Post.fromDoc(doc!)).toList();
     _addBookmarkToBookmarkedPosts(bookmarkedPosts);
     return bookmarkedPosts;
   }
@@ -122,6 +122,21 @@ mixin ProvideCommonPostsMethodMixin {
     for (var i = 0; i < bookmarkedPosts.length; i++) {
       bookmarkedPosts[i].isBookmarked = true;
     }
+  }
+
+  Future<List<Post>> getRepliedPosts(List<QueryDocumentSnapshot> docs) async {
+    final postIds = docs.map((doc) => doc.reference.parent.parent!.id).toSet();
+    final postSnapshots = await Future.wait(postIds
+        .map((postId) => firestore
+            .collectionGroup('posts')
+            .where('id', isEqualTo: postId)
+            .get())
+        .toList());
+    final repliedPostDocs =
+        postSnapshots.map((postSnapshot) => postSnapshot.docs[0]).toList();
+    final repliedPosts =
+        repliedPostDocs.map((doc) => Post.fromDoc(doc)).toList();
+    return repliedPosts;
   }
 
 // empathyとbookmark付ける
@@ -139,7 +154,7 @@ mixin ProvideCommonPostsMethodMixin {
         .collection('posts')
         .doc(oldPost.id)
         .get();
-    final newPost = Post(doc);
+    final newPost = Post.fromDoc(doc);
     await addBookmark(<Post>[newPost], bookmarkedPostsIds);
     await addEmpathy(<Post>[newPost], empathizedPostsIds);
     await getReplies([newPost], empathizedPostsIds);
