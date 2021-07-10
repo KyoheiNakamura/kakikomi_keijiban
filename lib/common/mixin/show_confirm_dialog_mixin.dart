@@ -34,9 +34,6 @@ mixin ShowConfirmDialogMixin {
               onPressed: () async {
                 Navigator.of(context).pop();
                 Navigator.of(context).pop(ValueFromShowConfirmDialog.discard);
-                // Navigator.of(context).popUntil(
-                //   ModalRoute.withName('/'),
-                // );
               },
             ),
           ],
@@ -45,8 +42,10 @@ mixin ShowConfirmDialogMixin {
     );
   }
 
-  Future<void> showLogoutConfirmDialog(BuildContext context) async {
-    return showDialog<void>(
+  Future<bool> showLogoutConfirmDialog(BuildContext context) async {
+    var isLoggedOut = false;
+
+    await showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
@@ -73,8 +72,9 @@ mixin ShowConfirmDialogMixin {
                 style: TextStyle(color: kDarkPink),
               ),
               onPressed: () async {
-                Navigator.of(context).pop();
-                Navigator.of(context).pop(ValueFromShowConfirmDialog.logout);
+                isLoggedOut = true;
+                Navigator.of(context).pop();                
+                // Navigator.of(context).pop(ValueFromShowConfirmDialog.logout);
                 // Navigator.of(context).popUntil(
                 //   ModalRoute.withName('/'),
                 // );
@@ -84,6 +84,7 @@ mixin ShowConfirmDialogMixin {
         );
       },
     );
+    return isLoggedOut;
   }
 
   Future<void> showRequiredInputConfirmDialog(BuildContext context) async {

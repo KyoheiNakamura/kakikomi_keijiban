@@ -46,7 +46,7 @@ class HomePostsPage extends StatelessWidget {
                                   await Navigator.push<void>(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => SearchPage(),
+                                      builder: (context) => const SearchPage(),
                                     ),
                                   );
                                 },
@@ -62,7 +62,7 @@ class HomePostsPage extends StatelessWidget {
                                   await Navigator.push<void>(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => NoticesPage(),
+                                      builder: (context) => const NoticesPage(),
                                     ),
                                   );
                                   await model.confirmIsNoticeExisting();
@@ -137,7 +137,7 @@ class HomePostsPage extends StatelessWidget {
                       await Navigator.push<ValueFromShowConfirmDialog>(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AddPostPage(),
+                      builder: (context) => const AddPostPage(),
                     ),
                   );
                   // 投稿された時

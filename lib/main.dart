@@ -11,14 +11,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: kDeepDarkPink, // status bar color
-    statusBarBrightness: Brightness.light, //status bar brightness
-    // statusBarIconBrightness: Brightness.light, //status barIcon brightness
-    // systemNavigationBarColor: Colors.blue, // navigation bar color
-    // systemNavigationBarDividerColor: Colors.greenAccent,//Navigation bar divider color
-    // systemNavigationBarIconBrightness: Brightness.light, //navigation bar icon
-  ));
   await Firebase.initializeApp();
   // If your message is a notification one (includes a notification property),
   // the Firebase SDKs will intercept this and display a visible notification

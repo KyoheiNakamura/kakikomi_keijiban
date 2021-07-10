@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
+import 'package:kakikomi_keijiban/presentation/home/home_page.dart';
 import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_model.dart';
 import 'package:provider/provider.dart';
 
@@ -62,7 +63,14 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                                 if (_formKey.currentState!.validate()) {
                                   try {
                                     await model.signInWithEmailAndPassword();
-                                    Navigator.pop(context, 'signedIn');
+                                    await Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => HomePage(),
+                                      ),
+                                      (_) => false,
+                                    );
+                                    // Navigator.pop(context, 'signedIn');
                                   } on String catch (e) {
                                     await showExceptionDialog(
                                       context,
@@ -71,14 +79,6 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                                   }
                                 }
                               },
-                              child: const Text(
-                                'ログインする',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
                               style: OutlinedButton.styleFrom(
                                 backgroundColor: kDarkPink,
                                 padding:
@@ -87,6 +87,14 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                                 //   borderRadius: BorderRadius.circular(15),
                                 // ),
                                 side: const BorderSide(color: kDarkPink),
+                              ),
+                              child: const Text(
+                                'ログインする',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ],
@@ -104,6 +112,28 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                             // ),
                             const SizedBox(height: 16),
                             OutlinedButton(
+                              onPressed: () async {
+                                try {
+                                  await model.signInWithGoogle();
+                                  await Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => HomePage(),
+                                    ),
+                                    (_) => false,
+                                  );
+                                  // if (model.oldUser != model.newUser) {
+                                  //   Navigator.pop(context, 'signedIn');
+                                  // } else {
+                                  //   Navigator.pop(context);
+                                  // }
+                                } on String catch (e) {
+                                  await showExceptionDialog(
+                                    context,
+                                    e.toString(),
+                                  );
+                                }
+                              },
                               child: Padding(
                                 padding: const EdgeInsets.all(12),
                                 child: Row(
@@ -124,21 +154,6 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                                   ],
                                 ),
                               ),
-                              onPressed: () async {
-                                try {
-                                  await model.signInWithGoogle();
-                                  if (model.oldUser != model.newUser) {
-                                    Navigator.pop(context, 'signedIn');
-                                  } else {
-                                    Navigator.pop(context);
-                                  }
-                                } on String catch (e) {
-                                  await showExceptionDialog(
-                                    context,
-                                    e.toString(),
-                                  );
-                                }
-                              },
                             ),
                           ],
                         ),

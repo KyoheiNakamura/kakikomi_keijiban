@@ -56,6 +56,7 @@ class SignInModel extends ChangeNotifier {
           idToken: googleAuth.idToken,
         );
         await auth.signInWithCredential(credential);
+        newUser = auth.currentUser!.uid;
       } else {
         throw 'アカウントを選択してください。';
       }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 // ignore: library_prefixes
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
@@ -10,6 +11,8 @@ import 'package:kakikomi_keijiban/entity/user.dart';
 class AppModel {
   static User? user;
 
+  bool anonymousUserIsLoading = false;
+
   Future<void> init() async {
     await _listenAuthStateChanges();
     await _listenOnTokenRefresh();
@@ -18,32 +21,48 @@ class AppModel {
   Future<void> _listenAuthStateChanges() async {
     auth.authStateChanges().listen((Auth.User? firebaseUser) async {
       if (firebaseUser == null) {
-        await auth.signInAnonymously();
+        // アノニマスユーザーでのログイン中にもイベントが流れくることにより、
+        // signInAnonymously() が複数回呼ばれてしまうのを防ぐために
+        // anonymousUserIsLoading フラグを使用している。
+        if (!anonymousUserIsLoading) {
+          anonymousUserIsLoading = true;
+          await auth.signInAnonymously();
+          anonymousUserIsLoading = false;
+        }
       } else {
-        final userDoc =
-            await firestore.collection('users').doc(firebaseUser.uid).get();
+        final userDoc = await _getUserDoc(firebaseUser.uid);
         if (!userDoc.exists) {
-          await userDoc.reference.set(<String, dynamic>{
-            'userId': firebaseUser.uid,
-            'nickname': '匿名',
-            'position': '',
-            'gender': '',
-            'age': '',
-            'area': '',
-            'postCount': 0,
-            'topics': <String>[],
-            'pushNoticesSetting': kInitialpushNoticesSetting,
-            'badges': <String, bool>{},
-            'createdAt': serverTimestamp(),
-            'updatedAt': serverTimestamp(),
-          });
-          final newUserDoc =
-              await firestore.collection('users').doc(firebaseUser.uid).get();
+          await _saveAnonymousToFirebase(userDoc);
+          final newUserDoc = await _getUserDoc(firebaseUser.uid);
           user = User(newUserDoc);
         } else {
           user = User(userDoc);
         }
       }
+    });
+  }
+
+  Future<DocumentSnapshot<Map<String, dynamic>>> _getUserDoc(String uid) async {
+    final userDoc = await firestore.collection('users').doc(uid).get();
+    return userDoc;
+  }
+
+  Future<void> _saveAnonymousToFirebase(
+    DocumentSnapshot<Map<String, dynamic>> userDoc,
+  ) async {
+    await userDoc.reference.set(<String, dynamic>{
+      'userId': userDoc.id,
+      'nickname': '匿名',
+      'position': '',
+      'gender': '',
+      'age': '',
+      'area': '',
+      'postCount': 0,
+      'topics': <String>[],
+      'pushNoticesSetting': kInitialpushNoticesSetting,
+      'badges': <String, bool>{},
+      'createdAt': serverTimestamp(),
+      'updatedAt': serverTimestamp(),
     });
   }
 

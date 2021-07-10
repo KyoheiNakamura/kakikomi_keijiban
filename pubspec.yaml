@@ -39,8 +39,9 @@ flutter:
       fonts:
         - asset: lib/assets/fonts/GenShinGothic/GenShinGothic-Regular.ttf
 
-flutter_native_splash:
-  image: "lib/assets/images/anpanman_charactors_1.png"
-  color: "f3d4d8"
-
-
+# # flutter pub run flutter_native_splash:create
+# flutter_native_splash:
+#   image: "lib/assets/images/splash_happy_transparent.png"
+#   color: "ffffff"
+#   # android12: true
+#   # fullscreen: true

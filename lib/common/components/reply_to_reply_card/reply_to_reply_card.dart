@@ -124,11 +124,11 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                       Icons.favorite,
                                       color: Colors.pinkAccent,
                                     ),
-                                    Image.asset(
-                                      'lib/assets/images/anpanman_emoji.gif',
-                                      width: 25,
-                                      height: 25,
-                                    ),
+                                    // Image.asset(
+                                    //   'lib/assets/images/anpanman_emoji.gif',
+                                    //   width: 25,
+                                    //   height: 25,
+                                    // ),
                                   ],
                                 ),
                                 style: TextButton.styleFrom(
@@ -167,11 +167,11 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                       Icons.favorite_border_outlined,
                                       color: kGrey,
                                     ),
-                                    Image.asset(
-                                      'lib/assets/images/anpanman_emoji.gif',
-                                      width: 25,
-                                      height: 25,
-                                    ),
+                                    // Image.asset(
+                                    //   'lib/assets/images/anpanman_emoji.gif',
+                                    //   width: 25,
+                                    //   height: 25,
+                                    // ),
                                   ],
                                 ),
                                 style: TextButton.styleFrom(

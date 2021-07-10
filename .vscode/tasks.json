@@ -1,0 +1,30 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "flutter",
+			"command": "flutter",
+			"args": [
+				"pub",
+				"get"
+			],
+			"problemMatcher": [],
+			"label": "flutter: flutter pub get"
+		},
+		{
+			"label": "build_runner",
+			"type": "shell",
+			"command": "flutter pub run build_runner build"
+		},
+		{
+			"label": "import sorter",
+			"type": "shell",
+			"command": "flutter pub run import_sorter:main --no-comments"
+		},
+		{
+			"label": "flutter clean",
+			"type": "shell",
+			"command": "flutter clean"
+		},
+	]
+}

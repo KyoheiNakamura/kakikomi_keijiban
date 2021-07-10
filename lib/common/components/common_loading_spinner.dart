@@ -4,7 +4,7 @@ class LoadingSpinner extends StatelessWidget {
   const LoadingSpinner({
     required this.isModalLoading,
     required this.child,
-    this.opacity = 0.3,
+    this.opacity = 0.5,
     this.color = Colors.black38,
     this.dismissible = false,
   });
@@ -24,7 +24,11 @@ class LoadingSpinner extends StatelessWidget {
           child: ModalBarrier(dismissible: dismissible, color: color),
           opacity: opacity,
         ),
-        const Center(child: CircularProgressIndicator()),
+        const Center(
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+          ),
+        ),
       ];
       widgetList += modal;
     }

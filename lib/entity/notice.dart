@@ -29,7 +29,7 @@ class Notice {
   String get createdAt => _formatDate(createdDate);
 
   String _formatDate(DateTime date) {
-    final formatter = DateFormat('MM/dd HH:mm');
+    final formatter = DateFormat('yyyy/MM/dd HH:mm');
     return formatter.format(date);
   }
 }
