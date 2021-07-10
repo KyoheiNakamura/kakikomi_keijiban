@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 enum CommonPostsType {
+  homePosts,
   bookmarkedPosts,
+  empathizedPosts,
   myPosts,
   myReplies,
   searchResultPosts,
@@ -22,8 +24,12 @@ class FireStoreManager {
     String? searchWord,
   }) {
     switch (type) {
+      case CommonPostsType.homePosts:
+      return _getHomePostsQuery(loadLimit: loadLimit);
       case CommonPostsType.bookmarkedPosts:
         return _getBookmarkedPostsQuery(loadLimit: loadLimit);
+        case CommonPostsType.empathizedPosts:
+        return _getEmpathizedPostsQuery(loadLimit: loadLimit);
       case CommonPostsType.myPosts:
         return _getMyPostsQuery(loadLimit: loadLimit);
       case CommonPostsType.myReplies:
@@ -33,7 +39,7 @@ class FireStoreManager {
           loadLimit: loadLimit,
           postField: postField!,
           searchWord: searchWord!,
-        );
+        );      
     }
   }
 
@@ -45,8 +51,18 @@ class FireStoreManager {
     String? searchWord,
   }) {
     switch (type) {
+      case CommonPostsType.homePosts:
+      return _loadHomePostsQuery(
+          loadLimit: loadLimit,
+          lastVisibleOfTheBatch: lastVisibleOfTheBatch,
+        );
       case CommonPostsType.bookmarkedPosts:
         return _loadBookmarkedPostsQuery(
+          loadLimit: loadLimit,
+          lastVisibleOfTheBatch: lastVisibleOfTheBatch,
+        );
+      case CommonPostsType.empathizedPosts:
+        return _loadEmpathizedPostsQuery(
           loadLimit: loadLimit,
           lastVisibleOfTheBatch: lastVisibleOfTheBatch,
         );
@@ -70,6 +86,26 @@ class FireStoreManager {
     }
   }
 
+  Query<Map<String, dynamic>> _getHomePostsQuery({
+    required int loadLimit,
+  }) {
+    return firestore
+        .collectionGroup('posts')
+        .orderBy('createdAt', descending: true)
+        .limit(loadLimit);
+  }
+
+  Query<Map<String, dynamic>> _loadHomePostsQuery({
+    required int loadLimit,
+    required DocumentSnapshot<Object?> lastVisibleOfTheBatch,
+  }) {
+    return firestore
+        .collectionGroup('posts')
+        .orderBy('createdAt', descending: true)
+        .startAfterDocument(lastVisibleOfTheBatch)
+        .limit(loadLimit);
+  }
+
   Query<Map<String, dynamic>> _getBookmarkedPostsQuery({
     required int loadLimit,
   }) {
@@ -89,6 +125,30 @@ class FireStoreManager {
         .collection('users')
         .doc(auth.currentUser?.uid)
         .collection('bookmarkedPosts')
+        .orderBy('createdAt', descending: true)
+        .startAfterDocument(lastVisibleOfTheBatch)
+        .limit(loadLimit);
+  }
+
+  Query<Map<String, dynamic>> _getEmpathizedPostsQuery({
+    required int loadLimit,
+  }) {
+    return firestore
+        .collection('users')
+        .doc(auth.currentUser?.uid)
+        .collection('empathizedPosts')
+        .orderBy('createdAt', descending: true)
+        .limit(loadLimit);
+  }
+
+  Query<Map<String, dynamic>> _loadEmpathizedPostsQuery({
+    required int loadLimit,
+    required DocumentSnapshot<Object?> lastVisibleOfTheBatch,
+  }) {
+    return firestore
+        .collection('users')
+        .doc(auth.currentUser?.uid)
+        .collection('empathizedPosts')
         .orderBy('createdAt', descending: true)
         .startAfterDocument(lastVisibleOfTheBatch)
         .limit(loadLimit);

@@ -28,286 +28,299 @@ class AddReplyToReplyPage extends StatelessWidget
         showDiscardConfirmDialog(context);
         return true;
       },
-      child: ChangeNotifierProvider<AddReplyToReplyModel>(
-        create: (context) => AddReplyToReplyModel(),
-        child: Scaffold(
-          appBar: AppBar(
-            toolbarHeight: 50,
-            title: const Text('返信'),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: Consumer<AddReplyToReplyModel>(
-                    builder: (context, model, child) {
-                  return TextButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        try {
-                          await model.addDraftedReplyToReply(repliedReply);
-                          const snackBar = SnackBar(
-                            content: Text('下書きに保存しました'),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                          Navigator.pop(context);
-                        } on String catch (e) {
-                          await showExceptionDialog(
-                            context,
-                            e.toString(),
-                          );
+      child: GestureDetector(
+        onTap: () {
+          final currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: ChangeNotifierProvider<AddReplyToReplyModel>(
+          create: (context) => AddReplyToReplyModel(),
+          child: Scaffold(
+            appBar: AppBar(
+              toolbarHeight: 50,
+              title: const Text('返信'),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Consumer<AddReplyToReplyModel>(
+                      builder: (context, model, child) {
+                    return TextButton(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          try {
+                            await model.addDraftedReplyToReply(repliedReply);
+                            const snackBar = SnackBar(
+                              content: Text('下書きに保存しました'),
+                            );
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                            Navigator.pop(context);
+                          } on String catch (e) {
+                            await showExceptionDialog(
+                              context,
+                              e.toString(),
+                            );
+                          }
+                        } else {
+                          await showRequiredInputConfirmDialog(context);
                         }
-                      } else {
-                        await showRequiredInputConfirmDialog(context);
-                      }
-                    },
-                    child: const Text(
-                      '下書き保存',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  );
-                }),
-              )
-            ],
-          ),
-          body: Consumer<AddReplyToReplyModel>(
-            builder: (context, model, child) {
-              final user = AppModel.user;
-              final isUserExisting = user != null;
-              return LoadingSpinner(
-                isModalLoading: model.isLoading,
-                child: KeyboardActions(
-                  config: buildConfig(context, _focusNodeContent),
-                  child: SingleChildScrollView(
-                    child: Form(
-                      key: _formKey,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 48, horizontal: 24),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            /// content
-                            TextFormField(
-                              controller: model.bodyController,
-                              focusNode: _focusNodeContent,
-                              validator: model.validateContentCallback,
-                              // maxLength: 1000,
-                              maxLines: null,
-                              minLines: 5,
-                              keyboardType: TextInputType.multiline,
-                              decoration: kContentTextFormFieldDecoration,
-                            ),
-                            const SizedBox(height: 32),
-
-                            /// nickname
-                            TextFormField(
-                              controller: model.nicknameController,
-                              validator: model.validateNicknameCallback,
-                              decoration: kNicknameTextFormFieldDecoration,
-                            ),
-                            const SizedBox(height: 32),
-
-                            /// position
-                            DropdownButtonFormField(
-                              focusColor: Colors.pink[50],
-                              value: isUserExisting
-                                  ? model.positionDropdownValue = user!.position
-                                  : model.positionDropdownValue,
-                              icon: const Icon(
-                                Icons.arrow_downward,
-                                // color: kDarkPink,
+                      },
+                      child: const Text(
+                        '下書き保存',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    );
+                  }),
+                )
+              ],
+            ),
+            body: Consumer<AddReplyToReplyModel>(
+              builder: (context, model, child) {
+                final user = AppModel.user;
+                final isUserExisting = user != null;
+                return LoadingSpinner(
+                  isModalLoading: model.isLoading,
+                  child: KeyboardActions(
+                    config: buildConfig(context, _focusNodeContent),
+                    child: SingleChildScrollView(
+                      child: Form(
+                        key: _formKey,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 48, horizontal: 24),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              /// content
+                              TextFormField(
+                                controller: model.bodyController,
+                                focusNode: _focusNodeContent,
+                                validator: model.validateContentCallback,
+                                // maxLength: 1000,
+                                maxLines: null,
+                                minLines: 5,
+                                keyboardType: TextInputType.multiline,
+                                decoration: kContentTextFormFieldDecoration,
                               ),
-                              iconSize: 24,
-                              elevation: 1,
-                              style: kDropdownButtonFormFieldTextStyle,
-                              decoration:
-                                  kPositionDropdownButtonFormFieldDecorationForReply,
-                              onChanged: (String? selectedValue) {
-                                model.positionDropdownValue = selectedValue!;
-                              },
-                              items: kPositionList.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            ),
-                            const SizedBox(height: 32),
+                              const SizedBox(height: 32),
 
-                            /// gender
-                            DropdownButtonFormField(
-                              // focusNode: _genderFocusNode,
-                              focusColor: Colors.pink[50],
-                              value: isUserExisting
-                                  ? model.genderDropdownValue = user!.gender
-                                  : model.genderDropdownValue,
-                              icon: const Icon(
-                                Icons.arrow_downward,
-                                // color: kDarkPink,
+                              /// nickname
+                              TextFormField(
+                                controller: model.nicknameController,
+                                validator: model.validateNicknameCallback,
+                                decoration: kNicknameTextFormFieldDecoration,
                               ),
-                              iconSize: 24,
-                              elevation: 1,
-                              style: kDropdownButtonFormFieldTextStyle,
-                              decoration:
-                                  kGenderDropdownButtonFormFieldDecoration,
-                              onChanged: (String? selectedValue) {
-                                model.genderDropdownValue = selectedValue!;
-                              },
-                              items: kGenderList.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            ),
-                            const SizedBox(height: 32),
+                              const SizedBox(height: 32),
 
-                            /// age
-                            DropdownButtonFormField(
-                              // focusNode: _ageFocusNode,
-                              focusColor: Colors.pink[50],
-                              value: isUserExisting
-                                  ? model.ageDropdownValue = user!.age
-                                  : model.ageDropdownValue,
-                              icon: const Icon(
-                                Icons.arrow_downward,
-                                // color: kDarkPink,
+                              /// position
+                              DropdownButtonFormField(
+                                focusColor: Colors.pink[50],
+                                value: isUserExisting
+                                    ? model.positionDropdownValue =
+                                        user!.position
+                                    : model.positionDropdownValue,
+                                icon: const Icon(
+                                  Icons.arrow_downward,
+                                  // color: kDarkPink,
+                                ),
+                                iconSize: 24,
+                                elevation: 1,
+                                style: kDropdownButtonFormFieldTextStyle,
+                                decoration:
+                                    kPositionDropdownButtonFormFieldDecorationForReply,
+                                onChanged: (String? selectedValue) {
+                                  model.positionDropdownValue = selectedValue!;
+                                },
+                                items: kPositionList.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
                               ),
-                              iconSize: 24,
-                              elevation: 1,
-                              style: kDropdownButtonFormFieldTextStyle,
-                              decoration: kAgeDropdownButtonFormFieldDecoration,
-                              onChanged: (String? selectedValue) {
-                                model.ageDropdownValue = selectedValue!;
-                              },
-                              items: kAgeList.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            ),
-                            const SizedBox(height: 32),
+                              const SizedBox(height: 32),
 
-                            /// area
-                            DropdownButtonFormField(
-                              // focusNode: _areaFocusNode,
-                              focusColor: Colors.pink[50],
-                              value: isUserExisting
-                                  ? model.areaDropdownValue = user!.area
-                                  : model.areaDropdownValue,
-                              icon: const Icon(
-                                Icons.arrow_downward,
-                                // color: kDarkPink,
+                              /// gender
+                              DropdownButtonFormField(
+                                // focusNode: _genderFocusNode,
+                                focusColor: Colors.pink[50],
+                                value: isUserExisting
+                                    ? model.genderDropdownValue = user!.gender
+                                    : model.genderDropdownValue,
+                                icon: const Icon(
+                                  Icons.arrow_downward,
+                                  // color: kDarkPink,
+                                ),
+                                iconSize: 24,
+                                elevation: 1,
+                                style: kDropdownButtonFormFieldTextStyle,
+                                decoration:
+                                    kGenderDropdownButtonFormFieldDecoration,
+                                onChanged: (String? selectedValue) {
+                                  model.genderDropdownValue = selectedValue!;
+                                },
+                                items: kGenderList.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
                               ),
-                              iconSize: 24,
-                              elevation: 1,
-                              style: kDropdownButtonFormFieldTextStyle,
-                              decoration:
-                                  kAreaDropdownButtonFormFieldDecoration,
-                              onChanged: (String? selectedValue) {
-                                model.areaDropdownValue = selectedValue!;
-                              },
-                              items: kAreaList.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                            ),
-                            const SizedBox(height: 48),
+                              const SizedBox(height: 32),
 
-                            /// 投稿送信ボタン
-                            OutlinedButton(
-                              onPressed: () async {
-                                if (_formKey.currentState!.validate()) {
-                                  try {
-                                    await model.addReplyToReply(repliedReply);
-                                    Navigator.pop(context);
-                                  } on String catch (e) {
-                                    await showExceptionDialog(
-                                      context,
-                                      e.toString(),
-                                    );
+                              /// age
+                              DropdownButtonFormField(
+                                // focusNode: _ageFocusNode,
+                                focusColor: Colors.pink[50],
+                                value: isUserExisting
+                                    ? model.ageDropdownValue = user!.age
+                                    : model.ageDropdownValue,
+                                icon: const Icon(
+                                  Icons.arrow_downward,
+                                  // color: kDarkPink,
+                                ),
+                                iconSize: 24,
+                                elevation: 1,
+                                style: kDropdownButtonFormFieldTextStyle,
+                                decoration:
+                                    kAgeDropdownButtonFormFieldDecoration,
+                                onChanged: (String? selectedValue) {
+                                  model.ageDropdownValue = selectedValue!;
+                                },
+                                items: kAgeList.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                              ),
+                              const SizedBox(height: 32),
+
+                              /// area
+                              DropdownButtonFormField(
+                                // focusNode: _areaFocusNode,
+                                focusColor: Colors.pink[50],
+                                value: isUserExisting
+                                    ? model.areaDropdownValue = user!.area
+                                    : model.areaDropdownValue,
+                                icon: const Icon(
+                                  Icons.arrow_downward,
+                                  // color: kDarkPink,
+                                ),
+                                iconSize: 24,
+                                elevation: 1,
+                                style: kDropdownButtonFormFieldTextStyle,
+                                decoration:
+                                    kAreaDropdownButtonFormFieldDecoration,
+                                onChanged: (String? selectedValue) {
+                                  model.areaDropdownValue = selectedValue!;
+                                },
+                                items: kAreaList.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                              ),
+                              const SizedBox(height: 48),
+
+                              /// 投稿送信ボタン
+                              OutlinedButton(
+                                onPressed: () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    try {
+                                      await model.addReplyToReply(repliedReply);
+                                      Navigator.pop(context);
+                                    } on String catch (e) {
+                                      await showExceptionDialog(
+                                        context,
+                                        e.toString(),
+                                      );
+                                    }
+                                    // Navigator.of(context).popUntil(
+                                    //   ModalRoute.withName('/'),
+                                    // );
+                                  } else {
+                                    await showRequiredInputConfirmDialog(
+                                        context);
                                   }
-                                  // Navigator.of(context).popUntil(
-                                  //   ModalRoute.withName('/'),
-                                  // );
-                                } else {
-                                  await showRequiredInputConfirmDialog(context);
-                                }
-                              },
-                              child: const Text(
-                                '返信する',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  // fontWeight: FontWeight.bold,
+                                },
+                                child: const Text(
+                                  '返信する',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    // fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: kDarkPink,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  side: const BorderSide(color: kDarkPink),
                                 ),
                               ),
-                              style: OutlinedButton.styleFrom(
-                                backgroundColor: kDarkPink,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                side: const BorderSide(color: kDarkPink),
-                              ),
-                            ),
 
-                            const SizedBox(height: 16),
+                              const SizedBox(height: 16),
 
-                            /// 下書き保存ボタン
-                            OutlinedButton(
-                              onPressed: () async {
-                                if (_formKey.currentState!.validate()) {
-                                  try {
-                                    await model
-                                        .addDraftedReplyToReply(repliedReply);
-                                    const snackBar = SnackBar(
-                                      content: Text('下書きに保存しました'),
-                                    );
-                                    ScaffoldMessenger.of(context)
-                                        .showSnackBar(snackBar);
-                                    Navigator.pop(context);
-                                  } on String catch (e) {
-                                    await showExceptionDialog(
-                                      context,
-                                      e.toString(),
-                                    );
+                              /// 下書き保存ボタン
+                              OutlinedButton(
+                                onPressed: () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    try {
+                                      await model
+                                          .addDraftedReplyToReply(repliedReply);
+                                      const snackBar = SnackBar(
+                                        content: Text('下書きに保存しました'),
+                                      );
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(snackBar);
+                                      Navigator.pop(context);
+                                    } on String catch (e) {
+                                      await showExceptionDialog(
+                                        context,
+                                        e.toString(),
+                                      );
+                                    }
+                                    // Navigator.of(context).popUntil(
+                                    //   ModalRoute.withName('/'),
+                                    // );
+                                  } else {
+                                    await showRequiredInputConfirmDialog(
+                                        context);
                                   }
-                                  // Navigator.of(context).popUntil(
-                                  //   ModalRoute.withName('/'),
-                                  // );
-                                } else {
-                                  await showRequiredInputConfirmDialog(context);
-                                }
-                              },
-                              child: const Text(
-                                '下書きに保存する',
-                                style: TextStyle(
-                                  color: kDarkPink,
-                                  fontSize: 16,
-                                  // fontWeight: FontWeight.bold,
+                                },
+                                child: const Text(
+                                  '下書きに保存する',
+                                  style: TextStyle(
+                                    color: kDarkPink,
+                                    fontSize: 16,
+                                    // fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                style: OutlinedButton.styleFrom(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  side: const BorderSide(color: kDarkPink),
                                 ),
                               ),
-                              style: OutlinedButton.styleFrom(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                side: const BorderSide(color: kDarkPink),
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),

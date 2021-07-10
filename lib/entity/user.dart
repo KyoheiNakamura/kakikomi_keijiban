@@ -29,8 +29,8 @@ class User {
     // topics = doc['topics'] as List<String>;
     // pushNoticesSetting = doc['pushNoticesSetting'] as List<String>;
     // badges = doc['badges'] as Map<String, bool>;
-    createdDate = (doc['createdAt'] as Timestamp).toDate();
-    updatedDate = (doc['updatedAt'] as Timestamp).toDate();
+    // createdDate = (doc['createdAt'] as Timestamp).toDate();
+    // updatedDate = (doc['updatedAt'] as Timestamp).toDate();
   }
 
   String id = '';
@@ -43,16 +43,16 @@ class User {
   List<String> topics = [];
   List<String> pushNoticesSetting = [];
   Map<String, bool> badges = {};
-  DateTime createdDate = DateTime.now();
-  DateTime updatedDate = DateTime.now();
+  // DateTime createdDate = DateTime.now();
+  // DateTime updatedDate = DateTime.now();
 
-  String get createdAt => _formatDate(createdDate);
-  String get updatedAt => _formatDate(updatedDate);
+  // String get createdAt => _formatDate(createdDate);
+  // String get updatedAt => _formatDate(updatedDate);
 
-  String _formatDate(DateTime date) {
-    final formatter = DateFormat('yyyy/MM/dd HH:mm');
-    return formatter.format(date);
-  }
+  // String _formatDate(DateTime date) {
+  //   final formatter = DateFormat('yyyy/MM/dd HH:mm');
+  //   return formatter.format(date);
+  // }
 
   bool? isCurrentUserAnonymous() {
     final currentUser = auth.currentUser;

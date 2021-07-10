@@ -5,13 +5,15 @@ import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/manager/firestore_manager.dart';
 
 class SearchPage extends StatelessWidget {
+  const SearchPage();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: commonAppBar(title: '検索'),
+      // appBar: commonAppBar(title: '検索'),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: const [
@@ -94,11 +96,12 @@ class SearchGenreCard extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.all(14),
-                child: Icon(genreIcon, color: kGrey),
+                child: Icon(genreIcon, color: kDarkPink),
               ),
               Text(
                 genreTitle,
-                style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                // style: TextStyle(color: Colors.grey[700], fontSize: 16),
+                style: const TextStyle(color: Colors.black, fontSize: 16),
               ),
             ],
           ),

@@ -15,7 +15,7 @@ class PostDetailPage extends StatelessWidget {
     return ChangeNotifierProvider<PostDetailModel>(
       create: (context) => PostDetailModel()..init(notice),
       child: Scaffold(
-        backgroundColor: kLightPink,
+        // backgroundColor: kLightPink,
         appBar: AppBar(
           toolbarHeight: 50,
           title: const Text('投稿'),
@@ -25,7 +25,7 @@ class PostDetailPage extends StatelessWidget {
             isModalLoading: model.isModalLoading,
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.only(top: 30, bottom: 60),
+                padding: const EdgeInsets.only(top: 16, bottom: 32),
                 child: model.post != null
                     ? PostCard(
                         post: model.post!,

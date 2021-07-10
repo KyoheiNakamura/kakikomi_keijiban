@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:kakikomi_keijiban/common/components/common_posts/common_posts_page.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card_model.dart';
 import 'package:kakikomi_keijiban/common/components/reply_card/reply_card.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/entity/post.dart';
 import 'package:kakikomi_keijiban/common/mixin/format_poster_data_mixin.dart';
+import 'package:kakikomi_keijiban/manager/firestore_manager.dart';
 import 'package:kakikomi_keijiban/presentation/add_reply/add_reply_page.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_page.dart';
@@ -35,7 +37,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
           alignment: AlignmentDirectional.topCenter,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 30),
+              padding: const EdgeInsets.fromLTRB(0, 40, 0, 16),
               child: Card(
                 color: Colors.white,
                 shape: RoundedRectangleBorder(
@@ -185,11 +187,11 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                             Icons.favorite,
                                             color: Colors.pinkAccent,
                                           ),
-                                          Image.asset(
-                                            'lib/assets/images/anpanman_emoji.gif',
-                                            width: 25,
-                                            height: 25,
-                                          ),
+                                          // Image.asset(
+                                          //   'lib/assets/images/anpanman_emoji.gif',
+                                          //   width: 25,
+                                          //   height: 25,
+                                          // ),
                                         ],
                                       ),
                                       style: TextButton.styleFrom(
@@ -225,11 +227,11 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                             Icons.favorite_border_outlined,
                                             color: kGrey,
                                           ),
-                                          Image.asset(
-                                            'lib/assets/images/anpanman_emoji.gif',
-                                            width: 25,
-                                            height: 25,
-                                          ),
+                                          // Image.asset(
+                                          //   'lib/assets/images/anpanman_emoji.gif',
+                                          //   width: 25,
+                                          //   height: 25,
+                                          // ),
                                         ],
                                       ),
                                       style: TextButton.styleFrom(
@@ -401,8 +403,8 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
             /// EmotionImageButton
             Positioned(
               // top: 20,
-              width: 70,
-              height: 70,
+              width: 80,
+              height: 80,
               child: GestureDetector(
                 child: kEmotionIcons[post.emotion] != null ||
                         kEmotionIcons[post.emotion] != ''
@@ -412,8 +414,11 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                   await Navigator.push<void>(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          SearchResultPostsPage(post.emotion!),
+                      builder: (context) => CommonPostsPage(
+                        title: post.emotion,
+                        type: CommonPostsType.searchResultPosts,
+                        searchWord: post.emotion,
+                      ),
                     ),
                   );
                 },

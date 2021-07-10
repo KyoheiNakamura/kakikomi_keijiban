@@ -4,19 +4,20 @@ import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/entity/notice.dart';
 
 class NoticesModel extends ChangeNotifier {
-  List<Notice> notices = [];
+  List<Notice> _notices = [];
+  List<Notice> get notices => _notices;
 
   QueryDocumentSnapshot? lastVisibleOfTheBatch;
-  int loadLimit = 15;
+  int loadLimit = 10;
   // bool isPostsExisting = false;
   bool canLoadMore = false;
   bool isLoading = false;
   bool isModalLoading = false;
 
   Future<void> init() async {
-    startModalLoading();
+    // startModalLoading();
     await getMyNotices();
-    stopModalLoading();
+    // stopModalLoading();
     await _removeNoticeBadgeIcon();
   }
 
@@ -31,23 +32,56 @@ class NoticesModel extends ChangeNotifier {
         .limit(loadLimit);
     final querySnapshot = await queryBatch.get();
     final docs = querySnapshot.docs;
-    notices.clear();
+    _notices.clear();
     if (docs.isEmpty) {
       // isPostsExisting = false;
       canLoadMore = false;
-      notices = [];
+      _notices = [];
     } else if (docs.length < loadLimit) {
       // isPostsExisting = true;
       canLoadMore = false;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      notices = docs.map((doc) => Notice(doc)).toList();
+      _notices = docs.map((doc) => Notice(doc)).toList();
     } else {
       // isPostsExisting = true;
       canLoadMore = true;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      notices = docs.map((doc) => Notice(doc)).toList();
+      _notices = docs.map((doc) => Notice(doc)).toList();
     }
 
+    stopLoading();
+    notifyListeners();
+  }
+
+  Future<void> loadPostsWithReplies() async {
+    startLoading();
+    print('loadPostsWithReplies');
+
+    final queryBatch = firestore
+        .collection('users')
+        .doc(auth.currentUser?.uid)
+        .collection('notices')
+        .orderBy('createdAt', descending: true)
+        .startAfterDocument(lastVisibleOfTheBatch!)
+        .limit(loadLimit);
+
+    final querySnapshot = await queryBatch.get();
+    final docs = querySnapshot.docs;
+    if (docs.isEmpty) {
+      // isPostsExisting = false;
+      canLoadMore = false;
+      _notices += [];
+    } else if (docs.length < loadLimit) {
+      // isPostsExisting = true;
+      canLoadMore = false;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      _notices += docs.map((doc) => Notice(doc)).toList();
+    } else {
+      // isPostsExisting = true;
+      canLoadMore = true;
+      lastVisibleOfTheBatch = docs[docs.length - 1];
+      _notices += docs.map((doc) => Notice(doc)).toList();
+    }
     stopLoading();
     notifyListeners();
   }

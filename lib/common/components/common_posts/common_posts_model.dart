@@ -30,16 +30,16 @@ class CommonPostsModel extends ChangeNotifier
   String postField = '';
 
   Future<void> init() async {
-    startModalLoading();
+    // startModalLoading();
     if (searchWord != null) {
       postField = _getPostField(searchWord!);
     }
     await getPostsWithReplies();
-    stopModalLoading();
+    // stopModalLoading();
   }
 
   Future<void> getPostsWithReplies() async {
-    startLoading();
+    // startModalLoading();
 
     final queryBatch = FireStoreManager.instance.getCommonPostsQuery(
       type: type,
@@ -66,22 +66,29 @@ class CommonPostsModel extends ChangeNotifier
       _posts = await _getPosts(docs);
     }
 
+    notifyListeners();
+
     if (type != CommonPostsType.bookmarkedPosts) {
       final bookmarkedPostsIds = await getBookmarkedPostsIds();
       await addBookmark(_posts, bookmarkedPostsIds);
     }
 
+    notifyListeners();
+
     final empathizedPostsIds = await getEmpathizedPostsIds();
     await addEmpathy(_posts, empathizedPostsIds);
 
+    notifyListeners();
+
     await getReplies(_posts, empathizedPostsIds);
 
-    stopLoading();
+    // stopModalLoading();
     notifyListeners();
   }
 
   Future<void> loadPostsWithReplies() async {
     startLoading();
+    print('loadPostsWithReplies');
 
     final queryBatch = FireStoreManager.instance.loadCommonPostsQuery(
       type: type,
@@ -100,21 +107,27 @@ class CommonPostsModel extends ChangeNotifier
       // isPostsExisting = true;
       canLoadMore = false;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      _posts = await _getPosts(docs);
+      _posts += await _getPosts(docs);
     } else {
       // isPostsExisting = true;
       canLoadMore = true;
       lastVisibleOfTheBatch = docs[docs.length - 1];
-      _posts = await _getPosts(docs);
+      _posts += await _getPosts(docs);
     }
+
+    notifyListeners();
 
     if (type != CommonPostsType.bookmarkedPosts) {
       final bookmarkedPostsIds = await getBookmarkedPostsIds();
       await addBookmark(_posts, bookmarkedPostsIds);
     }
 
+    notifyListeners();
+
     final empathizedPostsIds = await getEmpathizedPostsIds();
     await addEmpathy(_posts, empathizedPostsIds);
+
+    notifyListeners();
 
     await getReplies(_posts, empathizedPostsIds);
 

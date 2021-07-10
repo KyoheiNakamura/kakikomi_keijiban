@@ -11,6 +11,9 @@ class AddPostModel extends ChangeNotifier {
   bool isLoading = false;
   bool isCategoriesValid = true;
 
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final FocusNode focusNodeContent = FocusNode();
+
   TextEditingController titleController = TextEditingController();
   TextEditingController bodyController = TextEditingController();
   TextEditingController nicknameController = TextEditingController(

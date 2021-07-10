@@ -29,7 +29,7 @@ class CommonScrollBottomNotificationListener extends StatelessWidget {
             } else {
               if (model.canLoadMore as bool) {
                 // ignore: unnecessary_statements
-                model.loadPostsWithReplies;
+                model.loadPostsWithReplies();
               }
             }
           }
