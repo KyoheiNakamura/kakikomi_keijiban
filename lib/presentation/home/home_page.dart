@@ -22,104 +22,105 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<HomeModel>(
-      create: (context) => HomeModel()..init(context),
-      child: GestureDetector(
-        onTap: () {
-          final currentFocus = FocusScope.of(context);
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-          }
-        },
-        child: Consumer<HomeModel>(
-          builder: (context, model, child) {
-            return Scaffold(
-              body: SafeArea(
-                child: Stack(
-                  children: [
-                    Column(
-                      children: [
-                        const SizedBox(
-                            height: CustomAppBar.kCustomAppBarHeight),
-                        Expanded(child: _pageList[model.selectedIndex]),
-                      ],
-                    ),
-                    const CustomAppBar(),
-                  ],
-                ),
-              ),
-              bottomNavigationBar: BottomNavigationBar(
-                type: BottomNavigationBarType.fixed,
-                selectedLabelStyle:
-                    const TextStyle(fontWeight: FontWeight.bold),
-                unselectedLabelStyle:
-                    const TextStyle(fontWeight: FontWeight.bold),
-                // selectedItemColor: Colors.black,
-                selectedItemColor: kDarkPink,
-                unselectedItemColor: Colors.black,
-                selectedFontSize: 12,
-                // unselectedFontSize: 10,
-                items: <BottomNavigationBarItem>[
-                  const BottomNavigationBarItem(
-                    icon: Icon(Icons.home_outlined),
-                    activeIcon: Icon(Icons.home),
-                    label: 'ホーム',
-                  ),
-                  const BottomNavigationBarItem(
-                    icon: Icon(Icons.search_outlined),
-                    activeIcon: Icon(Icons.search),
-                    label: '見つける',
-                  ),
-                  BottomNavigationBarItem(
-                    icon: Icon(
-                      // context.watch<HomeModel>().isNoticeExisting
-                      model.isNoticeExisting
-                          ? Icons.notifications_active_outlined
-                          : Icons.notifications_outlined,
-                    ),
-                    activeIcon: Icon(
-                      // context.watch<HomeModel>().isNoticeExisting
-                      model.isNoticeExisting
-                          ? Icons.notifications_active
-                          : Icons.notifications,
-                    ),
-                    label: 'お知らせ',
-                  ),
-                  // BottomNavigationBarItem(
-                  //   icon: Icon(Icons.star_outline_outlined),
-                  //   activeIcon: Icon(Icons.star),
-                  //   label: 'ブックマーク',
-                  // ),
-                  const BottomNavigationBarItem(
-                    icon: Icon(Icons.account_circle_outlined),
-                    activeIcon: Icon(Icons.account_circle),
-                    label: 'マイページ',
-                  ),
-                ],
-                currentIndex: model.selectedIndex,
-                onTap: model.onItemTapped,
-              ),
-              floatingActionButton: FloatingActionButton(
-                shape: const CircleBorder(side: BorderSide(color: kPink)),
-                highlightElevation: 0,
-                splashColor: kDarkPink,
-                backgroundColor: const Color(0xFFFAFAFA),
-                child: const Icon(
-                  Icons.create,
-                  color: kDarkPink,
-                  size: 24,
-                ),
-                onPressed: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AddPostPage(),
-                    ),
-                  );
-                },
-              ),
-            );
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: ChangeNotifierProvider<HomeModel>(
+        create: (context) => HomeModel()..init(context),
+        child: GestureDetector(
+          onTap: () {
+            final currentFocus = FocusScope.of(context);
+            if (!currentFocus.hasPrimaryFocus) {
+              currentFocus.unfocus();
+            }
           },
+          child: Consumer<HomeModel>(
+            builder: (context, model, child) {
+              return Scaffold(
+                body: SafeArea(
+                  child: Stack(
+                    children: [
+                      Column(
+                        children: [
+                          const SizedBox(
+                              height: CustomAppBar.kCustomAppBarHeight),
+                          Expanded(child: _pageList[model.selectedIndex]),
+                        ],
+                      ),
+                      const CustomAppBar(),
+                    ],
+                  ),
+                ),
+                bottomNavigationBar: BottomNavigationBar(
+                  type: BottomNavigationBarType.fixed,
+                  selectedLabelStyle:
+                      const TextStyle(fontWeight: FontWeight.bold),
+                  unselectedLabelStyle:
+                      const TextStyle(fontWeight: FontWeight.bold),
+                  // selectedItemColor: Colors.black,
+                  selectedItemColor: kDarkPink,
+                  unselectedItemColor: Colors.black,
+                  selectedFontSize: 12,
+                  // unselectedFontSize: 10,
+                  items: <BottomNavigationBarItem>[
+                    const BottomNavigationBarItem(
+                      icon: Icon(Icons.home_outlined),
+                      activeIcon: Icon(Icons.home),
+                      label: 'ホーム',
+                    ),
+                    const BottomNavigationBarItem(
+                      icon: Icon(Icons.search_outlined),
+                      activeIcon: Icon(Icons.search),
+                      label: '見つける',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(
+                        model.isNoticeExisting
+                            ? Icons.notifications_active_outlined
+                            : Icons.notifications_outlined,
+                      ),
+                      activeIcon: Icon(
+                        model.isNoticeExisting
+                            ? Icons.notifications_active
+                            : Icons.notifications,
+                      ),
+                      label: 'お知らせ',
+                    ),
+                    // BottomNavigationBarItem(
+                    //   icon: Icon(Icons.star_outline_outlined),
+                    //   activeIcon: Icon(Icons.star),
+                    //   label: 'ブックマーク',
+                    // ),
+                    const BottomNavigationBarItem(
+                      icon: Icon(Icons.account_circle_outlined),
+                      activeIcon: Icon(Icons.account_circle),
+                      label: 'マイページ',
+                    ),
+                  ],
+                  currentIndex: model.selectedIndex,
+                  onTap: model.onItemTapped,
+                ),
+                floatingActionButton: FloatingActionButton(
+                  shape: const CircleBorder(side: BorderSide(color: kPink)),
+                  highlightElevation: 0,
+                  splashColor: kDarkPink,
+                  backgroundColor: const Color(0xFFFAFAFA),
+                  child: const Icon(
+                    Icons.create,
+                    color: kDarkPink,
+                    size: 24,
+                  ),
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AddPostPage(),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

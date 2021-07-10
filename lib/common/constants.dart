@@ -31,15 +31,15 @@ const String kPleaseSelect = '選択してください';
 const String kDoNotSelect = '選択しない';
 
 const Map<String, String> kEmotionIcons = {
-  'うれしい': 'lib/assets/images/anpanman_charactors_1.png',
-  'かなしい': 'lib/assets/images/anpanman_charactors_2.png',
-  'いかり': 'lib/assets/images/anpanman_charactors_3.png',
-  '相談': 'lib/assets/images/anpanman_charactors_4.png',
-  '疑問': 'lib/assets/images/anpanman_charactors_5.png',
-  '提案': 'lib/assets/images/anpanman_charactors_6.png',
-  '悩み': 'lib/assets/images/anpanman_charactors_7.png',
-  'エール': 'lib/assets/images/anpanman_charactors_8.png',
-  '呼びかけ': 'lib/assets/images/anpanman_charactors_9.png',
+  'うれしい': 'lib/assets/images/happy_transparent.png',
+  'つらい': 'lib/assets/images/tough_transparent.png',
+  'いかり': 'lib/assets/images/anger_transparent.png',
+  '相談': 'lib/assets/images/advice_transparent.png',
+  '疑問': 'lib/assets/images/question_transparent.png',
+  '提案': 'lib/assets/images/proposal_transparent.png',
+  '悩み': 'lib/assets/images/problem_transparent.png',
+  'エール': 'lib/assets/images/support_transparent.png',
+  '呼びかけ': 'lib/assets/images/announcement_transparent.png',
 };
 
 /// kEmotionListを変更したら、↑のkEmotionIconsにも値を追加する！！
@@ -47,8 +47,8 @@ const List<String> kEmotionList = [
   kPleaseSelect,
   'うれしい',
   // '希望',
-  'かなしい',
-  // 'つらい',
+  // 'かなしい',
+  'つらい',
   'いかり',
   // '落ち込み',
   '相談',
@@ -56,7 +56,7 @@ const List<String> kEmotionList = [
   // '質問',
   '提案',
   '悩み',
-  '愚痴',
+  // '愚痴',
   'エール',
   '呼びかけ',
 ];
@@ -335,8 +335,10 @@ const kContactContentTextFormFieldDecoration = InputDecoration(
 );
 
 const kAppBarTextStyle = TextStyle(
+  color: Colors.black,
   fontSize: 17,
   fontWeight: FontWeight.bold,
+  fontFamily: 'GenShinGothic',
 );
 
 const kDropdownButtonFormFieldTextStyle = TextStyle(
