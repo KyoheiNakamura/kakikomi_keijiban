@@ -341,6 +341,13 @@ const kAppBarTextStyle = TextStyle(
   fontFamily: 'GenShinGothic',
 );
 
+const kBodyTextStyle = TextStyle(
+  fontSize: 16,
+  height: 1.8,
+  color: Colors.black,
+  fontFamily: 'GenShinGothic',
+);
+
 const kDropdownButtonFormFieldTextStyle = TextStyle(
   color: Colors.black,
   fontSize: 15,

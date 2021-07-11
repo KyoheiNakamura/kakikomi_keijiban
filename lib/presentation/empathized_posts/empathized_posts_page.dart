@@ -4,43 +4,44 @@ import 'package:kakikomi_keijiban/common/components/common_app_bar.dart';
 import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/common_scroll_bottom_notification_listener.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
+import 'package:kakikomi_keijiban/presentation/empathized_posts/empathized_posts_model.dart';
 import 'package:kakikomi_keijiban/presentation/notices/notices_model.dart';
 import 'package:kakikomi_keijiban/presentation/post_detail/post_detail_page.dart';
 import 'package:provider/provider.dart';
 
-/// お知らせ画面
-class NoticesPage extends StatelessWidget {
-  const NoticesPage();
+/// ワカル画面
+class EmpathizedPostsPage extends StatelessWidget {
+  const EmpathizedPostsPage();
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<NoticesModel>(
-      create: (context) => NoticesModel()..init(),
+    return ChangeNotifierProvider<EmpathizedPostsModel>(
+      create: (context) => EmpathizedPostsModel()..init(),
       child: Scaffold(
-        // appBar: commonAppBar(title: '通知'),
-        body: Consumer<NoticesModel>(
+        appBar: commonAppBar(title: 'ワカル'),
+        body: Consumer<EmpathizedPostsModel>(
           builder: (context, model, child) {
-            final notices = model.notices;
-            return notices.isNotEmpty
+            final empathizedPosts = model.empathizedPosts;
+            return empathizedPosts.isNotEmpty
                 ? LoadingSpinner(
                     isModalLoading: model.isModalLoading,
                     child: RefreshIndicator(
-                      onRefresh: () => model.getMyNotices(),
+                      onRefresh: () => model.getEmpathizedPosts(),
                       child: CommonScrollBottomNotificationListener(
                         model: model,
                         child: ListView.separated(
                           // physics: const BouncingScrollPhysics(),
-                          itemCount: notices.length + 1,
+                          itemCount: empathizedPosts.length + 1,
                           itemBuilder: (BuildContext context, int index) {
-                            return index != notices.length
+                            return index != empathizedPosts.length
                                 ? GestureDetector(
                                     behavior: HitTestBehavior.translucent,
                                     onTap: () async {
                                       await Navigator.push<void>(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              PostDetailPage(notices[index]),
+                                          builder: (context) => PostDetailPage(
+                                              empathizedPosts[index]),
                                         ),
                                       );
                                     },
@@ -52,19 +53,22 @@ class NoticesPage extends StatelessWidget {
                                             CrossAxisAlignment.start,
                                         children: [
                                           /// emotion
-                                          kEmotionIcons[notices[index]
-                                                          .emotion] !=
-                                                      null ||
-                                                  kEmotionIcons[notices[index]
-                                                          .emotion] !=
-                                                      ''
+                                          empathizedPosts[index]
+                                                  .emotion
+                                                  .isNotEmpty
                                               ? Image.asset(
                                                   kEmotionIcons[
-                                                      notices[index].emotion]!,
+                                                      empathizedPosts[index]
+                                                          .emotion]!,
                                                   width: 50,
                                                   height: 50,
                                                 )
-                                              : const FlutterLogo(),
+                                              : const Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(4),
+                                                  child: const FlutterLogo(
+                                                      size: 42),
+                                                ),
                                           const SizedBox(width: 16),
                                           Flexible(
                                             child: Column(
@@ -73,20 +77,53 @@ class NoticesPage extends StatelessWidget {
                                               children: [
                                                 const SizedBox(height: 8),
 
-                                                /// title
-                                                Text(
-                                                  notices[index].title,
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 14,
-                                                  ),
-                                                  maxLines: 2,
+                                                /// nickname
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                      empathizedPosts[index]
+                                                              .nickname
+                                                              .isNotEmpty
+                                                          ? empathizedPosts[
+                                                                  index]
+                                                              .nickname
+                                                          : '',
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                      ),
+                                                      maxLines: 2,
+                                                    ),
+                                                    const SizedBox(height: 8),
+                                                  ],
                                                 ),
-                                                const SizedBox(height: 8),
+
+                                                // /// title
+                                                // Column(
+                                                //   children: [
+                                                //     Text(
+                                                //       empathizedPosts[index]
+                                                //               .title
+                                                //               .isNotEmpty
+                                                //           ? empathizedPosts[
+                                                //                   index]
+                                                //               .title
+                                                //           : '',
+                                                //       style: const TextStyle(
+                                                //         fontWeight:
+                                                //             FontWeight.bold,
+                                                //         fontSize: 14,
+                                                //       ),
+                                                //       maxLines: 2,
+                                                //     ),
+                                                //     const SizedBox(height: 8),
+                                                //   ],
+                                                // ),
 
                                                 /// body
                                                 Text(
-                                                  notices[index].body,
+                                                  empathizedPosts[index].body,
                                                   style: const TextStyle(
                                                     color: kDarkGrey,
                                                   ),
@@ -101,7 +138,8 @@ class NoticesPage extends StatelessWidget {
                                                 SizedBox(
                                                   width: double.infinity,
                                                   child: Text(
-                                                    notices[index].createdAt,
+                                                    empathizedPosts[index]
+                                                        .createdAt,
                                                     textAlign: TextAlign.end,
                                                     style: const TextStyle(
                                                       color: kLightGrey,
@@ -127,7 +165,7 @@ class NoticesPage extends StatelessWidget {
                     ),
                   )
                 : const Center(
-                    child: Text('お知らせはありません'),
+                    child: Text('まだワカルがありません'),
                   );
           },
         ),

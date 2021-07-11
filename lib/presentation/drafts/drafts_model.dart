@@ -14,9 +14,9 @@ class DraftsModel extends ChangeNotifier {
   bool isModalLoading = false;
 
   Future<void> init() async {
-    startModalLoading();
+    // startModalLoading();
     await getDrafts();
-    stopModalLoading();
+    // stopModalLoading();
   }
 
   Future<void> getDrafts() async {

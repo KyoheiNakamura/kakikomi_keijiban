@@ -8,6 +8,7 @@ import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/manager/firestore_manager.dart';
 import 'package:kakikomi_keijiban/presentation/contact/contact_page.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_page.dart';
+import 'package:kakikomi_keijiban/presentation/empathized_posts/empathized_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/my_page/my_page_model.dart';
 import 'package:kakikomi_keijiban/presentation/select_registration_method/select_registration_method_page.dart';
 import 'package:kakikomi_keijiban/presentation/settings/settings_page.dart';
@@ -63,7 +64,7 @@ class MyPage extends StatelessWidget with ShowConfirmDialogMixin {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.star_outline_outlined),
+            leading: const Icon(Icons.star_border),
             title: const Text('ブックマーク'),
             onTap: () async {
               await Navigator.push<void>(
@@ -73,6 +74,18 @@ class MyPage extends StatelessWidget with ShowConfirmDialogMixin {
                     title: 'ブックマーク',
                     type: CommonPostsType.bookmarkedPosts,
                   ),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.favorite_border),
+            title: const Text('ワカル'),
+            onTap: () async {
+              await Navigator.push<void>(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const EmpathizedPostsPage(),
                 ),
               );
             },

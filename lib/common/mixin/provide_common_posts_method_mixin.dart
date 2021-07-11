@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
+import 'package:kakikomi_keijiban/entity/empathized_post.dart';
 import 'package:kakikomi_keijiban/entity/post.dart';
 import 'package:kakikomi_keijiban/entity/reply.dart';
 import 'package:kakikomi_keijiban/entity/reply_to_reply.dart';
@@ -18,7 +19,9 @@ mixin ProvideCommonPostsMethodMixin {
   }
 
   Future<void> addBookmark(
-      List<dynamic> list, List<String> bookmarkedPostsIds) async {
+    List<dynamic> list,
+    List<String> bookmarkedPostsIds,
+  ) async {
     for (var i = 0; i < list.length; i++) {
       for (var n = 0; n < bookmarkedPostsIds.length; n++) {
         if (list[i].id == bookmarkedPostsIds[n]) {
@@ -93,6 +96,7 @@ mixin ProvideCommonPostsMethodMixin {
     }
   }
 
+  // bookmarkedPosts を取得
   // Todo bookmarkedPosts/{bookmarkedPost_id}にbookmarkしたpostのidのみじゃなくて、中身を全部持たせる。
   Future<List<Post>> getBookmarkedPosts(
       List<QueryDocumentSnapshot> docs) async {
@@ -123,6 +127,125 @@ mixin ProvideCommonPostsMethodMixin {
       bookmarkedPosts[i].isBookmarked = true;
     }
   }
+
+  // empathizedPosts を取得
+  Future<List<EmpathizedPost>> fetchEmpathizedPosts(
+      List<QueryDocumentSnapshot> docs) async {
+    final _empathizedPosts =
+        docs.map((doc) => EmpathizedPostInfo(doc)).toList();
+    final empathizedPostDocs =
+        await Future.wait(_empathizedPosts.map((empathizedPost) async {
+      if (empathizedPost.postType == 'post') {
+        final querySanpshot = await firestore
+            .collectionGroup('posts')
+            .where('id', isEqualTo: empathizedPost.postId)
+            .get();
+        final docs = querySanpshot.docs;
+        if (docs.isNotEmpty) {
+          return docs.first;
+          // final doc = docs.first;
+          // if (doc.exists) {
+          //   return Post.fromDoc(doc);
+          // }
+        }
+      } else if (empathizedPost.postType == 'reply') {
+        final querySanpshot = await firestore
+            .collectionGroup('replies')
+            .where('id', isEqualTo: empathizedPost.replyId)
+            .get();
+        final docs = querySanpshot.docs;
+        if (docs.isNotEmpty) {
+          return docs.first;
+          // final doc = docs.first;
+          // if (doc.exists) {
+          //   return Reply(doc);
+          // }
+        }
+        // } else if (empathizedPost.postType == 'replyToReply') {
+      } else {
+        final querySanpshot = await firestore
+            .collectionGroup('repliesToReply')
+            .where('id', isEqualTo: empathizedPost.replyToReplyId)
+            .get();
+        final docs = querySanpshot.docs;
+        if (docs.isNotEmpty) {
+          return docs.first;
+          // final doc = docs.first;
+          // if (doc.exists) {
+          //   return ReplyToReply(doc);
+          // }
+        }
+      }
+    }).toList())
+          ..removeWhere((element) => element == null);
+    final empathizedPosts =
+        empathizedPostDocs.map((doc) => EmpathizedPost(doc!)).toList();
+    _addEmpathyToEmpathizedPosts(empathizedPosts);
+    return empathizedPosts;
+  }
+
+  void _addEmpathyToEmpathizedPosts(List<EmpathizedPost> empathizedPosts) {
+    for (var i = 0; i < empathizedPosts.length; i++) {
+      empathizedPosts[i].isEmpathized = true;
+    }
+  }
+
+  // empathizedPosts を取得
+  // Future<List<dynamic>> fetchEmpathizedPosts(
+  //     List<QueryDocumentSnapshot> docs) async {
+  //   final _empathizedPosts =
+  //       docs.map((doc) => EmpathizedPostInfo(doc)).toList();
+  //   final empathizedPosts =
+  //       await Future.wait(_empathizedPosts.map((empathizedPost) async {
+  //     if (empathizedPost.postType == 'post') {
+  //       final querySanpshot = await firestore
+  //           .collectionGroup('posts')
+  //           .where('id', isEqualTo: empathizedPost.postId)
+  //           .get();
+  //       final docs = querySanpshot.docs;
+  //       if (docs.isNotEmpty) {
+  //         final doc = docs.first;
+  //         if (doc.exists) {
+  //           return Post.fromDoc(doc);
+  //         }
+  //       }
+  //     } else if (empathizedPost.postType == 'reply') {
+  //       final querySanpshot = await firestore
+  //           .collectionGroup('reply')
+  //           .where('id', isEqualTo: empathizedPost.replyId)
+  //           .get();
+  //       final docs = querySanpshot.docs;
+  //       if (docs.isNotEmpty) {
+  //         final doc = docs.first;
+  //         if (doc.exists) {
+  //           return Reply(doc);
+  //         }
+  //       }
+  //       // } else if (empathizedPost.postType == 'replyToReply') {
+  //     } else {
+  //       final querySanpshot = await firestore
+  //           .collectionGroup('repliesToReply')
+  //           .where('id', isEqualTo: empathizedPost.replyToReplyId)
+  //           .get();
+  //       final docs = querySanpshot.docs;
+  //       if (docs.isNotEmpty) {
+  //         final doc = docs.first;
+  //         if (doc.exists) {
+  //           return ReplyToReply(doc);
+  //         }
+  //       }
+  //     }
+  //   }).toList())
+  //         ..removeWhere((element) => element == null);
+  //   _addEmpathyToEmpathizedPosts(empathizedPosts);
+  //   return empathizedPosts;
+  // }
+
+  // void _addEmpathyToEmpathizedPosts(List<dynamic> empathizedPosts) {
+  //   for (var i = 0; i < empathizedPosts.length; i++) {
+  //     empathizedPosts[i].isEmpathized = true;
+  //   }
+  // }
 
   Future<List<Post>> getRepliedPosts(List<QueryDocumentSnapshot> docs) async {
     final postIds = docs.map((doc) => doc.reference.parent.parent!.id).toSet();

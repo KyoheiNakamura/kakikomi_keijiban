@@ -122,11 +122,7 @@ class PostCard extends StatelessWidget with FormatPosterDataMixin {
                                     )
                                   : const TextSpan(),
                             ],
-                            style: const TextStyle(
-                              fontSize: 16,
-                              height: 1.8,
-                              color: Colors.black,
-                            ),
+                            style: kBodyTextStyle,
                           ),
                         ),
                       ),

@@ -1,5 +1,5 @@
 # ユーザー情報
-# /users
+# /users/{userId}
 users:
   userId: auth.uid
   age: string
@@ -19,7 +19,7 @@ users:
   updatedAt: timestamp
 
   # 各ユーザーの投稿データ
-  # /users/{userId}/posts
+  # /users/{userId}/posts/{postId}
   posts:
     id: auto
     userId: auth.uid
@@ -38,7 +38,9 @@ users:
     createdAt: timestamp
     updatedAt: timestamp
 
-    # /users/{userId}/posts/{postId}/replies
+    # /users/{userId}/posts/{postId}/likes/{likeId}
+
+    # /users/{userId}/posts/{postId}/replies/{replyId}
     # 各投稿への返信データ
     replies:
       id: auto
@@ -56,7 +58,7 @@ users:
       updatedAt: timestamp
 
       # 各返信への返信データ
-      # /users/{userId}/posts/{postId}/replies/{replyId}/repliesToReply
+      # /users/{userId}/posts/{postId}/replies/{replyId}/repliesToReply/{repliesToReplyId}
       repliesToReply:
         id: auto
         userId: auth.uid
@@ -74,22 +76,27 @@ users:
         updatedAt: timestamp
 
   # 各ユーザーのブックマークした投稿
-  # /users/{userId}/bookmarkedPosts
+  # /users/{userId}/bookmarkedPosts/{bookmarkedPostId}
   bookmarkedPosts:
     id: post.id
     userId: auth.id
     createdAt: timestamp
 
   # 各ユーザーの共感した投稿(返信も含む)
-  # /users/{userId}/empathizedPosts
+  # /users/{userId}/empathizedPosts/{empathizedPostId}
   empathizedPosts:
     id: post.id or reply.id or replyToReplyId
     userId: auth.id
-    myEmpathyCount: int
+    ######## Todo: 変更を適用するプロジェクト全体に適用する ###########
+    postId: post.id
+    replyId: reply.id or ''
+    replyToReplyId: replyToReply.id or ''  
+    postType: string (post or reply or replyToReply)
+    # myEmpathyCount: int
     createdAt: timestamp
 
   # 各ユーザーの下書きした投稿
-  # /users/{userId}/draftedPosts
+  # /users/{userId}/draftedPosts/{draftedPostId}
   draftedPosts:
   　id: auto
     userId: auth.uid
@@ -109,7 +116,7 @@ users:
     updatedAt: timestamp
 
   # 各ユーザーの下書きした投稿への返信
-  # /users/{userId}/draftedReplies
+  # /users/{userId}/draftedReplies/{draftedReplyId}
   draftedReplies:
     id: auto
     userId: post.userId
@@ -142,13 +149,13 @@ users:
     updatedAt: timestamp
 
   # 各ユーザーのトークン（隠す予定）: idにはtoken(string)をそのまま使う
-  # /users/{userId}/tokens
+  # /users/{userId}/tokens/{tokenId}
   tokens:
     id: token
 
   # 自分への返信のpush通知があった際に追加しよう（新着のpush通知は追加しない）
   # タップしたらそのpostに飛べるようにしよう（通知から飛ぶ用に投稿詳細ページを作ろう）
-  # /users/{userId}/Notices
+  # /users/{userId}/Notices/{noticeId}
   notices:
     id: auto
     userId: auth.uid
@@ -162,13 +169,13 @@ users:
     createdAt: timestamp
 
   # 各ユーザーの機密データ
-  # /users/{userId}/tokens
+  # /users/{userId}/tokens/{tokenId}
 #  confidential:
 #    id: auth.uid
 #    email: string
 
 # お問い合わせメール
-# /mail/{mailId}/
+# /mail/{mailId}
 mail:
   userId: auth.uid
   to: email
@@ -176,7 +183,7 @@ mail:
   delivery: map
 
 # お問い合わせ内容
-# /contacts
+# /contacts/{contactId}
 contacts:
   id: auto
   userId: auth.uid

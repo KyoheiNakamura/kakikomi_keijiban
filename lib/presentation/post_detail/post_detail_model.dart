@@ -13,18 +13,15 @@ class PostDetailModel extends ChangeNotifier
 
   bool isModalLoading = false;
 
-  Future<void> init(Notice notice) async {
-    posterId = notice.posterId;
-    postId = notice.postId;
-    startModalLoading();
+  Future<void> init(dynamic entity) async {
+    posterId = entity.posterId;
+    postId = entity.postId;
+    // startModalLoading();
     await getPost();
-    stopModalLoading();
+    // stopModalLoading();
   }
 
   Future<void> getPost() async {
-    final empathizedPostsIds = await getEmpathizedPostsIds();
-    final bookmarkedPostsIds = await getBookmarkedPostsIds();
-
     final snapshot = await firestore
         .collection('users')
         .doc(posterId)
@@ -32,11 +29,17 @@ class PostDetailModel extends ChangeNotifier
         .doc(postId)
         .get();
     post = Post.fromDoc(snapshot);
+    notifyListeners();
 
-    await addBookmark(<Post>[post!], bookmarkedPostsIds);
+    final empathizedPostsIds = await getEmpathizedPostsIds();
     await addEmpathy(<Post>[post!], empathizedPostsIds);
-    await getReplies([post!], empathizedPostsIds);
+    notifyListeners();
 
+    final bookmarkedPostsIds = await getBookmarkedPostsIds();
+    await addBookmark(<Post>[post!], bookmarkedPostsIds);
+    notifyListeners();
+
+    await getReplies([post!], empathizedPostsIds);
     notifyListeners();
   }
 

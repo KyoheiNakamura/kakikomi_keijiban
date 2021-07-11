@@ -172,7 +172,8 @@ class CommonPostsModel extends ChangeNotifier
   }
 
   Future<List<Post>> _getPosts(
-      List<QueryDocumentSnapshot<Map<String, dynamic>>> docs) async {
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
+  ) async {
     if (type == CommonPostsType.bookmarkedPosts) {
       return getBookmarkedPosts(docs);
     } else if (type == CommonPostsType.myReplies) {
