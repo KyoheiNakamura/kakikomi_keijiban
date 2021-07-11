@@ -46,8 +46,12 @@ class ReplyCardModel extends ChangeNotifier {
       /// empathizedPosts自身のIDにはreplyIdと同じIDをsetしている
       'id': reply.id,
       'userId': reply.userId,
-      'myEmpathyCount': 1,
+      'postId': reply.postId,
+      'replyId': reply.id,
+      'replyToReplyId': '',
+      'postType': 'reply',
       'createdAt': serverTimestamp(),
+      // 'myEmpathyCount': 1,      
     });
 
     final replyRef = firestore

@@ -66,7 +66,7 @@ class CommonPostsPage extends StatelessWidget {
                     ),
                   )
                 : const Center(
-                    child: Text('まだ投稿がありません'),
+                    child: Text('投稿はありません'),
                   );
           },
         ),

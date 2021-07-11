@@ -131,8 +131,12 @@ class PostCardModel extends ChangeNotifier {
       /// empathizedPosts自身のIDにはpostIdと同じIDをsetしている
       'id': post.id,
       'userId': post.userId,
-      'myEmpathyCount': 1,
+      'postId': post.id,
+      'replyId': '',
+      'replyToReplyId': '',
+      'postType': 'post',
       'createdAt': serverTimestamp(),
+      // 'myEmpathyCount': 1,      
     });
 
     final postRef = firestore
