@@ -15,17 +15,20 @@ class AddReplyPage extends StatelessWidget
         ShowConfirmDialogMixin,
         KeyboardActionsConfigDoneMixin,
         ShowExceptionDialogMixin {
-  AddReplyPage(this.repliedPost);
+  AddReplyPage({
+    required this.repliedPost,
+    Key? key,
+  }) : super(key: key);
 
   final Post repliedPost;
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final FocusNode _focusNodeContent = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        showDiscardConfirmDialog(context);
+        await showDiscardConfirmDialog(context);
         return true;
       },
       child: GestureDetector(
@@ -57,11 +60,8 @@ class AddReplyPage extends StatelessWidget
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(snackBar);
                               Navigator.pop(context);
-                            } on String catch (e) {
-                              await showExceptionDialog(
-                                context,
-                                e.toString(),
-                              );
+                            } on Exception catch (e) {
+                              await showExceptionDialog(context, e);
                             }
                           } else {
                             await showRequiredInputConfirmDialog(context);
@@ -234,28 +234,14 @@ class AddReplyPage extends StatelessWidget
                                     try {
                                       await model.addReplyToPost(repliedPost);
                                       Navigator.pop(context);
-                                    } on String catch (e) {
-                                      await showExceptionDialog(
-                                        context,
-                                        e.toString(),
-                                      );
+                                    } on Exception catch (e) {
+                                      await showExceptionDialog(context, e);
                                     }
-                                    // Navigator.of(context).popUntil(
-                                    //   ModalRoute.withName('/'),
-                                    // );
                                   } else {
                                     await showRequiredInputConfirmDialog(
                                         context);
                                   }
                                 },
-                                child: const Text(
-                                  '返信する',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    // fontWeight: FontWeight.bold,
-                                  ),
-                                ),
                                 style: OutlinedButton.styleFrom(
                                   backgroundColor: kDarkPink,
                                   padding:
@@ -264,6 +250,14 @@ class AddReplyPage extends StatelessWidget
                                     borderRadius: BorderRadius.circular(15),
                                   ),
                                   side: const BorderSide(color: kDarkPink),
+                                ),
+                                child: const Text(
+                                  '返信する',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    // fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
 
@@ -281,25 +275,14 @@ class AddReplyPage extends StatelessWidget
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(snackBar);
                                       Navigator.pop(context);
-                                    } on String catch (e) {
-                                      await showExceptionDialog(
-                                        context,
-                                        e.toString(),
-                                      );
+                                    } on Exception catch (e) {
+                                      await showExceptionDialog(context, e);
                                     }
                                   } else {
                                     await showRequiredInputConfirmDialog(
                                         context);
                                   }
                                 },
-                                child: const Text(
-                                  '下書きに保存する',
-                                  style: TextStyle(
-                                    color: kDarkPink,
-                                    fontSize: 16,
-                                    // fontWeight: FontWeight.bold,
-                                  ),
-                                ),
                                 style: OutlinedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 12),
@@ -307,6 +290,14 @@ class AddReplyPage extends StatelessWidget
                                     borderRadius: BorderRadius.circular(16),
                                   ),
                                   side: const BorderSide(color: kDarkPink),
+                                ),
+                                child: const Text(
+                                  '下書きに保存する',
+                                  style: TextStyle(
+                                    color: kDarkPink,
+                                    fontSize: 16,
+                                    // fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ],

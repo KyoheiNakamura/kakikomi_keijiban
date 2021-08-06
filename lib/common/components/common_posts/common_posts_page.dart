@@ -4,7 +4,6 @@ import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart'
 import 'package:kakikomi_keijiban/common/components/common_posts/common_posts_model.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card.dart';
 import 'package:kakikomi_keijiban/common/components/common_scroll_bottom_notification_listener.dart';
-import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/manager/firestore_manager.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +12,9 @@ class CommonPostsPage extends StatelessWidget {
     this.title,
     required this.type,
     this.searchWord,
-  });
+    Key? key,
+  }) : super(key: key);
+
   final String? title;
   final CommonPostsType type;
   final String? searchWord;
@@ -30,8 +31,7 @@ class CommonPostsPage extends StatelessWidget {
         appBar:
             //commonAppBar(title: '$type'),
             title != null
-                ? commonAppBar(
-                    title: searchWord == null ? title! : '$searchWord')
+                ? commonAppBar(title: searchWord == null ? title! : searchWord!)
                 : null,
         body: Consumer<CommonPostsModel>(
           builder: (context, model, child) {

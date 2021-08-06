@@ -8,6 +8,8 @@ import 'package:kakikomi_keijiban/presentation/bookmarked_posts/bookmarked_posts
 import 'package:provider/provider.dart';
 
 class BookmarkedPostsPage extends StatelessWidget {
+  const BookmarkedPostsPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(

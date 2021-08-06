@@ -6,7 +6,8 @@ import 'package:kakikomi_keijiban/presentation/update_password/update_password_m
 import 'package:provider/provider.dart';
 
 class UpdatePasswordPage extends StatelessWidget with ShowExceptionDialogMixin {
-  final _formKey = GlobalKey<FormState>();
+  UpdatePasswordPage({Key? key}) : super(key: key);
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -84,22 +85,11 @@ class UpdatePasswordPage extends StatelessWidget with ShowExceptionDialogMixin {
                                     content: Text('パスワードが変更されました。'),
                                   ),
                                 );
-                              } on String catch (e) {
-                                await showExceptionDialog(
-                                  context,
-                                  e.toString(),
-                                );
+                              } on Exception catch (e) {
+                                await showExceptionDialog(context, e);
                               }
                             }
                           },
-                          child: const Text(
-                            'パスワードを変更する',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                           style: OutlinedButton.styleFrom(
                             backgroundColor: kDarkPink,
                             padding: const EdgeInsets.symmetric(vertical: 12),
@@ -107,6 +97,14 @@ class UpdatePasswordPage extends StatelessWidget with ShowExceptionDialogMixin {
                             //   borderRadius: BorderRadius.circular(15),
                             // ),
                             side: const BorderSide(color: kDarkPink),
+                          ),
+                          child: const Text(
+                            'パスワードを変更する',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         )
                       ],

@@ -7,6 +7,8 @@ import 'package:kakikomi_keijiban/presentation/my_replies/my_replies_model.dart'
 import 'package:provider/provider.dart';
 
 class MyRepliesPage extends StatelessWidget {
+  const MyRepliesPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(

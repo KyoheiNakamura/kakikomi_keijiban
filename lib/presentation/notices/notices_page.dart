@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:kakikomi_keijiban/common/components/common_app_bar.dart';
 import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/common_scroll_bottom_notification_listener.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
@@ -10,7 +9,7 @@ import 'package:provider/provider.dart';
 
 /// お知らせ画面
 class NoticesPage extends StatelessWidget {
-  const NoticesPage();
+  const NoticesPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,11 +35,14 @@ class NoticesPage extends StatelessWidget {
                                 ? GestureDetector(
                                     behavior: HitTestBehavior.translucent,
                                     onTap: () async {
+                                      final notice = notices[index];
                                       await Navigator.push<void>(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              PostDetailPage(notices[index]),
+                                          builder: (context) => PostDetailPage(
+                                            posterId: notice.posterId,
+                                            postId: notice.postId,
+                                          ),
                                         ),
                                       );
                                     },

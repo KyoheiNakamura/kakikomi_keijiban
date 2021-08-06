@@ -25,20 +25,20 @@ class SignInModel extends ChangeNotifier {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-email') {
         print('このメールアドレスは形式が正しくありません。');
-        throw 'このメールアドレスは\n形式が正しくありません。';
+        throw Exception('このメールアドレスは\n形式が正しくありません。');
       } else if (e.code == 'user-not-found') {
         print('このメールアドレスは登録されていません。');
-        throw 'このメールアドレスは\n登録されていません。';
+        throw Exception('このメールアドレスは\n登録されていません。');
       } else if (e.code == 'wrong-password') {
         print('パスワードが正しくありません。');
-        throw 'パスワードが正しくありません。';
+        throw Exception('パスワードが正しくありません。');
       } else {
         print(e.toString());
-        throw 'エラーが発生しました。\nもう一度お試し下さい。';
+        throw Exception('エラーが発生しました。\nもう一度お試し下さい。');
       }
     } on Exception catch (e) {
       print(e.toString());
-      throw 'エラーが発生しました。\nもう一度お試し下さい。';
+      throw Exception('エラーが発生しました。\nもう一度お試し下さい。');
     } finally {
       stopModalLoading();
     }
@@ -58,19 +58,19 @@ class SignInModel extends ChangeNotifier {
         await auth.signInWithCredential(credential);
         newUser = auth.currentUser!.uid;
       } else {
-        throw 'アカウントを選択してください。';
+        throw Exception('アカウントを選択してください。');
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'account-exists-with-different-credential') {
         print('このメールアドレスはすでに使用されています');
-        throw 'このメールアドレスは\nすでに使用されています。';
+        throw Exception('このメールアドレスは\nすでに使用されています。');
       } else {
         print(e.toString());
-        throw 'エラーが発生しました。\nもう一度お試し下さい。';
+        throw Exception('エラーが発生しました。\nもう一度お試し下さい。');
       }
     } on Exception catch (e) {
       print(e.toString());
-      throw 'エラーが発生しました。\nもう一度お試し下さい。';
+      throw Exception('エラーが発生しました。\nもう一度お試し下さい。');
     } finally {
       stopModalLoading();
     }
@@ -89,7 +89,9 @@ class SignInModel extends ChangeNotifier {
   String? validateEmailCallback(String? value) {
     if (value == null ||
         value.isEmpty ||
-        RegExp(kValidEmailRegularExpression).hasMatch(emailController.text.trim()) == false) {
+        RegExp(kValidEmailRegularExpression)
+                .hasMatch(emailController.text.trim()) ==
+            false) {
       return 'メールアドレスを入力してください';
     } else {
       return null;

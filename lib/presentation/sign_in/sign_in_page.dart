@@ -7,7 +7,8 @@ import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_model.dart';
 import 'package:provider/provider.dart';
 
 class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
-  final _formKey = GlobalKey<FormState>();
+  const SignInPage({Key? key}) : super(key: key);
+  GlobalKey<FormState> get _formKey => GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -63,19 +64,16 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                                 if (_formKey.currentState!.validate()) {
                                   try {
                                     await model.signInWithEmailAndPassword();
-                                    await Navigator.pushAndRemoveUntil(
+                                    await Navigator.pushAndRemoveUntil<void>(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => HomePage(),
+                                        builder: (context) => const HomePage(),
                                       ),
                                       (_) => false,
                                     );
                                     // Navigator.pop(context, 'signedIn');
-                                  } on String catch (e) {
-                                    await showExceptionDialog(
-                                      context,
-                                      e.toString(),
-                                    );
+                                  } on Exception catch (e) {
+                                    await showExceptionDialog(context, e);
                                   }
                                 }
                               },
@@ -115,10 +113,10 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                               onPressed: () async {
                                 try {
                                   await model.signInWithGoogle();
-                                  await Navigator.pushAndRemoveUntil(
+                                  await Navigator.pushAndRemoveUntil<void>(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => HomePage(),
+                                      builder: (context) => const HomePage(),
                                     ),
                                     (_) => false,
                                   );
@@ -127,11 +125,8 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                                   // } else {
                                   //   Navigator.pop(context);
                                   // }
-                                } on String catch (e) {
-                                  await showExceptionDialog(
-                                    context,
-                                    e.toString(),
-                                  );
+                                } on Exception catch (e) {
+                                  await showExceptionDialog(context, e);
                                 }
                               },
                               child: Padding(

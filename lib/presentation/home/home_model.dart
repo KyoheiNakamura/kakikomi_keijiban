@@ -4,7 +4,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
-import 'package:kakikomi_keijiban/presentation/home/home_page.dart';
 import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/notices/notices_page.dart';
 import 'package:kakikomi_keijiban/presentation/on_boarding/on_boarding_page.dart';
@@ -18,7 +17,7 @@ class HomeModel extends ChangeNotifier {
   Future<void> init(BuildContext context) async {
     await _showOnBoardingPage(context);
     await _openSpecifiedPageByNotification(context);
-    _confirmIsNoticeExisting();
+    await _confirmIsNoticeExisting();
   }
 
   Future<void> _openSpecifiedPageByNotification(BuildContext context) async {
@@ -38,14 +37,14 @@ class HomeModel extends ChangeNotifier {
       await Navigator.push<void>(
         context,
         // MaterialPageRoute(builder: (context) => MyPostsPage()),
-        MaterialPageRoute(builder: (context) => NoticesPage()),
+        MaterialPageRoute(builder: (context) => const NoticesPage()),
       );
       await _confirmIsNoticeExisting();
     } else if (initialMessage?.data['page'] == 'MyRepliesPage') {
       await Navigator.push<void>(
         context,
         // MaterialPageRoute(builder: (context) => MyRepliesPage()),
-        MaterialPageRoute(builder: (context) => NoticesPage()),
+        MaterialPageRoute(builder: (context) => const NoticesPage()),
       );
       await _confirmIsNoticeExisting();
     }
@@ -56,18 +55,18 @@ class HomeModel extends ChangeNotifier {
       if (message?.data['page'] == 'HomePostsPage') {
         await Navigator.push<void>(
           context,
-          MaterialPageRoute(builder: (context) => HomePostsPage()),
+          MaterialPageRoute(builder: (context) => const HomePostsPage()),
         );
       } else if (message?.data['page'] == 'MyPostsPage') {
         await Navigator.push<void>(
           context,
-          MaterialPageRoute(builder: (context) => NoticesPage()),
+          MaterialPageRoute(builder: (context) => const NoticesPage()),
         );
         await _confirmIsNoticeExisting();
       } else if (message?.data['page'] == 'MyRepliesPage') {
         await Navigator.push<void>(
           context,
-          MaterialPageRoute(builder: (context) => NoticesPage()),
+          MaterialPageRoute(builder: (context) => const NoticesPage()),
         );
         await _confirmIsNoticeExisting();
       }
@@ -78,9 +77,9 @@ class HomeModel extends ChangeNotifier {
     final preference = await SharedPreferences.getInstance();
     // 最初の起動ならチュートリアル表示
     if (preference.getBool(kOnBoardingDoneKey) != true) {
-      Navigator.push<void>(
+      await Navigator.push<void>(
         context,
-        MaterialPageRoute(builder: (context) => OnBoardingPage()),
+        MaterialPageRoute(builder: (context) => const OnBoardingPage()),
       );
     }
   }

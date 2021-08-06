@@ -42,18 +42,18 @@ class SignUpModel extends ChangeNotifier {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
         print('このメールアドレスはすでに使用されています。');
-        throw 'このメールアドレスはすでに使用されています。';
+        throw Exception('このメールアドレスはすでに使用されています。');
       } else if (e.code == 'invalid-email') {
         print('このメールアドレスは形式が正しくありません。');
-        throw 'このメールアドレスは形式が正しくありません。';
+        throw Exception('このメールアドレスは形式が正しくありません。');
         // Todo createUserWithEmailAndPassword()の他の例外処理も書こう
       } else {
         print(e.toString());
-        throw 'エラーが発生しました。\nもう一度お試し下さい。';
+        throw Exception('エラーが発生しました。\nもう一度お試し下さい。');
       }
     } on Exception catch (e) {
       print(e.toString());
-      throw 'エラーが発生しました。\nもう一度お試し下さい。';
+      throw Exception('エラーが発生しました。\nもう一度お試し下さい。');
     } finally {
       stopModalLoading();
     }
@@ -131,7 +131,7 @@ class SignUpModel extends ChangeNotifier {
 //       print(e);
 //       return e;
 //     }
-//   } on String catch (e) {
+//   } on Exception catch (e) {
 //     print(e);
 //     return e;
 //   }

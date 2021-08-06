@@ -15,6 +15,8 @@ import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_page.dart';
 import 'package:provider/provider.dart';
 
 class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
+  AccountDrawer({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Consumer<HomePostsModel>(builder: (context, model, child) {
@@ -27,7 +29,8 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
             padding: EdgeInsets.zero,
             children: [
               ChangingDrawerHeader(
-                  isCurrentUserAnonymous: isCurrentUserAnonymous),
+                isCurrentUserAnonymous: isCurrentUserAnonymous,
+              ),
               const Divider(thickness: 1),
               ListTile(
                 leading: const Icon(Icons.description),
@@ -93,7 +96,7 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
                   await Navigator.push<void>(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => DraftsPage(),
+                      builder: (context) => const DraftsPage(),
                     ),
                   );
                 },
@@ -152,8 +155,11 @@ class AccountDrawer extends StatelessWidget with ShowConfirmDialogMixin {
 }
 
 class ChangingDrawerHeader extends StatelessWidget {
-  const ChangingDrawerHeader({required this.isCurrentUserAnonymous});
-  final bool? isCurrentUserAnonymous;
+  const ChangingDrawerHeader({
+    required this.isCurrentUserAnonymous,
+    Key? key,
+  }) : super(key: key);
+  final bool isCurrentUserAnonymous;
 
   @override
   Widget build(BuildContext context) {
@@ -206,10 +212,6 @@ class ChangingDrawerHeader extends StatelessWidget {
                       ),
                     ),
                     OutlinedButton(
-                      child: const Text(
-                        '会員登録',
-                        style: TextStyle(color: Colors.white),
-                      ),
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(kDarkPink),
                       ),
@@ -219,30 +221,36 @@ class ChangingDrawerHeader extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                SelectRegistrationMethodPage(),
+                                const SelectRegistrationMethodPage(),
                           ),
                         );
                         if (result == 'signedIn') {
                           await model.reloadTabs();
                         }
                       },
+                      child: const Text(
+                        '会員登録',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                     const SizedBox(height: 16),
                     OutlinedButton(
-                      child: const Text(
-                        'ログイン',
-                        style: TextStyle(color: kDarkPink),
-                      ),
                       onPressed: () async {
                         Navigator.pop(context);
                         final result = await Navigator.push<String>(
                           context,
-                          MaterialPageRoute(builder: (context) => SignInPage()),
+                          MaterialPageRoute(
+                            builder: (context) => const SignInPage(),
+                          ),
                         );
                         if (result == 'signedIn') {
                           await model.reloadTabs();
                         }
                       },
+                      child: const Text(
+                        'ログイン',
+                        style: TextStyle(color: kDarkPink),
+                      ),
                     )
                   ],
                 ),

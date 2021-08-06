@@ -8,6 +8,8 @@ import 'package:kakikomi_keijiban/presentation/my_posts/my_posts_model.dart';
 import 'package:provider/provider.dart';
 
 class MyPostsPage extends StatelessWidget {
+  const MyPostsPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(

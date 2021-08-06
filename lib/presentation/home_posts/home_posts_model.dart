@@ -46,7 +46,7 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     // 下二行await不要論
     await _showOnBoardingPage(context);
     await _openSpecifiedPageByNotification(context);
-    confirmIsNoticeExisting();
+    await confirmIsNoticeExisting();
     startModalLoading();
     await _getAllPostsWithReplies();
     stopModalLoading();
@@ -400,20 +400,22 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     if (initialMessage?.data['page'] == 'HomePostsPage') {
       await Navigator.push<void>(
         context,
-        MaterialPageRoute(builder: (context) => HomePostsPage()),
+        MaterialPageRoute(builder: (context) => const HomePostsPage()),
       );
     } else if (initialMessage?.data['page'] == 'MyPostsPage') {
       await Navigator.push<void>(
         context,
         // MaterialPageRoute(builder: (context) => MyPostsPage()),
-        MaterialPageRoute(builder: (context) => NoticesPage()),
+        MaterialPageRoute(builder: (context) => const NoticesPage()),
       );
       await confirmIsNoticeExisting();
     } else if (initialMessage?.data['page'] == 'MyRepliesPage') {
       await Navigator.push<void>(
         context,
         // MaterialPageRoute(builder: (context) => MyRepliesPage()),
-        MaterialPageRoute(builder: (context) => NoticesPage()),
+        MaterialPageRoute(
+          builder: (context) => const NoticesPage(),
+        ),
       );
       await confirmIsNoticeExisting();
     }
@@ -424,18 +426,18 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
       if (message?.data['page'] == 'HomePostsPage') {
         await Navigator.push<void>(
           context,
-          MaterialPageRoute(builder: (context) => HomePostsPage()),
+          MaterialPageRoute(builder: (context) => const HomePostsPage()),
         );
       } else if (message?.data['page'] == 'MyPostsPage') {
         await Navigator.push<void>(
           context,
-          MaterialPageRoute(builder: (context) => NoticesPage()),
+          MaterialPageRoute(builder: (context) => const NoticesPage()),
         );
         await confirmIsNoticeExisting();
       } else if (message?.data['page'] == 'MyRepliesPage') {
         await Navigator.push<void>(
           context,
-          MaterialPageRoute(builder: (context) => NoticesPage()),
+          MaterialPageRoute(builder: (context) => const NoticesPage()),
         );
         await confirmIsNoticeExisting();
       }
@@ -446,9 +448,9 @@ class HomePostsModel extends ChangeNotifier with ProvideCommonPostsMethodMixin {
     final preference = await SharedPreferences.getInstance();
     // 最初の起動ならチュートリアル表示
     if (preference.getBool(kOnBoardingDoneKey) != true) {
-      Navigator.push<void>(
+      await Navigator.push<void>(
         context,
-        MaterialPageRoute(builder: (context) => OnBoardingPage()),
+        MaterialPageRoute(builder: (context) => const OnBoardingPage()),
       );
     }
   }

@@ -6,7 +6,8 @@ import 'package:kakikomi_keijiban/presentation/sign_up/sign_up_model.dart';
 import 'package:provider/provider.dart';
 
 class SignUpPage extends StatelessWidget with ShowExceptionDialogMixin {
-  final _formKey = GlobalKey<FormState>();
+  SignUpPage({Key? key}) : super(key: key);
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -77,22 +78,11 @@ class SignUpPage extends StatelessWidget with ShowExceptionDialogMixin {
                                 Navigator.of(context).popUntil(
                                   ModalRoute.withName('/'),
                                 );
-                              } on String catch (e) {
-                                await showExceptionDialog(
-                                  context,
-                                  e.toString(),
-                                );
+                              } on Exception catch (e) {
+                                await showExceptionDialog(context, e);
                               }
                             }
                           },
-                          child: const Text(
-                            '登録する',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                           style: OutlinedButton.styleFrom(
                             backgroundColor: kDarkPink,
                             padding: const EdgeInsets.symmetric(vertical: 12),
@@ -100,6 +90,14 @@ class SignUpPage extends StatelessWidget with ShowExceptionDialogMixin {
                             //   borderRadius: BorderRadius.circular(15),
                             // ),
                             side: const BorderSide(color: kDarkPink),
+                          ),
+                          child: const Text(
+                            '登録する',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         )
                       ],

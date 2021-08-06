@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 
 mixin ShowExceptionDialogMixin {
-  Future<void> showExceptionDialog(BuildContext context, String errorMessage) {
+  Future<void> showExceptionDialog(
+    BuildContext context,
+    Exception e,
+  ) {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
@@ -11,21 +14,29 @@ mixin ShowExceptionDialogMixin {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
-          content: Text(errorMessage),
+          content: Text(e.formatToString()),
           contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
           actions: <Widget>[
             TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
               child: const Text(
                 'OK',
                 style: TextStyle(color: kDarkPink),
               ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
             ),
           ],
         );
       },
     );
+  }
+}
+
+extension ExceptionToString on Exception {
+  String formatToString() {
+    final errorMessage = toString();
+    final exp = RegExp(r'Exception: ');
+    return errorMessage.replaceAll(exp, '');
   }
 }

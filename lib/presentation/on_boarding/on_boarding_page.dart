@@ -5,6 +5,8 @@ import 'package:kakikomi_keijiban/presentation/on_boarding/on_boarding_model.dar
 import 'package:provider/provider.dart';
 
 class OnBoardingPage extends StatelessWidget {
+  const OnBoardingPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(

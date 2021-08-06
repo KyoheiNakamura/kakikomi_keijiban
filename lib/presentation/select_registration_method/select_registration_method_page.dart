@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 class SelectRegistrationMethodPage extends StatelessWidget
     with ShowExceptionDialogMixin {
+  const SelectRegistrationMethodPage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<SelectRegistrationMethodModel>(
@@ -30,6 +31,16 @@ class SelectRegistrationMethodPage extends StatelessWidget
                   padding: const EdgeInsets.only(
                       left: 16, top: 24, right: 16, bottom: 12),
                   child: OutlinedButton(
+                    onPressed: () async {
+                      await Navigator.push<void>(
+                        context,
+                        MaterialPageRoute(builder: (context) => SignUpPage()),
+                      );
+                      // Navigator.pop(context);
+                    },
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(kDarkPink),
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const <Widget>[
@@ -47,22 +58,21 @@ class SelectRegistrationMethodPage extends StatelessWidget
                         ),
                       ],
                     ),
-                    onPressed: () async {
-                      await Navigator.push<void>(
-                        context,
-                        MaterialPageRoute(builder: (context) => SignUpPage()),
-                      );
-                      // Navigator.pop(context);
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(kDarkPink),
-                    ),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
                       left: 16, top: 12, right: 16, bottom: 16),
                   child: OutlinedButton(
+                    onPressed: () async {
+                      await Navigator.push<void>(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SignInPage(),
+                        ),
+                      );
+                      // Navigator.pop(context);
+                    },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const <Widget>[
@@ -80,13 +90,6 @@ class SelectRegistrationMethodPage extends StatelessWidget
                         ),
                       ],
                     ),
-                    onPressed: () async {
-                      await Navigator.push<void>(
-                        context,
-                        MaterialPageRoute(builder: (context) => SignInPage()),
-                      );
-                      // Navigator.pop(context);
-                    },
                   ),
                 ),
                 const Divider(thickness: 1),
@@ -97,6 +100,19 @@ class SelectRegistrationMethodPage extends StatelessWidget
                     children: [
                       const SizedBox(height: 16),
                       OutlinedButton(
+                        onPressed: () async {
+                          try {
+                            await model
+                                .signUpAndSignInWithGoogleAndUpgradeAnonymous();
+                            if (model.oldUser != model.newUser) {
+                              Navigator.pop(context, 'signedIn');
+                            } else {
+                              Navigator.pop(context);
+                            }
+                          } on Exception catch (e) {
+                            await showExceptionDialog(context, e);
+                          }
+                        },
                         child: Padding(
                           padding: const EdgeInsets.all(12),
                           child: Row(
@@ -117,22 +133,6 @@ class SelectRegistrationMethodPage extends StatelessWidget
                             ],
                           ),
                         ),
-                        onPressed: () async {
-                          try {
-                            await model
-                                .signUpAndSignInWithGoogleAndUpgradeAnonymous();
-                            if (model.oldUser != model.newUser) {
-                              Navigator.pop(context, 'signedIn');
-                            } else {
-                              Navigator.pop(context);
-                            }
-                          } on String catch (e) {
-                            await showExceptionDialog(
-                              context,
-                              e.toString(),
-                            );
-                          }
-                        },
                       ),
                     ],
                   ),

@@ -9,7 +9,8 @@ import 'package:provider/provider.dart';
 
 class ContactPage extends StatelessWidget
     with ShowExceptionDialogMixin, KeyboardActionsConfigDoneMixin {
-  final _formKey = GlobalKey<FormState>();
+  ContactPage({Key? key}) : super(key: key);
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final FocusNode _focusNodeContent = FocusNode();
 
   @override
@@ -101,22 +102,11 @@ class ContactPage extends StatelessWidget
                                       content: Text('お問い合わせが送信されました。'),
                                     ),
                                   );
-                                } on String catch (e) {
-                                  await showExceptionDialog(
-                                    context,
-                                    e.toString(),
-                                  );
+                                } on Exception catch (e) {
+                                  await showExceptionDialog(context, e);
                                 }
                               }
                             },
-                            child: const Text(
-                              'お問い合わせをする',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
                             style: OutlinedButton.styleFrom(
                               backgroundColor: kDarkPink,
                               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -124,6 +114,14 @@ class ContactPage extends StatelessWidget
                               //   borderRadius: BorderRadius.circular(15),
                               // ),
                               side: const BorderSide(color: kDarkPink),
+                            ),
+                            child: const Text(
+                              'お問い合わせをする',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           )
                         ],

@@ -15,14 +15,13 @@ class AddPostPage extends StatelessWidget
         ShowConfirmDialogMixin,
         KeyboardActionsConfigDoneMixin,
         ShowExceptionDialogMixin {
-  const AddPostPage();
-
+  const AddPostPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        showDiscardConfirmDialog(context);
+        await showDiscardConfirmDialog(context);
         return true;
       },
       child: GestureDetector(
@@ -56,11 +55,8 @@ class AddPostPage extends StatelessWidget
                         );
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         Navigator.pop(context);
-                      } on String catch (e) {
-                        await showExceptionDialog(
-                          context,
-                          e.toString(),
-                        );
+                      } on Exception catch (e) {
+                        await showExceptionDialog(context, e);
                       }
                     } else {
                       await showRequiredInputConfirmDialog(context);
@@ -345,13 +341,10 @@ class AddPostPage extends StatelessWidget
                                   if (model.validateSelectedCategories() &&
                                       model.formKey.currentState!.validate()) {
                                     try {
-                                      await model.addPost();
+                                      await model.addPost(context);
                                       Navigator.pop(context);
-                                    } on String catch (e) {
-                                      await showExceptionDialog(
-                                        context,
-                                        e.toString(),
-                                      );
+                                    } on Exception catch (e) {
+                                      await showExceptionDialog(context, e);
                                     }
                                     // Navigator.of(context).popUntil(
                                     //   ModalRoute.withName('/'),
@@ -361,14 +354,6 @@ class AddPostPage extends StatelessWidget
                                         context);
                                   }
                                 },
-                                child: const Text(
-                                  '投稿する',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    // fontWeight: FontWeight.bold,
-                                  ),
-                                ),
                                 style: OutlinedButton.styleFrom(
                                   backgroundColor: kDarkPink,
                                   padding:
@@ -377,6 +362,14 @@ class AddPostPage extends StatelessWidget
                                     borderRadius: BorderRadius.circular(16),
                                   ),
                                   side: const BorderSide(color: kDarkPink),
+                                ),
+                                child: const Text(
+                                  '投稿する',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    // fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
 
@@ -395,28 +388,14 @@ class AddPostPage extends StatelessWidget
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(snackBar);
                                       Navigator.pop(context);
-                                    } on String catch (e) {
-                                      await showExceptionDialog(
-                                        context,
-                                        e.toString(),
-                                      );
+                                    } on Exception catch (e) {
+                                      await showExceptionDialog(context, e);
                                     }
-                                    // Navigator.of(context).popUntil(
-                                    //   ModalRoute.withName('/'),
-                                    // );
                                   } else {
                                     await showRequiredInputConfirmDialog(
                                         context);
                                   }
                                 },
-                                child: const Text(
-                                  '下書きに保存する',
-                                  style: TextStyle(
-                                    color: kDarkPink,
-                                    fontSize: 16,
-                                    // fontWeight: FontWeight.bold,
-                                  ),
-                                ),
                                 style: OutlinedButton.styleFrom(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 12),
@@ -424,6 +403,13 @@ class AddPostPage extends StatelessWidget
                                     borderRadius: BorderRadius.circular(16),
                                   ),
                                   side: const BorderSide(color: kDarkPink),
+                                ),
+                                child: const Text(
+                                  '下書きに保存する',
+                                  style: TextStyle(
+                                    color: kDarkPink,
+                                    fontSize: 16,
+                                  ),
                                 ),
                               ),
                             ],
@@ -446,7 +432,8 @@ class FilterChipWidget extends StatelessWidget {
   const FilterChipWidget({
     required this.chipName,
     required this.model,
-  });
+    Key? key,
+  }) : super(key: key);
 
   final String chipName;
   final AddPostModel model;

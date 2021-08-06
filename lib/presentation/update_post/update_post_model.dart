@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
@@ -58,7 +57,7 @@ class UpdatePostModel extends ChangeNotifier {
       categories: selectedCategories,
     );
 
-    try {      
+    try {
       await PostRepository.instance.updatePost(
         userId: existingPost.userId!,
         postId: existingPost.id!,
@@ -67,7 +66,7 @@ class UpdatePostModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('updatePost処理中のエラーです');
       print(e.toString());
-      throw 'エラーが発生しました。\nもう一度お試し下さい。';
+      throw Exception('エラーが発生しました。\nもう一度お試し下さい。');
     } finally {
       stopLoading();
     }
@@ -95,7 +94,7 @@ class UpdatePostModel extends ChangeNotifier {
   //   } on Exception catch (e) {
   //     print('updatePost処理中のエラーです');
   //     print(e.toString());
-  //     throw 'エラーが発生しました。\nもう一度お試し下さい。';
+  //     throw Exception('エラーが発生しました。\nもう一度お試し下さい。');
   //   } finally {
   //     stopLoading();
   //   }
@@ -144,7 +143,7 @@ class UpdatePostModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('addPostFromDraftのバッチ処理中のエラーです');
       print(e.toString());
-      throw 'エラーが発生しました。\nもう一度お試し下さい。';
+      throw Exception('エラーが発生しました。\nもう一度お試し下さい。');
     } finally {
       stopLoading();
     }
@@ -174,7 +173,7 @@ class UpdatePostModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('updateDraftPost処理中のエラーです');
       print(e.toString());
-      throw 'エラーが発生しました。\nもう一度お試し下さい。';
+      throw Exception('エラーが発生しました。\nもう一度お試し下さい。');
     } finally {
       stopLoading();
     }

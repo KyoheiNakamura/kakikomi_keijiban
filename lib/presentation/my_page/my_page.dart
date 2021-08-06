@@ -16,7 +16,7 @@ import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_page.dart';
 import 'package:provider/provider.dart';
 
 class MyPage extends StatelessWidget with ShowConfirmDialogMixin {
-  const MyPage();
+  const MyPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +97,7 @@ class MyPage extends StatelessWidget with ShowConfirmDialogMixin {
               await Navigator.push<void>(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DraftsPage(),
+                  builder: (context) => const DraftsPage(),
                 ),
               );
             },
@@ -149,7 +149,10 @@ class MyPage extends StatelessWidget with ShowConfirmDialogMixin {
 }
 
 class ChangingHeader extends StatelessWidget {
-  const ChangingHeader({required this.isCurrentUserAnonymous});
+  const ChangingHeader({
+    required this.isCurrentUserAnonymous,
+    Key? key,
+  }) : super(key: key);
   final bool? isCurrentUserAnonymous;
 
   @override
@@ -203,43 +206,44 @@ class ChangingHeader extends StatelessWidget {
                       ),
                     ),
                     OutlinedButton(
-                      child: const Text(
-                        '会員登録',
-                        style: TextStyle(color: Colors.white),
-                      ),
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(kDarkPink),
                       ),
                       onPressed: () async {
-                        final result = await Navigator.push<String>(
+                        // final result = 
+                        await Navigator.push<String>(
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                SelectRegistrationMethodPage(),
+                                const SelectRegistrationMethodPage(),
                           ),
                         );
                         // if (result == 'signedIn') {
                         //   await model.reloadTabs();
                         // }
                       },
+                      child: const Text(
+                        '会員登録',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                     const SizedBox(height: 16),
                     OutlinedButton(
-                      child: const Text(
-                        'ログイン',
-                        style: TextStyle(color: kDarkPink),
-                      ),
                       onPressed: () async {
                         await Navigator.push<String>(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => SignInPage(),
+                            builder: (context) => const SignInPage(),
                           ),
                         );
                         // if (result == 'signedIn') {
                         //   await model.reloadTabs();
                         // }
                       },
+                      child: const Text(
+                        'ログイン',
+                        style: TextStyle(color: kDarkPink),
+                      ),
                     )
                   ],
                 ),

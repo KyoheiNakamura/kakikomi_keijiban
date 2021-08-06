@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/mixin/provide_common_posts_method_mixin.dart';
 import 'package:kakikomi_keijiban/entity/empathized_post.dart';
-import 'package:kakikomi_keijiban/entity/notice.dart';
 
 class EmpathizedPostsModel extends ChangeNotifier
     with ProvideCommonPostsMethodMixin {

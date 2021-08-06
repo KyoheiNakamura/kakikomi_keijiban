@@ -25,7 +25,7 @@ class ContactModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('submitFormの送信時のエラーです');
       print(e.toString());
-      throw 'エラーが発生しました。\nもう一度お試しください。';
+      throw Exception('エラーが発生しました。\nもう一度お試しください。');
     } finally {
       stopLoading();
     }

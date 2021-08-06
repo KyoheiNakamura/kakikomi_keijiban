@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:kakikomi_keijiban/common/components/common_app_bar.dart';
 import 'package:kakikomi_keijiban/common/components/common_posts/common_posts_page.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/manager/firestore_manager.dart';
 
 class SearchPage extends StatelessWidget {
-  const SearchPage();
+  const SearchPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +76,8 @@ class SearchGenreCard extends StatelessWidget {
     required this.genreTitle,
     required this.genreIcon,
     required this.genreList,
-  });
+    Key? key,
+  }) : super(key: key);
 
   final String genreTitle;
   final IconData genreIcon;
