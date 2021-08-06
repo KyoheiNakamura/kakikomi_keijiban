@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:kakikomi_keijiban/common/components/common_app_bar.dart';
 import 'package:kakikomi_keijiban/common/components/common_posts/common_posts_page.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
-import 'package:kakikomi_keijiban/common/enum.dart';
 import 'package:kakikomi_keijiban/manager/firestore_manager.dart';
 import 'package:kakikomi_keijiban/presentation/add_post/add_post_page.dart';
 import 'package:kakikomi_keijiban/presentation/home/home_model.dart';
@@ -13,12 +11,14 @@ import 'package:kakikomi_keijiban/presentation/search/search_page.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
-  final List<Widget> _pageList = const [
-    CommonPostsPage(type: CommonPostsType.homePosts),
-    SearchPage(),
-    NoticesPage(),
-    MyPage(),
-  ];
+  const HomePage({Key? key}) : super(key: key);
+  List<Widget> get _pageList => const [
+        CommonPostsPage(type: CommonPostsType.homePosts),
+        SearchPage(),
+        // AddPostPage(),
+        NoticesPage(),
+        MyPage(),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +42,11 @@ class HomePage extends StatelessWidget {
                       Column(
                         children: [
                           const SizedBox(
-                              height: CustomAppBar.kCustomAppBarHeight),
-                          Expanded(child: _pageList[model.selectedIndex]),
+                            height: CustomAppBar.kCustomAppBarHeight,
+                          ),
+                          Expanded(
+                            child: _pageList[model.selectedIndex],
+                          ),
                         ],
                       ),
                       const CustomAppBar(),
@@ -72,6 +75,10 @@ class HomePage extends StatelessWidget {
                       activeIcon: Icon(Icons.search),
                       label: '見つける',
                     ),
+                    // const BottomNavigationBarItem(
+                    //   icon: Icon(Icons.add_circle_outline_outlined),
+                    //   label: '',
+                    // ),
                     BottomNavigationBarItem(
                       icon: Icon(
                         model.isNoticeExisting
@@ -85,11 +92,6 @@ class HomePage extends StatelessWidget {
                       ),
                       label: 'お知らせ',
                     ),
-                    // BottomNavigationBarItem(
-                    //   icon: Icon(Icons.star_outline_outlined),
-                    //   activeIcon: Icon(Icons.star),
-                    //   label: 'ブックマーク',
-                    // ),
                     const BottomNavigationBarItem(
                       icon: Icon(Icons.account_circle_outlined),
                       activeIcon: Icon(Icons.account_circle),
@@ -104,19 +106,19 @@ class HomePage extends StatelessWidget {
                   highlightElevation: 0,
                   splashColor: kDarkPink,
                   backgroundColor: const Color(0xFFFAFAFA),
-                  child: const Icon(
-                    Icons.create,
-                    color: kDarkPink,
-                    size: 24,
-                  ),
                   onPressed: () async {
-                    await Navigator.push(
+                    await Navigator.push<void>(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const AddPostPage(),
                       ),
                     );
                   },
+                  child: const Icon(
+                    Icons.create,
+                    color: kDarkPink,
+                    size: 24,
+                  ),
                 ),
               );
             },
@@ -229,7 +231,11 @@ class CustomAppBar extends StatelessWidget {
 }
 
 class CustomPage extends StatelessWidget {
-  const CustomPage({required this.pannelColor, required this.title});
+  const CustomPage({
+    required this.pannelColor,
+    required this.title,
+    Key? key,
+  }) : super(key: key);
 
   final Color pannelColor;
   final String title;

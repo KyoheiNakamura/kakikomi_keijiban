@@ -7,7 +7,10 @@ import 'package:kakikomi_keijiban/presentation/search_result_posts/search_result
 import 'package:provider/provider.dart';
 
 class SearchResultPostsPage extends StatelessWidget {
-  const SearchResultPostsPage(this.searchWord);
+  const SearchResultPostsPage({
+    required this.searchWord,
+    Key? key,
+  }) : super(key: key);
   final String searchWord;
 
   @override

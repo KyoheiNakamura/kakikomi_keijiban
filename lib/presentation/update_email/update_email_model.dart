@@ -26,26 +26,26 @@ class UpdateEmailModel extends ChangeNotifier {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'wrong-password') {
         print('パスワードが正しくありません。');
-        throw 'パスワードが正しくありません。';
+        throw Exception('パスワードが正しくありません。');
       } else if (e.code == 'invalid-email') {
         print('このメールアドレスは形式が正しくありません。');
-        throw 'このメールアドレスは\n形式が正しくありません。';
+        throw Exception('このメールアドレスは\n形式が正しくありません。');
       } else if (e.code == 'email-already-in-use') {
         print('このメールアドレスはすでに使用されています。');
-        throw 'このメールアドレスは\nすでに使用されています。';
+        throw Exception('このメールアドレスは\nすでに使用されています。');
       } else if (e.code == 'requires-recent-login') {
         print('一度ログアウトしたのち、もう一度お試しください。');
-        throw '一度ログアウトしたのち、\nもう一度お試しください。';
+        throw Exception('一度ログアウトしたのち、\nもう一度お試しください。');
       } else if (e.code == 'too-many-requests') {
         print('リクエストの数が超過しました。\n時間を置いてから再度お試しください。');
-        throw 'リクエストの数が超過しました。\n時間を置いてから再度お試しください。';
+        throw Exception('リクエストの数が超過しました。\n時間を置いてから再度お試しください。');
       } else {
         print(e.toString());
-        throw 'エラーが発生しました。\nもう一度お試し下さい。';
+        throw Exception('エラーが発生しました。\nもう一度お試し下さい。');
       }
     } on Exception catch (e) {
       print(e.toString());
-      throw 'エラーが発生しました。\nもう一度お試し下さい。';
+      throw Exception('エラーが発生しました。\nもう一度お試し下さい。');
     } finally {
       stopLoading();
     }

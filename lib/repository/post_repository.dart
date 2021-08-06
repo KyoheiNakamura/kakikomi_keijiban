@@ -38,7 +38,7 @@ class PostRepository {
     required String userId,
     required Post post,
     required WriteBatch batch,
-  }) async {
+  }) {
     final postRef = firestore.collection(getCollectionPath(userId)).doc();
     post
       ..id = postRef.id

@@ -18,7 +18,8 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
     required this.reply,
     required this.post,
     required this.passedModel,
-  });
+    Key? key,
+  }) : super(key: key);
 
   final Reply reply;
   final Post post;
@@ -113,22 +114,23 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            AddReplyToReplyPage(reply),
+                                            AddReplyToReplyPage(
+                                                repliedReply: reply),
                                       ),
                                     );
                                     await model.getRepliesToReply(reply);
                                   },
-                                  child: const Text(
-                                    '返信する',
-                                    style: TextStyle(
-                                        color: kDarkPink, fontSize: 15),
-                                  ),
                                   style: OutlinedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(16),
                                     ),
                                     side: const BorderSide(color: kPink),
                                     primary: kDarkPink,
+                                  ),
+                                  child: const Text(
+                                    '返信する',
+                                    style: TextStyle(
+                                        color: kDarkPink, fontSize: 15),
                                   ),
                                 )
                               : const SizedBox(),
@@ -142,18 +144,9 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                         model.turnOffEmpathyButton(reply);
                                         await model.deleteEmpathizedPost(reply);
                                       },
-                                      icon: Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.favorite,
-                                            color: Colors.pinkAccent,
-                                          ),
-                                          // Image.asset(
-                                          //   'lib/assets/images/anpanman_emoji.gif',
-                                          //   width: 25,
-                                          //   height: 25,
-                                          // ),
-                                        ],
+                                      icon: const Icon(
+                                        Icons.favorite,
+                                        color: Colors.pinkAccent,
                                       ),
                                       style: TextButton.styleFrom(
                                         primary: kDarkPink,
@@ -182,18 +175,9 @@ class ReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                         model.turnOnEmpathyButton(reply);
                                         await model.addEmpathizedPost(reply);
                                       },
-                                      icon: Row(
-                                        children: [
-                                          const Icon(
-                                            Icons.favorite_border_outlined,
-                                            color: kGrey,
-                                          ),
-                                          // Image.asset(
-                                          //   'lib/assets/images/anpanman_emoji.gif',
-                                          //   width: 25,
-                                          //   height: 25,
-                                          // ),
-                                        ],
+                                      icon: const Icon(
+                                        Icons.favorite_border_outlined,
+                                        color: kGrey,
                                       ),
                                       style: TextButton.styleFrom(
                                         primary: kDarkPink,

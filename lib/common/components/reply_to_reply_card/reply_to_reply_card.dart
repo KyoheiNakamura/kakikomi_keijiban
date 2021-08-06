@@ -18,7 +18,8 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
     required this.reply,
     required this.post,
     required this.passedModel,
-  });
+    Key? key,
+  }) : super(key: key);
 
   final ReplyToReply replyToReply;
   final Reply reply;
@@ -114,18 +115,9 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                   await model
                                       .deleteEmpathizedPost(replyToReply);
                                 },
-                                icon: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.favorite,
-                                      color: Colors.pinkAccent,
-                                    ),
-                                    // Image.asset(
-                                    //   'lib/assets/images/anpanman_emoji.gif',
-                                    //   width: 25,
-                                    //   height: 25,
-                                    // ),
-                                  ],
+                                icon: const Icon(
+                                  Icons.favorite,
+                                  color: Colors.pinkAccent,
                                 ),
                                 style: TextButton.styleFrom(
                                   primary: kDarkPink,
@@ -157,18 +149,9 @@ class ReplyToReplyCard extends StatelessWidget with FormatPosterDataMixin {
                                   model.turnOnEmpathyButton(replyToReply);
                                   await model.addEmpathizedPost(replyToReply);
                                 },
-                                icon: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.favorite_border_outlined,
-                                      color: kGrey,
-                                    ),
-                                    // Image.asset(
-                                    //   'lib/assets/images/anpanman_emoji.gif',
-                                    //   width: 25,
-                                    //   height: 25,
-                                    // ),
-                                  ],
+                                icon: const Icon(
+                                  Icons.favorite_border_outlined,
+                                  color: kGrey,
                                 ),
                                 style: TextButton.styleFrom(
                                   primary: kDarkPink,

@@ -6,7 +6,9 @@ import 'package:kakikomi_keijiban/presentation/update_email/update_email_model.d
 import 'package:provider/provider.dart';
 
 class UpdateEmailPage extends StatelessWidget with ShowExceptionDialogMixin {
-  final _formKey = GlobalKey<FormState>();
+  UpdateEmailPage({Key? key}) : super(key: key);
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -83,22 +85,11 @@ class UpdateEmailPage extends StatelessWidget with ShowExceptionDialogMixin {
                                     content: Text('メールアドレスが変更されました。'),
                                   ),
                                 );
-                              } on String catch (e) {
-                                await showExceptionDialog(
-                                  context,
-                                  e.toString(),
-                                );
+                              } on Exception catch (e) {
+                                await showExceptionDialog(context, e);
                               }
                             }
                           },
-                          child: const Text(
-                            'メールアドレスを変更する',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                           style: OutlinedButton.styleFrom(
                             backgroundColor: kDarkPink,
                             padding: const EdgeInsets.symmetric(vertical: 12),
@@ -106,6 +97,14 @@ class UpdateEmailPage extends StatelessWidget with ShowExceptionDialogMixin {
                             //   borderRadius: BorderRadius.circular(15),
                             // ),
                             side: const BorderSide(color: kDarkPink),
+                          ),
+                          child: const Text(
+                            'メールアドレスを変更する',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         )
                       ],

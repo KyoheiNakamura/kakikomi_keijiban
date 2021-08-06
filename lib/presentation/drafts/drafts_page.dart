@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/components/common_app_bar.dart';
 import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/components/post_card/post_card.dart';
-import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/presentation/drafts/drafts_model.dart';
 import 'package:provider/provider.dart';
 
 class DraftsPage extends StatelessWidget {
+  const DraftsPage({Key? key}) : super(key: key);
+  
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<DraftsModel>(

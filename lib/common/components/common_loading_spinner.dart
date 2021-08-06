@@ -7,7 +7,8 @@ class LoadingSpinner extends StatelessWidget {
     this.opacity = 0.5,
     this.color = Colors.black38,
     this.dismissible = false,
-  });
+    Key? key,
+  }) : super(key: key);
 
   final bool isModalLoading;
   final double opacity;
@@ -21,8 +22,8 @@ class LoadingSpinner extends StatelessWidget {
     if (isModalLoading) {
       final modal = [
         Opacity(
-          child: ModalBarrier(dismissible: dismissible, color: color),
           opacity: opacity,
+          child: ModalBarrier(dismissible: dismissible, color: color,),
         ),
         const Center(
           child: CircularProgressIndicator(
@@ -66,26 +67,18 @@ Widget loadingSpinner({
 
 /// 共通のローディングクラス
 class CommonLoadingDialog {
-  // CommonLoadingDialogクラスのシングルトン化 //
   CommonLoadingDialog._();
   static CommonLoadingDialog instance = CommonLoadingDialog._();
-  //                                       //
-  late BuildContext childContext;
 
-  // factory CommonLoadingDialog() => _instance;
-  // CommonLoadingDialog._internal();
-  //
-  // static final CommonLoadingDialog _instance
-  //     = CommonLoadingDialog._internal();
+  late BuildContext _context;
 
-  void showDialog(BuildContext context) {
-    showGeneralDialog(
+  Future<void> showDialog(BuildContext context) async {
+    _context = context;
+    await showGeneralDialog(
       context: context,
       barrierDismissible: false,
       barrierColor: Colors.black.withOpacity(0.1),
-      pageBuilder: (BuildContext childContext, Animation animation,
-          Animation secondaryAnimation) {
-        this.childContext = childContext;
+      pageBuilder: (_, __, ___) {
         return const Center(
           child: CircularProgressIndicator(),
         );
@@ -94,6 +87,6 @@ class CommonLoadingDialog {
   }
 
   void closeDialog() {
-    Navigator.pop(childContext);
+    Navigator.pop(_context);
   }
 }

@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 
 class UpdatePushNotificationPage extends StatelessWidget
     with ShowExceptionDialogMixin {
+  UpdatePushNotificationPage({Key? key}) : super(key: key);
+
   final user = AppModel.user!;
 
   @override

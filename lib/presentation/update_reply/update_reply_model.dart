@@ -34,7 +34,7 @@ class UpdateReplyModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('updateReply処理中のエラーです');
       print(e.toString());
-      throw 'エラーが発生しました。\nもう一度お試し下さい。';
+      throw Exception('エラーが発生しました。\nもう一度お試し下さい。');
     } finally {
       stopLoading();
     }
@@ -86,7 +86,7 @@ class UpdateReplyModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('addReplyToPostFromDraftのバッチ処理中のエラーです');
       print(e.toString());
-      throw 'エラーが発生しました。\nもう一度お試し下さい。';
+      throw Exception('エラーが発生しました。\nもう一度お試し下さい。');
     } finally {
       stopLoading();
     }
@@ -112,7 +112,7 @@ class UpdateReplyModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('updateDraftReply処理中のエラーです');
       print(e.toString());
-      throw 'エラーが発生しました。\nもう一度お試し下さい。';
+      throw Exception('エラーが発生しました。\nもう一度お試し下さい。');
     } finally {
       stopLoading();
     }

@@ -20,18 +20,19 @@ class UpdateReplyToReplyPage extends StatelessWidget
   UpdateReplyToReplyPage({
     required this.existingReplyToReply,
     required this.passedModel,
-  });
+    Key? key,
+  }) : super(key: key);
 
   final ReplyToReply existingReplyToReply;
   final dynamic passedModel;
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final FocusNode _focusNodeContent = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        showDiscardConfirmDialog(context);
+        await showDiscardConfirmDialog(context);
         return true;
       },
       child: ChangeNotifierProvider<UpdateReplyToReplyModel>(
@@ -222,11 +223,8 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                           await model.updateReplyToReply(
                                               existingReplyToReply);
                                           Navigator.pop(context);
-                                        } on String catch (e) {
-                                          await showExceptionDialog(
-                                            context,
-                                            e.toString(),
-                                          );
+                                        } on Exception catch (e) {
+                                          await showExceptionDialog(context, e);
                                         }
                                         // Navigator.of(context).popUntil(
                                         //   ModalRoute.withName('/'),
@@ -236,14 +234,6 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                             context);
                                       }
                                     },
-                                    child: const Text(
-                                      '更新する',
-                                      style: TextStyle(
-                                        color: kDarkPink,
-                                        fontSize: 16,
-                                        // fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
                                     style: OutlinedButton.styleFrom(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 12),
@@ -251,6 +241,14 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                         borderRadius: BorderRadius.circular(15),
                                       ),
                                       side: const BorderSide(color: kDarkPink),
+                                    ),
+                                    child: const Text(
+                                      '更新する',
+                                      style: TextStyle(
+                                        color: kDarkPink,
+                                        fontSize: 16,
+                                        // fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   )
                                 :
@@ -273,11 +271,9 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                                 ResultForDraftButton
                                                     .addPostFromDraft,
                                               );
-                                            } on String catch (e) {
+                                            } on Exception catch (e) {
                                               await showExceptionDialog(
-                                                context,
-                                                e.toString(),
-                                              );
+                                                  context, e);
                                             }
                                             // Navigator.of(context).popUntil(
                                             //   ModalRoute.withName('/'),
@@ -287,14 +283,6 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                                 context);
                                           }
                                         },
-                                        child: const Text(
-                                          '投稿する',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                            // fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
                                         style: OutlinedButton.styleFrom(
                                           backgroundColor: kDarkPink,
                                           padding: const EdgeInsets.symmetric(
@@ -305,6 +293,14 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                           ),
                                           side: const BorderSide(
                                               color: kDarkPink),
+                                        ),
+                                        child: const Text(
+                                          '投稿する',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            // fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                       const SizedBox(height: 16),
@@ -328,11 +324,9 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                                 ResultForDraftButton
                                                     .updateDraft,
                                               );
-                                            } on String catch (e) {
+                                            } on Exception catch (e) {
                                               await showExceptionDialog(
-                                                context,
-                                                e.toString(),
-                                              );
+                                                  context, e);
                                             }
                                             // Navigator.of(context).popUntil(
                                             //   ModalRoute.withName('/'),
@@ -342,14 +336,6 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                                 context);
                                           }
                                         },
-                                        child: const Text(
-                                          '下書きに保存する',
-                                          style: TextStyle(
-                                            color: kDarkPink,
-                                            fontSize: 16,
-                                            // fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
                                         style: OutlinedButton.styleFrom(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 12),
@@ -359,6 +345,14 @@ class UpdateReplyToReplyPage extends StatelessWidget
                                           ),
                                           side: const BorderSide(
                                               color: kDarkPink),
+                                        ),
+                                        child: const Text(
+                                          '下書きに保存する',
+                                          style: TextStyle(
+                                            color: kDarkPink,
+                                            fontSize: 16,
+                                            // fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                     ],

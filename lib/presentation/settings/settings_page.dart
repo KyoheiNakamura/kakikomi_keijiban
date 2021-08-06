@@ -13,6 +13,8 @@ import 'package:kakikomi_keijiban/presentation/update_push_notification/update_p
 import 'package:provider/provider.dart';
 
 class SettingsPage extends StatelessWidget with ShowConfirmDialogMixin {
+  SettingsPage({Key? key}) : super(key: key);
+
   final bool? isCurrentUserAnonymous =
       AppModel.user?.isCurrentUserAnonymous() ?? false;
   @override
@@ -92,12 +94,12 @@ class SettingsPage extends StatelessWidget with ShowConfirmDialogMixin {
                                 final isLoggedOut =
                                     await showLogoutConfirmDialog(context);
                                 if (isLoggedOut) {
-                                  model.signOut();
+                                  await model.signOut();
                                 }
-                                await Navigator.pushAndRemoveUntil(
+                                await Navigator.pushAndRemoveUntil<void>(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => HomePage(),
+                                    builder: (context) => const HomePage(),
                                   ),
                                   (_) => false,
                                 );
@@ -116,7 +118,7 @@ class SettingsPage extends StatelessWidget with ShowConfirmDialogMixin {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        SelectRegistrationMethodPage(),
+                                        const SelectRegistrationMethodPage(),
                                   ),
                                 );
                                 // Navigator.pop(context);

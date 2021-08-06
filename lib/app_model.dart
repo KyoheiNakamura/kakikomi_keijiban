@@ -1,7 +1,7 @@
 import 'dart:async';
 
-// ignore: library_prefixes
 import 'package:cloud_firestore/cloud_firestore.dart';
+// ignore: library_prefixes
 import 'package:firebase_auth/firebase_auth.dart' as Auth;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';

@@ -18,23 +18,23 @@ mixin ShowConfirmDialogMixin {
               const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           actions: <Widget>[
             TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
               child: const Text(
                 'キャンセル',
                 style: TextStyle(color: kDarkPink),
               ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
             ),
             TextButton(
-              child: const Text(
-                '破棄',
-                style: TextStyle(color: kDarkPink),
-              ),
               onPressed: () async {
                 Navigator.of(context).pop();
                 Navigator.of(context).pop(ValueFromShowConfirmDialog.discard);
               },
+              child: const Text(
+                '破棄',
+                style: TextStyle(color: kDarkPink),
+              ),
             ),
           ],
         );
@@ -58,27 +58,23 @@ mixin ShowConfirmDialogMixin {
               const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           actions: <Widget>[
             TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
               child: const Text(
                 'キャンセル',
                 style: TextStyle(color: kDarkPink),
               ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
             ),
             TextButton(
+              onPressed: () async {
+                isLoggedOut = true;
+                Navigator.of(context).pop();
+              },
               child: const Text(
                 'ログアウト',
                 style: TextStyle(color: kDarkPink),
               ),
-              onPressed: () async {
-                isLoggedOut = true;
-                Navigator.of(context).pop();                
-                // Navigator.of(context).pop(ValueFromShowConfirmDialog.logout);
-                // Navigator.of(context).popUntil(
-                //   ModalRoute.withName('/'),
-                // );
-              },
             ),
           ],
         );
@@ -101,13 +97,13 @@ mixin ShowConfirmDialogMixin {
               const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           actions: <Widget>[
             TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
               child: const Text(
                 'OK',
                 style: TextStyle(color: kDarkPink),
               ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
             ),
           ],
         );

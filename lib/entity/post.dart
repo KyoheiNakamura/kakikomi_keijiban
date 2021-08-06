@@ -119,7 +119,7 @@ class Post {
   }
 
   Map<String, dynamic> toMap() {
-    return {
+    return <String, dynamic>{
       PostField.id: id,
       PostField.userId: userId,
       PostField.title: title,
@@ -136,7 +136,7 @@ class Post {
       PostField.isReplyExisting: isReplyExisting,
       PostField.createdAt: createdAtFieldValue,
       PostField.updatedAt: updatedAtFieldValue,
-    }..removeWhere((key, value) => value == null);
+    }..removeWhere((key, dynamic value) => value == null);
   }
 
   // Map<String, dynamic> toMap() {

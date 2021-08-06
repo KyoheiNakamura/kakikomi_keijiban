@@ -8,8 +8,10 @@ import 'package:kakikomi_keijiban/presentation/update_profile/update_profile_mod
 import 'package:provider/provider.dart';
 
 class UpdateProfilePage extends StatelessWidget with ShowExceptionDialogMixin {
+  UpdateProfilePage({Key? key}) : super(key: key);
+
   final user = AppModel.user!;
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -174,23 +176,12 @@ class UpdateProfilePage extends StatelessWidget with ShowExceptionDialogMixin {
                                   Navigator.of(context).popUntil(
                                     ModalRoute.withName('/'),
                                   );
-                                } on String catch (e) {
-                                  await showExceptionDialog(
-                                    context,
-                                    e.toString(),
-                                  );
+                                } on Exception catch (e) {
+                                  await showExceptionDialog(context, e);
                                 }
                                 // Navigator.pop(context);
                               }
                             },
-                            child: const Text(
-                              '更新する',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                // fontWeight: FontWeight.bold,
-                              ),
-                            ),
                             style: OutlinedButton.styleFrom(
                               backgroundColor: kDarkPink,
                               padding: const EdgeInsets.symmetric(vertical: 12),
@@ -198,6 +189,14 @@ class UpdateProfilePage extends StatelessWidget with ShowExceptionDialogMixin {
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               side: const BorderSide(color: kDarkPink),
+                            ),
+                            child: const Text(
+                              '更新する',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                // fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ],

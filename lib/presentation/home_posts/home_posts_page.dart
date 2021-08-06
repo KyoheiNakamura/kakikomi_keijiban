@@ -13,6 +13,8 @@ import 'package:kakikomi_keijiban/presentation/search/search_page.dart';
 import 'package:provider/provider.dart';
 
 class HomePostsPage extends StatelessWidget {
+  const HomePostsPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<HomePostsModel>(
@@ -178,7 +180,8 @@ class TabBarViewChild extends StatelessWidget {
   const TabBarViewChild({
     required this.tabType,
     required this.model,
-  });
+    Key? key,
+  }) : super(key: key);
 
   final TabType tabType;
   final HomePostsModel model;
@@ -215,7 +218,6 @@ class TabBarViewChild extends StatelessWidget {
                                 post: post,
                                 indexOfPost: index,
                                 passedModel: model,
-                                tabType: tabType,
                               ),
                               post == posts.last && model.isLoading
                                   ? const CircularProgressIndicator()

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
+import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/common/text_process.dart';
@@ -28,8 +29,9 @@ class AddPostModel extends ChangeNotifier {
   String ageDropdownValue = kPleaseSelect;
   String areaDropdownValue = kPleaseSelect;
 
-  Future<void> addPost() async {
-    startLoading();
+  Future<void> addPost(BuildContext context) async {
+    // ignore: unawaited_futures
+    CommonLoadingDialog.instance.showDialog(context);
 
     final uid = auth.currentUser!.uid;
     final _batch = firestore.batch();
@@ -88,9 +90,10 @@ class AddPostModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('addPostのバッチ処理中のエラーです');
       print(e.toString());
-      throw 'エラーが発生しました。\nもう一度お試し下さい。';
+      throw Exception('エラーが発生しました。\nもう一度お試し下さい。');
     } finally {
-      stopLoading();
+      CommonLoadingDialog.instance.closeDialog();
+      // stopLoading();
     }
   }
 
@@ -123,7 +126,7 @@ class AddPostModel extends ChangeNotifier {
     } on Exception catch (e) {
       print('addDraftedPost処理中のエラーです');
       print(e.toString());
-      throw 'エラーが発生しました。\nもう一度お試し下さい。';
+      throw Exception('エラーが発生しました。\nもう一度お試し下さい。');
     } finally {
       stopLoading();
     }

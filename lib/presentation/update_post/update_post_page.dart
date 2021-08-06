@@ -20,18 +20,19 @@ class UpdatePostPage extends StatelessWidget
   UpdatePostPage({
     required this.existingPost,
     required this.passedModel,
-  });
+    Key? key,
+  }) : super(key: key);
 
   final Post existingPost;
   final dynamic passedModel;
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final FocusNode _focusNodeContent = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        showDiscardConfirmDialog(context);
+        await showDiscardConfirmDialog(context);
         return true;
       },
       child: ChangeNotifierProvider<UpdatePostModel>(
@@ -326,11 +327,8 @@ class UpdatePostPage extends StatelessWidget
                                         try {
                                           await model.updatePost();
                                           Navigator.pop(context);
-                                        } on String catch (e) {
-                                          await showExceptionDialog(
-                                            context,
-                                            e.toString(),
-                                          );
+                                        } on Exception catch (e) {
+                                          await showExceptionDialog(context, e);
                                         }
                                         // Navigator.of(context).popUntil(
                                         //   ModalRoute.withName('/'),
@@ -340,14 +338,6 @@ class UpdatePostPage extends StatelessWidget
                                             context);
                                       }
                                     },
-                                    child: const Text(
-                                      '更新する',
-                                      style: TextStyle(
-                                        color: kDarkPink,
-                                        fontSize: 16,
-                                        // fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
                                     style: OutlinedButton.styleFrom(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 12),
@@ -355,6 +345,14 @@ class UpdatePostPage extends StatelessWidget
                                         borderRadius: BorderRadius.circular(16),
                                       ),
                                       side: const BorderSide(color: kDarkPink),
+                                    ),
+                                    child: const Text(
+                                      '更新する',
+                                      style: TextStyle(
+                                        color: kDarkPink,
+                                        fontSize: 16,
+                                        // fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   )
                                 :
@@ -378,11 +376,9 @@ class UpdatePostPage extends StatelessWidget
                                                 ResultForDraftButton
                                                     .addPostFromDraft,
                                               );
-                                            } on String catch (e) {
+                                            } on Exception catch (e) {
                                               await showExceptionDialog(
-                                                context,
-                                                e.toString(),
-                                              );
+                                                  context, e);
                                             }
 
                                             // Navigator.of(context).popUntil(
@@ -393,14 +389,6 @@ class UpdatePostPage extends StatelessWidget
                                                 context);
                                           }
                                         },
-                                        child: const Text(
-                                          '投稿する',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                            // fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
                                         style: OutlinedButton.styleFrom(
                                           backgroundColor: kDarkPink,
                                           padding: const EdgeInsets.symmetric(
@@ -411,6 +399,14 @@ class UpdatePostPage extends StatelessWidget
                                           ),
                                           side: const BorderSide(
                                               color: kDarkPink),
+                                        ),
+                                        child: const Text(
+                                          '投稿する',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 16,
+                                            // fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                       const SizedBox(height: 16),
@@ -435,11 +431,9 @@ class UpdatePostPage extends StatelessWidget
                                                 ResultForDraftButton
                                                     .updateDraft,
                                               );
-                                            } on String catch (e) {
+                                            } on Exception catch (e) {
                                               await showExceptionDialog(
-                                                context,
-                                                e.toString(),
-                                              );
+                                                  context, e);
                                             }
                                             // Navigator.of(context).popUntil(
                                             //   ModalRoute.withName('/'),
@@ -449,14 +443,6 @@ class UpdatePostPage extends StatelessWidget
                                                 context);
                                           }
                                         },
-                                        child: const Text(
-                                          '下書きに保存する',
-                                          style: TextStyle(
-                                            color: kDarkPink,
-                                            fontSize: 16,
-                                            // fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
                                         style: OutlinedButton.styleFrom(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 12),
@@ -466,6 +452,14 @@ class UpdatePostPage extends StatelessWidget
                                           ),
                                           side: const BorderSide(
                                               color: kDarkPink),
+                                        ),
+                                        child: const Text(
+                                          '下書きに保存する',
+                                          style: TextStyle(
+                                            color: kDarkPink,
+                                            fontSize: 16,
+                                            // fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -489,7 +483,8 @@ class FilterChipWidget extends StatelessWidget {
   const FilterChipWidget({
     required this.chipName,
     required this.model,
-  });
+    Key? key,
+  }) : super(key: key);
 
   final String chipName;
   final UpdatePostModel model;

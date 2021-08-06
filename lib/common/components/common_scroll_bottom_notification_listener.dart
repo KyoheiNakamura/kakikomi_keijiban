@@ -6,7 +6,8 @@ class CommonScrollBottomNotificationListener extends StatelessWidget {
     required this.model,
     required this.child,
     this.tabType,
-  });
+    Key? key,
+  }) : super(key: key);
 
   final dynamic model;
   final Widget child;

@@ -6,11 +6,11 @@ import 'package:kakikomi_keijiban/common/components/reply_card/reply_card_model.
 import 'package:kakikomi_keijiban/common/components/reply_to_reply_card/reply_to_reply_card_model.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/presentation/home/home_page.dart';
-import 'package:kakikomi_keijiban/presentation/home_posts/home_posts_page.dart';
 import 'package:kakikomi_keijiban/presentation/splash_page.dart';
 import 'package:provider/provider.dart';
 
 class App extends StatelessWidget {
+  App({Key? key}) : super(key: key);
   final model = AppModel();
   @override
   Widget build(BuildContext context) {
@@ -54,9 +54,9 @@ class App extends StatelessWidget {
           future: model.init(),
           builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return SplashPage();
+              return const SplashPage();
             } else if (snapshot.connectionState == ConnectionState.done) {
-              return HomePage();
+              return const HomePage();
             } else {
               return const Center(
                 child: CircularProgressIndicator(),
