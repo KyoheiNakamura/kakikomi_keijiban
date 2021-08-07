@@ -20,7 +20,7 @@ class PostDetailPage extends StatelessWidget {
       create: (context) => PostDetailModel(
         posterId: posterId,
         postId: postId,
-      ),
+      )..init(),
       child: Scaffold(
         // backgroundColor: kLightPink,
         appBar: commonAppBar(title: '投稿'),

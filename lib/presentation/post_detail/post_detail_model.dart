@@ -16,6 +16,11 @@ class PostDetailModel extends ChangeNotifier
 
   Post? post;
 
+  Future<void> init() async {
+    await getPost();
+    notifyListeners();
+  }
+
   Future<void> getPost() async {
     final snapshot = await firestore
         .collection('users')

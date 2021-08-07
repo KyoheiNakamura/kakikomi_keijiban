@@ -29,7 +29,7 @@ mixin ShowConfirmDialogMixin {
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop();
-                Navigator.of(context).pop(ValueFromShowConfirmDialog.discard);
+                // Navigator.of(context).pop(ValueFromShowConfirmDialog.discard);
               },
               child: const Text(
                 '破棄',

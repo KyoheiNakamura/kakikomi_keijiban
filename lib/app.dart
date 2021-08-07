@@ -17,9 +17,9 @@ class App extends StatelessWidget {
     model.init();
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<PostCardModel>(
-          create: (context) => PostCardModel(),
-        ),
+        // ChangeNotifierProvider<PostCardModel>(
+        //   create: (context) => PostCardModel(),
+        // ),
         ChangeNotifierProvider<ReplyCardModel>(
           create: (context) => ReplyCardModel(),
         ),
@@ -42,6 +42,7 @@ class App extends StatelessWidget {
             iconTheme: IconThemeData(color: Colors.grey),
             textTheme: TextTheme(headline6: kAppBarTextStyle),
           ),
+          scaffoldBackgroundColor: kbackGroundGrey,
           fontFamily: 'GenShinGothic',
           pageTransitionsTheme: const PageTransitionsTheme(
             builders: <TargetPlatform, PageTransitionsBuilder>{

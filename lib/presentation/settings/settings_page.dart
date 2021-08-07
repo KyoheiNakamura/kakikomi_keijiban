@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/app_model.dart';
 import 'package:kakikomi_keijiban/common/components/common_app_bar.dart';
+import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
+import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/presentation/home/home_page.dart';
 import 'package:kakikomi_keijiban/presentation/select_registration_method/select_registration_method_page.dart';
 import 'package:kakikomi_keijiban/presentation/settings/settings_model.dart';
@@ -12,7 +14,8 @@ import 'package:kakikomi_keijiban/presentation/update_profile/update_profile_pag
 import 'package:kakikomi_keijiban/presentation/update_push_notification/update_push_notification_page.dart';
 import 'package:provider/provider.dart';
 
-class SettingsPage extends StatelessWidget with ShowConfirmDialogMixin {
+class SettingsPage extends StatelessWidget
+    with ShowConfirmDialogMixin, ShowExceptionDialogMixin {
   SettingsPage({Key? key}) : super(key: key);
 
   final bool? isCurrentUserAnonymous =
@@ -94,15 +97,19 @@ class SettingsPage extends StatelessWidget with ShowConfirmDialogMixin {
                                 final isLoggedOut =
                                     await showLogoutConfirmDialog(context);
                                 if (isLoggedOut) {
-                                  await model.signOut();
+                                  try {
+                                    await model.signOut();
+                                  } on Exception catch (e) {
+                                    await showExceptionDialog(context, e);
+                                  }
+                                  await Navigator.pushAndRemoveUntil<void>(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (context) => const HomePage(),
+                                    ),
+                                    (_) => false,
+                                  );
                                 }
-                                await Navigator.pushAndRemoveUntil<void>(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const HomePage(),
-                                  ),
-                                  (_) => false,
-                                );
                                 // Navigator.pop(context);
                               },
                             ),
@@ -125,13 +132,29 @@ class SettingsPage extends StatelessWidget with ShowConfirmDialogMixin {
                               },
                             ),
                             const SizedBox(height: 32),
-                            const Text(
-                              'データの損失を防ぐために、会員登録をおすすめします。\n'
-                              '会員登録をした後も現在のデータは引き継がれます。 ',
-                              style: TextStyle(
-                                fontSize: 17,
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.9,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: kDarkPink,
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 20,
+                                ),
+                                child: const Text(
+                                  'データの損失を防ぐために、会員登録をおすすめします。\n'
+                                  '会員登録をした後も現在のデータは引き継がれます。 ',
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                  ),
+                                  textAlign: TextAlign.start,
+                                ),
                               ),
-                              textAlign: TextAlign.start,
                             ),
                           ],
                         ),

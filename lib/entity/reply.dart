@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/entity/reply_to_reply.dart';
+import 'package:kakikomi_keijiban/util/date_util.dart';
 
 class Reply {
   Reply(DocumentSnapshot doc) {
@@ -16,8 +17,10 @@ class Reply {
     age = doc['age'] != '' ? doc['age'] as String : '';
     area = doc['area'] != '' ? doc['area'] as String : '';
     empathyCount = doc['empathyCount'] as int;
-    createdDate = (doc['createdAt'] as Timestamp).toDate();
-    updatedDate = (doc['updatedAt'] as Timestamp).toDate();
+    // createdDate = (doc['createdAt'] as Timestamp).toDate();
+    createdDate = doc['createdAt'] as Timestamp;
+    // updatedDate = (doc['updatedAt'] as Timestamp).toDate();
+    updatedDate = doc['updatedAt'] as Timestamp;
   }
 
   String id = '';
@@ -31,15 +34,15 @@ class Reply {
   String age = '';
   String area = '';
   int empathyCount = 0;
-  DateTime createdDate = DateTime.now();
-  DateTime updatedDate = DateTime.now();
+  Timestamp createdDate = Timestamp.now();
+  Timestamp updatedDate = Timestamp.now();
 
   bool isDraft = false;
   bool isEmpathized = false;
   List<ReplyToReply> repliesToReply = [];
 
-  String get createdAt => _formatDate(createdDate);
-  String get updatedAt => _formatDate(updatedDate);
+  String get createdAt => DateUtil.formatTimestampToString(createdDate);
+  String get updatedAt => DateUtil.formatTimestampToString(createdDate);
 
   String _formatDate(DateTime date) {
     final formatter = DateFormat('yyyy/MM/dd HH:mm');

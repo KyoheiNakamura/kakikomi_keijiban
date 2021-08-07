@@ -27,12 +27,9 @@ class CommonPostsPage extends StatelessWidget {
         searchWord: searchWord,
       )..init(),
       child: Scaffold(
-        // backgroundColor: kLightPink,
-        appBar:
-            //commonAppBar(title: '$type'),
-            title != null
-                ? commonAppBar(title: searchWord == null ? title! : searchWord!)
-                : null,
+        appBar: title != null
+            ? commonAppBar(title: searchWord == null ? title! : searchWord!)
+            : null,
         body: Consumer<CommonPostsModel>(
           builder: (context, model, child) {
             final posts = model.posts;

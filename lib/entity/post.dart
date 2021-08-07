@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:kakikomi_keijiban/common/firebase_util.dart';
 import 'package:kakikomi_keijiban/entity/reply.dart';
+import 'package:kakikomi_keijiban/util/date_util.dart';
 
 // enum PostField {
 //   id,
@@ -204,12 +205,15 @@ class Post {
   bool isDraft = false;
   List<Reply> replies = [];
 
-  String get createdDate => _formatDate(createdAt!);
-  String get updatedDate => _formatDate(createdAt!);
+  // String get createdDate => _formatDate(createdAt!);
+  String get createdDate => DateUtil.formatTimestampToString(createdAt!);
+  // String get updatedDate => _formatDate(updatedAt!);
+  String get updatedDate => DateUtil.formatTimestampToString(updatedAt!);
 
   String _formatDate(Timestamp timestamp) {
     final date = timestamp.toDate();
-    final formatter = DateFormat('yyyy/MM/dd HH:mm');
+    // final formatter = DateFormat('yyyy/MM/dd HH:mm');
+    final formatter = DateFormat('MM/dd HH:mm');
     return formatter.format(date);
   }
 

@@ -4,11 +4,13 @@ const Color kDeepDarkPink = Color(0xFFa54352);
 const Color kDarkPink = Color(0xFFDC5A6E);
 const Color kPink = Color(0xFFf3d4d8);
 const Color kLightPink = Color(0xFFFCF0F5);
+const Color kLightPink2 = Color(0xFFfce4ec);
 const Color kUltraLightPink = Color(0xFFFFF7FA);
 const Color kDarkGrey = Color(0xFF646464);
 const Color kGrey = Color(0xFFa0a0a0);
 const Color kLightGrey = Colors.grey;
 const Color kUltraLightGrey = Color(0xFFe0e0e0);
+const Color kbackGroundGrey = Color(0xFFEEEEEE);
 
 const String kOnBoardingDoneKey = 'onBoardingDone';
 
@@ -70,7 +72,8 @@ const List<String> kCategoryList = [
   'LD',
   // 'SLD(限局性学習障害)',
   '大人の発達障害',
-  '発達障害グレーゾーン',
+  // '発達障害グレーゾーン',
+  'グレーゾーン',
   'アスペルガー',
   'カサンドラ',
   '広汎性発達障害',

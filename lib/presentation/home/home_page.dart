@@ -12,16 +12,16 @@ import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
-  List<Widget> get _pageList => const [
-        CommonPostsPage(type: CommonPostsType.homePosts),
-        SearchPage(),
-        // AddPostPage(),
-        NoticesPage(),
-        MyPage(),
-      ];
 
   @override
   Widget build(BuildContext context) {
+    const _pageList = [
+      CommonPostsPage(type: CommonPostsType.homePosts),
+      SearchPage(),
+      // AddPostPage(),
+      NoticesPage(),
+      MyPage(),
+    ];
     return WillPopScope(
       onWillPop: () async => false,
       child: ChangeNotifierProvider<HomeModel>(
@@ -139,7 +139,7 @@ class CustomAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      elevation: .5,
+      // elevation: .5,
       child: Row(
         children: [
           Expanded(
@@ -195,7 +195,8 @@ class CustomAppBar extends StatelessWidget {
                       //     .endFavoriteRecipeFiltering();
                     },
                   ),
-                  fillColor: Colors.grey[200],
+                  // fillColor: kbackGroundGrey,
+                  fillColor: kbackGroundGrey,
                   filled: true,
                 ),
                 style: const TextStyle(
