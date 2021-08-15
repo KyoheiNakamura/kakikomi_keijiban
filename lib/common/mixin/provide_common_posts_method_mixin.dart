@@ -4,6 +4,9 @@ import 'package:kakikomi_keijiban/entity/empathized_post.dart';
 import 'package:kakikomi_keijiban/entity/post.dart';
 import 'package:kakikomi_keijiban/entity/reply.dart';
 import 'package:kakikomi_keijiban/entity/reply_to_reply.dart';
+import 'package:kakikomi_keijiban/repository/bookmark_repository.dart';
+import 'package:kakikomi_keijiban/repository/empathy_repository.dart';
+import 'package:kakikomi_keijiban/repository/post_repository.dart';
 
 mixin ProvideCommonPostsMethodMixin {
   Future<List<String>> getBookmarkedPostsIds() async {
@@ -18,10 +21,11 @@ mixin ProvideCommonPostsMethodMixin {
     return bookmarkedPostsIds;
   }
 
-  Future<void> addBookmark(
+  void addBookmark(
     List<dynamic> list,
-    List<String> bookmarkedPostsIds,
-  ) async {
+    // List<String> bookmarkedPostsIds,
+  ) {
+    final bookmarkedPostsIds = BookmarkRepository.instance.bookmarkedPostsIds;
     for (var i = 0; i < list.length; i++) {
       for (var n = 0; n < bookmarkedPostsIds.length; n++) {
         if (list[i].id == bookmarkedPostsIds[n]) {
@@ -43,8 +47,11 @@ mixin ProvideCommonPostsMethodMixin {
     return empathizedPostsIds;
   }
 
-  Future<void> addEmpathy(
-      List<dynamic> list, List<String> empathizedPostsIds) async {
+  void addEmpathy(
+    List<dynamic> list,
+    // List<String> empathizedPostsIds,
+  ) {
+    final empathizedPostsIds = EmpathyRepository.instance.empathizedPostsIds;
     for (var i = 0; i < list.length; i++) {
       for (var n = 0; n < empathizedPostsIds.length; n++) {
         if (list[i].id == empathizedPostsIds[n]) {
@@ -54,32 +61,92 @@ mixin ProvideCommonPostsMethodMixin {
     }
   }
 
-  Future<void> getReplies(
-      List<Post> _posts, List<String> empathizedPostsId) async {
-    for (var i = 0; i < _posts.length; i++) {
-      final post = _posts[i];
-      final querySnapshot = await firestore
-          .collection('users')
-          .doc(post.userId)
-          .collection('posts')
-          .doc(post.id)
-          .collection('replies')
-          .orderBy('createdAt')
-          .get();
-      final docs = querySnapshot.docs;
-      final _replies = docs.map((doc) => Reply(doc)).toList();
-      await addEmpathy(_replies, empathizedPostsId);
-      post.replies = _replies;
-
-      await _getRepliesToReply(_replies, empathizedPostsId);
-    }
+  Query<Map<String, dynamic>> getRepliesQuery({
+    required Post post,
+    required int loadLimit,
+  }) {
+    return firestore
+        .collection('users')
+        .doc(post.userId)
+        .collection('posts')
+        .doc(post.id)
+        .collection('replies')
+        .orderBy('createdAt')
+        .limit(loadLimit);
   }
 
-  Future<void> _getRepliesToReply(
-      List<Reply> _replies, List<String> empathizedPostsId) async {
-    for (var i = 0; i < _replies.length; i++) {
-      final reply = _replies[i];
-      final _querySnapshot = await firestore
+  Query<Map<String, dynamic>> loadRepliesQuery({
+    required Post post,
+    required int loadLimit,
+    required DocumentSnapshot<Object?> lastVisibleOfTheBatch,
+  }) {
+    return firestore
+        .collection('users')
+        .doc(post.userId)
+        .collection('posts')
+        .doc(post.id)
+        .collection('replies')
+        .orderBy('createdAt')
+        .startAfterDocument(lastVisibleOfTheBatch)
+        .limit(loadLimit);
+  }
+
+  Future<List<Reply>> getReplies(
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
+  ) async {
+    final replies = docs.map((doc) => Reply(doc)).toList();
+    addEmpathy(replies);
+    await getRepliesToReply(replies);
+    return replies;
+  }
+
+  // Future<void> getReplies(Post post) async {
+  //   final querySnapshot = await firestore
+  //       .collection('users')
+  //       .doc(post.userId)
+  //       .collection('posts')
+  //       .doc(post.id)
+  //       .collection('replies')
+  //       .orderBy('createdAt')
+  //       .get();
+  //   final docs = querySnapshot.docs;
+  //   final replies = docs.map((doc) => Reply(doc)).toList();
+  //   addEmpathy(replies);
+  //   post.replies = replies;
+
+  //   await getRepliesToReply(replies);
+  // }
+
+  // Future<void> getReplies(
+  //   List<Post> _posts,
+  //   // List<String> empathizedPostsIds,
+  // ) async {
+  //   for (var i = 0; i < _posts.length; i++) {
+  //     final post = _posts[i];
+  //     final querySnapshot = await firestore
+  //         .collection('users')
+  //         .doc(post.userId)
+  //         .collection('posts')
+  //         .doc(post.id)
+  //         .collection('replies')
+  //         .orderBy('createdAt')
+  //         .get();
+  //     final docs = querySnapshot.docs;
+  //     final _replies = docs.map((doc) => Reply(doc)).toList();
+  //     addEmpathy(_replies);
+  //     post.replies = _replies;
+
+  //     await getRepliesToReply(_replies);
+  //   }
+  // }
+
+  Future<void> getRepliesToReply(
+    List<Reply> replies,
+    // List<String> empathizedPostsId,
+  ) async {
+    for (var i = 0; i < replies.length; i++) {
+      final reply = replies[i];
+      final querySnapshot = await firestore
           .collection('users')
           .doc(reply.userId)
           .collection('posts')
@@ -89,10 +156,10 @@ mixin ProvideCommonPostsMethodMixin {
           .collection('repliesToReply')
           .orderBy('createdAt')
           .get();
-      final _docs = _querySnapshot.docs;
-      final _repliesToReplies = _docs.map((doc) => ReplyToReply(doc)).toList();
-      await addEmpathy(_repliesToReplies, empathizedPostsId);
-      reply.repliesToReply = _repliesToReplies;
+      final docs = querySnapshot.docs;
+      final repliesToReplies = docs.map((doc) => ReplyToReply(doc)).toList();
+      addEmpathy(repliesToReplies);
+      reply.repliesToReply = repliesToReplies;
     }
   }
 
@@ -278,9 +345,9 @@ mixin ProvideCommonPostsMethodMixin {
         .doc(oldPost.id)
         .get();
     final newPost = Post.fromDoc(doc);
-    await addBookmark(<Post>[newPost], bookmarkedPostsIds);
-    await addEmpathy(<Post>[newPost], empathizedPostsIds);
-    await getReplies([newPost], empathizedPostsIds);
+    addBookmark(<Post>[newPost]);
+    addEmpathy(<Post>[newPost]);
+    // await getReplies(newPost);
 
     posts
       // 更新前のpostをpostsから削除

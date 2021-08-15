@@ -77,7 +77,8 @@ class CommonLoadingDialog {
     await showGeneralDialog(
       context: context,
       barrierDismissible: false,
-      barrierColor: Colors.black.withOpacity(0.1),
+      // barrierColor: Colors.black.withOpacity(0.1),
+      barrierColor: Colors.transparent,
       pageBuilder: (_, __, ___) {
         return const Center(
           child: CircularProgressIndicator(),

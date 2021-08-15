@@ -80,23 +80,23 @@ class Post {
 
   Post.fromDoc(DocumentSnapshot snapshot) {
     final map = snapshot.data()! as Map<String, dynamic>;
-    id = map[PostField.id] as String;
-    userId = map[PostField.userId] as String;
-    title = map[PostField.title] as String;
-    body = map[PostField.body] as String;
-    nickname = map[PostField.nickname] as String;
-    emotion = map[PostField.emotion] as String;
-    position = map[PostField.position] as String;
-    gender = map[PostField.gender] as String;
-    age = map[PostField.age] as String;
-    area = map[PostField.area] as String;
-    final _categories = map[PostField.categories] as List<dynamic>;
-    categories = List<String>.from(_categories);
-    replyCount = map[PostField.replyCount] as int;
-    empathyCount = map[PostField.empathyCount] as int;
-    isReplyExisting = map[PostField.isReplyExisting] as bool;
-    createdAt = map[PostField.createdAt] as Timestamp;
-    updatedAt = map[PostField.updatedAt] as Timestamp;
+    id = map[PostField.id] as String?;
+    userId = map[PostField.userId] as String?;
+    title = map[PostField.title] as String?;
+    body = map[PostField.body] as String?;
+    nickname = map[PostField.nickname] as String?;
+    emotion = map[PostField.emotion] as String?;
+    position = map[PostField.position] as String?;
+    gender = map[PostField.gender] as String?;
+    age = map[PostField.age] as String?;
+    area = map[PostField.area] as String?;
+    final _categories = map[PostField.categories] as List<dynamic>?;
+    categories = List<String?>.from(_categories ?? <String>[]);
+    replyCount = map[PostField.replyCount] as int?;
+    empathyCount = map[PostField.empathyCount] as int?;
+    isReplyExisting = map[PostField.isReplyExisting] as bool?;
+    createdAt = map[PostField.createdAt] as Timestamp?;
+    updatedAt = map[PostField.updatedAt] as Timestamp?;
   }
 
   Post.fromMap(Map<String, dynamic> map) {
@@ -171,7 +171,7 @@ class Post {
   String? gender;
   String? age;
   String? area;
-  List<String>? categories;
+  List<String?>? categories;
   FieldValue? replyCountFieldValue;
   int? replyCount;
   FieldValue? empathyCountFieldValue;
@@ -208,14 +208,15 @@ class Post {
   // String get createdDate => _formatDate(createdAt!);
   String get createdDate => DateUtil.formatTimestampToString(createdAt!);
   // String get updatedDate => _formatDate(updatedAt!);
-  String get updatedDate => DateUtil.formatTimestampToString(updatedAt!);
+  String get updatedDate =>
+      DateUtil.formatTimestampToString(updatedAt ?? Timestamp.now());
 
-  String _formatDate(Timestamp timestamp) {
-    final date = timestamp.toDate();
-    // final formatter = DateFormat('yyyy/MM/dd HH:mm');
-    final formatter = DateFormat('MM/dd HH:mm');
-    return formatter.format(date);
-  }
+  // String _formatDate(Timestamp timestamp) {
+  //   final date = timestamp.toDate();
+  //   // final formatter = DateFormat('yyyy/MM/dd HH:mm');
+  //   final formatter = DateFormat('MM/dd HH:mm');
+  //   return formatter.format(date);
+  // }
 
   bool isMe() {
     final currentUser = auth.currentUser;

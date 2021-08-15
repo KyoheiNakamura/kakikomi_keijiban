@@ -19,12 +19,12 @@ class UpdatePostPage extends StatelessWidget
         ShowExceptionDialogMixin {
   UpdatePostPage({
     required this.existingPost,
-    required this.passedModel,
+    // required this.passedModel,
     Key? key,
   }) : super(key: key);
 
   final Post existingPost;
-  final dynamic passedModel;
+  // final dynamic passedModel;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final FocusNode _focusNodeContent = FocusNode();
 
@@ -319,151 +319,138 @@ class UpdatePostPage extends StatelessWidget
                             ),
 
                             /// 投稿更新ボタン
-                            passedModel is! DraftsModel
-                                ? OutlinedButton(
-                                    onPressed: () async {
-                                      if (model.validateSelectedCategories() &&
-                                          _formKey.currentState!.validate()) {
-                                        try {
-                                          await model.updatePost();
-                                          Navigator.pop(context);
-                                        } on Exception catch (e) {
-                                          await showExceptionDialog(context, e);
-                                        }
-                                        // Navigator.of(context).popUntil(
-                                        //   ModalRoute.withName('/'),
-                                        // );
-                                      } else {
-                                        await showRequiredInputConfirmDialog(
-                                            context);
-                                      }
-                                    },
-                                    style: OutlinedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 12),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      side: const BorderSide(color: kDarkPink),
-                                    ),
-                                    child: const Text(
-                                      '更新する',
-                                      style: TextStyle(
-                                        color: kDarkPink,
-                                        fontSize: 16,
-                                        // fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  )
-                                :
+                            // passedModel is! DraftsModel
+                            // ?
+                            OutlinedButton(
+                              onPressed: () async {
+                                if (model.validateSelectedCategories() &&
+                                    _formKey.currentState!.validate()) {
+                                  try {
+                                    await model.updatePost();
+                                    Navigator.pop(context);
+                                  } on Exception catch (e) {
+                                    await showExceptionDialog(context, e);
+                                  }
+                                  // Navigator.of(context).popUntil(
+                                  //   ModalRoute.withName('/'),
+                                  // );
+                                } else {
+                                  await showRequiredInputConfirmDialog(context);
+                                }
+                              },
+                              style: OutlinedButton.styleFrom(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 12),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                side: const BorderSide(color: kDarkPink),
+                              ),
+                              child: const Text(
+                                '更新する',
+                                style: TextStyle(
+                                  color: kDarkPink,
+                                  fontSize: 16,
+                                  // fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )
+                            // :
 
-                                /// 投稿送信ボタン
-                                Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      OutlinedButton(
-                                        onPressed: () async {
-                                          if (model
-                                                  .validateSelectedCategories() &&
-                                              _formKey.currentState!
-                                                  .validate()) {
-                                            try {
-                                              await model.addPostFromDraft(
-                                                  existingPost);
-                                              Navigator.pop(
-                                                context,
-                                                ResultForDraftButton
-                                                    .addPostFromDraft,
-                                              );
-                                            } on Exception catch (e) {
-                                              await showExceptionDialog(
-                                                  context, e);
-                                            }
+                            // /// 投稿送信ボタン
+                            // Column(
+                            //   crossAxisAlignment: CrossAxisAlignment.stretch,
+                            //   children: [
+                            //     OutlinedButton(
+                            //       onPressed: () async {
+                            //         if (model.validateSelectedCategories() &&
+                            //             _formKey.currentState!.validate()) {
+                            //           try {
+                            //             await model
+                            //                 .addPostFromDraft(existingPost);
+                            //             Navigator.pop(
+                            //               context,
+                            //               ResultForDraftButton.addPostFromDraft,
+                            //             );
+                            //           } on Exception catch (e) {
+                            //             await showExceptionDialog(context, e);
+                            //           }
 
-                                            // Navigator.of(context).popUntil(
-                                            //   ModalRoute.withName('/'),
-                                            // );
-                                          } else {
-                                            await showRequiredInputConfirmDialog(
-                                                context);
-                                          }
-                                        },
-                                        style: OutlinedButton.styleFrom(
-                                          backgroundColor: kDarkPink,
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 12),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(16),
-                                          ),
-                                          side: const BorderSide(
-                                              color: kDarkPink),
-                                        ),
-                                        child: const Text(
-                                          '投稿する',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                            // fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 16),
+                            //           // Navigator.of(context).popUntil(
+                            //           //   ModalRoute.withName('/'),
+                            //           // );
+                            //         } else {
+                            //           await showRequiredInputConfirmDialog(
+                            //               context);
+                            //         }
+                            //       },
+                            //       style: OutlinedButton.styleFrom(
+                            //         backgroundColor: kDarkPink,
+                            //         padding: const EdgeInsets.symmetric(
+                            //             vertical: 12),
+                            //         shape: RoundedRectangleBorder(
+                            //           borderRadius: BorderRadius.circular(16),
+                            //         ),
+                            //         side: const BorderSide(color: kDarkPink),
+                            //       ),
+                            //       child: const Text(
+                            //         '投稿する',
+                            //         style: TextStyle(
+                            //           color: Colors.white,
+                            //           fontSize: 16,
+                            //           // fontWeight: FontWeight.bold,
+                            //         ),
+                            //       ),
+                            //     ),
+                            //     const SizedBox(height: 16),
 
-                                      /// 下書き保存ボタン
-                                      OutlinedButton(
-                                        onPressed: () async {
-                                          if (model
-                                                  .validateSelectedCategories() &&
-                                              _formKey.currentState!
-                                                  .validate()) {
-                                            try {
-                                              await model.updateDraftPost(
-                                                  existingPost);
-                                              const snackBar = SnackBar(
-                                                content: Text('下書きに保存しました'),
-                                              );
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(snackBar);
-                                              Navigator.pop(
-                                                context,
-                                                ResultForDraftButton
-                                                    .updateDraft,
-                                              );
-                                            } on Exception catch (e) {
-                                              await showExceptionDialog(
-                                                  context, e);
-                                            }
-                                            // Navigator.of(context).popUntil(
-                                            //   ModalRoute.withName('/'),
-                                            // );
-                                          } else {
-                                            await showRequiredInputConfirmDialog(
-                                                context);
-                                          }
-                                        },
-                                        style: OutlinedButton.styleFrom(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 12),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(16),
-                                          ),
-                                          side: const BorderSide(
-                                              color: kDarkPink),
-                                        ),
-                                        child: const Text(
-                                          '下書きに保存する',
-                                          style: TextStyle(
-                                            color: kDarkPink,
-                                            fontSize: 16,
-                                            // fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                            //     /// 下書き保存ボタン
+                            //     OutlinedButton(
+                            //       onPressed: () async {
+                            //         if (model.validateSelectedCategories() &&
+                            //             _formKey.currentState!.validate()) {
+                            //           try {
+                            //             await model
+                            //                 .updateDraftPost(existingPost);
+                            //             const snackBar = SnackBar(
+                            //               content: Text('下書きに保存しました'),
+                            //             );
+                            //             ScaffoldMessenger.of(context)
+                            //                 .showSnackBar(snackBar);
+                            //             Navigator.pop(
+                            //               context,
+                            //               ResultForDraftButton.updateDraft,
+                            //             );
+                            //           } on Exception catch (e) {
+                            //             await showExceptionDialog(context, e);
+                            //           }
+                            //           // Navigator.of(context).popUntil(
+                            //           //   ModalRoute.withName('/'),
+                            //           // );
+                            //         } else {
+                            //           await showRequiredInputConfirmDialog(
+                            //               context);
+                            //         }
+                            //       },
+                            //       style: OutlinedButton.styleFrom(
+                            //         padding: const EdgeInsets.symmetric(
+                            //             vertical: 12),
+                            //         shape: RoundedRectangleBorder(
+                            //           borderRadius: BorderRadius.circular(16),
+                            //         ),
+                            //         side: const BorderSide(color: kDarkPink),
+                            //       ),
+                            //       child: const Text(
+                            //         '下書きに保存する',
+                            //         style: TextStyle(
+                            //           color: kDarkPink,
+                            //           fontSize: 16,
+                            //           // fontWeight: FontWeight.bold,
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   ],
+                            // ),
                           ],
                         ),
                       ),

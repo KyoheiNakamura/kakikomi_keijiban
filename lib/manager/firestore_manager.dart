@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 enum CommonPostsType {
-  homePosts,
+  newPosts,
   bookmarkedPosts,
   empathizedPosts,
   myPosts,
@@ -24,11 +24,11 @@ class FireStoreManager {
     String? searchWord,
   }) {
     switch (type) {
-      case CommonPostsType.homePosts:
-      return _getHomePostsQuery(loadLimit: loadLimit);
+      case CommonPostsType.newPosts:
+        return _getNewPostsQuery(loadLimit: loadLimit);
       case CommonPostsType.bookmarkedPosts:
         return _getBookmarkedPostsQuery(loadLimit: loadLimit);
-        case CommonPostsType.empathizedPosts:
+      case CommonPostsType.empathizedPosts:
         return _getEmpathizedPostsQuery(loadLimit: loadLimit);
       case CommonPostsType.myPosts:
         return _getMyPostsQuery(loadLimit: loadLimit);
@@ -39,7 +39,7 @@ class FireStoreManager {
           loadLimit: loadLimit,
           postField: postField!,
           searchWord: searchWord!,
-        );      
+        );
     }
   }
 
@@ -51,8 +51,8 @@ class FireStoreManager {
     String? searchWord,
   }) {
     switch (type) {
-      case CommonPostsType.homePosts:
-      return _loadHomePostsQuery(
+      case CommonPostsType.newPosts:
+        return _loadNewPostsQuery(
           loadLimit: loadLimit,
           lastVisibleOfTheBatch: lastVisibleOfTheBatch,
         );
@@ -86,7 +86,7 @@ class FireStoreManager {
     }
   }
 
-  Query<Map<String, dynamic>> _getHomePostsQuery({
+  Query<Map<String, dynamic>> _getNewPostsQuery({
     required int loadLimit,
   }) {
     return firestore
@@ -95,7 +95,7 @@ class FireStoreManager {
         .limit(loadLimit);
   }
 
-  Query<Map<String, dynamic>> _loadHomePostsQuery({
+  Query<Map<String, dynamic>> _loadNewPostsQuery({
     required int loadLimit,
     required DocumentSnapshot<Object?> lastVisibleOfTheBatch,
   }) {

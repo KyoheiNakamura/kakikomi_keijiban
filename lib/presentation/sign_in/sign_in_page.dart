@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kakikomi_keijiban/common/components/common_loading_spinner.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
-import 'package:kakikomi_keijiban/presentation/home/home_page.dart';
+import 'package:kakikomi_keijiban/presentation/main/main_page.dart';
 import 'package:kakikomi_keijiban/presentation/sign_in/sign_in_model.dart';
 import 'package:provider/provider.dart';
 
@@ -67,7 +67,7 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                                     await Navigator.pushAndRemoveUntil<void>(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => const HomePage(),
+                                        builder: (context) => const MainPage(),
                                       ),
                                       (_) => false,
                                     );
@@ -116,7 +116,7 @@ class SignInPage extends StatelessWidget with ShowExceptionDialogMixin {
                                   await Navigator.pushAndRemoveUntil<void>(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const HomePage(),
+                                      builder: (context) => const MainPage(),
                                     ),
                                     (_) => false,
                                   );

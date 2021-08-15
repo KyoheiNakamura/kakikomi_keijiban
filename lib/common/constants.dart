@@ -11,6 +11,7 @@ const Color kGrey = Color(0xFFa0a0a0);
 const Color kLightGrey = Colors.grey;
 const Color kUltraLightGrey = Color(0xFFe0e0e0);
 const Color kbackGroundGrey = Color(0xFFEEEEEE);
+const Color kbackGroundWhite = Color(0xFFFFFFFF);
 
 const String kOnBoardingDoneKey = 'onBoardingDone';
 
@@ -31,6 +32,64 @@ const List<String> kInitialpushNoticesSetting = [
 
 const String kPleaseSelect = '選択してください';
 const String kDoNotSelect = '選択しない';
+
+enum Emotion {
+  happy,
+  tough,
+  anger,
+  advice,
+  question,
+  proposal,
+  problem,
+  support,
+  announcement,
+}
+
+String emotinoDescription(Emotion emotion) {
+  switch (emotion) {
+    case Emotion.happy:
+      return 'うれしい';
+    case Emotion.tough:
+      return 'つらい';
+    case Emotion.anger:
+      return 'いかり';
+    case Emotion.advice:
+      return '相談';
+    case Emotion.question:
+      return '疑問';
+    case Emotion.proposal:
+      return '提案';
+    case Emotion.problem:
+      return '悩み';
+    case Emotion.support:
+      return 'エール';
+    case Emotion.announcement:
+      return '呼びかけ';
+  }
+}
+
+String emotinoImage(Emotion emotion) {
+  switch (emotion) {
+    case Emotion.happy:
+      return 'lib/assets/images/happy_transparent.png';
+    case Emotion.tough:
+      return 'lib/assets/images/tough_transparent.png';
+    case Emotion.anger:
+      return 'lib/assets/images/anger_transparent.png';
+    case Emotion.advice:
+      return 'lib/assets/images/advice_transparent.png';
+    case Emotion.question:
+      return 'lib/assets/images/question_transparent.png';
+    case Emotion.proposal:
+      return 'lib/assets/images/proposal_transparent.png';
+    case Emotion.problem:
+      return 'lib/assets/images/problem_transparent.png';
+    case Emotion.support:
+      return 'lib/assets/images/support_transparent.png';
+    case Emotion.announcement:
+      return 'lib/assets/images/announcement_transparent.png';
+  }
+}
 
 const Map<String, String> kEmotionIcons = {
   'うれしい': 'lib/assets/images/happy_transparent.png',
@@ -345,7 +404,7 @@ const kAppBarTextStyle = TextStyle(
 );
 
 const kBodyTextStyle = TextStyle(
-  fontSize: 16,
+  fontSize: 15,
   height: 1.8,
   color: Colors.black,
   fontFamily: 'GenShinGothic',

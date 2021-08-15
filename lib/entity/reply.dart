@@ -12,15 +12,17 @@ class Reply {
     replierId = doc['replierId'] as String;
     body = doc['body'] as String;
     nickname = doc['nickname'] as String;
+    emotion = doc['emotion'] as String;
     position = doc['position'] != '' ? doc['position'] as String : '';
     gender = doc['gender'] != '' ? doc['gender'] as String : '';
     age = doc['age'] != '' ? doc['age'] as String : '';
     area = doc['area'] != '' ? doc['area'] as String : '';
+    replyCount = doc['replyCount'] as int;
     empathyCount = doc['empathyCount'] as int;
     // createdDate = (doc['createdAt'] as Timestamp).toDate();
-    createdDate = doc['createdAt'] as Timestamp;
+    createdDate = doc['createdAt'] as Timestamp? ?? Timestamp.now();
     // updatedDate = (doc['updatedAt'] as Timestamp).toDate();
-    updatedDate = doc['updatedAt'] as Timestamp;
+    updatedDate = doc['updatedAt'] as Timestamp? ?? Timestamp.now();
   }
 
   String id = '';
@@ -29,10 +31,12 @@ class Reply {
   String replierId = '';
   String body = '';
   String nickname = '';
+  String emotion = '';
   String position = '';
   String gender = '';
   String age = '';
   String area = '';
+  int replyCount = 0;
   int empathyCount = 0;
   Timestamp createdDate = Timestamp.now();
   Timestamp updatedDate = Timestamp.now();

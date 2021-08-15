@@ -11,6 +11,7 @@ class ReplyToReply {
     replierId = doc['replierId'] as String;
     body = doc['body'] as String;
     nickname = doc['nickname'] as String;
+    emotion = doc['emotion'] as String;
     position = doc['position'] != '' ? doc['position'] as String : '';
     gender = doc['gender'] != '' ? doc['gender'] as String : '';
     age = doc['age'] != '' ? doc['age'] as String : '';
@@ -27,6 +28,7 @@ class ReplyToReply {
   String replierId = '';
   String body = '';
   String nickname = '';
+  String emotion = '';
   String position = '';
   String gender = '';
   String age = '';

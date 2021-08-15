@@ -36,7 +36,7 @@ class UpdatePostModel extends ChangeNotifier {
 
   String emotionDropdownValue = kPleaseSelect;
   String selectedCategory = '';
-  List<String> selectedCategories = [];
+  List<String?> selectedCategories = [];
   String positionDropdownValue = kPleaseSelect;
   String genderDropdownValue = kPleaseSelect;
   String ageDropdownValue = kPleaseSelect;

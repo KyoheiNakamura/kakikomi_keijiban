@@ -5,7 +5,7 @@ import 'package:kakikomi_keijiban/common/components/common_app_bar.dart';
 import 'package:kakikomi_keijiban/common/constants.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_confirm_dialog_mixin.dart';
 import 'package:kakikomi_keijiban/common/mixin/show_exception_dialog_mixin.dart';
-import 'package:kakikomi_keijiban/presentation/home/home_page.dart';
+import 'package:kakikomi_keijiban/presentation/main/main_page.dart';
 import 'package:kakikomi_keijiban/presentation/select_registration_method/select_registration_method_page.dart';
 import 'package:kakikomi_keijiban/presentation/settings/settings_model.dart';
 import 'package:kakikomi_keijiban/presentation/update_email/update_email_page.dart';
@@ -105,7 +105,7 @@ class SettingsPage extends StatelessWidget
                                   await Navigator.pushAndRemoveUntil<void>(
                                     context,
                                     MaterialPageRoute<void>(
-                                      builder: (context) => const HomePage(),
+                                      builder: (context) => const MainPage(),
                                     ),
                                     (_) => false,
                                   );

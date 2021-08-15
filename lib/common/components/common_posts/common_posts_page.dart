@@ -34,31 +34,30 @@ class CommonPostsPage extends StatelessWidget {
           builder: (context, model, child) {
             final posts = model.posts;
             return posts.isNotEmpty
-                ? LoadingSpinner(
-                    isModalLoading: model.isModalLoading,
-                    child: RefreshIndicator(
-                      onRefresh: () => model.getPostsWithReplies(),
-                      child: CommonScrollBottomNotificationListener(
-                        model: model,
-                        child: ListView.builder(
-                          padding: const EdgeInsets.only(top: 16, bottom: 32),
-                          itemBuilder: (BuildContext context, int index) {
-                            final post = posts[index];
-                            return Column(
-                              children: [
-                                PostCard(
-                                  post: post,
-                                  indexOfPost: index,
-                                  passedModel: model,
-                                ),
-                                post == posts.last && model.isLoading
-                                    ? const CircularProgressIndicator()
-                                    : const SizedBox(),
-                              ],
-                            );
-                          },
-                          itemCount: posts.length,
-                        ),
+                ? RefreshIndicator(
+                    onRefresh: () => model.getPostsWithReplies(),
+                    child: CommonScrollBottomNotificationListener(
+                      model: model,
+                      child: ListView.builder(
+                        key: key,
+                        padding: const EdgeInsets.only(bottom: 32),
+                        itemBuilder: (BuildContext context, int index) {
+                          final post = posts[index];
+                          return Column(
+                            children: [
+                              if (post == posts.first)
+                                const SizedBox(height: 16),
+                              PostCard(
+                                post: post,
+                                indexOfPost: index,
+                                passedModel: model,
+                              ),
+                              if (post == posts.last && model.isLoading)
+                                const CircularProgressIndicator(),
+                            ],
+                          );
+                        },
+                        itemCount: posts.length,
                       ),
                     ),
                   )

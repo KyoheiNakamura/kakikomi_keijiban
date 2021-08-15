@@ -41,98 +41,117 @@ class CommonPostsModel extends ChangeNotifier
   Future<void> getPostsWithReplies() async {
     // startModalLoading();
 
-    final queryBatch = FireStoreManager.instance.getCommonPostsQuery(
-      type: type,
-      loadLimit: loadLimit,
-      postField: postField,
-      searchWord: searchWord,
-    );
-    final querySnapshot = await queryBatch.get();
-    final docs = querySnapshot.docs;
-    _posts.clear();
-    if (docs.isEmpty) {
-      // isPostsExisting = false;
-      canLoadMore = false;
-      _posts = [];
-    } else if (docs.length < loadLimit) {
-      // isPostsExisting = true;
-      canLoadMore = false;
-      lastVisibleOfTheBatch = docs[docs.length - 1];
-      _posts = await _getPosts(docs);
-    } else {
-      // isPostsExisting = true;
-      canLoadMore = true;
-      lastVisibleOfTheBatch = docs[docs.length - 1];
-      _posts = await _getPosts(docs);
+    try {
+      final queryBatch = FireStoreManager.instance.getCommonPostsQuery(
+        type: type,
+        loadLimit: loadLimit,
+        postField: postField,
+        searchWord: searchWord,
+      );
+      final querySnapshot = await queryBatch.get();
+      final docs = querySnapshot.docs;
+      _posts.clear();
+      if (docs.isEmpty) {
+        // isPostsExisting = false;
+        canLoadMore = false;
+        _posts = [];
+      } else if (docs.length < loadLimit) {
+        // isPostsExisting = true;
+        canLoadMore = false;
+        lastVisibleOfTheBatch = docs[docs.length - 1];
+        _posts = await _getPosts(docs);
+      } else {
+        // isPostsExisting = true;
+        canLoadMore = true;
+        lastVisibleOfTheBatch = docs[docs.length - 1];
+        _posts = await _getPosts(docs);
+      }
+
+      notifyListeners();
+
+      if (type != CommonPostsType.bookmarkedPosts) {
+        // final bookmarkedPostsIds = await getBookmarkedPostsIds();
+        addBookmark(_posts);
+      }
+
+      notifyListeners();
+
+      // final empathizedPostsIds = await getEmpathizedPostsIds();
+      addEmpathy(_posts);
+
+      await Future.delayed(const Duration(seconds: 3), () {});
+
+      // notifyListeners();
+
+      // await getReplies(_posts, empathizedPostsIds);
+
+      // stopModalLoading();
+      notifyListeners();
+    } catch (e) {
+      // エラーが出ても何もしない
+      // dispose() 後に notifyListeners() が呼ばれる時の例外を処理するため。
+      print('ゲットオオオオオオオオ');
+      print(e.toString());
     }
-
-    notifyListeners();
-
-    if (type != CommonPostsType.bookmarkedPosts) {
-      final bookmarkedPostsIds = await getBookmarkedPostsIds();
-      await addBookmark(_posts, bookmarkedPostsIds);
-    }
-
-    notifyListeners();
-
-    final empathizedPostsIds = await getEmpathizedPostsIds();
-    await addEmpathy(_posts, empathizedPostsIds);
-
-    notifyListeners();
-
-    await getReplies(_posts, empathizedPostsIds);
-
-    // stopModalLoading();
-    notifyListeners();
   }
 
   Future<void> loadPostsWithReplies() async {
     startLoading();
-    print('loadPostsWithReplies');
 
-    final queryBatch = FireStoreManager.instance.loadCommonPostsQuery(
-      type: type,
-      loadLimit: loadLimit,
-      lastVisibleOfTheBatch: lastVisibleOfTheBatch!,
-      postField: postField,
-      searchWord: searchWord,
-    );
-    final querySnapshot = await queryBatch.get();
-    final docs = querySnapshot.docs;
-    if (docs.isEmpty) {
-      // isPostsExisting = false;
-      canLoadMore = false;
-      _posts += [];
-    } else if (docs.length < loadLimit) {
-      // isPostsExisting = true;
-      canLoadMore = false;
-      lastVisibleOfTheBatch = docs[docs.length - 1];
-      _posts += await _getPosts(docs);
-    } else {
-      // isPostsExisting = true;
-      canLoadMore = true;
-      lastVisibleOfTheBatch = docs[docs.length - 1];
-      _posts += await _getPosts(docs);
+    try {
+      final queryBatch = FireStoreManager.instance.loadCommonPostsQuery(
+        type: type,
+        loadLimit: loadLimit,
+        lastVisibleOfTheBatch: lastVisibleOfTheBatch!,
+        postField: postField,
+        searchWord: searchWord,
+      );
+      final querySnapshot = await queryBatch.get();
+      final docs = querySnapshot.docs;
+      if (docs.isEmpty) {
+        // isPostsExisting = false;
+        canLoadMore = false;
+        _posts += [];
+      } else if (docs.length < loadLimit) {
+        // isPostsExisting = true;
+        canLoadMore = false;
+        lastVisibleOfTheBatch = docs[docs.length - 1];
+        _posts += await _getPosts(docs);
+      } else {
+        // isPostsExisting = true;
+        canLoadMore = true;
+        lastVisibleOfTheBatch = docs[docs.length - 1];
+        _posts += await _getPosts(docs);
+      }
+
+      notifyListeners();
+
+      if (type != CommonPostsType.bookmarkedPosts) {
+        // final bookmarkedPostsIds = await getBookmarkedPostsIds();
+        addBookmark(_posts);
+      }
+
+      notifyListeners();
+
+      // final empathizedPostsIds = await getEmpathizedPostsIds();
+      addEmpathy(_posts);
+
+      await Future.delayed(const Duration(seconds: 3), () {});
+
+      // notifyListeners();
+
+      // await getReplies(_posts, empathizedPostsIds);
+
+      // stopLoading();
+      notifyListeners();
+    } catch (e) {
+      // エラーが出ても何もしない
+      // dispose() 後に notifyListeners() が呼ばれる時の例外を処理するため。
+      print('ロードオオオオオオオオオオオオ');
+      print(e.toString());
+    } finally {
+      stopLoading();
     }
-
-    notifyListeners();
-
-    if (type != CommonPostsType.bookmarkedPosts) {
-      final bookmarkedPostsIds = await getBookmarkedPostsIds();
-      await addBookmark(_posts, bookmarkedPostsIds);
-    }
-
-    notifyListeners();
-
-    final empathizedPostsIds = await getEmpathizedPostsIds();
-    await addEmpathy(_posts, empathizedPostsIds);
-
-    notifyListeners();
-
-    await getReplies(_posts, empathizedPostsIds);
-
-    stopLoading();
-    notifyListeners();
   }
 
   Future<void> refreshThePostOfPostsAfterUpdated({
